@@ -1,0 +1,15 @@
+.DS_Store
+
+# ESP-IDF build outputs
+build/
+managed_components/
+dependencies.lock
+sdkconfig
+sdkconfig.old
+
+# Local dependency copies
+esp-csi/
+
+# Python caches
+__pycache__/
+*.pyc
