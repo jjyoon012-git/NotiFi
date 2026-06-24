@@ -60,6 +60,36 @@ CSV 저장은 receiver 보드의 시리얼 로그에서 진행합니다.
 
 ---
 
+## Latest Data Collection Status
+
+2026.06.25 기준 Team 3 / `yja` 데이터 수집과 정리가 완료되었습니다.
+
+관련 저장소:
+
+- 데이터 코드/로그: [NotiFi2026/NotiFi-Data](https://github.com/NotiFi2026/NotiFi-Data)
+- subject 폴더: [`NotiFi-Data/yja`](https://github.com/NotiFi2026/NotiFi-Data/tree/main/yja)
+- 원본 CSV/시각화 업로드 대상: [Google Drive](https://drive.google.com/drive/folders/1idY-wNY24yFioixPITnredHj11CaWbwA)
+
+`yja` 번들 구성:
+
+| item | count |
+|---|---:|
+| raw CSI CSV | 921 |
+| visualization PNG | 921 |
+| collection/synthesis logs | 6 |
+
+품질 점검 결과:
+
+- 예상 CSV `921/921`
+- 빈 CSV `0`
+- 누락 trial `0`
+- 라벨/메타데이터 불일치 `0`
+- CSI 길이 불일치 `0`
+
+자세한 작업 로그는 [logs/2026.06.25.md](logs/2026.06.25.md)를 참고합니다.
+
+---
+
 ## Data Collection Plan
 
 WiFi CSI는 보드 위치, 안테나 방향, 보드 간 거리, 방 구조, 주변 물체에 영향을 많이 받습니다. 따라서 데이터 수집 시 참가자 3명은 같은 구조와 같은 행동 가이드로 수집해야 합니다.
@@ -154,7 +184,8 @@ python tools/check_csi_csv.py --idle data/raw/idle.csv --move data/raw/walk.csv 
 ├── docs/
 │   └── data-collection-manual.md
 ├── logs/
-│   └── 2026.06.16.md
+│   ├── 2026.06.16.md
+│   └── 2026.06.25.md
 └── tools/
     ├── serial_to_csv.py
     └── check_csi_csv.py
