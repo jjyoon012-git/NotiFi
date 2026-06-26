@@ -90,6 +90,30 @@ CSV 저장은 receiver 보드의 시리얼 로그에서 진행합니다.
 
 ---
 
+## CSI-to-Pose Experiment
+
+2026.06.26 기준, NotiFi의 다음 실험 방향으로 CSI-to-Pose 실험을 정리했습니다.
+
+목표는 CSI 신호만으로 사람 영상을 직접 복원하는 것이 아니라, 학습 단계에서 영상 기반 pose teacher가 생성한 skeleton representation을 CSI-only student model이 예측할 수 있는지 확인하는 것입니다.
+
+핵심 흐름:
+
+```text
+Training:
+CSI + Video → Pose Teacher → Skeleton GT → CSI Student
+
+Inference:
+CSI only → 3D Skeleton Proxy → Behavior / Event Interpretation
+```
+
+실험 문서:
+
+- [CSI-to-Pose/README.md](CSI-to-Pose/README.md)
+
+우선 `warning/gait/unstable_walking` 라벨을 pilot으로 수집하여 MediaPipe 기반 derived feature 추출과 CSI-to-skeleton proxy 복원 가능성을 확인합니다.
+
+---
+
 ## Data Collection Plan
 
 WiFi CSI는 보드 위치, 안테나 방향, 보드 간 거리, 방 구조, 주변 물체에 영향을 많이 받습니다. 따라서 데이터 수집 시 참가자 3명은 같은 구조와 같은 행동 가이드로 수집해야 합니다.
@@ -180,12 +204,17 @@ python tools/check_csi_csv.py --idle data/raw/idle.csv --move data/raw/walk.csv 
 
 ```text
 .
+├── CSI-to-Pose/
+│   ├── README.md
+│   └── assets/
+│       └── csi-to-pose-overview.png
 ├── README.md
 ├── docs/
 │   └── data-collection-manual.md
 ├── logs/
 │   ├── 2026.06.16.md
-│   └── 2026.06.25.md
+│   ├── 2026.06.25.md
+│   └── 2026.06.26.md
 └── tools/
     ├── serial_to_csv.py
     └── check_csi_csv.py
