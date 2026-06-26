@@ -1,5 +1,7 @@
 # NotiFi
 
+![CSI-to-Pose unstable walking reconstruction](CSI-to-Pose/assets/unstable-walking-csi-to-pose-human-readable.gif)
+
 NotiFi is a privacy-preserving WiFi CSI sensing project for detecting possible fall events, inactivity, and breathing anomalies without cameras or wearable devices.
 
 NotiFi는 카메라나 웨어러블 없이 WiFi CSI(Channel State Information)를 활용해 노인의 낙상, 무활동, 호흡 이상 가능성을 감지하는 프로젝트입니다.

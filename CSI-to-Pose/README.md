@@ -4,6 +4,8 @@ This folder documents the CSI-to-Pose experiment for NotiFi.
 
 NotiFi CSI-to-Pose는 WiFi CSI 신호만으로 노인 행동 흐름을 직접 분류하는 것을 넘어, 영상 기반 pose teacher가 만든 skeleton representation을 CSI-only student model이 예측할 수 있는지 확인하는 실험입니다.
 
+![Unstable walking CSI-to-Pose reconstruction](assets/unstable-walking-csi-to-pose-human-readable.gif)
+
 ![CSI-to-Pose overview](assets/csi-to-pose-overview.png)
 
 ---
@@ -259,3 +261,18 @@ Deployment: CSI only
 ```text
 CSI → skeleton proxy → behavior / event interpretation
 ```
+
+---
+
+## 11. Scripts
+
+The current pilot scripts are stored in [`scripts/`](scripts/).
+
+| Script | Purpose |
+|---|---|
+| `save_csi_raw.py` | Save receiver `CSI_DATA` serial logs as CSV |
+| `collect_csi_video.py` | Collect paired CSI CSV and video clips |
+| `preview_pose_camera.py` | Preview camera feed with live MediaPipe pose overlay |
+| `extract_pose_features.py` | Extract 33 landmarks, 13-point proxy, derived features, plots, and overlay video |
+| `train_csi_to_pose.py` | Train a pilot CSI-to-3D-skeleton-proxy model |
+| `render_pose_comparison.py` | Render human-readable GT vs CSI-predicted skeleton animation |
