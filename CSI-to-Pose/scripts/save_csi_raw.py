@@ -19,6 +19,7 @@ LABEL_MAP = {
     "stand_to_lie_normal":  ("safe",    "transition"),
     "lie_to_stand":         ("safe",    "transition"),
     "lying_normal_breath":  ("safe",    "breathing"),
+    "normal_breathing_visible": ("safe", "breathing"),
     # warning
     "lying_fast_breath":        ("warning", "breathing"),
     "lying_long_breath":        ("warning", "breathing"),

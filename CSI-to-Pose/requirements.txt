@@ -1,0 +1,8 @@
+numpy
+pandas
+opencv-python
+mediapipe
+matplotlib
+pyserial
+torch
+joblib

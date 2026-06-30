@@ -1,0 +1,28 @@
+# Generated CSI/video/pose/model artifacts
+csi_to_pose/
+data/
+videos/
+pose_gt/
+pose_overlays/
+pose_plots/
+models/
+collection_logs/
+body_templates/
+
+# Large media/model outputs
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.gif
+*.pt
+*.pth
+*.npz
+*.pkl
+
+# Python/runtime
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+venv/
