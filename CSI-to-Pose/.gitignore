@@ -8,6 +8,8 @@ pose_plots/
 models/
 collection_logs/
 body_templates/
+outputs/
+split_manifest/*.tmp
 
 # Large media/model outputs
 *.mp4

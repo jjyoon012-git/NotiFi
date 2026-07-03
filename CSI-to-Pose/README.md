@@ -426,3 +426,52 @@ Deployment: CSI only
 ```
 
 팀 공유 시에는 원본 영상보다 `proxy13.csv`, `overlay.mp4`, `derived_features.png`, 학습 결과를 우선 공유합니다.
+
+## Updated mixed-subject training pipeline
+
+The repository now includes an updated CSI-only pose reconstruction training flow:
+
+- `scripts/train_csi_to_pose_mixed.py`
+  - reads `split_manifest/manifest_full.csv`
+  - uses `split_mode1` as the train/validation/test split by default
+  - caches parsed CSI features as `.npz` files to avoid repeatedly parsing every raw CSI CSV
+  - trains a residual TCN from CSI amplitude features to 13-point canonical 3D skeleton proxy
+  - saves metrics, predictions, plots, a best checkpoint, and sample reconstruction videos
+- `scripts/render_clinical_review.py`
+  - renders GT vs CSI-only reconstruction videos
+  - shows GT on the left and CSI-only reconstruction on the right
+  - adds joint-motion and suspected load-region summaries
+  - can render every test prediction with `--all-test`
+
+Recommended training command:
+
+```powershell
+python scripts\train_csi_to_pose_mixed.py `
+  --split-policy manifest `
+  --epochs 70 `
+  --patience 12 `
+  --batch-size 512 `
+  --amp `
+  --out-root outputs\manifest_split_all_labels
+```
+
+Render every test reconstruction in the clinical review style:
+
+```powershell
+python scripts\render_clinical_review.py `
+  --output-root outputs\manifest_split_all_labels `
+  --all-test `
+  --out-subdir clinical_review_videos_no_gray
+```
+
+Expected input layout:
+
+```text
+CSI-to-Pose/
+  split_manifest/manifest_full.csv
+  csi_to_pose_{subject}/
+    csi/...
+    pose_gt/proxy_13/...
+```
+
+Large generated artifacts such as feature caches, model checkpoints, predictions, and rendered videos should remain outside git or under ignored output directories.
