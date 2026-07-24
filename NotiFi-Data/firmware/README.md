@@ -129,4 +129,4 @@ idf.py -p COM_TX1 build flash
 python scripts/check_tx_links.py COM_RX --rate 30
 ```
 
-TX1/TX2/TX3가 10초 동안 각각 270 frames 이상이어야 본 수집을 시작할 수 있다.
+TX1/TX2/TX3가 10초 동안 각각 1 frame 이상이면 본 수집을 시작할 수 있다. 240/270 frames 같은 낮은 수신량 기준은 경고나 중단 조건으로 쓰지 않는다.

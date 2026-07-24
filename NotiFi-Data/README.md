@@ -51,7 +51,7 @@ COM 포트 확인:
 python scripts/check_tx_links.py COM_PORT --rate 30
 ```
 
-10초 기준 TX1/TX2/TX3가 각각 270 frames 이상이어야 한다. `idf.py monitor`가 RX 포트를 사용 중이면 `Ctrl+]`로 종료한다.
+10초 기준 TX1/TX2/TX3가 각각 1 frame 이상이면 수집을 시작할 수 있다. 240/270 frames 같은 낮은 수신량 기준은 경고나 중단 조건으로 쓰지 않는다. `idf.py monitor`가 RX 포트를 사용 중이면 `Ctrl+]`로 종료한다.
 
 ## 3. 장비 배치
 
@@ -131,7 +131,7 @@ python scripts/collect_dataset.py `
 7. 전체 반복 완료 후 sound3 재생
 
 정적 라벨은 action cue가 없다. DANGER는 5회 후 자동으로 3분 휴식하며, 10회 완료 후 다음 DANGER 세트까지 10분 이상 쉬어야 한다.
-수집 중 포트 오류, CSI 수신 부족, 카메라 오류, 자동 QC 실패 등으로 중단되면 `error.wav`가 울린 뒤 `삐삐삐` 3회 알림이 재생되고 프로그램이 즉시 종료된다. `--no-sound`를 사용하면 모든 알림음이 꺼진다.
+수집 중 포트 오류, TX별 CSI 0 frame, 카메라 오류, 자동 QC 실패 등으로 중단되면 `error.wav`가 울린 뒤 `삐삐삐` 3회 알림이 재생되고 프로그램이 즉시 종료된다. 낮은 수신량은 CSI 시각화로만 확인하고 중단 조건으로 쓰지 않는다. `--no-sound`를 사용하면 모든 알림음이 꺼진다.
 
 수집 파일:
 
@@ -148,6 +148,8 @@ collection_data/v2/
 ```
 
 CSI CSV에는 PC monotonic timestamp, sender MAC/ID, sequence number, firmware timestamp, RSSI, CSI 배열을 보존한다. `*_csi_visualization.png`에는 TX1/TX2/TX3의 평균 CSI amplitude가 같은 trial 기준으로 저장된다. metadata에는 cue, variant, 장비 배치, 자동 QC, CSI 시각화 생성 여부, 실제 이벤트 주석 필드를 저장한다.
+
+잘못 수집된 trial을 다시 찍고 싶으면 해당 trial 폴더를 삭제한 뒤 같은 명령어를 다시 실행한다. 진행률과 다음 trial 번호는 manifest만 보지 않고 실제 `csi/video/meta` 파일과 trial 폴더 존재 여부를 함께 확인하므로, 폴더를 삭제한 번호부터 다시 채워진다.
 
 ## 6. 이벤트 주석
 

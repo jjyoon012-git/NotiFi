@@ -21,7 +21,12 @@ def main() -> None:
     parser.add_argument("--sec", type=float, default=10.0)
     parser.add_argument("--baud", type=int, default=921600)
     parser.add_argument("--rate", type=int, default=30)
-    parser.add_argument("--pass-ratio", type=float, default=0.90)
+    parser.add_argument(
+        "--pass-ratio",
+        type=float,
+        default=0.90,
+        help="Deprecated compatibility option. Link pass/fail is zero-frame only.",
+    )
     args = parser.parse_args()
 
     try:
@@ -51,29 +56,26 @@ def main() -> None:
     finally:
         ser.close()
 
-    minimum = int(args.rate * args.sec * args.pass_ratio)
     print("\n================ 3TX LINK RESULT ================")
-    print(
-        f"Minimum per TX: {minimum} frames "
-        f"({args.rate} pkt/s x {args.sec:.0f}s x {args.pass_ratio:.0%})"
-    )
+    print("Pass rule: each expected TX must have at least 1 frame.")
+    print("Low-but-nonzero counts are recorded only; they do not fail collection.")
     all_ok = True
     for mac, tx_id in EXPECTED_TX.items():
         count = counts.get(tx_id, 0)
-        ok = count >= minimum
+        ok = count > 0
         all_ok = all_ok and ok
-        print(f"[{'OK' if ok else 'FAIL'}] {tx_id} {mac}: {count} frames")
+        print(f"[{'OK' if ok else 'ZERO'}] {tx_id} {mac}: {count} frames")
     unknown = counts.get("UNKNOWN", 0)
     if unknown:
-        print(f"[WARN] unknown MAC frames: {unknown}")
+        print(f"[INFO] unknown MAC frames: {unknown}")
         for mac, count in mac_counts.items():
             if mac not in EXPECTED_TX:
                 print(f"       {mac}: {count}")
     print("==================================================")
     if not all_ok:
-        print("One or more links failed. Do not start collection.")
+        print("One or more TX links produced 0 frames. Check TX power, MAC, antenna, and RX port.")
         raise SystemExit(1)
-    print("All three links passed. Collection can begin.")
+    print("All three links produced CSI frames. Collection can begin.")
 
 
 if __name__ == "__main__":

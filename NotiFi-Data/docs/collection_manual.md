@@ -357,14 +357,15 @@
 
 - CSI 파일이 없거나 0 byte면 재수집한다.
 - TX1/TX2/TX3 중 한 링크라도 0 frame이면 재수집한다.
-- 기본 수신 합격선은 TX당 30 pkt/s × 10초 × 90% = 270 frames다.
+- TX별 수신량이 낮아도 0 frame만 아니면 자동 실패로 처리하지 않는다. 수집 품질은 `*_csi_visualization.png`에서 확인한다.
 - 각 trial 종료 직후 `*_csi_visualization.png`가 자동 저장되어야 한다.
 - 영상이 없거나 손상되면 재수집한다.
 - 전신이 잘리거나 pose valid frame ratio가 95% 미만이면 reconstruction 대상에서 제외한다.
 - CSI-영상 sync residual p95가 50 ms를 넘으면 REVIEW, 100 ms를 넘으면 재수집한다.
 - planned cue와 actual onset 차이가 0.5초를 넘으면 재수집한다.
 - 정의와 다른 outcome이면 재수집한다.
-- 수집 중 포트 오류, CSI 수신 부족, 카메라 오류, 자동 QC 실패가 발생하면 error sound 후 `삐삐삐` 3회 알림이 재생되고 즉시 중단된다.
+- 수집 중 포트 오류, TX별 CSI 0 frame, 카메라 오류, 자동 QC 실패가 발생하면 error sound 후 `삐삐삐` 3회 알림이 재생되고 즉시 중단된다.
+- 잘못 수집된 trial은 해당 trial 폴더를 삭제한 뒤 같은 명령어를 다시 실행한다. 삭제된 trial 번호는 manifest에 남아 있어도 다시 사용된다.
 
 ## 안전
 

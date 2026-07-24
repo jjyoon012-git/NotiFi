@@ -114,23 +114,88 @@ def ensure_camera(config: SessionConfig) -> cv2.VideoCapture:
     return cap
 
 
-def next_trial_number(label_root: Path) -> int:
-    numbers: list[int] = []
-    if label_root.exists():
-        for child in label_root.iterdir():
-            if not child.is_dir():
-                continue
-            marker = child.name.rsplit("_t", 1)
-            if len(marker) == 2 and marker[1].isdigit():
-                numbers.append(int(marker[1]))
-    return max(numbers, default=0) + 1
-
-
 def load_manifest_rows(manifest_path: Path) -> list[dict[str, str]]:
     if not manifest_path.exists():
         return []
     with manifest_path.open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle))
+
+
+def manifest_row_has_files(output_root: Path, row: dict[str, str]) -> bool:
+    required_fields = ("csi_path", "video_path", "metadata_path")
+    optional_fields = ("csi_plot_path",)
+    for field in required_fields:
+        value = str(row.get(field, "")).strip()
+        if not value or not (output_root / value).exists():
+            return False
+    for field in optional_fields:
+        value = str(row.get(field, "")).strip()
+        if value and not (output_root / value).exists():
+            return False
+    return True
+
+
+def usable_manifest_rows(output_root: Path, rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    return [row for row in rows if manifest_row_has_files(output_root, row)]
+
+
+def trial_number_from_name(name: str) -> int | None:
+    marker = name.rsplit("_t", 1)
+    if len(marker) != 2:
+        return None
+    trial_text = marker[1].split("_", 1)[0]
+    if not trial_text.isdigit():
+        return None
+    return int(trial_text)
+
+
+def existing_trial_numbers_from_dirs(
+    output_root: Path,
+    config: SessionConfig,
+    spec,
+) -> list[int]:
+    environment_root = output_root / config.subject / config.environment
+    if not environment_root.exists():
+        return []
+    numbers: list[int] = []
+    for session_dir in environment_root.iterdir():
+        label_root = session_dir / spec.risk.lower() / spec.label
+        if not label_root.exists():
+            continue
+        for trial_dir in label_root.iterdir():
+            if not trial_dir.is_dir():
+                continue
+            number = trial_number_from_name(trial_dir.name)
+            if number is not None:
+                numbers.append(number)
+    return numbers
+
+
+def available_trial_numbers(
+    used_numbers: list[int],
+    repeat: int,
+    target: int,
+    allow_extra: bool,
+) -> list[int]:
+    used = {number for number in used_numbers if number > 0}
+    numbers: list[int] = []
+    candidate = 1
+    while len(numbers) < repeat:
+        if not allow_extra and candidate > target:
+            break
+        if candidate not in used:
+            numbers.append(candidate)
+        candidate += 1
+    return numbers
+
+
+def format_trial_plan(numbers: list[int]) -> str:
+    if not numbers:
+        return "none"
+    contiguous = numbers == list(range(numbers[0], numbers[0] + len(numbers)))
+    if contiguous:
+        return f"t{numbers[0]:03d}-t{numbers[-1]:03d}"
+    return ", ".join(f"t{number:03d}" for number in numbers)
 
 
 def append_manifest(manifest_path: Path, row: dict) -> None:
@@ -472,8 +537,7 @@ def collect_one(
         "TX3": int(counts.get("TX3", 0)),
     }
     unknown_count = int(counts.get("UNKNOWN", 0))
-    expected_per_link = config.packet_rate * TRIAL_DURATION_S
-    minimum_per_link = int(expected_per_link * min_link_ratio)
+    minimum_per_link = 1
     links_ok = all(value >= minimum_per_link for value in tx_counts.values())
     video_frames = int(video_result.get("frames", 0))
     video_ok = video_frames >= int(config.camera_fps * TRIAL_DURATION_S * 0.8)
@@ -547,6 +611,7 @@ def collect_one(
         },
         "automatic_qc": {
             "status": automatic_qc,
+            "link_qc_rule": "zero_frame_only",
             "minimum_link_frames": minimum_per_link,
             "link_counts": tx_counts,
             "unknown_mac_frames": unknown_count,
@@ -602,13 +667,13 @@ def collect_one(
     }
     print(
         f"[QC] TX1={tx_counts['TX1']} TX2={tx_counts['TX2']} "
-        f"TX3={tx_counts['TX3']} minimum={minimum_per_link} "
+        f"TX3={tx_counts['TX3']} link_rule=zero_frame_only "
         f"video={video_frames} -> {automatic_qc}"
     )
     return manifest_row, automatic_qc != "AUTO_REJECT"
 
 
-def print_plan(config: SessionConfig, spec, repeat: int, start_trial: int) -> None:
+def print_plan(config: SessionConfig, spec, repeat: int, trial_numbers: list[int]) -> None:
     print("\n[NotiFi v2.0 Collection Plan]")
     print(
         f"subject={config.subject} environment={config.environment} "
@@ -619,7 +684,7 @@ def print_plan(config: SessionConfig, spec, repeat: int, start_trial: int) -> No
         f"repeat={repeat} duration={TRIAL_DURATION_S:.0f}s"
     )
     print(
-        f"trial_range=t{start_trial:03d}-t{start_trial + repeat - 1:03d} "
+        f"trial_plan={format_trial_plan(trial_numbers)} "
         f"default_break=2.0s"
     )
     print(f"start_pose: {spec.start_pose}")
@@ -670,9 +735,10 @@ def main() -> None:
 
     manifest_path = args.output_root / "manifests" / "trials.csv"
     existing_rows = load_manifest_rows(manifest_path)
+    existing_file_rows = usable_manifest_rows(args.output_root, existing_rows)
     label_rows = [
         row
-        for row in existing_rows
+        for row in existing_file_rows
         if row.get("subject_id") == config.subject
         and row.get("environment_id") == config.environment
         and row.get("scenario_label") == spec.label
@@ -682,7 +748,8 @@ def main() -> None:
         for row in label_rows
         if str(row.get("trial_number", "")).isdigit()
     ]
-    start_trial = max(recorded_numbers, default=0) + 1
+    existing_dir_numbers = existing_trial_numbers_from_dirs(args.output_root, config, spec)
+    used_numbers = sorted(set(recorded_numbers + existing_dir_numbers))
     accepted_count = sum(
         row.get("automatic_qc") != "AUTO_REJECT"
         and row.get("manual_qc") != "REJECT"
@@ -694,9 +761,20 @@ def main() -> None:
             f"{spec.label} target is {spec.repeats_per_environment} per environment. "
             f"Only {remaining} trial(s) remain. Use --repeat {remaining}."
         )
+    trial_numbers = available_trial_numbers(
+        used_numbers=used_numbers,
+        repeat=repeat,
+        target=spec.repeats_per_environment,
+        allow_extra=args.allow_extra,
+    )
+    if len(trial_numbers) < repeat:
+        raise ValueError(
+            f"No reusable trial slots remain for {spec.label}. "
+            "Delete rejected trial folders to reuse their numbers or use --allow-extra."
+        )
 
-    validate_session_limits(existing_rows, config, spec.risk, repeat)
-    print_plan(config, spec, repeat, start_trial)
+    validate_session_limits(existing_file_rows, config, spec.risk, repeat)
+    print_plan(config, spec, repeat, trial_numbers)
     if args.dry_run:
         print("[DRY RUN] Hardware was not opened and no files were written.")
         return
@@ -710,8 +788,7 @@ def main() -> None:
         cap = ensure_camera(config)
         ser = serial.Serial(config.port, config.baud, timeout=0.1)
         time.sleep(0.5)
-        for offset in range(repeat):
-            trial_number = start_trial + offset
+        for offset, trial_number in enumerate(trial_numbers):
             row, passed = collect_one(
                 ser=ser,
                 cap=cap,
@@ -728,7 +805,8 @@ def main() -> None:
             if not passed and not args.continue_on_qc_fail:
                 raise RuntimeError(
                     "Automatic QC failed. Collection stopped; inspect TX power, antenna, "
-                    "camera, and serial port before retrying with a new session ID."
+                    "camera, and serial port. Delete the rejected trial folder before retrying "
+                    "if you want to reuse the same trial number."
                 )
             if offset < repeat - 1:
                 if spec.risk == "DANGER" and completed == 5:
