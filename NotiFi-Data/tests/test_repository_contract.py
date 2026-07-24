@@ -38,6 +38,7 @@ def test_collection_cli_has_no_legacy_ambient_switch() -> None:
     assert "LABEL_MAP" not in source
     assert "csi_plot_path" in source
     assert "save_csi_visualization" in source
+    assert "play_error_alarm" in source
 
 
 def test_team_guides_exist_and_have_all_commands() -> None:

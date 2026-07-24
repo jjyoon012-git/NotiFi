@@ -28,7 +28,7 @@ from notifi_collection.labels import (
     variant_for_trial,
 )
 from notifi_collection.session import DEFAULT_CONFIG_PATH, SessionConfig, load_session
-from notifi_collection.sound import play_sound
+from notifi_collection.sound import play_error_alarm, play_sound
 
 
 CSV_FIELDS = (
@@ -743,7 +743,8 @@ def main() -> None:
         if spec.risk == "DANGER" and completed >= 10:
             print("[SAFETY] Rest for at least 10 minutes before another DANGER set.")
     except Exception:
-        play_sound("error", sound_enabled)
+        print("[ERROR ALARM] Collection failed. Playing error sound + beep beep beep.")
+        play_error_alarm(sound_enabled)
         raise
     finally:
         if ser is not None and ser.is_open:

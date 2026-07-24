@@ -364,6 +364,7 @@
 - CSI-영상 sync residual p95가 50 ms를 넘으면 REVIEW, 100 ms를 넘으면 재수집한다.
 - planned cue와 actual onset 차이가 0.5초를 넘으면 재수집한다.
 - 정의와 다른 outcome이면 재수집한다.
+- 수집 중 포트 오류, CSI 수신 부족, 카메라 오류, 자동 QC 실패가 발생하면 error sound 후 `삐삐삐` 3회 알림이 재생되고 즉시 중단된다.
 
 ## 안전
 

@@ -131,6 +131,7 @@ python scripts/collect_dataset.py `
 7. 전체 반복 완료 후 sound3 재생
 
 정적 라벨은 action cue가 없다. DANGER는 5회 후 자동으로 3분 휴식하며, 10회 완료 후 다음 DANGER 세트까지 10분 이상 쉬어야 한다.
+수집 중 포트 오류, CSI 수신 부족, 카메라 오류, 자동 QC 실패 등으로 중단되면 `error.wav`가 울린 뒤 `삐삐삐` 3회 알림이 재생되고 프로그램이 즉시 종료된다. `--no-sound`를 사용하면 모든 알림음이 꺼진다.
 
 수집 파일:
 

@@ -57,3 +57,13 @@ def play_sound(name: str, enabled: bool = True) -> None:
     except Exception as exc:
         print(f"[WARN] sound playback failed: {exc}", file=sys.stderr)
         time.sleep(0.05)
+
+
+def play_error_alarm(enabled: bool = True) -> None:
+    """Play a collection-failure alarm: error tone followed by three beeps."""
+    if not enabled:
+        return
+    play_sound("error", True)
+    for _ in range(3):
+        time.sleep(0.12)
+        play_sound("action_cue", True)
