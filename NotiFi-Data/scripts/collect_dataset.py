@@ -18,6 +18,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from notifi_collection.csi import EXPECTED_TX, parse_csi_line
+from notifi_collection.csi_visualization import save_csi_visualization
 from notifi_collection.files import write_trial_checksums
 from notifi_collection.labels import (
     LABELS,
@@ -89,6 +90,7 @@ MANIFEST_FIELDS = (
     "video_frames",
     "effective_video_fps",
     "csi_path",
+    "csi_plot_path",
     "video_path",
     "metadata_path",
 )
@@ -134,6 +136,16 @@ def load_manifest_rows(manifest_path: Path) -> list[dict[str, str]]:
 def append_manifest(manifest_path: Path, row: dict) -> None:
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     exists = manifest_path.exists()
+    if exists:
+        with manifest_path.open(newline="", encoding="utf-8") as handle:
+            reader = csv.DictReader(handle)
+            if tuple(reader.fieldnames or ()) != MANIFEST_FIELDS:
+                rows = list(reader)
+                with manifest_path.open("w", newline="", encoding="utf-8") as rewrite_handle:
+                    writer = csv.DictWriter(rewrite_handle, fieldnames=MANIFEST_FIELDS)
+                    writer.writeheader()
+                    for existing_row in rows:
+                        writer.writerow({field: existing_row.get(field, "") for field in MANIFEST_FIELDS})
     with manifest_path.open("a", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=MANIFEST_FIELDS)
         if not exists:
@@ -366,6 +378,7 @@ def collect_one(
     trial_dir.mkdir(parents=True)
 
     csi_path = trial_dir / f"{source_uid}_csi.csv"
+    csi_plot_path = trial_dir / f"{source_uid}_csi_visualization.png"
     video_path = trial_dir / f"{source_uid}_video.mp4"
     video_ts_path = trial_dir / f"{source_uid}_video_timestamps.csv"
     meta_path = trial_dir / f"{source_uid}_meta.json"
@@ -464,7 +477,21 @@ def collect_one(
     links_ok = all(value >= minimum_per_link for value in tx_counts.values())
     video_frames = int(video_result.get("frames", 0))
     video_ok = video_frames >= int(config.camera_fps * TRIAL_DURATION_S * 0.8)
-    automatic_qc = "AUTO_PASS_PENDING_MANUAL_QC" if links_ok and video_ok else "AUTO_REJECT"
+    csi_plot_summary: dict = {}
+    plot_ok = False
+    try:
+        csi_plot_summary = save_csi_visualization(
+            csi_path,
+            csi_plot_path,
+            title=f"{source_uid} | {spec.risk} / {spec.label}",
+        )
+        plot_ok = csi_plot_path.exists()
+        print(f"[PLOT] saved {csi_plot_path}")
+    except Exception as exc:
+        csi_plot_summary = {"error": str(exc)}
+        print(f"[PLOT ERROR] {exc}")
+
+    automatic_qc = "AUTO_PASS_PENDING_MANUAL_QC" if links_ok and video_ok and plot_ok else "AUTO_REJECT"
 
     meta = {
         "dataset_version": "v2.0",
@@ -524,9 +551,12 @@ def collect_one(
             "link_counts": tx_counts,
             "unknown_mac_frames": unknown_count,
             "video_ok": video_ok,
+            "csi_visualization_ok": plot_ok,
+            "csi_visualization": csi_plot_summary,
         },
         "files": {
             "csi": csi_path.name,
+            "csi_visualization": csi_plot_path.name if plot_ok else None,
             "video": video_path.name,
             "video_timestamps": video_ts_path.name,
         },
@@ -566,6 +596,7 @@ def collect_one(
         "video_frames": video_frames,
         "effective_video_fps": f"{video_result.get('effective_fps', 0.0):.3f}",
         "csi_path": str(csi_path.relative_to(output_root)),
+        "csi_plot_path": str(csi_plot_path.relative_to(output_root)) if plot_ok else "",
         "video_path": str(video_path.relative_to(output_root)),
         "metadata_path": str(meta_path.relative_to(output_root)),
     }

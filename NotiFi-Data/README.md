@@ -126,8 +126,9 @@ python scripts/collect_dataset.py `
 2. sound1과 동시에 CSI·영상 기록 시작
 3. 동적 라벨은 2.5/3.0/3.5초를 순환하며 action cue 재생
 4. 10초 후 sound2와 함께 trial 종료
-5. 다음 trial까지 2초 휴식
-6. 전체 반복 완료 후 sound3 재생
+5. TX1/TX2/TX3별 CSI amplitude 시각화 PNG 자동 저장
+6. 다음 trial까지 2초 휴식
+7. 전체 반복 완료 후 sound3 재생
 
 정적 라벨은 action cue가 없다. DANGER는 5회 후 자동으로 3분 휴식하며, 10회 완료 후 다음 DANGER 세트까지 10분 이상 쉬어야 한다.
 
@@ -137,6 +138,7 @@ python scripts/collect_dataset.py `
 collection_data/v2/
   SUBJECT/E01/SESSION/risk/label/source_trial_uid/
     *_csi.csv
+    *_csi_visualization.png
     *_video.mp4
     *_video_timestamps.csv
     *_meta.json
@@ -144,7 +146,7 @@ collection_data/v2/
   manifests/trials.csv
 ```
 
-CSI CSV에는 PC monotonic timestamp, sender MAC/ID, sequence number, firmware timestamp, RSSI, CSI 배열을 보존한다. metadata에는 cue, variant, 장비 배치, 자동 QC, 실제 이벤트 주석 필드를 저장한다.
+CSI CSV에는 PC monotonic timestamp, sender MAC/ID, sequence number, firmware timestamp, RSSI, CSI 배열을 보존한다. `*_csi_visualization.png`에는 TX1/TX2/TX3의 평균 CSI amplitude가 같은 trial 기준으로 저장된다. metadata에는 cue, variant, 장비 배치, 자동 QC, CSI 시각화 생성 여부, 실제 이벤트 주석 필드를 저장한다.
 
 ## 6. 이벤트 주석
 

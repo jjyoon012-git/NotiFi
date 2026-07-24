@@ -358,6 +358,7 @@
 - CSI 파일이 없거나 0 byte면 재수집한다.
 - TX1/TX2/TX3 중 한 링크라도 0 frame이면 재수집한다.
 - 기본 수신 합격선은 TX당 30 pkt/s × 10초 × 90% = 270 frames다.
+- 각 trial 종료 직후 `*_csi_visualization.png`가 자동 저장되어야 한다.
 - 영상이 없거나 손상되면 재수집한다.
 - 전신이 잘리거나 pose valid frame ratio가 95% 미만이면 reconstruction 대상에서 제외한다.
 - CSI-영상 sync residual p95가 50 ms를 넘으면 REVIEW, 100 ms를 넘으면 재수집한다.
