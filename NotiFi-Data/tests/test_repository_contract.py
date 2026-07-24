@@ -44,6 +44,8 @@ def test_collection_cli_has_no_legacy_ambient_switch() -> None:
     assert "csi_plot_path" in source
     assert "save_csi_visualization" in source
     assert "play_error_alarm" in source
+    assert "ensure_no_mobile_camera" in source
+    assert "open_laptop_camera" in source
 
 
 def test_team_guides_exist_and_have_all_commands() -> None:
@@ -51,8 +53,20 @@ def test_team_guides_exist_and_have_all_commands() -> None:
         text = (ROOT / f"{subject}.md").read_text(encoding="utf-8")
         assert f"--subject {subject}" in text
         assert text.count("python scripts/collect_dataset.py --label") == 17
+        assert "python scripts/check_camera_source.py" in text
         assert "환경별 목표: `275`" in text
         assert "개인 전체 목표: `825`" in text
+
+
+def test_camera_guard_is_present() -> None:
+    guard = (ROOT / "notifi_collection" / "camera_guard.py").read_text(encoding="utf-8")
+    preview = (ROOT / "scripts" / "preview_camera.py").read_text(encoding="utf-8")
+    check_script = (ROOT / "scripts" / "check_camera_source.py").read_text(encoding="utf-8")
+
+    assert "continuity camera" in guard.lower()
+    assert "iphone" in guard.lower()
+    assert "ensure_no_mobile_camera" in preview
+    assert "ensure_no_mobile_camera" in check_script
 
 
 def test_deleted_trial_artifacts_do_not_block_trial_number_reuse(tmp_path) -> None:

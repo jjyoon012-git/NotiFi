@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from notifi_collection.camera_guard import ensure_no_mobile_camera, open_laptop_camera
 from notifi_collection.csi import EXPECTED_TX, parse_csi_line
 from notifi_collection.csi_visualization import save_csi_visualization
 from notifi_collection.files import write_trial_checksums
@@ -101,7 +102,7 @@ def utc_now() -> str:
 
 
 def ensure_camera(config: SessionConfig) -> cv2.VideoCapture:
-    cap = cv2.VideoCapture(config.camera_index)
+    cap = open_laptop_camera(config.camera_index)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, config.camera_width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, config.camera_height)
     cap.set(cv2.CAP_PROP_FPS, config.camera_fps)
@@ -421,6 +422,7 @@ def collect_one(
     sound_enabled: bool,
     preview: bool,
     min_link_ratio: float,
+    camera_safety_report: dict,
 ) -> tuple[dict, bool]:
     cue_s = cue_for_trial(spec, trial_number)
     variant = variant_for_trial(spec, trial_number)
@@ -603,6 +605,7 @@ def collect_one(
         },
         "camera": {
             "index": config.camera_index,
+            "safety": camera_safety_report,
             "requested_width": config.camera_width,
             "requested_height": config.camera_height,
             "requested_fps": config.camera_fps,
@@ -785,6 +788,7 @@ def main() -> None:
     sound_enabled = not args.no_sound
     completed = 0
     try:
+        camera_safety_report = ensure_no_mobile_camera().to_dict()
         cap = ensure_camera(config)
         ser = serial.Serial(config.port, config.baud, timeout=0.1)
         time.sleep(0.5)
@@ -799,6 +803,7 @@ def main() -> None:
                 sound_enabled=sound_enabled,
                 preview=args.preview,
                 min_link_ratio=args.min_link_ratio,
+                camera_safety_report=camera_safety_report,
             )
             append_manifest(manifest_path, row)
             completed += 1

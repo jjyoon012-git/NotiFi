@@ -69,8 +69,11 @@ python scripts/check_tx_links.py COM_PORT --rate 30
 카메라 확인:
 
 ```powershell
+python scripts/check_camera_source.py
 python scripts/preview_camera.py --camera 0
 ```
+
+macOS에서 iPhone/iPad/Continuity Camera가 감지되면 `check_camera_source.py`, `preview_camera.py`, `collect_dataset.py`가 수집을 시작하지 않는다. 노트북 내장 카메라만 남도록 Continuity Camera를 끄거나 휴대폰 연결을 해제한 뒤 다시 실행한다.
 
 ## 4. 세션 설정
 
@@ -132,6 +135,7 @@ python scripts/collect_dataset.py `
 
 정적 라벨은 action cue가 없다. DANGER는 5회 후 자동으로 3분 휴식하며, 10회 완료 후 다음 DANGER 세트까지 10분 이상 쉬어야 한다.
 수집 중 포트 오류, TX별 CSI 0 frame, 카메라 오류, 자동 QC 실패 등으로 중단되면 `error.wav`가 울린 뒤 `삐삐삐` 3회 알림이 재생되고 프로그램이 즉시 종료된다. 낮은 수신량은 CSI 시각화로만 확인하고 중단 조건으로 쓰지 않는다. `--no-sound`를 사용하면 모든 알림음이 꺼진다.
+CSI와 영상은 같은 PC monotonic clock과 같은 `trial_start_monotonic_ns` 기준으로 기록된다. CSI CSV와 `*_video_timestamps.csv`를 함께 사용하면 후처리에서 같은 trial 안의 CSI 프레임과 영상 프레임을 시간 기준으로 정렬할 수 있다.
 
 수집 파일:
 

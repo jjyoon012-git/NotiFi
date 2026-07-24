@@ -17,8 +17,11 @@ cd C:\PATH\TO\NotiFi-Data
 .\.venv\Scripts\Activate.ps1
 python scripts/create_session.py --subject lmh --environment E01 --session YYYYMMDD_AM01 --port COM_PORT --camera 0 --firmware-commit FIRMWARE_COMMIT --device-config K0_P0
 python scripts/check_tx_links.py COM_PORT --rate 30
+python scripts/check_camera_source.py
 python scripts/preview_camera.py --camera 0
 ```
+
+macOS에서 iPhone/iPad/Continuity Camera가 감지되면 카메라 확인과 수집이 중단된다. 노트북 내장 카메라만 남긴 뒤 다시 실행한다.
 
 `E02`, `E03`에서는 `--environment`와 새 `--session` 값만 바꿔 같은 절차를 반복한다.
 같은 환경에서도 60회 또는 35분에 도달하면 새 `--session`을 만든다. 진행률과 trial 번호는 manifest 기준으로 이어진다.

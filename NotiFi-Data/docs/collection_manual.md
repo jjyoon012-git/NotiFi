@@ -11,6 +11,7 @@
 - 한 trial에는 행동을 정확히 한 번만 수행한다.
 - core 수집에서는 배경 조건을 별도 변수로 나누지 않는다.
 - 원본 CSI, 영상, 프레임 timestamp, metadata, checksum을 같은 trial 폴더에 저장한다.
+- CSI와 영상은 같은 PC monotonic clock과 같은 `trial_start_monotonic_ns` 기준으로 동시에 기록한다.
 - 수집 후 actual onset, impact, action end와 수동 QC를 기록한다.
 
 ## 장비 배치
@@ -21,6 +22,7 @@
 - TX3: 활동 중심 대각 바닥 측, 높이 0.35 m
 - 네 보드 모두 세로 편파, 외장 안테나와 케이블 방향을 고정
 - 카메라: 활동 중심을 향하고 전신, 매트, 의자, 침대가 모두 프레임 안에 들어오도록 고정
+- 카메라는 노트북 내장 카메라만 사용한다. iPhone/iPad/Continuity Camera가 감지되면 수집을 시작하지 않는다.
 - 세 환경에서 동일한 로컬 좌표와 가구 배치를 재현하고 setup 사진과 실측값을 남긴다.
 - session 중 보드 위치 2 cm 또는 각도 3도 이상 변하면 중단하고 새 device_config_id를 사용한다.
 
@@ -358,13 +360,12 @@
 - CSI 파일이 없거나 0 byte면 재수집한다.
 - TX1/TX2/TX3 중 한 링크라도 0 frame이면 재수집한다.
 - TX별 수신량이 낮아도 0 frame만 아니면 자동 실패로 처리하지 않는다. 수집 품질은 `*_csi_visualization.png`에서 확인한다.
-- 각 trial 종료 직후 `*_csi_visualization.png`가 자동 저장되어야 한다.
 - 영상이 없거나 손상되면 재수집한다.
+- iPhone/iPad/Continuity Camera가 감지되면 수집을 시작하지 않는다.
 - 전신이 잘리거나 pose valid frame ratio가 95% 미만이면 reconstruction 대상에서 제외한다.
 - CSI-영상 sync residual p95가 50 ms를 넘으면 REVIEW, 100 ms를 넘으면 재수집한다.
 - planned cue와 actual onset 차이가 0.5초를 넘으면 재수집한다.
 - 정의와 다른 outcome이면 재수집한다.
-- 수집 중 포트 오류, TX별 CSI 0 frame, 카메라 오류, 자동 QC 실패가 발생하면 error sound 후 `삐삐삐` 3회 알림이 재생되고 즉시 중단된다.
 - 잘못 수집된 trial은 해당 trial 폴더를 삭제한 뒤 같은 명령어를 다시 실행한다. 삭제된 trial 번호는 manifest에 남아 있어도 다시 사용된다.
 
 ## 안전

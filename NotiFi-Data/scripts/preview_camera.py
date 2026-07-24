@@ -1,8 +1,16 @@
 from __future__ import annotations
 
 import argparse
+import sys
+from pathlib import Path
 
 import cv2
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from notifi_collection.camera_guard import ensure_no_mobile_camera, open_laptop_camera
 
 
 def main() -> None:
@@ -12,7 +20,10 @@ def main() -> None:
     parser.add_argument("--height", type=int, default=720)
     args = parser.parse_args()
 
-    cap = cv2.VideoCapture(args.camera)
+    camera_safety_report = ensure_no_mobile_camera()
+    print(f"[CAMERA SAFETY] {camera_safety_report.raw_summary}")
+
+    cap = open_laptop_camera(args.camera)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.height)
     if not cap.isOpened():
