@@ -1,0 +1,379 @@
+{
+  "protocol": "yja_holdout",
+  "baseline": "none",
+  "max_lag_frames": 30,
+  "smooth_width": 7,
+  "thresholds": {
+    "observable_correlation": 0.3,
+    "aligned_abs_lag_frames": 6
+  },
+  "status_counts": {
+    "lag_candidate": 1219,
+    "low_observability": 771,
+    "aligned_observable": 639
+  },
+  "by_split": [
+    {
+      "split": "test",
+      "trials": 263,
+      "median_zero_lag_correlation": 0.11929667749655203,
+      "median_best_correlation": 0.28133335392354064,
+      "median_abs_lag_frames": 16.0,
+      "aligned_observable_rate": 0.16730038022813687,
+      "lag_candidate_rate": 0.3041825095057034,
+      "low_observability_rate": 0.5285171102661597
+    },
+    {
+      "split": "train",
+      "trials": 1961,
+      "median_zero_lag_correlation": 0.3396722829928905,
+      "median_best_correlation": 0.4766191123487642,
+      "median_abs_lag_frames": 11.0,
+      "aligned_observable_rate": 0.24987251402345742,
+      "lag_candidate_rate": 0.4824069352371239,
+      "low_observability_rate": 0.26772055073941864
+    },
+    {
+      "split": "val",
+      "trials": 405,
+      "median_zero_lag_correlation": 0.3400963386025423,
+      "median_best_correlation": 0.4867273599817033,
+      "median_abs_lag_frames": 11.0,
+      "aligned_observable_rate": 0.25925925925925924,
+      "lag_candidate_rate": 0.4765432098765432,
+      "low_observability_rate": 0.2641975308641975
+    }
+  ],
+  "by_subject_environment": [
+    {
+      "split": "test",
+      "subject": "yja",
+      "environment": "E02",
+      "trials": 263,
+      "median_zero_lag_correlation": 0.11929667749655203,
+      "median_best_correlation": 0.28133335392354064,
+      "median_abs_lag_frames": 16.0,
+      "aligned_observable_rate": 0.16730038022813687,
+      "lag_candidate_rate": 0.3041825095057034,
+      "low_observability_rate": 0.5285171102661597
+    },
+    {
+      "split": "train",
+      "subject": "ajh",
+      "environment": "E01",
+      "trials": 218,
+      "median_zero_lag_correlation": 0.24774059446217195,
+      "median_best_correlation": 0.35445196434876247,
+      "median_abs_lag_frames": 14.0,
+      "aligned_observable_rate": 0.1651376146788991,
+      "lag_candidate_rate": 0.41743119266055045,
+      "low_observability_rate": 0.41743119266055045
+    },
+    {
+      "split": "train",
+      "subject": "ajh",
+      "environment": "E02",
+      "trials": 218,
+      "median_zero_lag_correlation": 0.2859685948424219,
+      "median_best_correlation": 0.4367926323211851,
+      "median_abs_lag_frames": 14.0,
+      "aligned_observable_rate": 0.16055045871559634,
+      "lag_candidate_rate": 0.555045871559633,
+      "low_observability_rate": 0.28440366972477066
+    },
+    {
+      "split": "train",
+      "subject": "ajh",
+      "environment": "E03",
+      "trials": 218,
+      "median_zero_lag_correlation": 0.2801871397456621,
+      "median_best_correlation": 0.576885791468454,
+      "median_abs_lag_frames": 18.0,
+      "aligned_observable_rate": 0.19724770642201836,
+      "lag_candidate_rate": 0.536697247706422,
+      "low_observability_rate": 0.26605504587155965
+    },
+    {
+      "split": "train",
+      "subject": "lmh",
+      "environment": "E01",
+      "trials": 217,
+      "median_zero_lag_correlation": 0.2794405941180324,
+      "median_best_correlation": 0.4414352612919302,
+      "median_abs_lag_frames": 12.0,
+      "aligned_observable_rate": 0.23963133640552994,
+      "lag_candidate_rate": 0.4838709677419355,
+      "low_observability_rate": 0.2764976958525346
+    },
+    {
+      "split": "train",
+      "subject": "lmh",
+      "environment": "E02",
+      "trials": 218,
+      "median_zero_lag_correlation": 0.4312536486211641,
+      "median_best_correlation": 0.5408964224990662,
+      "median_abs_lag_frames": 9.0,
+      "aligned_observable_rate": 0.3440366972477064,
+      "lag_candidate_rate": 0.45871559633027525,
+      "low_observability_rate": 0.19724770642201836
+    },
+    {
+      "split": "train",
+      "subject": "lmh",
+      "environment": "E03",
+      "trials": 218,
+      "median_zero_lag_correlation": 0.17725132016587136,
+      "median_best_correlation": 0.31085635617626656,
+      "median_abs_lag_frames": 12.0,
+      "aligned_observable_rate": 0.2018348623853211,
+      "lag_candidate_rate": 0.3440366972477064,
+      "low_observability_rate": 0.4541284403669725
+    },
+    {
+      "split": "train",
+      "subject": "mhw",
+      "environment": "E01",
+      "trials": 218,
+      "median_zero_lag_correlation": 0.47261392951429837,
+      "median_best_correlation": 0.5727366634074604,
+      "median_abs_lag_frames": 10.0,
+      "aligned_observable_rate": 0.28440366972477066,
+      "lag_candidate_rate": 0.5458715596330275,
+      "low_observability_rate": 0.16972477064220184
+    },
+    {
+      "split": "train",
+      "subject": "mhw",
+      "environment": "E02",
+      "trials": 218,
+      "median_zero_lag_correlation": 0.4801097562802382,
+      "median_best_correlation": 0.5928059864418287,
+      "median_abs_lag_frames": 9.0,
+      "aligned_observable_rate": 0.3532110091743119,
+      "lag_candidate_rate": 0.48623853211009177,
+      "low_observability_rate": 0.16055045871559634
+    },
+    {
+      "split": "train",
+      "subject": "mhw",
+      "environment": "E03",
+      "trials": 218,
+      "median_zero_lag_correlation": 0.4513788005649071,
+      "median_best_correlation": 0.5689059935837035,
+      "median_abs_lag_frames": 10.5,
+      "aligned_observable_rate": 0.30275229357798167,
+      "lag_candidate_rate": 0.5137614678899083,
+      "low_observability_rate": 0.1834862385321101
+    },
+    {
+      "split": "val",
+      "subject": "ajh",
+      "environment": "E01",
+      "trials": 45,
+      "median_zero_lag_correlation": 0.2217035089277406,
+      "median_best_correlation": 0.40055394270931977,
+      "median_abs_lag_frames": 14.0,
+      "aligned_observable_rate": 0.17777777777777778,
+      "lag_candidate_rate": 0.4888888888888889,
+      "low_observability_rate": 0.3333333333333333
+    },
+    {
+      "split": "val",
+      "subject": "ajh",
+      "environment": "E02",
+      "trials": 45,
+      "median_zero_lag_correlation": 0.24789475310224632,
+      "median_best_correlation": 0.44295250922747614,
+      "median_abs_lag_frames": 13.0,
+      "aligned_observable_rate": 0.2,
+      "lag_candidate_rate": 0.5111111111111111,
+      "low_observability_rate": 0.28888888888888886
+    },
+    {
+      "split": "val",
+      "subject": "ajh",
+      "environment": "E03",
+      "trials": 45,
+      "median_zero_lag_correlation": 0.4238555808211301,
+      "median_best_correlation": 0.5783130579519329,
+      "median_abs_lag_frames": 19.0,
+      "aligned_observable_rate": 0.24444444444444444,
+      "lag_candidate_rate": 0.4888888888888889,
+      "low_observability_rate": 0.26666666666666666
+    },
+    {
+      "split": "val",
+      "subject": "lmh",
+      "environment": "E01",
+      "trials": 45,
+      "median_zero_lag_correlation": 0.29002894414204183,
+      "median_best_correlation": 0.45688788855782897,
+      "median_abs_lag_frames": 10.0,
+      "aligned_observable_rate": 0.26666666666666666,
+      "lag_candidate_rate": 0.4222222222222222,
+      "low_observability_rate": 0.3111111111111111
+    },
+    {
+      "split": "val",
+      "subject": "lmh",
+      "environment": "E02",
+      "trials": 45,
+      "median_zero_lag_correlation": 0.42007580456883326,
+      "median_best_correlation": 0.5927631581794093,
+      "median_abs_lag_frames": 9.0,
+      "aligned_observable_rate": 0.4,
+      "lag_candidate_rate": 0.37777777777777777,
+      "low_observability_rate": 0.2222222222222222
+    },
+    {
+      "split": "val",
+      "subject": "lmh",
+      "environment": "E03",
+      "trials": 45,
+      "median_zero_lag_correlation": 0.24729886831252137,
+      "median_best_correlation": 0.3678941486943543,
+      "median_abs_lag_frames": 11.0,
+      "aligned_observable_rate": 0.26666666666666666,
+      "lag_candidate_rate": 0.4,
+      "low_observability_rate": 0.3333333333333333
+    },
+    {
+      "split": "val",
+      "subject": "mhw",
+      "environment": "E01",
+      "trials": 45,
+      "median_zero_lag_correlation": 0.3820610660288762,
+      "median_best_correlation": 0.5042113747882179,
+      "median_abs_lag_frames": 10.0,
+      "aligned_observable_rate": 0.3111111111111111,
+      "lag_candidate_rate": 0.4222222222222222,
+      "low_observability_rate": 0.26666666666666666
+    },
+    {
+      "split": "val",
+      "subject": "mhw",
+      "environment": "E02",
+      "trials": 45,
+      "median_zero_lag_correlation": 0.4207148879157548,
+      "median_best_correlation": 0.5493033021554433,
+      "median_abs_lag_frames": 10.0,
+      "aligned_observable_rate": 0.28888888888888886,
+      "lag_candidate_rate": 0.5111111111111111,
+      "low_observability_rate": 0.2
+    },
+    {
+      "split": "val",
+      "subject": "mhw",
+      "environment": "E03",
+      "trials": 45,
+      "median_zero_lag_correlation": 0.4259452819486165,
+      "median_best_correlation": 0.5427967810865838,
+      "median_abs_lag_frames": 10.0,
+      "aligned_observable_rate": 0.17777777777777778,
+      "lag_candidate_rate": 0.6666666666666666,
+      "low_observability_rate": 0.15555555555555556
+    }
+  ],
+  "by_risk": [
+    {
+      "split": "test",
+      "risk": "danger",
+      "trials": 50,
+      "median_zero_lag_correlation": 0.2219215303215305,
+      "median_best_correlation": 0.328927840650145,
+      "median_abs_lag_frames": 7.0,
+      "aligned_observable_rate": 0.24,
+      "lag_candidate_rate": 0.3,
+      "low_observability_rate": 0.46
+    },
+    {
+      "split": "test",
+      "risk": "safe",
+      "trials": 138,
+      "median_zero_lag_correlation": 0.07423756078169735,
+      "median_best_correlation": 0.24875049969938878,
+      "median_abs_lag_frames": 23.5,
+      "aligned_observable_rate": 0.08695652173913043,
+      "lag_candidate_rate": 0.34782608695652173,
+      "low_observability_rate": 0.5652173913043478
+    },
+    {
+      "split": "test",
+      "risk": "warning",
+      "trials": 75,
+      "median_zero_lag_correlation": 0.11929667749655203,
+      "median_best_correlation": 0.29779876632853064,
+      "median_abs_lag_frames": 10.0,
+      "aligned_observable_rate": 0.26666666666666666,
+      "lag_candidate_rate": 0.22666666666666666,
+      "low_observability_rate": 0.5066666666666667
+    },
+    {
+      "split": "train",
+      "risk": "danger",
+      "trials": 360,
+      "median_zero_lag_correlation": 0.5191461362316271,
+      "median_best_correlation": 0.6293942560469423,
+      "median_abs_lag_frames": 8.0,
+      "aligned_observable_rate": 0.38333333333333336,
+      "lag_candidate_rate": 0.49166666666666664,
+      "low_observability_rate": 0.125
+    },
+    {
+      "split": "train",
+      "risk": "safe",
+      "trials": 1034,
+      "median_zero_lag_correlation": 0.23022532921176692,
+      "median_best_correlation": 0.37757378834140043,
+      "median_abs_lag_frames": 15.0,
+      "aligned_observable_rate": 0.16827852998065765,
+      "lag_candidate_rate": 0.4690522243713733,
+      "low_observability_rate": 0.36266924564796904
+    },
+    {
+      "split": "train",
+      "risk": "warning",
+      "trials": 567,
+      "median_zero_lag_correlation": 0.4018438143159329,
+      "median_best_correlation": 0.530832144899073,
+      "median_abs_lag_frames": 9.0,
+      "aligned_observable_rate": 0.31393298059964725,
+      "lag_candidate_rate": 0.5008818342151675,
+      "low_observability_rate": 0.18518518518518517
+    },
+    {
+      "split": "val",
+      "risk": "danger",
+      "trials": 90,
+      "median_zero_lag_correlation": 0.5391393592912264,
+      "median_best_correlation": 0.65590229177607,
+      "median_abs_lag_frames": 7.5,
+      "aligned_observable_rate": 0.4222222222222222,
+      "lag_candidate_rate": 0.5,
+      "low_observability_rate": 0.07777777777777778
+    },
+    {
+      "split": "val",
+      "risk": "safe",
+      "trials": 207,
+      "median_zero_lag_correlation": 0.1911714315172035,
+      "median_best_correlation": 0.3802350988774948,
+      "median_abs_lag_frames": 14.0,
+      "aligned_observable_rate": 0.2028985507246377,
+      "lag_candidate_rate": 0.43478260869565216,
+      "low_observability_rate": 0.36231884057971014
+    },
+    {
+      "split": "val",
+      "risk": "warning",
+      "trials": 108,
+      "median_zero_lag_correlation": 0.38962995969969405,
+      "median_best_correlation": 0.5570835206934017,
+      "median_abs_lag_frames": 11.0,
+      "aligned_observable_rate": 0.23148148148148148,
+      "lag_candidate_rate": 0.5370370370370371,
+      "low_observability_rate": 0.23148148148148148
+    }
+  ],
+  "csv": "work_v2/reports/motion_alignment_audit.csv"
+}

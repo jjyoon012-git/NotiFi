@@ -4,8 +4,8 @@ Wi-Fi CSI만 입력받아 시간에 따른 사람의 **GVHMR SMPL-22 3D pose와 
 
 - 기존 코드: [NotiFi-CSI-to-Pose `feature/goal1`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1)
 - 현재 통합 위치: [NotiFi/CSI-to-Pose](https://github.com/jjyoon012-git/NotiFi/tree/main/CSI-to-Pose)
-- 현재 권장 모델: **validation-calibrated impact GraphFormer**
-- 실험 모델: **CSI-conditioned latent rectified flow**
+- 현재 권장 seen 모델: **motion-first + action-conditioned calibrated residual + keyframe root residual**
+- 현재 개발 순서: **seen 성능 확보 후 unseen/LOSO calibration 재개**
 
 ## 연구 목표
 
@@ -20,6 +20,81 @@ Wi-Fi CSI만 입력받아 시간에 따른 사람의 **GVHMR SMPL-22 3D pose와 
 보조  action: 17 classes
       risk:   safe / warning / danger
 ```
+
+## 현재 Seen-First 모델
+
+현재는 사용자가 지정한
+[`feature/goal1/work_v2/splits`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1/work_v2/splits)의
+`single_split`을 사용한다. `ajh/lmh/mhw`와 `E01/E02/E03`이 train, validation,
+test에 모두 포함되고 trial만 분리된 **seen-subject + seen-environment + unseen-trial**
+protocol이다.
+
+| Split | Pose trials | Subjects | Environments |
+|---|---:|---|---|
+| train | 1,556 | ajh, lmh, mhw | E01, E02, E03 |
+| validation | 405 | ajh, lmh, mhw | E01, E02, E03 |
+| test | 405 | ajh, lmh, mhw | E01, E02, E03 |
+
+split 간 trial ID 중복은 0이며 yja와 LOSO 데이터는 현재 seen 학습과 모델 선택에
+사용하지 않는다.
+
+```mermaid
+flowchart LR
+    A["3-link CSI"] --> B["GraphFormer baseline"]
+    A --> C["Raw CSI branch"]
+    A --> D["Temporal-difference branch"]
+    C --> E["Motion-first encoder"]
+    D --> E
+    B --> F["Predicted-action-conditioned pose residual"]
+    E --> F
+    F --> G["Validation scale = 0.5"]
+    G --> H["Keyframe root residual"]
+    H --> I["SMPL-22 pose + root"]
+```
+
+1. raw CSI와 temporal difference CSI를 별도 branch로 인코딩한다.
+2. speed, moving, fall phase, impact, action, risk를 먼저 학습해 CSI 동작 표현을 만든다.
+3. 기존 GraphFormer와 motion feature를 predicted action 확률로 condition한 pose residual에 넣는다.
+4. residual 강도는 test가 아니라 validation의 위치 오차와 pose-speed ratio로 선택한다.
+5. pose를 고정한 뒤 4-frame keyframe root residual로 pelvis 절대 이동 경로만 보정한다.
+
+### Seen test 결과
+
+| Metric | 기존 GraphFormer | 현재 모델 | 변화 |
+|---|---:|---:|---:|
+| MPJPE | 24.17cm | **21.68cm** | -10.3% |
+| Dynamic MPJPE | 23.39cm | **21.22cm** | -9.3% |
+| Distal MPJPE | 35.44cm | **32.16cm** | -9.3% |
+| Impact MPJPE | 58.24cm | **55.27cm** | -5.1% |
+| Root error | 33.06cm | **32.36cm** | -2.1% |
+| Pose-speed ratio | 1.058 | 1.141 | 정상 범위 유지 |
+
+shuffled CSI에서는 MPJPE가 `31.25cm`, root error가 `57.67cm`로 악화된다.
+따라서 현재 개선은 action label을 GT로 주입한 결과가 아니라, predicted action과
+trial-specific CSI를 실제로 사용한 결과다.
+
+실패한 구조를 포함한 번호·날짜·시간·목적·방법·결과·결정은
+[`docs/experiment_log.md`](docs/experiment_log.md)에 계속 누적한다. 원시 결과 JSON은
+[`docs/results`](docs/results)에 있으며 checkpoint와 데이터셋은 저장소에 포함하지 않는다.
+
+### 실행 순서
+
+```powershell
+python -m notifi_pose.tools.audit_motion_alignment
+python -m notifi_pose.tools.train_motion_first --exp single_split `
+  --epochs 12 --patience 4 --batch-size 12 `
+  --run-dir work_v2/runs/motion_first_seen
+python -m notifi_pose.tools.train_seen_action_residual `
+  --epochs 20 --patience 6 --batch-size 12
+python -m notifi_pose.tools.calibrate_seen_action_residual
+python -m notifi_pose.tools.train_seen_root_residual `
+  --epochs 20 --patience 6 --batch-size 12
+```
+
+현재 seen gate는 완전히 통과하지 않았다. 다음 목표는 MPJPE 20cm 이하,
+impact 50cm 이하, root 25cm 이하, pose-speed ratio 0.8~1.2다. 이 기준에 가까워지면
+동일한 backbone을 고정하고 calibration/domain adaptation을 붙여 yja E02와 LOSO를
+unseen protocol로 다시 평가한다.
 
 ## 기존 코드 설명
 
@@ -98,7 +173,7 @@ python -m notifi_pose.tools.summarize_robust_runs
 
 ## 2안: Impact-aware Temporal Refiner
 
-**상태: 현재 권장 모델, 보수적 개선**
+**상태: 이전 unseen/LOSO 비교 기준, 현재 seen 모델의 baseline**
 
 기존 robust checkpoint 뒤에 0으로 초기화된 temporal residual refiner를 붙인다. 초기 출력은 기준 모델과 정확히 같으며, validation 종합 점수가 좋아질 때만 체크포인트를 교체한다.
 

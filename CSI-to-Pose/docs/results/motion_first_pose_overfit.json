@@ -1,0 +1,26 @@
+{
+  "run": "EXP-004A4_keyframe_trajectory_overfit",
+  "trials": 1,
+  "steps": 1200,
+  "trial_ids": [
+    "mhw_E02_D05_t009"
+  ],
+  "last_train_loss": 0.1438567340373993,
+  "velocity_mix": 0.0,
+  "raw_metrics": {
+    "mpjpe_m": 0.02727717161178589,
+    "dynamic_mpjpe_m": 0.033755552023649216,
+    "root_error_m": 0.013775394298136234,
+    "pose_speed_ratio": 0.6666416632766085
+  },
+  "metrics": {
+    "mpjpe_m": 0.0287302378565073,
+    "dynamic_mpjpe_m": 0.036091674119234085,
+    "root_error_m": 0.014371533878147602,
+    "pose_speed_ratio": 0.572470540127195
+  },
+  "gate": {
+    "mpjpe_lt_3cm": true,
+    "speed_ratio_0.9_to_1.1": false
+  }
+}
