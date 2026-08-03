@@ -1,0 +1,224 @@
+{
+  "evaluation": "CSI-only, pose trials, five-frame smoothing",
+  "selection": "checkpoint and joint residual scales selected on validation only",
+  "protocols": {
+    "yja_E02": {
+      "mpjpe_m": {
+        "baseline": 0.2956968626651927,
+        "final": 0.294458432994188,
+        "delta": -0.0012384296710046816
+      },
+      "dynamic_mpjpe_m": {
+        "baseline": 0.30941200447111317,
+        "final": 0.30788633025786727,
+        "delta": -0.0015256742132458978
+      },
+      "distal_mpjpe_m": {
+        "baseline": 0.438628269748996,
+        "final": 0.43745815515971453,
+        "delta": -0.0011701145892814568
+      },
+      "head_mpjpe_m": {
+        "baseline": 0.38841849724149524,
+        "final": 0.38841849724149524,
+        "delta": 0.0
+      },
+      "impact_mpjpe_m": {
+        "baseline": 0.8414406728744507,
+        "final": 0.8383897238969803,
+        "delta": -0.00305094897747038
+      },
+      "root_error_m": {
+        "baseline": 0.5922603522190123,
+        "final": 0.5922603522190123,
+        "delta": 0.0
+      },
+      "pose_speed_ratio": {
+        "baseline": 0.7206920441549929,
+        "final": 0.7175587146432059,
+        "delta": -0.0031333295117870197
+      },
+      "root_speed_ratio": {
+        "baseline": 0.3235018956276661,
+        "final": 0.3235018956276661,
+        "delta": 0.0
+      }
+    },
+    "loso_ajh": {
+      "mpjpe_m": {
+        "baseline": 0.2809771323645556,
+        "final": 0.2809771323645556,
+        "delta": 0.0
+      },
+      "dynamic_mpjpe_m": {
+        "baseline": 0.25984139596683936,
+        "final": 0.25984139596683936,
+        "delta": 0.0
+      },
+      "distal_mpjpe_m": {
+        "baseline": 0.4237606386343638,
+        "final": 0.4237606386343638,
+        "delta": 0.0
+      },
+      "head_mpjpe_m": {
+        "baseline": 0.3567544635247301,
+        "final": 0.3567544635247301,
+        "delta": 0.0
+      },
+      "impact_mpjpe_m": {
+        "baseline": 0.6714032649993896,
+        "final": 0.6714032649993896,
+        "delta": 0.0
+      },
+      "root_error_m": {
+        "baseline": 0.4843915757205751,
+        "final": 0.4843915757205751,
+        "delta": 0.0
+      },
+      "pose_speed_ratio": {
+        "baseline": 0.49479580661543043,
+        "final": 0.49479580661543043,
+        "delta": 0.0
+      },
+      "root_speed_ratio": {
+        "baseline": 0.6496762837056725,
+        "final": 0.6496762837056725,
+        "delta": 0.0
+      }
+    },
+    "loso_lmh": {
+      "mpjpe_m": {
+        "baseline": 0.3288141593888954,
+        "final": 0.3280708910138519,
+        "delta": -0.0007432683750435154
+      },
+      "dynamic_mpjpe_m": {
+        "baseline": 0.31604546040028064,
+        "final": 0.31498980374486596,
+        "delta": -0.001055656655414683
+      },
+      "distal_mpjpe_m": {
+        "baseline": 0.489971160557535,
+        "final": 0.487803061692803,
+        "delta": -0.00216809886473196
+      },
+      "head_mpjpe_m": {
+        "baseline": 0.4396950443585714,
+        "final": 0.4396950443585714,
+        "delta": 0.0
+      },
+      "impact_mpjpe_m": {
+        "baseline": 0.6041297644376755,
+        "final": 0.6013769805431366,
+        "delta": -0.002752783894538924
+      },
+      "root_error_m": {
+        "baseline": 0.4323945222629441,
+        "final": 0.4323945222629441,
+        "delta": 0.0
+      },
+      "pose_speed_ratio": {
+        "baseline": 0.4560348271364062,
+        "final": 0.4527611684993239,
+        "delta": -0.0032736586370822884
+      },
+      "root_speed_ratio": {
+        "baseline": 0.49700055613599853,
+        "final": 0.49700055613599853,
+        "delta": 0.0
+      }
+    },
+    "loso_mhw": {
+      "mpjpe_m": {
+        "baseline": 0.27158584854117146,
+        "final": 0.2718873105115361,
+        "delta": 0.00030146197036462485
+      },
+      "dynamic_mpjpe_m": {
+        "baseline": 0.2623095218254172,
+        "final": 0.26232935086540554,
+        "delta": 1.98290399883172e-05
+      },
+      "distal_mpjpe_m": {
+        "baseline": 0.4053248657120599,
+        "final": 0.4057411927867819,
+        "delta": 0.0004163270747220005
+      },
+      "head_mpjpe_m": {
+        "baseline": 0.35481256075479367,
+        "final": 0.35481256075479367,
+        "delta": 0.0
+      },
+      "impact_mpjpe_m": {
+        "baseline": 0.721825494368871,
+        "final": 0.7200054218371709,
+        "delta": -0.0018200725317001343
+      },
+      "root_error_m": {
+        "baseline": 0.5340754970908165,
+        "final": 0.5340754970908165,
+        "delta": 0.0
+      },
+      "pose_speed_ratio": {
+        "baseline": 0.15578907299767333,
+        "final": 0.15522816496238337,
+        "delta": -0.0005609080352899642
+      },
+      "root_speed_ratio": {
+        "baseline": 0.13544633572549997,
+        "final": 0.13544633572549997,
+        "delta": 0.0
+      }
+    }
+  },
+  "loso_mean": {
+    "mpjpe_m": {
+      "baseline": 0.29379238009820746,
+      "final": 0.29364511129664783,
+      "delta": -0.00014726880155963018
+    },
+    "dynamic_mpjpe_m": {
+      "baseline": 0.2793987927308457,
+      "final": 0.27905351685903695,
+      "delta": -0.00034527587180878855
+    },
+    "distal_mpjpe_m": {
+      "baseline": 0.43968555496798617,
+      "final": 0.4391016310379829,
+      "delta": -0.0005839239300033198
+    },
+    "head_mpjpe_m": {
+      "baseline": 0.38375402287936505,
+      "final": 0.38375402287936505,
+      "delta": 0.0
+    },
+    "impact_mpjpe_m": {
+      "baseline": 0.6657861746019788,
+      "final": 0.6642618891265658,
+      "delta": -0.0015242854754130193
+    },
+    "root_error_m": {
+      "baseline": 0.48362053169144525,
+      "final": 0.48362053169144525,
+      "delta": 0.0
+    },
+    "pose_speed_ratio": {
+      "baseline": 0.36887323558317003,
+      "final": 0.36759504669237925,
+      "delta": -0.0012781888907907508
+    },
+    "root_speed_ratio": {
+      "baseline": 0.42737439185572373,
+      "final": 0.42737439185572373,
+      "delta": 0.0
+    }
+  },
+  "rejected_experiment": {
+    "protocol": "yja_E02",
+    "reason": "five-frame displacement loss did not improve coherent motion",
+    "baseline_pose_speed_ratio": 0.7206920441549929,
+    "coherent_pose_speed_ratio": 0.7142106296724222,
+    "baseline_mpjpe_m": 0.2956968626651927,
+    "coherent_mpjpe_m": 0.29475258480573335
+  }
+}

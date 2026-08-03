@@ -13,3 +13,15 @@ esp-csi/
 # Python caches
 __pycache__/
 *.pyc
+
+# CSI-to-Pose local datasets and generated artifacts
+CSI-to-Pose/data/
+CSI-to-Pose/csi_to_pose/
+CSI-to-Pose/work_v2/cache/
+CSI-to-Pose/work_v2/index/
+CSI-to-Pose/work_v2/runs/
+CSI-to-Pose/work_v2/priors/
+CSI-to-Pose/work_v2/reports/
+CSI-to-Pose/**/*.pt
+CSI-to-Pose/**/*.npz
+CSI-to-Pose/**/*.mp4

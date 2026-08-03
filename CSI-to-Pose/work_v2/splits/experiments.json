@@ -1,0 +1,169 @@
+{
+  "single_split": {
+    "description": "in-domain. 세 사람의 train+val 로 학습, test 로 평가",
+    "train": {
+      "subjects": [
+        "ajh",
+        "mhw",
+        "lmh"
+      ],
+      "roles": [
+        "train"
+      ]
+    },
+    "val": {
+      "subjects": [
+        "ajh",
+        "mhw",
+        "lmh"
+      ],
+      "roles": [
+        "val"
+      ]
+    },
+    "test": {
+      "subjects": [
+        "ajh",
+        "mhw",
+        "lmh"
+      ],
+      "roles": [
+        "test"
+      ]
+    }
+  },
+  "yja_holdout": {
+    "description": "Protocol A: use every source trial for train/validation and keep yja E02 pose trials as the unseen test set",
+    "train": {
+      "subjects": [
+        "ajh",
+        "mhw",
+        "lmh"
+      ],
+      "roles": [
+        "train",
+        "test"
+      ]
+    },
+    "val": {
+      "subjects": [
+        "ajh",
+        "mhw",
+        "lmh"
+      ],
+      "roles": [
+        "val"
+      ]
+    },
+    "test": {
+      "subject": "yja",
+      "environment": "E02",
+      "task": "pose_and_action"
+    }
+  },
+  "loso": {
+    "test_ajh": {
+      "description": "ajh 미학습. 나머지 둘의 train+val 로 학습, ajh 의 test 몫만 평가(단일 split 과 동일 trial)",
+      "train": {
+        "subjects": [
+          "mhw",
+          "lmh"
+        ],
+        "roles": [
+          "train"
+        ]
+      },
+      "val": {
+        "subjects": [
+          "mhw",
+          "lmh"
+        ],
+        "roles": [
+          "val"
+        ]
+      },
+      "test": {
+        "subjects": [
+          "ajh"
+        ],
+        "roles": [
+          "test"
+        ]
+      }
+    },
+    "test_mhw": {
+      "description": "mhw 미학습. 나머지 둘의 train+val 로 학습, mhw 의 test 몫만 평가(단일 split 과 동일 trial)",
+      "train": {
+        "subjects": [
+          "ajh",
+          "lmh"
+        ],
+        "roles": [
+          "train"
+        ]
+      },
+      "val": {
+        "subjects": [
+          "ajh",
+          "lmh"
+        ],
+        "roles": [
+          "val"
+        ]
+      },
+      "test": {
+        "subjects": [
+          "mhw"
+        ],
+        "roles": [
+          "test"
+        ]
+      }
+    },
+    "test_lmh": {
+      "description": "lmh 미학습. 나머지 둘의 train+val 로 학습, lmh 의 test 몫만 평가(단일 split 과 동일 trial)",
+      "train": {
+        "subjects": [
+          "ajh",
+          "mhw"
+        ],
+        "roles": [
+          "train"
+        ]
+      },
+      "val": {
+        "subjects": [
+          "ajh",
+          "mhw"
+        ],
+        "roles": [
+          "val"
+        ]
+      },
+      "test": {
+        "subjects": [
+          "lmh"
+        ],
+        "roles": [
+          "test"
+        ]
+      }
+    }
+  },
+  "sealed": {
+    "yja_E02": {
+      "subject": "yja",
+      "environment": "E02",
+      "note": "최종 unseen subject. 마일스톤에서만 연다."
+    }
+  },
+  "excluded": {
+    "yja_E01": "진폭 6 수준 + 프레임간 상관 0.52 = 채널이 아니라 잡음",
+    "yja_E03": "3링크 전부 값이 0"
+  },
+  "link_qc": {
+    "min_frame_corr": 0.65,
+    "min_pkt_max": 1.0,
+    "max_allzero_ratio": 0.9
+  }
+}
