@@ -211,6 +211,37 @@ python -m notifi_pose.tools.run_latent_flow_protocols `
   --only yja_e02 --prior-epochs 12 --epochs 15
 ```
 
+## 5안: CSI Motion Observability 진단
+
+**상태: 진단 완료, 다음 모델의 필수 통과 기준**
+
+decoder를 더 바꾸기 전에 현재 모델이 CSI의 trial별 동작을 실제로 사용하는지 검사했다.
+
+```powershell
+python -m notifi_pose.tools.diagnose_observability `
+  --probe-epochs 15 --overfit-steps 200 --overfit-trials 1 10
+```
+
+핵심 결과:
+
+- 정상 CSI 대신 다른 yja E02 trial의 CSI를 넣어도 MPJPE는 `29.57 -> 29.59cm`로 `0.02cm`만 악화됐다.
+- train mean-pose baseline도 `30.59cm`라 현재 모델과 차이가 `1.02cm`뿐이다.
+- frozen encoder의 speed R2는 source validation `0.004`, yja E02 `-0.109`였다.
+- impact F1은 source `0.148`, yja E02 `0.103`이고 timing MAE는 각각 `43.0`, `48.4` frames였다.
+- 가장 동적인 1개 trial을 200 step 외워도 `9.35cm`, pose-speed ratio `0.534`에 머물렀다.
+
+따라서 주 병목은 더 큰 pose decoder가 아니라 **CSI encoder가 speed, phase, impact를 보존하지 못하고 pose objective가 평균 자세로 붕괴하는 것**이다. domain shift도 존재하지만 source 내부에서 이미 motion observability가 낮으므로 domain adaptation만 강화해서는 해결되지 않는다.
+
+다음 개발 순서는 다음과 같이 고정한다.
+
+1. trial별 CSI motion energy와 GT speed의 lag/correlation으로 alignment 불량 데이터를 격리한다.
+2. speed, moving, phase, impact를 먼저 예측하는 motion-first CSI encoder를 pretrain한다.
+3. 정상 CSI 대비 shuffled CSI가 dynamic/impact 지표에서 명확히 나빠지는지 확인한다.
+4. 1-trial overfit `MPJPE < 3cm`, pose-speed ratio `0.9-1.1`을 통과시킨다.
+5. 그 뒤 velocity-space sequence decoder와 calibration을 붙이고 LOSO를 재개한다.
+
+전체 수치와 합격 기준은 [`docs/observability_diagnostics.md`](docs/observability_diagnostics.md), 원시 결과는 [`docs/results/observability_diagnostics.json`](docs/results/observability_diagnostics.json)에 있다.
+
 ## 실험 결과
 
 모든 수치는 CSI-only pose trial, validation-selected checkpoint, 5-frame smoothing 기준이다.
@@ -319,7 +350,7 @@ python -m unittest discover -s tests -v
 python -m py_compile notifi_pose\*.py notifi_pose\tools\*.py
 ```
 
-현재 16개 단위 테스트가 timestamp alignment, site baseline, GraphFormer shape, impact window, temporal refiner, latent flow objective, loss backward를 검증한다.
+현재 20개 단위 테스트가 timestamp alignment, site baseline, GraphFormer shape, impact window, temporal refiner, latent flow objective, observability diagnostic, loss backward를 검증한다.
 
 ## 폴더 구조
 
@@ -349,10 +380,10 @@ CSI-to-Pose/
 
 ## 결론
 
-현재 권장안은 **2안 impact-aware calibrated GraphFormer**다. 기준 모델을 망가뜨리지 않으면서 전체·dynamic·distal·impact 오차를 작게 개선한다.
+현재 배포 가능한 권장안은 **2안 impact-aware calibrated GraphFormer**다. 기준 모델을 망가뜨리지 않으면서 전체·dynamic·distal·impact 오차를 작게 개선한다. 다만 5안 진단 결과, 이 모델도 trial별 CSI motion을 충분히 사용한다고 볼 수 없으므로 연구 목표를 달성한 최종 모델은 아니다.
 
-다만 CSI-only 동작 진폭 복원은 아직 해결되지 않았다. 다음 연구 우선순위는 손실을 더 붙이는 것이 아니라 다음 세 가지다.
+CSI-only 동작 진폭 복원은 아직 해결되지 않았다. 다음 연구 우선순위는 손실을 더 붙이는 것이 아니라 다음 세 가지다.
 
-1. subject/environment 수와 동일 동작 반복을 늘려 CSI→motion latent 대응의 식별 가능성을 높인다.
-2. action/phase를 정확히 추정한 뒤 latent generator의 condition으로 사용한다.
-3. velocity-space motion prior와 multi-hypothesis flow를 도입하고, MPJPE와 함께 smoothed motion amplitude를 필수 선택 지표로 사용한다.
+1. timestamp·lag·CSI/GT motion correlation audit으로 학습 가능한 trial만 확정한다.
+2. motion-first encoder가 speed·moving·phase·impact와 CSI-shuffle gate를 통과하도록 만든다.
+3. 그 뒤 velocity-space sequence decoder와 subject/environment calibration을 도입하고, MPJPE와 함께 dynamic·impact·speed ratio를 필수 선택 지표로 사용한다.
