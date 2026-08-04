@@ -4,11 +4,204 @@ Wi-Fi CSI만 입력받아 시간에 따른 사람의 **GVHMR SMPL-22 3D pose와 
 
 - 기존 코드: [NotiFi-CSI-to-Pose `feature/goal1`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1)
 - 현재 통합 위치: [NotiFi/CSI-to-Pose](https://github.com/jjyoon012-git/NotiFi/tree/main/CSI-to-Pose)
-- 현재 권장 seen 모델: **V10 P2-V9 dual hybrid**
+- 현재 권장 seen 모델: **V12 clean-protocol multi-expert**
+- 다음 sealed 평가 후보: **V12RG shift-root + missing-link guard**
 - 현재 개발 순서: **seen 성능 확보 후 unseen/LOSO calibration 재개**
 - 문서 정렬 원칙: **현재 권장 모델을 맨 위에 두고, 이전 안은 최신순으로 기록**
 
-## 현재 모델: V10 P2-V9 dual hybrid
+## 현재 모델: V12 clean-protocol multi-expert
+
+V12는 팀원 p2 계열의 CSI encoder를 coarse backbone으로 유지하면서, **자세·root·분류를
+서로 다른 목적 함수로 학습한 expert**로 분리한다. 입력은 4-board 수집에서 얻은 3개
+논리 link의 amplitude와 sanitized phase뿐이다. 영상과 GVHMR은 GT 생성에만 쓰며
+validation/test 추론에는 들어가지 않는다.
+
+```mermaid
+flowchart LR
+    A["3-link amplitude + sanitized phase"] --> B["absence subtraction + train normalization"]
+    B --> C["shared LinkEncoder + FiLM + 4.2 s TCN"]
+    C --> D["p2 coarse pose and logits"]
+    D --> E["pose residual experts: seeds 17/7/23"]
+    E --> F["31-frame residual smoothing"]
+    F --> G["SMPL-22 symmetric bone projection"]
+    D --> H["direct-root experts: seeds 17/7"]
+    H --> I["absolute root trajectory"]
+    D --> J["clean + RF-robust class experts"]
+    J --> K["17-class / safe-warning-danger reconciliation"]
+    G --> L["CSI-only pose"]
+    I --> L
+    K --> L
+```
+
+### 핵심 변경
+
+1. **시간 오차 내성 pose 학습**: 전체 trial을 작은 범위에서 정렬해 보는 shift-robust
+   loss를 사용하되 timestamp/GT 자체를 이동하거나 다시 저장하지 않는다.
+2. **직접 root 복원**: velocity 누적만으로 생기던 장기 drift를 줄이기 위해 absolute root
+   residual과 5/15/30-frame displacement를 함께 학습한다.
+3. **cross-seed pose/root ensemble**: pose는 `0.45/0.25/0.30`, root는 `0.80/0.20`이다.
+   세 번째 pose seed 단독 speed ratio는 `1.80`이라 탈락했지만 30% 혼합 시 `1.003`으로
+   정상화되면서 낙상 오차를 줄였다.
+4. **표현에 맞는 RF 증강**: cache가 I/Q가 아니라 `amp_phase`임을 확인해 잘못된 complex
+   rotation을 폐기했다. amplitude gain과 sanitized-phase curvature만 증강한다.
+5. **계층 분류**: clean expert와 RF-robust expert를 `0.5/0.5`로 섞고 17-class 확률을
+   3-risk 확률과 `0.60` 비율로 조정한다. danger bias는 validation에서 고정한 `+0.35`다.
+6. **해부학적 후처리**: 31-frame residual smoothing 후 좌우 대칭 bone projection을
+   `0.25`만 적용해 관절 길이를 안정화한다.
+
+모든 checkpoint, 혼합 비율, smoothing, bone projection, logit bias는 validation에서만
+결정했다. 최종 test는 설정을 잠근 뒤 **한 번만** 열었고 이후 어떤 값도 바꾸지 않았다.
+
+### 데이터와 평가 protocol
+
+`single_split_lmh_e01`은 `ajh/mhw E01-E03 + lmh E01`만 사용한다. 문제로 확인된
+`lmh E02/E03`은 train/validation/test 모두에서 제외하고, `yja`는 이 seen 실험에 쓰지 않는다.
+
+| Split | Trials | Pose GT | Absence | 역할 |
+|---|---:|---:|---:|---|
+| train | 1,266 | 1,210 | 56 | 가중치 학습 |
+| validation | 329 | 315 | 14 | checkpoint와 calibration 선택 |
+| test | 329 | 315 | 14 | 잠금 후 1회 최종 보고 |
+
+분할·경로 교집합, 제외 환경, calibration lock, split fingerprint 20개 검사는 모두 통과했다.
+다만 pose trial 262개는 모두 `lmh/E01`의 `uniform_30fps`이고 나머지는 recorded timestamp다.
+validation에서 이 군의 root는 timestamp 군보다 `+7.43 cm`였지만 subject/environment도 동시에
+달라 원인을 시간 가정으로만 귀속할 수 없다. lmh pose timestamp 재수집이 다음 데이터 우선순위다.
+원시는 [`v12_protocol_integrity.json`](docs/results/v12_protocol_integrity.json)과
+[`v12_alignment_strata.json`](docs/results/v12_alignment_strata.json)에 있다.
+
+### 최종 성능
+
+| Metric | Validation | Test |
+|---|---:|---:|
+| MPJPE | **13.30 cm** | **15.07 cm** |
+| PA-MPJPE | **6.77 cm** | **7.12 cm** |
+| Dynamic MPJPE | 16.53 cm | 18.02 cm |
+| Root error | 31.28 cm | 33.79 cm |
+| Danger MPJPE | 44.45 cm | 50.71 cm |
+| Danger distal | 45.72 cm | 51.84 cm |
+| Danger endpoint | 55.52 cm | 64.28 cm |
+| Pose-speed ratio | 1.003 | 1.136 |
+| 17-class accuracy / macro F1 | 96.05 / 95.19% | 94.22 / 92.54% |
+| Risk accuracy / macro F1 | 97.87 / 97.63% | 97.26 / 96.55% |
+| Danger recall / precision | 67/70, 95.71 / 97.10% | 64/70, 91.43 / 95.52% |
+| Safe -> danger | 2/175, 1.14% | 2/175, 1.14% |
+
+![V12 validation progression](docs/results/v12_validation_progress.png)
+
+고정 baseline 대비 validation에서 MPJPE `13.63 -> 13.30 cm`, root `33.86 -> 31.28 cm`,
+danger `46.06 -> 44.45 cm`, danger endpoint `56.99 -> 55.52 cm`로 개선됐다. 최종 test는
+팀원이 공유한 p2 결과보다 MPJPE `15.76 -> 15.07 cm`, PA-MPJPE `8.67 -> 7.12 cm`,
+root `35.45 -> 33.79 cm`, class accuracy `91.8 -> 94.2%`로 높다. 반면 팀원의 danger recall
+`94.3%`보다 현재 `91.4%`가 낮아, 다음 seen 단계의 가장 중요한 미해결 항목이다.
+
+historical V10 test와 비교하면 V12는 MPJPE `16.31 -> 15.07 cm`, dynamic `19.38 ->
+18.02 cm`, class accuracy `93.31 -> 94.22%`, safe-to-danger `4 -> 2`로 좋아졌다. 그러나
+root `32.29 -> 33.79 cm`, danger `47.99 -> 50.71 cm`, danger recall `95.71 -> 91.43%`는
+나빠졌다. V10은 개발 중 test를 반복 확인한 이력이 있으므로 공정한 선택 기준으로 재사용하지
+않고, 이 수치는 투명성을 위한 historical 비교로만 남긴다.
+
+### 입력 강건성
+
+validation의 ±2-frame jitter에서는 MPJPE 변화가 `+0.01 cm`뿐이다. subcarrier band 제거와
+amp/phase 변화에서도 MPJPE는 각각 `15.22/14.76 cm`로 유지된다. 반면 link 하나가 완전히
+사라지면 MPJPE `20.89 cm`, danger `62.11 cm`, danger recall `81.43%`로 내려간다.
+RF-robust 분류 ensemble이 이때 safe-to-danger를 `15 -> 13`으로 줄였지만, **link 장애가
+현재 가장 큰 입력 강건성 병목**이다.
+
+### V12RG shift-root + missing-link guard (validation candidate)
+
+V12 최종 test를 연 뒤에는 설정을 바꾸지 않는 원칙을 지키기 위해, 후속 모델은 test를
+다시 열지 않고 validation에서만 개발했다. 최대 5-frame danger-root shift loss로 warm-start
+root expert를 보강한 뒤 기존 seed7과 `0.80/0.20`으로 섞었다. 그 위에서
+`80%` link-dropout으로 학습한 pose/root expert는 한 link의 frame coverage가 `50%` 이하일
+때 호출한다. class/risk expert는 학습 분포와 맞는 **전 구간 link 소실**에서만 호출한다.
+pose blend `0.50`, root blend `1.00`과 link별 class blend
+`[1.00,1.00,0.75]`, risk blend `[0.00,1.00,0.50]`, danger bias
+`[-0.25,-0.50,-0.25]`는 deterministic drop-link validation에서 선택했다. 각 link마다
+danger recall 비열화 금지, risk accuracy `-0.5%p` 이내, 오경보 `+2` 이내 hard gate를 적용했다.
+
+| Metric | V12 clean | V12RG clean | V12 link loss | V12RG link loss |
+|---|---:|---:|---:|---:|
+| MPJPE | 13.30 cm | 13.32 cm | 20.89 cm | **20.45 cm** |
+| Root error | 31.28 cm | **31.03 cm** | 46.35 cm | **43.09 cm** |
+| Danger absolute MPJPE | 44.45 cm | **44.35 cm** | 62.11 cm | **57.61 cm** |
+| Danger endpoint | 55.52 cm | **55.25 cm** | 80.93 cm | **75.06 cm** |
+| 17-class accuracy | 96.05% | 96.05% | 63.83% | **64.74%** |
+| Risk accuracy | 97.87% | **98.18%** | 82.37% | **82.67%** |
+| Danger recall | 67/70 | 67/70 | 57/70 | **60/70** |
+| Safe -> danger | 2 | **1** | 13 | 15 |
+
+| Removed link | Root V12 -> V12RG | Danger V12 -> V12RG | Recall V12 -> V12RG | FP V12 -> V12RG |
+|---|---:|---:|---:|---:|
+| link 0 | 45.90 -> **42.49 cm** | 57.32 -> **53.31 cm** | 61 -> 61/70 | 17 -> 17 |
+| link 1 | 44.50 -> **42.38 cm** | 56.65 -> **53.51 cm** | 55 -> **61/70** | 19 -> 21 |
+| link 2 | 49.77 -> **44.00 cm** | 68.93 -> **60.82 cm** | 50 -> **55/70** | 13 -> 15 |
+
+부분 단절 위치를 선택에 쓰지 않고 초반/중간/후반/trial별 이동으로 바꿔 외삽 검증했다.
+
+| 50% link burst | Root V12 -> V12RG | Danger V12 -> V12RG | Recall | FP V12 -> V12RG |
+|---|---:|---:|---:|---:|
+| early | 37.83 -> **36.85 cm** | 50.72 -> **48.64 cm** | 67 -> 67/70 | 3 -> 4 |
+| middle | 38.82 -> **37.41 cm** | 53.66 -> **51.82 cm** | 65 -> 65/70 | 6 -> 6 |
+| late | 39.98 -> **38.54 cm** | 56.44 -> **54.54 cm** | 64 -> 64/70 | 4 -> 5 |
+| shifted | 38.98 -> **37.30 cm** | 54.80 -> **52.41 cm** | 64 -> 64/70 | 6 -> 6 |
+
+분류 fallback까지 부분 단절에 켜는 실험은 early burst에서 recall `-1`, FP `+5`라 기각했다.
+이중 coverage gate는 네 위치 모두 recall을 보존하고 FP 증가는 최대 1건으로 제한했다.
+clean MPJPE가 `+0.013 cm`, 완전 link-loss 오경보가 `+2`라는 비용이 있으나 root와 낙상 absolute
+trajectory 개선은 크다. 따라서 V12RG는 **다음 sealed 평가 전 validation candidate**이며, 위 V12
+test 수치와 섞어 최종 성능으로 주장하지 않는다. 전체 결과는
+[`v12_link_failure_guard_robustness.json`](docs/results/v12_link_failure_guard_robustness.json)에 있다.
+
+![V12 versus V12RG under one-link loss](docs/results/v12_link_failure_comparison.png)
+
+```powershell
+python -m notifi_pose.tools.audit_v12_link_failure_guard `
+  --p2-checkpoint work_v2/runs/p2_sub_single_clean_finetune/best_model.pt `
+  --root-calibration docs/results/v12_shift_robust_root_calibration.json `
+  --classification-calibration work_v2/runs/p2_v12w_robust_classification_ensemble/validation.json `
+  --pose-calibration docs/results/v12_link_failure_pose_calibration.json `
+  --failure-root-calibration docs/results/v12_link_failure_root_calibration.json `
+  --failure-class-calibration docs/results/v12_link_specific_classification_calibration.json `
+  --minimum-link-coverage 0.5 `
+  --classification-minimum-link-coverage 0.0 `
+  --output docs/results/v12_link_failure_guard_robustness.json
+```
+
+### 추론 비용
+
+RTX GPU에서 `[1,304,3,114,2]` 한 trial의 forward latency는 평균 `101.0 ms`,
+p95 `113.7 ms`다(10회 warmup 뒤 100회 측정). 7개 expert의 frozen p2 state가 bitwise
+동일함을 확인한 뒤 backbone, CSI motion feature, normalized subcarrier feature를 공유하고,
+분류 expert는 pose/root head를 건너뛰는 logit-only 경로를 사용한다. validation JSON의 모든
+항목은 최적화 전후 `delta=0`이고, latency는 `147.0 -> 101.0 ms`로 `31.3%` 감소했다. 중복 제거 후
+inference graph는 `2,647,249` parameter, 저장 state는 약 `11.0 MB`다. 남은 residual head도
+여전히 여러 개이므로 더 작은 배포 모델이 필요하면 teacher-student distillation을 적용한다. 측정 원본은
+[`v12_runtime_benchmark.json`](docs/results/v12_runtime_benchmark.json)에 있다. validation 329개
+전체에서 pose/root/class/risk tensor의 최대 절대차가 모두 정확히 `0`인 검증은
+[`v12_shared_equivalence.json`](docs/results/v12_shared_equivalence.json)에 있다.
+
+### 재현
+
+최종 evaluator는 validation lock의 protocol과 `test_used_for_selection=false`를 확인한다.
+
+```powershell
+python -m notifi_pose.tools.evaluate_v12_final `
+  --p2-checkpoint work_v2/runs/p2_sub_single_clean_finetune/best_model.pt `
+  --root-calibration work_v2/runs/p2_v12aa_pose_seed23_w30/validation.json `
+  --classification-calibration work_v2/runs/p2_v12w_robust_classification_ensemble/validation.json `
+  --exp single_split_lmh_e01 --open-test `
+  --output work_v2/runs/p2_v12_final_locked/final_evaluation.json
+```
+
+원시 최종 결과는 [`v12_final_evaluation.json`](docs/results/v12_final_evaluation.json),
+강건성 결과는 [`v12_input_robustness.json`](docs/results/v12_input_robustness.json), 압축 요약은
+[`v12_final_summary.json`](docs/results/v12_final_summary.json)에 있다. split, cache, checkpoint,
+calibration, 핵심 source 37개의 SHA-256은
+[`v12_release_manifest.json`](docs/results/v12_release_manifest.json)에 고정했다.
+
+## 이전 모델: V10 P2-V9 dual hybrid
 
 V10은 팀원 p2의 낮은 pose 오차와 안정적인 분류, V9의 낙상 trajectory 보정, V9C의
 root trajectory를 validation gate로 결합한다. 팀원 checkpoint를 그대로 복사하지 않고
@@ -690,7 +883,9 @@ python -m unittest discover -s tests -v
 python -m py_compile notifi_pose\*.py notifi_pose\tools\*.py
 ```
 
-현재 36개 단위 테스트가 timestamp alignment, site baseline, GraphFormer shape, impact window, temporal refiner, latent flow objective, observability diagnostic, loss backward를 검증한다.
+현재 90개 단위 테스트가 timestamp alignment, site baseline, GraphFormer shape, V12 expert
+조합, amp-phase RF 증강, impact window, temporal refiner, latent flow objective, observability
+diagnostic, loss backward를 검증한다.
 
 ## 폴더 구조
 
@@ -720,13 +915,17 @@ CSI-to-Pose/
 
 ## 결론
 
-현재 권장안은 **6안 Seen Reconstruction V2의 validation-calibrated 구성**이다.
-기준 GraphFormer 대비 MPJPE, dynamic, distal, impact, root를 모두 개선했고
-pose-speed ratio 1.167로 물리 속도 gate를 통과했다.
+현재 권장안은 **V12 clean-protocol multi-expert**다. 최종 test MPJPE `15.07 cm`,
+PA-MPJPE `7.12 cm`, class accuracy `94.22%`, risk accuracy `97.26%`이며 test는 model lock
+후 한 번만 열었다. 다만 danger MPJPE `50.71 cm`, endpoint `64.28 cm`, danger recall
+`91.43%`는 목표 수준이 아니고 link 하나가 사라질 때 성능 하락도 크다.
 
-무보정 6안의 MPJPE 18.11cm는 pose-speed ratio 2.088이라 채택하지 않는다.
-현재 공식 성능은 MPJPE 21.29cm, impact 54.72cm, root 32.33cm이며 연구 목표를
-완전히 달성한 최종 모델은 아니다.
+후속 **V12RG shift-root + missing-link guard**는 test를 재사용하지 않은 validation candidate다.
+clean root와 risk를 각각 `31.28→31.03 cm`, `97.87→98.18%`로 유지·개선하면서, 한 link 소실 시 root
+`46.35→43.09 cm`, danger absolute `62.11→57.61 cm`, danger recall `57→60/70`을 얻었다.
+각 link 고정 소실 audit에서도 recall 비열화를 허용하지 않았다. 50% burst 위치 네 종류에서도
+recall을 모두 보존하며 root를 `1.0~1.7 cm`, danger absolute를 `1.9~2.4 cm` 줄였다.
 
-다음 개발 순서는 root trajectory 개선, rotation dynamics 안정화,
-impact/contact curriculum, seen gate 재검증, LOSO/unseen 적응 순서다.
+다음 개발 순서는 test를 다시 보지 않은 채 train/validation에서 link-reconstruction
+pretraining과 danger trajectory expert를 개발하고, 새 protocol 또는 새 데이터에서 확인한 뒤
+seen gate를 통과하면 LOSO/unseen calibration으로 이동하는 것이다.

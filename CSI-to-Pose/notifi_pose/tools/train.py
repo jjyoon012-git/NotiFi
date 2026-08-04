@@ -105,6 +105,10 @@ def main() -> int:
         "--selection-mode", choices=("composite", "mpjpe"), default="composite",
         help="validation checkpoint criterion; p2 uses mpjpe",
     )
+    ap.add_argument(
+        "--skip-test-eval", action="store_true",
+        help="do not evaluate the held-out test split after training",
+    )
 
     args = ap.parse_args()
 
@@ -142,6 +146,7 @@ def main() -> int:
         domain_grl=args.domain_grl,
         weight_average_start=args.weight_average_start,
         selection_mode=args.selection_mode,
+        evaluate_test=not args.skip_test_eval,
         baseline=args.baseline,
     )
 

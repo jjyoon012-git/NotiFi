@@ -1,27 +1,27 @@
-"""split 생성 — 사이트 고정 분할 + LOSO 3-fold + yja 봉인.
+"""split 생성: 사이트 고정 분할 + LOSO 3-fold + yja 봉인.
 
 설계(확정):
 
   개발셋 = ajh + mhw + lmh, 9개 사이트(subject x environment)
     각 사이트를 70/15/15 로 **한 번만** 나누고 그 역할을 영구 고정한다.
-    → 모든 trial 이 영구적인 역할(train/val/test)을 갖는다.
-    → test 몫은 어떤 설정에서도 학습에 들어가지 않는다.
-    → 같은 test trial 을 '그 사람을 본 모델'과 '안 본 모델'로 각각 평가할 수 있어
+    - 모든 trial 이 영구적인 역할(train/val/test)을 갖는다.
+    - test 몫은 어떤 설정에서도 학습에 들어가지 않는다.
+    - 같은 test trial 을 '그 사람을 본 모델'과 '안 본 모델'로 각각 평가할 수 있어
       일반화 갭이 순수하게 측정된다. (전역 랜덤 분할로는 불가능한 비교)
 
-  실험 1 — 단일 split (in-domain)
+  실험 1: 단일 split (in-domain)
     학습: 세 사람의 train + val
     평가: test (사람별·환경별 분해 가능)
 
-  실험 2 — LOSO 3-fold (unseen subject)
-    fold(S): 나머지 두 사람의 train + val 로 학습 → S 의 **test 몫만** 평가.
+  실험 2: LOSO 3-fold (unseen subject)
+    fold(S): 나머지 두 사람의 train + val 로 학습, S 의 **test 몫만** 평가.
     held-out 인 S 의 train/val 은 쓰지 않는다. 실험 1과 동일한 trial 로 평가되므로
     두 숫자가 직접 비교된다.
 
   봉인
     yja E02  최종 unseen subject (3링크 온전)
-    yja E01  제외 — 진폭 6 수준에 프레임간 상관 0.52. 잡음이지 신호가 아니다.
-    yja E03  제외 — 3링크 전부 값이 0.
+    yja E01  제외: 진폭 6 수준에 프레임간 상관 0.52. 잡음이지 신호가 아니다.
+    yja E03  제외: 3링크 전부 값이 0.
 
 분할 규칙:
   - 사이트 안에서 **클래스별로** 나눈다(계층화). 17클래스가 전 split 에 들어간다.
@@ -79,7 +79,7 @@ ROLE_EXCLUDED = "excluded"
 
 
 def _trial_number(trial_id: str) -> int:
-    """`lmh_E03_S05_t012` → 12. 연속 블록 분할의 정렬 키."""
+    """`lmh_E03_S05_t012`에서 12를 읽는 연속 블록 분할 정렬 키."""
     m = re.search(r"_t(\d+)$", trial_id)
     return int(m.group(1)) if m else 0
 

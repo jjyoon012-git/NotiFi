@@ -229,7 +229,7 @@ class PoseDataset(Dataset):
         return shifted
 
     def _augment_rf(self, csi: np.ndarray, rng: np.random.Generator) -> np.ndarray:
-        """Apply hardware-style complex gain and frequency response changes."""
+        """Apply hardware changes in the cache's declared CSI representation."""
         config = self.dropout
         links = csi.shape[1]
         scale = np.exp(
@@ -238,15 +238,26 @@ class PoseDataset(Dataset):
         offset = rng.normal(0.0, config.phase_std, size=links).astype(np.float32)
         slope = rng.normal(0.0, config.phase_slope_std, size=links).astype(np.float32)
         frequency = np.linspace(-1.0, 1.0, csi.shape[2], dtype=np.float32)
-        angle = offset[:, None] + slope[:, None] * frequency[None]
-        cosine, sine = np.cos(angle), np.sin(angle)
-        real, imag = csi[..., 0].copy(), csi[..., 1].copy()
-        csi[..., 0] = scale[None, :, None] * (
-            real * cosine[None] - imag * sine[None]
-        )
-        csi[..., 1] = scale[None, :, None] * (
-            real * sine[None] + imag * cosine[None]
-        )
+        if C.CSI_REPRESENTATION == "amp_phase":
+            csi[..., 0] *= scale[None, :, None]
+            # Constant and linear phase terms were removed by sanitize_phase.
+            # Curvature/ripple approximates the residual hardware response.
+            curvature = np.square(frequency) - np.square(frequency).mean()
+            ripple = (
+                offset[:, None] * curvature[None]
+                + slope[:, None] * np.sin(np.pi * frequency)[None]
+            )
+            csi[..., 1] += ripple[None]
+        else:
+            angle = offset[:, None] + slope[:, None] * frequency[None]
+            cosine, sine = np.cos(angle), np.sin(angle)
+            real, imag = csi[..., 0].copy(), csi[..., 1].copy()
+            csi[..., 0] = scale[None, :, None] * (
+                real * cosine[None] - imag * sine[None]
+            )
+            csi[..., 1] = scale[None, :, None] * (
+                real * sine[None] + imag * cosine[None]
+            )
 
         if rng.random() < config.subcarrier_mask_p:
             width = int(rng.integers(4, min(17, csi.shape[2] + 1)))

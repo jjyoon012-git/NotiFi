@@ -1,0 +1,93 @@
+{
+  "protocol": "single_split_lmh_e01",
+  "split_trials": {"train": 1266, "validation": 329, "test": 329},
+  "test_opened_once_after_lock": true,
+  "configuration": {
+    "pose_seed_weights": [0.45, 0.25, 0.30],
+    "root_seed_weights": [0.80, 0.20],
+    "classification_expert_weights": [0.50, 0.50],
+    "residual_window": 31,
+    "bone_projection_blend": 0.25,
+    "hierarchical_class_weight": 0.60,
+    "danger_logit_bias": 0.35,
+    "shared_backbone_execution": true
+  },
+  "validation": {
+    "mpjpe_cm": 13.3028,
+    "pa_mpjpe_cm": 6.7684,
+    "dynamic_mpjpe_cm": 16.5272,
+    "root_cm": 31.2839,
+    "danger_mpjpe_cm": 44.4463,
+    "danger_distal_cm": 45.7197,
+    "danger_endpoint_cm": 55.5182,
+    "pose_speed_ratio": 1.0031,
+    "class_accuracy": 0.9605,
+    "class_macro_f1": 0.9519,
+    "risk_accuracy": 0.9787,
+    "risk_macro_f1": 0.9763,
+    "danger_recall": 0.9571,
+    "safe_to_danger": 2
+  },
+  "test": {
+    "mpjpe_cm": 15.0732,
+    "pa_mpjpe_cm": 7.1232,
+    "dynamic_mpjpe_cm": 18.0162,
+    "root_cm": 33.7872,
+    "danger_mpjpe_cm": 50.7130,
+    "danger_distal_cm": 51.8423,
+    "danger_endpoint_cm": 64.2849,
+    "pose_speed_ratio": 1.1357,
+    "class_accuracy": 0.9422,
+    "class_macro_f1": 0.9254,
+    "risk_accuracy": 0.9726,
+    "risk_macro_f1": 0.9655,
+    "danger_recall": 0.9143,
+    "danger_precision": 0.9552,
+    "danger_true_positive": 64,
+    "danger_support": 70,
+    "safe_to_danger": 2,
+    "safe_support": 175
+  },
+  "validation_only_guard_candidate": {
+    "name": "V12RG shift-root + missing-link guard",
+    "test_opened": false,
+    "trajectory_minimum_link_coverage": 0.5,
+    "classification_minimum_link_coverage": 0.0,
+    "clean": {
+      "mpjpe_cm": 13.3158,
+      "root_cm": 31.0342,
+      "danger_mpjpe_cm": 44.3542,
+      "danger_endpoint_cm": 55.2502,
+      "class_accuracy": 0.9605,
+      "risk_accuracy": 0.9818,
+      "danger_recall": 0.9571,
+      "safe_to_danger": 1
+    },
+    "drop_one_link": {
+      "mpjpe_cm": 20.4455,
+      "root_cm": 43.0935,
+      "danger_mpjpe_cm": 57.6079,
+      "danger_endpoint_cm": 75.0586,
+      "class_accuracy": 0.6474,
+      "risk_accuracy": 0.8267,
+      "danger_recall": 0.8571,
+      "danger_true_positive": 60,
+      "danger_support": 70,
+      "safe_to_danger": 15
+    },
+    "drop_link_burst": {
+      "definition": "middle 50% of one cyclic link",
+      "root_cm": 37.4085,
+      "danger_mpjpe_cm": 51.8165,
+      "danger_recall": 0.9286,
+      "danger_true_positive": 65,
+      "danger_support": 70,
+      "safe_to_danger": 6
+    }
+  },
+  "validation_progress": [
+    {"name": "locked baseline", "mpjpe_cm": 13.6311, "root_cm": 33.8554, "danger_cm": 46.0562, "endpoint_cm": 56.9866},
+    {"name": "V12 two-seed", "mpjpe_cm": 13.3080, "root_cm": 31.2839, "danger_cm": 44.5540, "endpoint_cm": 55.6472},
+    {"name": "V12 final", "mpjpe_cm": 13.3028, "root_cm": 31.2839, "danger_cm": 44.4463, "endpoint_cm": 55.5182}
+  ]
+}

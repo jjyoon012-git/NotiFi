@@ -327,7 +327,12 @@ def multitask_selection_score(pose_metrics: dict, classification: dict,
 def make_loaders(args, device: str):
     datasets = build_datasets(
         exp=args.exp, baseline="sub",
-        dropout=DropoutConfig(p=0.0, rf_augment=False), seed=args.seed,
+        dropout=DropoutConfig(
+            p=float(getattr(args, "link_dropout_p", 0.0)),
+            max_drop=int(getattr(args, "max_link_drop", 2)),
+            rf_augment=bool(getattr(args, "rf_augment", False)),
+        ),
+        seed=args.seed,
     )
     train = QualityWeightedDataset(datasets["train"])
     validation = QualityWeightedDataset(pose_only(datasets["val"]))

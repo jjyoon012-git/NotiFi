@@ -1,0 +1,62 @@
+{
+  "run": "p2_v12_final_inference_benchmark",
+  "protocol": "single_split_lmh_e01",
+  "split_used_for_input_shape": "validation",
+  "test_used": false,
+  "device": "cuda",
+  "input_shape": [
+    1,
+    304,
+    3,
+    114,
+    2
+  ],
+  "parameters": 2647249,
+  "trainable_parameters": 0,
+  "warmup_iterations": 10,
+  "timed_iterations": 50,
+  "latency_ms": {
+    "mean": 126.967520006001,
+    "median": 126.62094994448125,
+    "p95": 140.34459996037185,
+    "min": 113.03530004806817,
+    "max": 142.8262998815626
+  },
+  "configuration": {
+    "p2_checkpoint": "work_v2\\runs\\p2_sub_single_clean_finetune\\best_model.pt",
+    "pose_checkpoints": [
+      "work_v2\\runs\\p2_v12r_corrected_rf_pose_finetune\\best_model.pt",
+      "work_v2\\runs\\p2_v12k_shift_robust_pose_seed7\\best_model.pt",
+      "work_v2\\runs\\p2_v12x_shift_rf_pose_seed23\\best_model.pt"
+    ],
+    "pose_weights": [
+      0.45,
+      0.25,
+      0.3
+    ],
+    "root_checkpoints": [
+      "work_v2\\runs\\p2_v12d_direct_root_multiscale\\best_model.pt",
+      "work_v2\\runs\\p2_v12p_direct_root_multiscale_seed7\\best_model.pt"
+    ],
+    "root_weights": [
+      0.8,
+      0.2
+    ],
+    "residual_window": 31,
+    "residual_blend": 1.0,
+    "bone_blend": 0.25,
+    "bone_symmetric": true,
+    "classification_expert_checkpoints": [
+      "work_v2\\runs\\p2_v11v_classification_expert_seed17\\best_model.pt",
+      "work_v2\\runs\\p2_v12v_corrected_rf_classification\\best_model.pt"
+    ],
+    "classification_expert_weights": [
+      0.5,
+      0.5
+    ],
+    "classification_expert_strength": 1.0,
+    "hierarchical_class_weight": 0.6,
+    "final_danger_logit_bias": 0.35000000000000003,
+    "shared_backbone_execution": true
+  }
+}

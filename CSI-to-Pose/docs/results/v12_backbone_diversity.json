@@ -1,0 +1,184 @@
+{
+  "run": "p2_v12_backbone_diversity_audit",
+  "test_used": false,
+  "experts": [
+    {
+      "path": "work_v2\\runs\\p2_v12r_corrected_rf_pose_finetune\\best_model.pt",
+      "objective": "pose_only",
+      "initial_source": null,
+      "base_sha256": "1f460f02479dea477ca2246507dd1a3ddf1950b4f9a635f900b4283d1f28d5d1",
+      "base_parameters": 382487
+    },
+    {
+      "path": "work_v2\\runs\\p2_v12k_shift_robust_pose_seed7\\best_model.pt",
+      "objective": "pose_only",
+      "initial_source": null,
+      "base_sha256": "1f460f02479dea477ca2246507dd1a3ddf1950b4f9a635f900b4283d1f28d5d1",
+      "base_parameters": 382487
+    },
+    {
+      "path": "work_v2\\runs\\p2_v12x_shift_rf_pose_seed23\\best_model.pt",
+      "objective": "pose_only",
+      "initial_source": null,
+      "base_sha256": "1f460f02479dea477ca2246507dd1a3ddf1950b4f9a635f900b4283d1f28d5d1",
+      "base_parameters": 382487
+    },
+    {
+      "path": "work_v2\\runs\\p2_v12d_direct_root_multiscale\\best_model.pt",
+      "objective": "root_only",
+      "initial_source": null,
+      "base_sha256": "1f460f02479dea477ca2246507dd1a3ddf1950b4f9a635f900b4283d1f28d5d1",
+      "base_parameters": 382487
+    },
+    {
+      "path": "work_v2\\runs\\p2_v12p_direct_root_multiscale_seed7\\best_model.pt",
+      "objective": "root_only",
+      "initial_source": null,
+      "base_sha256": "1f460f02479dea477ca2246507dd1a3ddf1950b4f9a635f900b4283d1f28d5d1",
+      "base_parameters": 382487
+    },
+    {
+      "path": "work_v2\\runs\\p2_v11v_classification_expert_seed17\\best_model.pt",
+      "objective": "classification_only",
+      "initial_source": null,
+      "base_sha256": "1f460f02479dea477ca2246507dd1a3ddf1950b4f9a635f900b4283d1f28d5d1",
+      "base_parameters": 382487
+    },
+    {
+      "path": "work_v2\\runs\\p2_v12v_corrected_rf_classification\\best_model.pt",
+      "objective": "classification_only",
+      "initial_source": null,
+      "base_sha256": "1f460f02479dea477ca2246507dd1a3ddf1950b4f9a635f900b4283d1f28d5d1",
+      "base_parameters": 382487
+    }
+  ],
+  "pairwise": [
+    {
+      "left": "work_v2\\runs\\p2_v12r_corrected_rf_pose_finetune\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12k_shift_robust_pose_seed7\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12r_corrected_rf_pose_finetune\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12x_shift_rf_pose_seed23\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12r_corrected_rf_pose_finetune\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12d_direct_root_multiscale\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12r_corrected_rf_pose_finetune\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12p_direct_root_multiscale_seed7\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12r_corrected_rf_pose_finetune\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v11v_classification_expert_seed17\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12r_corrected_rf_pose_finetune\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12v_corrected_rf_classification\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12k_shift_robust_pose_seed7\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12x_shift_rf_pose_seed23\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12k_shift_robust_pose_seed7\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12d_direct_root_multiscale\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12k_shift_robust_pose_seed7\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12p_direct_root_multiscale_seed7\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12k_shift_robust_pose_seed7\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v11v_classification_expert_seed17\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12k_shift_robust_pose_seed7\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12v_corrected_rf_classification\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12x_shift_rf_pose_seed23\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12d_direct_root_multiscale\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12x_shift_rf_pose_seed23\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12p_direct_root_multiscale_seed7\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12x_shift_rf_pose_seed23\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v11v_classification_expert_seed17\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12x_shift_rf_pose_seed23\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12v_corrected_rf_classification\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12d_direct_root_multiscale\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12p_direct_root_multiscale_seed7\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12d_direct_root_multiscale\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v11v_classification_expert_seed17\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12d_direct_root_multiscale\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12v_corrected_rf_classification\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12p_direct_root_multiscale_seed7\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v11v_classification_expert_seed17\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v12p_direct_root_multiscale_seed7\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12v_corrected_rf_classification\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    },
+    {
+      "left": "work_v2\\runs\\p2_v11v_classification_expert_seed17\\best_model.pt",
+      "right": "work_v2\\runs\\p2_v12v_corrected_rf_classification\\best_model.pt",
+      "same_hash": true,
+      "relative_l2": 0.0
+    }
+  ],
+  "unique_backbone_hashes": 1
+}

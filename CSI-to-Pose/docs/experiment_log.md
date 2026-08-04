@@ -1,5 +1,64 @@
 # Seen-first experiment log
 
+## 최신 기록: V12 clean-protocol multi-expert
+
+아래 실험은 모두 `single_split_lmh_e01`의 validation만으로 선택했다. 최종 test는
+EXP-075에서 한 번만 열었으며, 그 결과를 보고 추가로 모델이나 calibration을 변경하지 않았다.
+
+| 번호 | 완료 시각(KST) | 상세 내용 | 목적 | 결과 | 결정 |
+|---|---|---|---|---|---|
+| EXP-095 | 2026-08-05 07:04 | danger root 5-frame shift-robust warm-start + seed7 ensemble + V12G 결합 | timestamp 혼재에 둔감한 absolute root 복원 | V12RG clean root 31.28→31.03cm, danger 44.45→44.35cm, endpoint 55.52→55.25cm; link 장애 성능 유지 | test 미개봉 validation candidate 채택 |
+| EXP-094 | 2026-08-05 06:55 | split/lock SHA-256 무결성 audit와 timestamp strata 진단 | 누수 및 정렬 품질 잔여 위험 확인 | 20/20 검사 통과; pose 262개가 lmh/E01 uniform_30fps, val root가 exact군보다 +7.43cm이나 subject와 confounded | 누수 없음, lmh timestamp 재수집 우선 |
+| EXP-093 | 2026-08-05 06:47 | best/last snapshot root simplex 66조합 | 추가 학습 없는 root 분산 감소 검증 | 선택 `[0.8,0.0,0.2]`; last snapshot 가중치 0 | 기각, 기존 두 best 유지 |
+| EXP-092 | 2026-08-05 06:39 | direct-root seed23 + 3-seed simplex 66조합 | clean root ensemble 다양성 확대 | seed23 단독 root 33.64cm, 최적 `[0.8,0.2,0.0]` | 새 seed 기각 |
+| EXP-091 | 2026-08-05 06:31 | early/middle/late/shifted 50% link burst 외삽 audit와 이중 coverage gate | 한 burst 위치 과적합 및 분류 OOD 사용 방지 | 네 위치 recall 보존; root 1.0~1.7cm, danger 1.9~2.4cm 개선; FP 최대 +1 | pose/root threshold 0.5, class/risk 0.0 채택 |
+| EXP-090 | 2026-08-05 06:18 | 부분 link coverage 0/0.5/0.75 비교와 최저 coverage link 식별 수정 | 완전 소실 외 간헐 단절 대응 | 0.5가 clean root 31.16cm, middle-burst root 38.82→37.41cm; 0.75는 clean 비열화 | trajectory threshold 0.5 채택 |
+| EXP-089 | 2026-08-05 06:08 | V12G specialist 3개의 bitwise 동일 P2 backbone 공유 | 장애 시 중복 encoder 실행 제거 | shared/unshared robustness JSON exact match | shared guard execution 채택 |
+| EXP-088 | 2026-08-05 05:58 | link 0/1/2 고정 소실 audit + link별 분류 calibration | 순환 평균이 숨긴 보드별 실패 검출 | 전역 guard가 link0에서 악화되어 기각; link별 gate로 세 link recall 비열화 0, 순환 recall 57→60/70 | link-specific V12G로 교체 |
+| EXP-087 | 2026-08-05 05:48 | pose/root/class missing-link guard 통합 강건성 audit | 정상 경로 보존과 장애 복원 동시 확인 | clean root 31.28→31.18cm, drop-link root 46.35→43.09cm, danger 62.11→57.61cm, recall 57→60/70 | test 미개봉 V12G validation candidate 채택 |
+| EXP-086 | 2026-08-05 05:45 | 80% link-dropout direct-root expert + 실패 validation 선택 | link 소실 root drift 완화 | drop root 46.35→43.09cm, danger root 54.81→49.59cm; clean root도 31.18cm | 조건부 root strength 1.0 채택 |
+| EXP-085 | 2026-08-05 05:41 | link-failure class/risk probability blend와 오경보 hard gate | recall 증가 꼼수 방지 | recall 57→59/70, FP 13→14, risk acc 82.37% 유지; 단독 expert 62/70·FP20은 기각 | class 1.0, risk 0.5, failure bias -0.25 채택 |
+| EXP-084 | 2026-08-05 05:38 | missing-link classification specialist를 장애 validation으로 선택 | link 장애 danger miss 감소 | 단독 recall 53→62/70이나 FP 13→20 | 단독 기각, 제한 blend만 사용 |
+| EXP-083 | 2026-08-05 05:34 | missing-link pose specialist와 조건부 blend | 정상 pose를 유지하며 장애 pose 보정 | drop MPJPE 20.89→20.45cm, danger 62.11→61.83cm; clean +0.013cm | strength 0.5 guard 채택 |
+| EXP-082 | 2026-08-05 05:31 | 80% link-dropout pose expert를 clean validation으로 선택 | 기존 selector의 robustness 적합성 점검 | clean 기준이 epoch 0 warm start를 선택해 장애 학습을 폐기 | 실패 기록, perturbation-specific selector 추가 |
+| EXP-081 | 2026-08-05 05:29 | normalized CSI/motion cache + classification logit-only fast path | 동일 출력으로 multi-expert 비용 추가 절감 | validation JSON 전 항목 동일, mean 147.0→101.0ms, p95 165.8→113.7ms | 채택 |
+| EXP-080 | 2026-08-05 05:27 | shared backbone 안에서 motion/normalization feature 재사용 | expert별 중복 전처리 제거 | 329개 tensor 최대 절대차 0 | 채택 |
+| EXP-079 | 2026-08-05 05:26 | shared/unshared 실행을 validation 329개 tensor로 전수 비교 | 최적화 correctness를 자동 회귀검사로 고정 | pose/root/class/risk 최대 절대차 모두 0 | 동등성 audit 채택 |
+| EXP-078 | 2026-08-05 05:19 | bitwise 동일 expert backbone 공유 + `norm` proxy | 정확도 보존 실행 최적화 | 모든 val metric delta 0, mean 147.0→127.0ms, p95 165.8→140.3ms, state 20.2→11.0MB | 채택 |
+| EXP-077 | 2026-08-05 05:12 | expert의 p2 forward를 한 번으로 공유하는 1차 구현 | 정확도 변화 없이 latency 절감 | cache wrapper가 `norm`을 가려 val MPJPE 13.30→13.87cm | 기각 후 원인 수정, 잘못된 결과 미사용 |
+| EXP-076 | 2026-08-05 05:06 | 최종 validation lock의 batch-1 GPU latency 측정 | multi-expert 배포 비용 공개 | 4.93M params, mean/p95 147.0/165.8ms, test 미사용 | 재현 benchmark 채택, distillation을 후속 과제로 기록 |
+| EXP-075 | 2026-08-05 04:55 | 완전히 잠근 V12를 test 329 trial에 1회 평가 | test 재사용 없는 최종 일반화 측정 | MPJPE 15.07cm, PA 7.12cm, root 33.79cm, class 94.22%, risk 97.26%, danger recall 64/70 | 최종 보고, 이후 조정 금지 |
+| EXP-074 | 2026-08-05 04:52 | pose seed23을 10/20/30%로 제한 ablation | seed diversity의 낙상 복원 이득 검증 | 30%에서 val danger 44.45cm, distal 45.72cm, endpoint 55.52cm, speed ratio 1.003 | pose 45/25/30 채택 |
+| EXP-073 | 2026-08-05 04:46 | 공통 V11 pose에서 seed23 shift/RF 학습 | 두 seed 개선의 우연성 점검 | 단독 MPJPE 13.85cm이나 speed ratio 1.80 | 단독 기각, ensemble만 검증 |
+| EXP-072 | 2026-08-05 04:43 | clean/RF-robust class expert logit ensemble | clean 비열화 없이 link 유실 분류 개선 | clean 동일, drop-link risk 81.46→82.37%, 오경보 15→13 | 0.5/0.5 채택 |
+| EXP-071 | 2026-08-05 04:40 | corrected amp-phase RF로 class-only fine-tune | link 유실 danger recall 개선 | clean class/risk가 단독 expert에서 하락 | 단독 기각, ensemble 후보로만 사용 |
+| EXP-070 | 2026-08-05 04:38 | corrected RF로 direct-root fine-tune | link 유실 root 강건성 개선 | validation 선택기가 epoch 0 초기값 선택 | 기각 |
+| EXP-069 | 2026-08-05 04:35 | pose 2-seed와 root 2-seed 최종 조합 | seed 편향과 root drift 동시 감소 | MPJPE 13.31cm, root 31.28cm, danger 44.55cm | V12T 채택 후 3번째 seed 검증 |
+| EXP-068 | 2026-08-05 04:31 | amp-phase 표현에 맞춘 RF pose fine-tune | 잘못된 I/Q 회전 제거 및 RF 강건성 개선 | clean/phase/subcarrier 모두 개선 | 채택 |
+| EXP-067 | 2026-08-05 04:23 | direct-root seed17/7 ensemble | root 학습의 seed 의존성 완화 | 0.8/0.2에서 root 31.28cm, danger root 39.04cm | 채택 |
+| EXP-066 | 2026-08-05 04:16 | seed7 direct-root multiscale 재학습 | root 개선 재현성 확인 | seed17과 다른 오차로 ensemble 이득 발생 | 채택 |
+| EXP-065 | 2026-08-05 04:14 | risk-adaptive cross-seed pose blend | danger에 별도 pose 비율 적용 | 평균은 소폭 개선했으나 낙상 지표 악화 | 기각 |
+| EXP-064 | 2026-08-05 04:08 | seed7 shift-robust pose 재학습 | shift loss 방향성 재현 | 독립 seed에서도 개선 방향 재현 | 2-seed ensemble 채택 |
+| EXP-063 | 2026-08-05 04:03 | predicted danger 기반 hard/probability pose gate | 낙상 expert 선택 자동화 | seed 간 개선이 재현되지 않고 fall metric 불안정 | 기각 |
+| EXP-062 | 2026-08-05 03:57 | validation-selected checkpoint model soup | 추가 추론비 없이 seed 이득 획득 | pose/danger 복합 지표 악화 | 기각 |
+| EXP-061 | 2026-08-05 03:53 | 17-class와 3-risk 확률의 계층 calibration | danger recall 유지하며 warning/safe 오류 감소 | risk acc 97.26→97.87%, macro F1 96.90→97.63% | 채택 |
+| EXP-060 | 2026-08-05 03:49 | trial-level global shift-robust pose loss | CSI-GT 수 프레임 오차에 대한 문맥 내성 | 평균·dynamic·danger가 함께 개선 | 채택 |
+| EXP-059 | 2026-08-05 03:45 | direct absolute-root + 5/15/30-frame loss | velocity 누적 drift 제거 | root 33.86→31.34cm, danger root 개선 | 채택 |
+| EXP-058 | 2026-08-05 03:30 | danger-weighted pose-only fine-tune와 분리 학습 | multi-task gradient 충돌 진단 | pose 평균 개선, 일부 distal trade-off 확인 | expert 분리 설계의 출발점 |
+
+### V12 최종 판정
+
+- validation: MPJPE `13.30cm`, PA-MPJPE `6.77cm`, root `31.28cm`, danger `44.45cm`,
+  danger endpoint `55.52cm`, class/risk `96.05/97.87%`.
+- test: MPJPE `15.07cm`, PA-MPJPE `7.12cm`, root `33.79cm`, danger `50.71cm`,
+  danger endpoint `64.28cm`, class/risk `94.22/97.26%`.
+- 최종 채택 이유: test 선택 없이 전체 pose와 분류가 강하고 validation의 root/danger도 개선됐다.
+- 남은 문제: test danger recall `91.43%`, danger endpoint `64.28cm`, drop-one-link danger
+  `57.61cm`(V12G validation). V12G는 test를 열지 않았으므로 새 최종 test 점수로 쓰지 않는다.
+- 원시 결과: [`results/v12_final_evaluation.json`](results/v12_final_evaluation.json),
+  [`results/v12_input_robustness.json`](results/v12_input_robustness.json),
+  [`results/v12_link_failure_guard_robustness.json`](results/v12_link_failure_guard_robustness.json).
+
 ## 최신 기록: V10 P2-V9 dual hybrid
 
 | 번호 | 완료 시각(KST) | 상세 내용 | 목적 | 결과 | 결정 |

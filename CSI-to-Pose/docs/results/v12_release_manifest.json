@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-08-04T22:06:53.860628+00:00",
+  "protocol": "single_split_lmh_e01",
+  "test_opened_once": true,
+  "artifact_count": 37,
+  "total_bytes_hashed": 1421874719,
+  "artifacts": [
+    {
+      "role": "locked final evaluation",
+      "path": "docs/results/v12_final_evaluation.json",
+      "bytes": 22539,
+      "sha256": "401e4cea0f18bc8e5bb70888982cfef3814e671d681b8f7413d923bc6cf15528"
+    },
+    {
+      "role": "link-failure validation lock",
+      "path": "docs/results/v12_link_failure_pose_calibration.json",
+      "bytes": 8451,
+      "sha256": "27fb2350f6c953dab6d60edb5510ba3aea7089f5ae836eabe6c9e5457a8c3643"
+    },
+    {
+      "role": "link-failure validation lock",
+      "path": "docs/results/v12_link_failure_root_calibration.json",
+      "bytes": 6772,
+      "sha256": "2d13ef2a477720e52bd86aa04fb328c56e67600d90e2df374cf7217b9c020c41"
+    },
+    {
+      "role": "link-failure validation lock",
+      "path": "docs/results/v12_link_specific_classification_calibration.json",
+      "bytes": 314018,
+      "sha256": "b17277d3b5c49c7e75a8ea1fd162b8090bfc040d84f0566da968c8cb4ac9827f"
+    },
+    {
+      "role": "V12RG root validation lock",
+      "path": "docs/results/v12_shift_robust_root_calibration.json",
+      "bytes": 30760,
+      "sha256": "76382feb452e3da18da685b684f5ff7fc55ed8dd0ac6ff5b48bbccda15a720ba"
+    },
+    {
+      "role": "core source",
+      "path": "notifi_pose/dataio/dataset.py",
+      "bytes": 18427,
+      "sha256": "7a27fcaaff183e69fd32449b7db85b4f9561f0018e49d98fe9435d739d0d8cc2"
+    },
+    {
+      "role": "core source",
+      "path": "notifi_pose/hybrid_v10.py",
+      "bytes": 50145,
+      "sha256": "ea282e917e119c9d74134f8db95110c859a880d19fbe7c470ae988e86a477daf"
+    },
+    {
+      "role": "core source",
+      "path": "notifi_pose/tools/audit_v12_alignment_strata.py",
+      "bytes": 3784,
+      "sha256": "a9d1d7e5907f484e6510ab2e82e56cb1fb11765f5caf035dc8fb51f6edaa628f"
+    },
+    {
+      "role": "core source",
+      "path": "notifi_pose/tools/audit_v12_link_failure_guard.py",
+      "bytes": 8987,
+      "sha256": "ac567e45b13504d0952df1119e330474bf646bdadca74427fdd25e928f0b63cc"
+    },
+    {
+      "role": "core source",
+      "path": "notifi_pose/tools/audit_v12_protocol_integrity.py",
+      "bytes": 7100,
+      "sha256": "0896ee009adf538bd53f8f302d8fa0a91594412126a66a001d70f113c5761ef9"
+    },
+    {
+      "role": "core source",
+      "path": "notifi_pose/tools/evaluate_v12_final.py",
+      "bytes": 10680,
+      "sha256": "86fc25f2e0209f915d99f73495609a32b096d4dfe5ced6a6683272f6d978bc53"
+    },
+    {
+      "role": "core source",
+      "path": "notifi_pose/tools/train_p2_v9_hybrid.py",
+      "bytes": 39333,
+      "sha256": "a4f7670f8d703444dabfb4faae96cee908238db0d05d331c507ecf8a349376c6"
+    },
+    {
+      "role": "training cache contract",
+      "path": "work_v2/cache/cache_index.csv",
+      "bytes": 365247,
+      "sha256": "6b74deeb8ef4f66faa38fd75ceb3a1974edbb29811ebae9a551599f033a102d6"
+    },
+    {
+      "role": "training cache contract",
+      "path": "work_v2/cache/cache_meta.json",
+      "bytes": 1619,
+      "sha256": "832bf6304a6691816425b17633bfd47b9c4b11d5072db39de0f9f8584a02b292"
+    },
+    {
+      "role": "training cache contract",
+      "path": "work_v2/cache/csi_iq.npy",
+      "bytes": 1143232256,
+      "sha256": "166eac1a9b475c85ebb8a081a5ca1f06e3e4777b77ccaedb3e35c1097a983d9f"
+    },
+    {
+      "role": "training cache contract",
+      "path": "work_v2/cache/link_mask.npy",
+      "bytes": 2507216,
+      "sha256": "4866e149f55871b052d736c824fac6bf903769f547b103efdd19ff65f5ca641f"
+    },
+    {
+      "role": "training cache contract",
+      "path": "work_v2/cache/pose_rel.npy",
+      "bytes": 220623872,
+      "sha256": "18d7dda49eacd630480d818a9278ef38a2bff4026fc7eacfad277d11848a3fde"
+    },
+    {
+      "role": "training cache contract",
+      "path": "work_v2/cache/root.npy",
+      "bytes": 10028480,
+      "sha256": "134b480990ce75c07d0644cbe43bdc47e04bac9e3bd55c79a188affffe501239"
+    },
+    {
+      "role": "training cache contract",
+      "path": "work_v2/cache/site_baseline.npz",
+      "bytes": 123396,
+      "sha256": "cceaf1be1ce29f3913f1d7b833af31506b6e377b7218afb1cdcec07cfd4581cc"
+    },
+    {
+      "role": "training cache contract",
+      "path": "work_v2/cache/valid.npy",
+      "bytes": 835824,
+      "sha256": "4be97a29c5314d19514f0b09273062064b0f162f018420551194908c55fee074"
+    },
+    {
+      "role": "coarse P2 checkpoint",
+      "path": "work_v2/runs/p2_sub_single_clean_finetune/best_model.pt",
+      "bytes": 1554293,
+      "sha256": "a8d4a85eb2bc9efc2cd54cb33ac95f7e527dd3c1e16d787ee76245310539e3d4"
+    },
+    {
+      "role": "classification expert checkpoint",
+      "path": "work_v2/runs/p2_v11v_classification_expert_seed17/best_model.pt",
+      "bytes": 2841186,
+      "sha256": "aa3622ac6512be495e320fdcd6edb64facab3a83f855c68eae156444538fc58e"
+    },
+    {
+      "role": "link-failure expert checkpoint",
+      "path": "work_v2/runs/p2_v12_link_failure_class_selected/best_model.pt",
+      "bytes": 2841442,
+      "sha256": "a55a124e84e06cc35fa5cf0af2104c2a336744587134851548ad7363f760421e"
+    },
+    {
+      "role": "link-failure expert checkpoint",
+      "path": "work_v2/runs/p2_v12_link_failure_pose_selected/best_model.pt",
+      "bytes": 2841378,
+      "sha256": "bafb0606bae52a0c7f1f91073278f9be3d0f81fcfdde2e4480a28b61c060d215"
+    },
+    {
+      "role": "link-failure expert checkpoint",
+      "path": "work_v2/runs/p2_v12_link_failure_root_selected/best_model.pt",
+      "bytes": 2984812,
+      "sha256": "ab1548de6f39cc594a89d77acabaf36f8df91d81e306f4441aa6952ce3b7c833"
+    },
+    {
+      "role": "root validation lock",
+      "path": "work_v2/runs/p2_v12aa_pose_seed23_w30/validation.json",
+      "bytes": 15341,
+      "sha256": "7d7243f50651df32360370d1394b35c84d3ed870c94598a0b24fc08393b77f02"
+    },
+    {
+      "role": "V12RG root expert checkpoint",
+      "path": "work_v2/runs/p2_v12ac_shift_robust_root/best_model.pt",
+      "bytes": 2984876,
+      "sha256": "df3172244ab55aeeeb3dd6144e208a7882938beefbe621b5c7060758d6e7626b"
+    },
+    {
+      "role": "root expert checkpoint",
+      "path": "work_v2/runs/p2_v12d_direct_root_multiscale/best_model.pt",
+      "bytes": 2984748,
+      "sha256": "a851a3821b4849a0ecb3b945d3305584d7cd45798df78ee8ec586c033f305b95"
+    },
+    {
+      "role": "pose expert checkpoint",
+      "path": "work_v2/runs/p2_v12k_shift_robust_pose_seed7/best_model.pt",
+      "bytes": 2841314,
+      "sha256": "53b7300ed2f03bf8a371f3c36055076d3d93d281da4d0c505040f46fd70b7ccb"
+    },
+    {
+      "role": "V12RG root expert checkpoint",
+      "path": "work_v2/runs/p2_v12p_direct_root_multiscale_seed7/best_model.pt",
+      "bytes": 2984748,
+      "sha256": "8bf83105fd454bdb53e79c2d2051908a6ec40ee80e5337f95952ad399380b4ef"
+    },
+    {
+      "role": "pose expert checkpoint",
+      "path": "work_v2/runs/p2_v12r_corrected_rf_pose_finetune/best_model.pt",
+      "bytes": 2841314,
+      "sha256": "848cc704b0ccfa4c5894164e2282ba782bad4ce694ec7519b459d9fafdf08d35"
+    },
+    {
+      "role": "classification expert checkpoint",
+      "path": "work_v2/runs/p2_v12v_corrected_rf_classification/best_model.pt",
+      "bytes": 2841378,
+      "sha256": "bb3d56488498025f4290126d46972eac1b5220eb5408eb44cb8ae6eae2417a9b"
+    },
+    {
+      "role": "classification validation lock",
+      "path": "work_v2/runs/p2_v12w_robust_classification_ensemble/validation.json",
+      "bytes": 9260539,
+      "sha256": "3295aeb5fcc3bae0591f40a19aed1fff80ef69d5b2f0002890b654d528dca361"
+    },
+    {
+      "role": "pose expert checkpoint",
+      "path": "work_v2/runs/p2_v12x_shift_rf_pose_seed23/best_model.pt",
+      "bytes": 2841314,
+      "sha256": "520decbe9e00384af6bff1363dd5a0a675bc51b0dc7c46ae58cb4cb47c402f74"
+    },
+    {
+      "role": "development split index",
+      "path": "work_v2/splits/dev_index.csv",
+      "bytes": 876444,
+      "sha256": "1f9ef0412eec31e8de2018a90acfd0ff503eb7bc3b1f17f627caafb6af84e798"
+    },
+    {
+      "role": "split protocol",
+      "path": "work_v2/splits/experiments.json",
+      "bytes": 4125,
+      "sha256": "c0ed312378d96a3e14e4d739d2dbd121f7b65ccb65e3c6597733eaaf304d2d8d"
+    },
+    {
+      "role": "sealed split index",
+      "path": "work_v2/splits/sealed_index.csv",
+      "bytes": 96561,
+      "sha256": "85a83032e52618c671a53d6820d6b3c92c1dd33c8dfdbff5228191db7831627c"
+    }
+  ]
+}

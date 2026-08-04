@@ -1,0 +1,53 @@
+{
+  "run": "p2_v12_alignment_source_audit",
+  "protocol": "single_split_lmh_e01",
+  "selection_split": "validation",
+  "test_used": false,
+  "results": {
+    "timestamps": {
+      "pose_trials": 270,
+      "classification_trials": 284,
+      "trajectory": {
+        "mpjpe_m": 0.1326561749878305,
+        "dynamic_mpjpe_m": 0.16389294856645423,
+        "root_error_m": 0.30223025670275094,
+        "pose_speed_ratio": 0.9132503289206515,
+        "danger_mpjpe_m": 0.44265234768390654,
+        "danger_distal_mpjpe_m": 0.4565381988883018,
+        "danger_endpoint_mpjpe_m": 0.5567148427168528,
+        "danger_speed_correlation": 0.3624838946542392
+      },
+      "danger_trials": 60,
+      "class_accuracy": 0.9612675905227661,
+      "risk_accuracy": 0.9823943376541138,
+      "danger_recall": 0.949999988079071,
+      "safe_to_danger": 2
+    },
+    "uniform_30fps": {
+      "pose_trials": 45,
+      "classification_trials": 45,
+      "trajectory": {
+        "mpjpe_m": 0.1352619703859091,
+        "dynamic_mpjpe_m": 0.17415896616876125,
+        "root_error_m": 0.37649110327992175,
+        "pose_speed_ratio": 1.5424608448364836,
+        "danger_mpjpe_m": 0.45532908141613004,
+        "danger_distal_mpjpe_m": 0.46114979684352875,
+        "danger_endpoint_mpjpe_m": 0.5459860935807228,
+        "danger_speed_correlation": 0.2902240719646215
+      },
+      "danger_trials": 10,
+      "class_accuracy": 0.9555555582046509,
+      "risk_accuracy": 0.9555555582046509,
+      "danger_recall": 1.0,
+      "safe_to_danger": 0
+    }
+  },
+  "uniform_minus_timestamps": {
+    "mpjpe_m": 0.002605795398078592,
+    "dynamic_mpjpe_m": 0.010266017602307026,
+    "root_error_m": 0.0742608465771708,
+    "danger_mpjpe_m": 0.0126767337322235,
+    "danger_endpoint_mpjpe_m": -0.010728749136129978
+  }
+}

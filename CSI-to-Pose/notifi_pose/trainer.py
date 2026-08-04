@@ -89,6 +89,7 @@ class TrainConfig:
     domain_grl: float = 0.2
     weight_average_start: int = 10
     selection_mode: str = "composite"
+    evaluate_test: bool = True
 
     #: 사이트별 빈방 기준선 제거 (Phase 2). "none" | "sub" | "sub_z"
     #: dataset.SiteBaseline 참조. PerLinkNorm(전역 정규화)은 이 뒤의 2차 정규화로 유지된다.
@@ -582,7 +583,8 @@ def train(datasets: dict, cfg: TrainConfig, out_dir: Path,
               "weight_averaged": bool(ckpt.get("weight_averaged", False)),
               "n_averaged": int(ckpt.get("n_averaged", 0)),
               "train_seconds": round(time.perf_counter() - t0, 1)}
-    for split in ("val", "test"):
+    evaluation_splits = ("val", "test") if cfg.evaluate_test else ("val",)
+    for split in evaluation_splits:
         if split in loaders:
             result[split] = evaluate(model, loaders[split], loss_fn, device)
     (out_dir / "result.json").write_text(
@@ -590,7 +592,7 @@ def train(datasets: dict, cfg: TrainConfig, out_dir: Path,
 
     print(f"\n[train] best epoch {result['best_epoch']} "
           f"({result['train_seconds']:.0f}s)")
-    for split in ("val", "test"):
+    for split in evaluation_splits:
         if split in result:
             r = result[split]
             print(f"  {split:5s} MPJPE {r['mpjpe']*100:.2f}cm  root {r['root_err']*100:.2f}cm  "
