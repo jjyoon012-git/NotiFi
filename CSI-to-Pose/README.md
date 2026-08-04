@@ -4,11 +4,11 @@ Wi-Fi CSI만 입력받아 시간에 따른 사람의 **GVHMR SMPL-22 3D pose와 
 
 - 기존 코드: [NotiFi-CSI-to-Pose `feature/goal1`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1)
 - 현재 통합 위치: [NotiFi/CSI-to-Pose](https://github.com/jjyoon012-git/NotiFi/tree/main/CSI-to-Pose)
-- 현재 권장 seen 모델: **7안 Stage A - contact-guided root refinement**
+- 현재 권장 seen 모델: **8안 Stage A - contact-calibrated impact event model**
 - 현재 개발 순서: **seen 성능 확보 후 unseen/LOSO calibration 재개**
 - 문서 정렬 원칙: **현재 권장 모델을 맨 위에 두고, 이전 안은 최신순으로 기록**
 
-## 현재 모델: 7안 Stage A - Contact-Guided Root
+## 현재 모델: 8안 Stage A - Contact-Calibrated Impact Event
 
 현재는 사용자가 지정한
 [`feature/goal1/work_v2/splits`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1/work_v2/splits)의
@@ -46,6 +46,12 @@ flowchart LR
     N --> O["Support-aware anchor / velocity refinement"]
     O --> P["Validation-selected root strength"]
     P --> Q["SMPL-22 pose + refined root"]
+    A --> R["Raw CSI multi-scale event energy"]
+    Q --> S["Frozen 7안 event features"]
+    R --> S
+    S --> T["Impact / joint / contact / speed heads"]
+    T --> U["Validation branch calibration"]
+    U --> V["Contact 0.75; other event branches 0"]
 ```
 
 1. timestamp 완전성, 유효 link 수, CSI-GT motion correlation으로 trial 품질 가중치를 만든다.
@@ -57,17 +63,21 @@ flowchart LR
 7. head-only 학습 후 기존 backbone의 마지막 temporal block만 낮은 learning rate로 미세조정한다.
 8. 7안 Stage A는 V2 pose를 고정하고 예측 foot contact, phase, impact, 상대 foot speed로
    root anchor와 velocity만 보정한다.
+9. 8안은 raw CSI event feature를 추가하되 validation gate를 통과한 injury-contact
+   residual만 `0.75`로 사용한다.
 
 ### Seen test 결과
 
-| Metric | 기존 GraphFormer | 6안 V2 | 현재 7안 | 기준선 대비 |
+| Metric | 기존 GraphFormer | 6안 V2 | 7안 | 현재 8안 |
 |---|---:|---:|---:|---:|
-| MPJPE | 24.17cm | 21.29cm | **21.29cm** | -11.9% |
-| Dynamic MPJPE | 23.39cm | 20.90cm | **20.90cm** | -10.6% |
-| Distal MPJPE | 35.44cm | 31.53cm | **31.53cm** | -11.0% |
-| Impact MPJPE | 58.24cm | **54.72cm** | 54.89cm | -5.8% |
-| Root error | 33.06cm | 32.33cm | **31.81cm** | -3.8% |
-| Pose-speed ratio | 1.058 | 1.167 | 1.167 | 정상 범위 유지 |
+| MPJPE | 24.17cm | 21.29cm | **21.29cm** | **21.29cm** |
+| Dynamic MPJPE | 23.39cm | 20.90cm | **20.90cm** | **20.90cm** |
+| Distal MPJPE | 35.44cm | 31.53cm | **31.53cm** | **31.53cm** |
+| Impact MPJPE | 58.24cm | **54.72cm** | 54.89cm | 54.89cm |
+| Root error | 33.06cm | 32.33cm | **31.81cm** | **31.81cm** |
+| Pose-speed ratio | 1.058 | 1.167 | 1.167 | 1.167 |
+| Injury-contact F1 | - | 0.354 | 0.354 | **0.423** |
+| First-contact accuracy | - | 37.8% | 37.8% | 37.8% |
 
 무보정 V2는 test MPJPE `18.11cm`까지 내려갔지만 pose-speed ratio가 `2.088`로
 실제 움직임의 두 배를 만들어 공식 결과에서 제외했다. validation에서만 branch 강도를
@@ -80,17 +90,23 @@ flowchart LR
 반면 impact MPJPE는 `54.72 -> 54.89cm`, foot-contact F1은 `0.708 -> 0.701`로 소폭
 악화됐다. 따라서 7안은 root Stage A로 채택하되 impact/contact 개선으로 해석하지 않는다.
 
+8안은 physical impact proxy와 `(frame, joint)` event head를 추가했다. 전체 event model은
+test에서 일반화하지 못해 event/joint/speed strength를 모두 `0`으로 되돌렸다. validation이
+contact strength `0.75`만 선택했고, test injury-contact F1은 `0.354 -> 0.423`으로
+개선됐다. first-contact, impact speed, pose, root는 7안과 동일하다.
+
 실패한 구조를 포함한 번호·날짜·시간·목적·방법·결과·결정은
 [`docs/experiment_log.md`](docs/experiment_log.md)에 계속 누적한다. 원시 결과 JSON은
 [`docs/results`](docs/results)에 있으며 checkpoint와 데이터셋은 저장소에 포함하지 않는다.
 6안의 코드 대응, 손실, 보정 규칙은
 [`docs/seen_reconstruction_v2.md`](docs/seen_reconstruction_v2.md), 7안 root stage는
-[`docs/seen_reconstruction_v3.md`](docs/seen_reconstruction_v3.md)에 정리했다.
+[`docs/seen_reconstruction_v3.md`](docs/seen_reconstruction_v3.md), 8안 event stage는
+[`docs/impact_event_v8.md`](docs/impact_event_v8.md)에 정리했다.
 
 ## 모델안별 성능 이력
 
 서로 다른 test protocol의 숫자는 직접 우열 비교하지 않는다. 1~4안은 `yja/E02 unseen`
-동일 조건, seen 기준선~7안은 제공된 `single_split seen` 동일 조건이다. 5안은 새 모델이
+동일 조건, seen 기준선~8안은 제공된 `single_split seen` 동일 조건이다. 5안은 새 모델이
 아니라 CSI observability 진단이므로 성능선에서 분리했다.
 
 | 안 | 핵심 변경 | 평가 protocol | MPJPE | Impact | Root | Speed ratio | 판정 |
@@ -102,6 +118,7 @@ flowchart LR
 | 5안 | CSI observability 진단 | yja/E02 unseen | 29.57cm 정상 / 29.59cm shuffled | - | - | - | encoder 병목 확인 |
 | 6안 | Seen Reconstruction V2 | single_split seen | **21.29cm** | **54.72cm** | 32.33cm | 1.167 | 채택 |
 | 7안 A | Contact-guided root | single_split seen | **21.29cm** | 54.89cm | **31.81cm** | 1.167 | 현재 root 모델 |
+| 8안 A | Contact-calibrated event | single_split seen | **21.29cm** | 54.89cm | **31.81cm** | 1.167 | contact F1 0.423, 현재 모델 |
 
 ### 1~4안: yja/E02 unseen 흐름
 
@@ -122,7 +139,8 @@ flowchart LR
     B["이전 seen<br/>21.68 / 55.27 / 32.36"]
     C["6안 V2<br/>21.29 / 54.72 / 32.33"]
     D["7안 Stage A<br/>21.29 / 54.89 / 31.81"]
-    A --> B --> C --> D
+    E["8안 Contact<br/>Pose 유지 / Contact F1 0.423"]
+    A --> B --> C --> D --> E
 ```
 
 단위는 cm다. 각 안의 원시 출처와 protocol은
@@ -148,6 +166,12 @@ python -m notifi_pose.tools.calibrate_seen_v2
 python -m notifi_pose.tools.train_seen_v3_root `
   --epochs 16 --patience 5 --batch-size 8 `
   --run-dir work_v2/runs/seen_v3_contact_root
+python -m notifi_pose.tools.audit_impact_targets --split val
+python -m notifi_pose.tools.audit_impact_alignment
+python -m notifi_pose.tools.train_impact_event `
+  --epochs 15 --patience 5 --batch-size 8 `
+  --run-dir work_v2/runs/impact_event_v8c_raw
+python -m notifi_pose.tools.calibrate_impact_event
 ```
 
 현재 seen gate는 완전히 통과하지 않았다. 다음 목표는 MPJPE 20cm 이하,
@@ -157,21 +181,20 @@ unseen protocol로 다시 평가한다.
 
 ## 기존 모델과의 차이
 
-직전 권장 모델인 6안은 phase-aware 6D rotation과 keyframe root를 함께 보정했다.
-7안 Stage A는 calibrated 6안을 완전히 동결한 뒤 contact-guided root branch만 추가한다.
+7안은 calibrated 6안을 동결한 뒤 contact-guided root branch를 추가했다. 현재 8안은
+7안 전체를 동결하고 event/contact head만 별도로 학습한 뒤 branch별로 보정한다.
 
-| 구분 | 기준 GraphFormer | 6안 V2 | 현재 7안 Stage A |
+| 구분 | 6안 V2 | 7안 Stage A | 현재 8안 Stage A |
 |---|---|---|---|
-| 데이터 사용 | trial 동일 가중치 | 품질 가중치 | 동일 품질 가중치와 sampler |
-| CSI motion | 단일 temporal 표현 | motion-first + gated fusion | V2 temporal feature + root/contact dynamics |
-| Pose decoder | Cartesian hybrid decoder | phase-aware 6D rotation + FK | 6안 pose를 그대로 고정 |
-| Root | 직접 root 회귀 | anchor + root-step 적분 | contact support-aware anchor + velocity 적분 |
-| 접촉 사용 | 보조 head | feet/injury contact 예측 | 예측 foot contact를 root support gate로 사용 |
-| 학습 | backbone 전체 학습 | head 학습 + 제한적 fine-tuning | 새 root branch만 학습 |
-| 모델 선택 | validation MPJPE | branch calibration + speed gate | validation root/impact 점수 + identity 후보 |
+| CSI motion | motion-first + gated fusion | root/contact dynamics | raw amplitude/phase delta 1/3/7/15-frame 추가 |
+| Pose decoder | phase-aware 6D rotation + FK | 6안 pose 고정 | 7안 pose/root 완전 고정 |
+| Root | anchor + root-step 적분 | contact support-aware 적분 | 7안 root 그대로 유지 |
+| Event target | 가속도 peak/높이 heuristic | 동일 보조 head | 감속+가속도+하강+표면근접 physical proxy |
+| 학습 | head + 제한적 fine-tuning | 새 root branch만 학습 | event/contact head만 학습 |
+| 모델 선택 | branch calibration + speed gate | root/impact + identity 후보 | event/joint/contact/speed branch별 validation gate |
 
-6안에서 현재 7안으로 pose 지표와 speed는 유지되고 root는 32.33→31.81cm로 개선됐다.
-impact는 0.17cm 악화돼 다음 Stage의 명시적 개선 대상이다.
+7안에서 8안으로 pose/root는 유지되고 injury-contact F1만 0.354→0.423으로 개선됐다.
+event timing과 최초 충돌 부위 branch는 검증 실패로 비활성화했다.
 
 ## 현재 모델 문제점 및 개선 방향
 
@@ -179,19 +202,20 @@ impact는 0.17cm 악화돼 다음 Stage의 명시적 개선 대상이다.
 |---:|---|---|---|
 | 1 | Root 절대 위치가 여전히 가장 큰 병목 | root 31.81cm, Stage A에서 0.52cm 개선 | 장기 anchor drift와 horizontal/vertical trajectory를 분리 학습 |
 | 2 | 회전 branch가 움직임을 과장 | 무보정 speed ratio 2.088, rotation-only 1.971 | angular velocity/geodesic loss, phase별 rotation 크기 제한, keyframe 보간 개선 |
-| 3 | 낙상 impact 복원이 부족 | impact 54.89cm, Stage A에서 0.17cm 악화 | danger 전환 event sampler, first-contact localization, impact 전용 temporal decoder |
+| 3 | 낙상 impact 복원이 부족 | impact 54.89cm, event timing test 약 25.6프레임 오차 | 실제 영상 impact frame/body-region 표본 annotation과 proxy 검증 |
 | 4 | 고주파 branch가 실질적으로 미사용 | validation이 high-pose scale 0을 선택 | 2cm residual의 대역 분리와 temporal regularization 재설계 |
-| 5 | 부상 관련 head 정확도가 낮음 | injury F1 0.354, 최초 접촉 정확도 0.378 | event-level contact localization, class imbalance 보정, uncertainty calibration |
+| 5 | 최초 충돌 부위 정확도가 낮음 | injury F1 0.423, 최초 접촉 정확도 0.378 | 검증된 event label 확보 후 coarse-to-fine region/joint 재학습 |
 | 6 | 아직 seen 성능만 검증 | 같은 사람·환경의 unseen trial 평가 | seen gate 통과 후 backbone을 고정하고 LOSO/domain calibration 진행 |
 | 7 | 저품질 trial이 남아 있음 | 품질 가중치 최솟값 0.443 | high-quality subset ablation, timestamp/link audit 강화, 자동 시간 이동은 금지 |
 
 다음 실험은 한 번에 여러 요소를 다시 섞지 않고 아래 순서로 진행한다.
 
 1. 완료: coarse pose를 고정하고 contact-guided root 전용 표현을 학습했다.
-2. danger transition 중심 impact/contact event sampler와 localization head를 적용한다.
-3. rotation branch에 angular velocity와 geodesic amplitude 제약을 추가한다.
-4. MPJPE 20cm, impact 50cm, root 25cm, speed ratio 0.8~1.2를 seen gate로 재검증한다.
-5. gate에 가까워진 모델만 LOSO와 yja E02 unseen adaptation으로 넘긴다.
+2. 완료: event/contact head를 적용하고 contact branch만 validation에서 채택했다.
+3. danger 영상에서 실제 impact frame/body region을 표본 annotation해 proxy를 검증한다.
+4. rotation branch에 angular velocity와 geodesic amplitude 제약을 추가한다.
+5. MPJPE 20cm, impact 50cm, root 25cm, speed ratio 0.8~1.2를 seen gate로 재검증한다.
+6. gate에 가까워진 모델만 LOSO와 yja E02 unseen adaptation으로 넘긴다.
 
 ## 연구 목표
 

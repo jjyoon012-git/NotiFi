@@ -37,6 +37,7 @@ trial ID의 train/validation/test 교집합은 0이다. 같은 사람과 같은 
 | EXP-012 | 2026-08-04 10:50 | 개선안 1-7 통합 학습 | test MPJPE 18.11cm, speed ratio 2.088 | 위치는 개선, 물리 속도 위반으로 무보정 모델 거절 |
 | EXP-013 | 2026-08-04 11:06 | V2 branch별 validation calibration | rotation 0.10/high 0/root 0.50 선택, MPJPE 21.29cm, speed 1.167 | V2 calibrated 모델 채택 |
 | EXP-014 | 2026-08-04 11:59 | contact-guided root Stage A | strength 0.50 선택, test root 31.81cm, impact 54.89cm | root 개선으로 채택, impact는 다음 단계에서 재개선 |
+| EXP-015 | 2026-08-04 13:21 | event-centric impact/contact Stage | contact 0.75만 선택, test injury F1 0.354→0.423 | contact branch 채택, event/joint/speed branch 거절 |
 
 ## 상세 로그
 
@@ -181,16 +182,42 @@ trial ID의 train/validation/test 교집합은 0이다. 같은 사람과 같은 
   채택한다. 다만 낙상 impact 및 contact 성능 개선으로 해석하지 않으며, 다음 단계는 pose를
   건드리지 않고 event-level impact/contact localization을 별도로 개선한다.
 
+### EXP-015: event-centric impact and body-part localization
+
+- 목적: 전체 pose loss에 묻히던 낙상 순간을 `(frame, injury joint)` event로 분리하고,
+  최초 충돌 시점과 부위를 CSI-only로 복원한다.
+- target 변경: 기존 `height < 12cm`만 사용하지 않고 표면 근접, 하강 속도, 관절 감속,
+  가속도, 낙상 진행도를 결합한 physical impact proxy를 만들었다. 관절별 시간 정규화를
+  적용해 train 270 danger trial에서 pelvis/hip/knee/head/wrist 8개 관절이 모두 사용됐다.
+- 구조: frozen 7안의 V2/V3 temporal feature, raw motion feature, baseline feature와 raw CSI
+  amplitude/phase 변화량의 1/3/7/15-frame 표현을 결합했다. event frame, joint-time,
+  4개 body region, legacy contact, impact speed head를 학습했다.
+- 정렬 감사: danger 360개 train/validation trial에서 CSI 최대 motion peak와 GT event의
+  중앙 오차는 train 30.0, validation 24.5프레임이었다. 상위 5% CSI motion 후보와 event의
+  최소 거리는 각각 8.0, 5.5프레임이었다. validation best-correlation의 중앙 절대 lag는
+  13.5프레임으로, 충돌 후보는 존재하지만 다른 큰 동작에 묻히고 trial별 lag도 일정하지 않았다.
+- 실패 실험: exact joint-time head는 validation timing 29.24→25.94프레임으로 개선했으나
+  joint accuracy가 16.7→13.3%로 악화됐다. hierarchical region 및 raw CSI 반복도 timing은
+  25.14프레임까지 개선했지만 test region 23.3%, exact joint 13.3%로 일반화하지 못했다.
+- branch calibration: validation에서 event/joint/speed strength는 모두 `0`, contact만
+  `0.75`가 선택됐다. test injury-contact F1은 `0.354→0.423`, first-contact accuracy는
+  `37.8%`로 유지됐다. impact-speed MAE `0.553m/s`와 pose/root 출력도 그대로다.
+- 판단: 8안은 **contact-calibrated Stage A만 채택**한다. event timing과 최초 충돌 부위는
+  개선됐다고 주장하지 않는다. 다음 단계는 영상을 이용해 최소한 danger trial의 실제 impact
+  frame/body region annotation을 만들거나, 현재 proxy의 표본 검증을 먼저 해야 한다.
+
 ## 현재 seen 결과
 
-| Metric | 기존 기준선 | 이전 seen | 6안 V2 | 7안 Stage A |
-|---|---:|---:|---:|---:|
-| MPJPE | 24.17cm | 21.68cm | **21.29cm** | **21.29cm** |
-| Dynamic MPJPE | 23.39cm | 21.22cm | **20.90cm** | **20.90cm** |
-| Distal MPJPE | 35.44cm | 32.16cm | **31.53cm** | **31.53cm** |
-| Impact MPJPE | 58.24cm | 55.27cm | **54.72cm** | 54.89cm |
-| Root error | 33.06cm | 32.36cm | 32.33cm | **31.81cm** |
-| Pose-speed ratio | 1.058 | 1.141 | 1.167 | 1.167 |
+| Metric | 기존 기준선 | 이전 seen | 6안 V2 | 7안 Stage A | 8안 contact |
+|---|---:|---:|---:|---:|---:|
+| MPJPE | 24.17cm | 21.68cm | **21.29cm** | **21.29cm** | **21.29cm** |
+| Dynamic MPJPE | 23.39cm | 21.22cm | **20.90cm** | **20.90cm** | **20.90cm** |
+| Distal MPJPE | 35.44cm | 32.16cm | **31.53cm** | **31.53cm** | **31.53cm** |
+| Impact MPJPE | 58.24cm | 55.27cm | **54.72cm** | 54.89cm | 54.89cm |
+| Root error | 33.06cm | 32.36cm | 32.33cm | **31.81cm** | **31.81cm** |
+| Pose-speed ratio | 1.058 | 1.141 | 1.167 | 1.167 | 1.167 |
+| Injury-contact F1 | - | - | 0.354 | 0.354 | **0.423** |
+| First-contact accuracy | - | - | 37.8% | 37.8% | 37.8% |
 
 현재 seen gate는 완전히 통과하지 않았다. 다음 seen 우선순위는 root trajectory와 impact
 절대위치이며, 목표는 MPJPE 20cm 이하, impact 50cm 이하, root 25cm 이하,
@@ -216,4 +243,10 @@ python -m notifi_pose.tools.calibrate_seen_v2
 python -m notifi_pose.tools.train_seen_v3_root `
   --epochs 16 --patience 5 --batch-size 8 `
   --run-dir work_v2/runs/seen_v3_contact_root
+python -m notifi_pose.tools.audit_impact_targets --split val
+python -m notifi_pose.tools.audit_impact_alignment
+python -m notifi_pose.tools.train_impact_event `
+  --epochs 15 --patience 5 --batch-size 8 `
+  --run-dir work_v2/runs/impact_event_v8c_raw
+python -m notifi_pose.tools.calibrate_impact_event
 ```

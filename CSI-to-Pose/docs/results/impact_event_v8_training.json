@@ -1,0 +1,691 @@
+{
+  "run": "impact_event_v8_single_split",
+  "protocol": "single_split",
+  "selection_split": "validation",
+  "test_used_for_selection": false,
+  "best_epoch": 3,
+  "initial_validation": {
+    "event_trials": 90,
+    "timing_mae_frames": 29.244444444444444,
+    "timing_median_frames": 14.0,
+    "timing_hit_at_2": 0.13333333333333333,
+    "timing_hit_at_5": 0.2777777777777778,
+    "joint_accuracy": 0.16666666666666666,
+    "joint_top3_accuracy": 0.45555555555555555,
+    "joint_time_hit_at_2": 0.011111111111111112,
+    "joint_time_hit_at_5": 0.044444444444444446,
+    "region_accuracy": 0.35555555555555557,
+    "region_top2_accuracy": 0.5888888888888889,
+    "region_time_hit_at_2": 0.044444444444444446,
+    "region_time_hit_at_5": 0.1111111111111111,
+    "target_joint_counts": [
+      6,
+      10,
+      4,
+      16,
+      17,
+      13,
+      16,
+      8
+    ],
+    "predicted_joint_counts": [
+      0,
+      0,
+      0,
+      55,
+      26,
+      0,
+      3,
+      6
+    ],
+    "target_region_counts": [
+      20,
+      33,
+      13,
+      24
+    ],
+    "predicted_region_counts": [
+      0,
+      82,
+      0,
+      8
+    ]
+  },
+  "selected_validation": {
+    "event_trials": 90,
+    "timing_mae_frames": 25.144444444444446,
+    "timing_median_frames": 13.5,
+    "timing_hit_at_2": 0.16666666666666666,
+    "timing_hit_at_5": 0.24444444444444444,
+    "joint_accuracy": 0.16666666666666666,
+    "joint_top3_accuracy": 0.43333333333333335,
+    "joint_time_hit_at_2": 0.03333333333333333,
+    "joint_time_hit_at_5": 0.06666666666666667,
+    "region_accuracy": 0.3333333333333333,
+    "region_top2_accuracy": 0.6,
+    "region_time_hit_at_2": 0.06666666666666667,
+    "region_time_hit_at_5": 0.07777777777777778,
+    "target_joint_counts": [
+      6,
+      10,
+      4,
+      16,
+      17,
+      13,
+      16,
+      8
+    ],
+    "predicted_joint_counts": [
+      0,
+      6,
+      11,
+      25,
+      20,
+      7,
+      6,
+      15
+    ],
+    "target_region_counts": [
+      20,
+      33,
+      13,
+      24
+    ],
+    "predicted_region_counts": [
+      24,
+      34,
+      4,
+      28
+    ]
+  },
+  "test": {
+    "event_trials": 90,
+    "timing_mae_frames": 22.944444444444443,
+    "timing_median_frames": 13.0,
+    "timing_hit_at_2": 0.1,
+    "timing_hit_at_5": 0.24444444444444444,
+    "joint_accuracy": 0.13333333333333333,
+    "joint_top3_accuracy": 0.3111111111111111,
+    "joint_time_hit_at_2": 0.03333333333333333,
+    "joint_time_hit_at_5": 0.05555555555555555,
+    "region_accuracy": 0.23333333333333334,
+    "region_top2_accuracy": 0.4777777777777778,
+    "region_time_hit_at_2": 0.03333333333333333,
+    "region_time_hit_at_5": 0.06666666666666667,
+    "target_joint_counts": [
+      10,
+      5,
+      6,
+      13,
+      13,
+      20,
+      12,
+      11
+    ],
+    "predicted_joint_counts": [
+      0,
+      12,
+      12,
+      20,
+      13,
+      5,
+      14,
+      14
+    ],
+    "target_region_counts": [
+      21,
+      26,
+      20,
+      23
+    ],
+    "predicted_region_counts": [
+      31,
+      32,
+      3,
+      24
+    ]
+  },
+  "legacy_injury_test": {
+    "injury_contact_f1": 0.43538233660433256,
+    "foot_contact_f1": 0.7010294297948861,
+    "first_contact_accuracy": 0.25555555555555554,
+    "first_contact_trials": 90,
+    "impact_joint_speed_mae_mps": 0.5664558004825673,
+    "floor_height_mae_m": 0.027191810125921978,
+    "pose_scale_mean": 0.05999974240455937,
+    "root_scale_mean": 0.28419766727264545
+  },
+  "quality": {
+    "train": {
+      "count": 1556,
+      "mean": 0.7881935834884644,
+      "minimum": 0.4431612491607666,
+      "p10": 0.5401250123977661,
+      "median": 0.8050000071525574,
+      "p90": 1.0,
+      "maximum": 1.0
+    },
+    "validation": {
+      "count": 405,
+      "mean": 0.7852487564086914,
+      "minimum": 0.4631243646144867,
+      "p10": 0.5401250123977661,
+      "median": 0.8050000071525574,
+      "p90": 1.0,
+      "maximum": 1.0
+    },
+    "test": {
+      "count": 405,
+      "mean": 0.7885462045669556,
+      "minimum": 0.4431612491607666,
+      "p10": 0.5401250123977661,
+      "median": 0.8050000071525574,
+      "p90": 1.0,
+      "maximum": 1.0
+    }
+  },
+  "config": {
+    "danger_weight": 4.0,
+    "learning_rate": 0.0002,
+    "batch_size": 8
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "total": 9.734990689932227,
+        "event_focal": 0.016544588014919186,
+        "event_time": 4.941520597756981,
+        "joint_time": 7.7958063748318,
+        "region_time": 6.666984659847073,
+        "first_contact": 2.949871153328903,
+        "first_region": 1.8446633584395167,
+        "contact": 0.052944763544420195,
+        "impact_speed": 0.3418181617875945
+      },
+      "selection_score": 4.044444444444445,
+      "validation": {
+        "event_trials": 90,
+        "timing_mae_frames": 27.61111111111111,
+        "timing_median_frames": 13.0,
+        "timing_hit_at_2": 0.13333333333333333,
+        "timing_hit_at_5": 0.26666666666666666,
+        "joint_accuracy": 0.1,
+        "joint_top3_accuracy": 0.4,
+        "joint_time_hit_at_2": 0.011111111111111112,
+        "joint_time_hit_at_5": 0.03333333333333333,
+        "region_accuracy": 0.3111111111111111,
+        "region_top2_accuracy": 0.5777777777777777,
+        "region_time_hit_at_2": 0.05555555555555555,
+        "region_time_hit_at_5": 0.1111111111111111,
+        "target_joint_counts": [
+          6,
+          10,
+          4,
+          16,
+          17,
+          13,
+          16,
+          8
+        ],
+        "predicted_joint_counts": [
+          0,
+          1,
+          2,
+          37,
+          14,
+          12,
+          6,
+          18
+        ],
+        "target_region_counts": [
+          20,
+          33,
+          13,
+          24
+        ],
+        "predicted_region_counts": [
+          5,
+          45,
+          9,
+          31
+        ]
+      }
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "total": 8.427172923762265,
+        "event_focal": 0.007381951341831669,
+        "event_time": 4.529624693804351,
+        "joint_time": 6.880127803831909,
+        "region_time": 5.781471480440665,
+        "first_contact": 2.518428732006593,
+        "first_region": 1.4362310854512192,
+        "contact": 0.03262068927503529,
+        "impact_speed": 0.315668340552129
+      },
+      "selection_score": 4.011666666666667,
+      "validation": {
+        "event_trials": 90,
+        "timing_mae_frames": 26.81111111111111,
+        "timing_median_frames": 15.5,
+        "timing_hit_at_2": 0.1111111111111111,
+        "timing_hit_at_5": 0.2222222222222222,
+        "joint_accuracy": 0.12222222222222222,
+        "joint_top3_accuracy": 0.3888888888888889,
+        "joint_time_hit_at_2": 0.022222222222222223,
+        "joint_time_hit_at_5": 0.044444444444444446,
+        "region_accuracy": 0.28888888888888886,
+        "region_top2_accuracy": 0.5666666666666667,
+        "region_time_hit_at_2": 0.03333333333333333,
+        "region_time_hit_at_5": 0.06666666666666667,
+        "target_joint_counts": [
+          6,
+          10,
+          4,
+          16,
+          17,
+          13,
+          16,
+          8
+        ],
+        "predicted_joint_counts": [
+          0,
+          9,
+          12,
+          28,
+          11,
+          9,
+          6,
+          15
+        ],
+        "target_region_counts": [
+          20,
+          33,
+          13,
+          24
+        ],
+        "predicted_region_counts": [
+          29,
+          37,
+          3,
+          21
+        ]
+      }
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "total": 7.702703327017149,
+        "event_focal": 0.0047347314964139246,
+        "event_time": 4.099509103132704,
+        "joint_time": 6.185079998712613,
+        "region_time": 5.208870473435115,
+        "first_contact": 2.2602181538824557,
+        "first_region": 1.2886621188994851,
+        "contact": 0.03149024166219454,
+        "impact_speed": 0.3330610594436871
+      },
+      "selection_score": 3.783888888888889,
+      "validation": {
+        "event_trials": 90,
+        "timing_mae_frames": 25.144444444444446,
+        "timing_median_frames": 13.5,
+        "timing_hit_at_2": 0.16666666666666666,
+        "timing_hit_at_5": 0.24444444444444444,
+        "joint_accuracy": 0.16666666666666666,
+        "joint_top3_accuracy": 0.43333333333333335,
+        "joint_time_hit_at_2": 0.03333333333333333,
+        "joint_time_hit_at_5": 0.06666666666666667,
+        "region_accuracy": 0.3333333333333333,
+        "region_top2_accuracy": 0.6,
+        "region_time_hit_at_2": 0.06666666666666667,
+        "region_time_hit_at_5": 0.07777777777777778,
+        "target_joint_counts": [
+          6,
+          10,
+          4,
+          16,
+          17,
+          13,
+          16,
+          8
+        ],
+        "predicted_joint_counts": [
+          0,
+          6,
+          11,
+          25,
+          20,
+          7,
+          6,
+          15
+        ],
+        "target_region_counts": [
+          20,
+          33,
+          13,
+          24
+        ],
+        "predicted_region_counts": [
+          24,
+          34,
+          4,
+          28
+        ]
+      }
+    },
+    {
+      "epoch": 4,
+      "train": {
+        "total": 6.986757465377258,
+        "event_focal": 0.004133556938826245,
+        "event_time": 3.7052962773869766,
+        "joint_time": 5.626850783978146,
+        "region_time": 4.6867242478466276,
+        "first_contact": 2.084818539705252,
+        "first_region": 1.1440132711571103,
+        "contact": 0.02795757321343975,
+        "impact_speed": 0.32868716446323687
+      },
+      "selection_score": 4.367222222222222,
+      "validation": {
+        "event_trials": 90,
+        "timing_mae_frames": 31.144444444444446,
+        "timing_median_frames": 17.0,
+        "timing_hit_at_2": 0.07777777777777778,
+        "timing_hit_at_5": 0.15555555555555556,
+        "joint_accuracy": 0.1111111111111111,
+        "joint_top3_accuracy": 0.4111111111111111,
+        "joint_time_hit_at_2": 0.05555555555555555,
+        "joint_time_hit_at_5": 0.05555555555555555,
+        "region_accuracy": 0.35555555555555557,
+        "region_top2_accuracy": 0.5222222222222223,
+        "region_time_hit_at_2": 0.07777777777777778,
+        "region_time_hit_at_5": 0.07777777777777778,
+        "target_joint_counts": [
+          6,
+          10,
+          4,
+          16,
+          17,
+          13,
+          16,
+          8
+        ],
+        "predicted_joint_counts": [
+          1,
+          15,
+          19,
+          20,
+          8,
+          8,
+          5,
+          14
+        ],
+        "target_region_counts": [
+          20,
+          33,
+          13,
+          24
+        ],
+        "predicted_region_counts": [
+          45,
+          19,
+          7,
+          19
+        ]
+      }
+    },
+    {
+      "epoch": 5,
+      "train": {
+        "total": 6.195408306483198,
+        "event_focal": 0.004097739816027747,
+        "event_time": 3.324479151507576,
+        "joint_time": 5.057326915025098,
+        "region_time": 4.143704905301562,
+        "first_contact": 1.864988783331334,
+        "first_region": 0.9430017474377983,
+        "contact": 0.02838785839709992,
+        "impact_speed": 0.32976051682371715
+      },
+      "selection_score": 4.755000000000001,
+      "validation": {
+        "event_trials": 90,
+        "timing_mae_frames": 34.522222222222226,
+        "timing_median_frames": 18.5,
+        "timing_hit_at_2": 0.1,
+        "timing_hit_at_5": 0.16666666666666666,
+        "joint_accuracy": 0.15555555555555556,
+        "joint_top3_accuracy": 0.43333333333333335,
+        "joint_time_hit_at_2": 0.06666666666666667,
+        "joint_time_hit_at_5": 0.1,
+        "region_accuracy": 0.28888888888888886,
+        "region_top2_accuracy": 0.5555555555555556,
+        "region_time_hit_at_2": 0.08888888888888889,
+        "region_time_hit_at_5": 0.1,
+        "target_joint_counts": [
+          6,
+          10,
+          4,
+          16,
+          17,
+          13,
+          16,
+          8
+        ],
+        "predicted_joint_counts": [
+          1,
+          6,
+          8,
+          24,
+          9,
+          17,
+          10,
+          15
+        ],
+        "target_region_counts": [
+          20,
+          33,
+          13,
+          24
+        ],
+        "predicted_region_counts": [
+          25,
+          30,
+          12,
+          23
+        ]
+      }
+    },
+    {
+      "epoch": 6,
+      "train": {
+        "total": 5.940079786170724,
+        "event_focal": 0.00400119808906325,
+        "event_time": 3.1277545178763972,
+        "joint_time": 4.671494577108741,
+        "region_time": 3.8465818598828156,
+        "first_contact": 1.6569227490449625,
+        "first_region": 0.8237877452128344,
+        "contact": 0.029931556806327406,
+        "impact_speed": 0.31667362172683283
+      },
+      "selection_score": 4.103333333333334,
+      "validation": {
+        "event_trials": 90,
+        "timing_mae_frames": 28.033333333333335,
+        "timing_median_frames": 19.5,
+        "timing_hit_at_2": 0.12222222222222222,
+        "timing_hit_at_5": 0.2,
+        "joint_accuracy": 0.15555555555555556,
+        "joint_top3_accuracy": 0.4,
+        "joint_time_hit_at_2": 0.07777777777777778,
+        "joint_time_hit_at_5": 0.1,
+        "region_accuracy": 0.3111111111111111,
+        "region_top2_accuracy": 0.5111111111111111,
+        "region_time_hit_at_2": 0.06666666666666667,
+        "region_time_hit_at_5": 0.07777777777777778,
+        "target_joint_counts": [
+          6,
+          10,
+          4,
+          16,
+          17,
+          13,
+          16,
+          8
+        ],
+        "predicted_joint_counts": [
+          3,
+          5,
+          18,
+          12,
+          5,
+          23,
+          7,
+          17
+        ],
+        "target_region_counts": [
+          20,
+          33,
+          13,
+          24
+        ],
+        "predicted_region_counts": [
+          33,
+          15,
+          20,
+          22
+        ]
+      }
+    },
+    {
+      "epoch": 7,
+      "train": {
+        "total": 4.95616452637605,
+        "event_focal": 0.0038008470671912296,
+        "event_time": 2.8523571380919233,
+        "joint_time": 4.150652900146642,
+        "region_time": 3.4155753841743373,
+        "first_contact": 1.3845877181594965,
+        "first_region": 0.6423087075620814,
+        "contact": 0.0287208599810534,
+        "impact_speed": 0.3113972640052859
+      },
+      "selection_score": 4.667777777777779,
+      "validation": {
+        "event_trials": 90,
+        "timing_mae_frames": 34.01111111111111,
+        "timing_median_frames": 19.5,
+        "timing_hit_at_2": 0.1,
+        "timing_hit_at_5": 0.17777777777777778,
+        "joint_accuracy": 0.14444444444444443,
+        "joint_top3_accuracy": 0.4444444444444444,
+        "joint_time_hit_at_2": 0.03333333333333333,
+        "joint_time_hit_at_5": 0.05555555555555555,
+        "region_accuracy": 0.32222222222222224,
+        "region_top2_accuracy": 0.6111111111111112,
+        "region_time_hit_at_2": 0.05555555555555555,
+        "region_time_hit_at_5": 0.1,
+        "target_joint_counts": [
+          6,
+          10,
+          4,
+          16,
+          17,
+          13,
+          16,
+          8
+        ],
+        "predicted_joint_counts": [
+          3,
+          11,
+          15,
+          24,
+          9,
+          16,
+          5,
+          7
+        ],
+        "target_region_counts": [
+          20,
+          33,
+          13,
+          24
+        ],
+        "predicted_region_counts": [
+          31,
+          32,
+          14,
+          13
+        ]
+      }
+    },
+    {
+      "epoch": 8,
+      "train": {
+        "total": 4.631926513149132,
+        "event_focal": 0.003702714164225226,
+        "event_time": 2.7001067360140056,
+        "joint_time": 3.7999485084514077,
+        "region_time": 3.0853013839084262,
+        "first_contact": 1.1585519066353385,
+        "first_region": 0.43264152879580126,
+        "contact": 0.029935352880732756,
+        "impact_speed": 0.29327361438911803
+      },
+      "selection_score": 4.651111111111112,
+      "validation": {
+        "event_trials": 90,
+        "timing_mae_frames": 33.9,
+        "timing_median_frames": 18.5,
+        "timing_hit_at_2": 0.07777777777777778,
+        "timing_hit_at_5": 0.2111111111111111,
+        "joint_accuracy": 0.17777777777777778,
+        "joint_top3_accuracy": 0.4,
+        "joint_time_hit_at_2": 0.044444444444444446,
+        "joint_time_hit_at_5": 0.1,
+        "region_accuracy": 0.32222222222222224,
+        "region_top2_accuracy": 0.5666666666666667,
+        "region_time_hit_at_2": 0.06666666666666667,
+        "region_time_hit_at_5": 0.13333333333333333,
+        "target_joint_counts": [
+          6,
+          10,
+          4,
+          16,
+          17,
+          13,
+          16,
+          8
+        ],
+        "predicted_joint_counts": [
+          7,
+          9,
+          21,
+          12,
+          6,
+          14,
+          9,
+          12
+        ],
+        "target_region_counts": [
+          20,
+          33,
+          13,
+          24
+        ],
+        "predicted_region_counts": [
+          34,
+          21,
+          12,
+          23
+        ]
+      }
+    }
+  ],
+  "checkpoint": "work_v2/runs/impact_event_v8c_raw/best_model.pt"
+}

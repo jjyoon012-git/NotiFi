@@ -1,0 +1,635 @@
+{
+  "run": "impact_event_v8_branch_calibration",
+  "selection_split": "validation",
+  "test_used_for_selection": false,
+  "source_checkpoint": "work_v2/runs/impact_event_v8c_raw/best_model.pt",
+  "selected": {
+    "event_strength": 0.0,
+    "joint_strength": 0.0,
+    "contact_strength": 0.75,
+    "speed_strength": 0.0
+  },
+  "baseline_validation": {
+    "event": {
+      "event_trials": 90,
+      "timing_mae_frames": 29.244444444444444,
+      "timing_median_frames": 14.0,
+      "timing_hit_at_2": 0.13333333333333333,
+      "timing_hit_at_5": 0.2777777777777778,
+      "joint_accuracy": 0.16666666666666666,
+      "joint_top3_accuracy": 0.45555555555555555,
+      "joint_time_hit_at_2": 0.011111111111111112,
+      "joint_time_hit_at_5": 0.044444444444444446,
+      "region_accuracy": 0.35555555555555557,
+      "region_top2_accuracy": 0.5888888888888889,
+      "region_time_hit_at_2": 0.044444444444444446,
+      "region_time_hit_at_5": 0.1111111111111111,
+      "target_joint_counts": [
+        6,
+        10,
+        4,
+        16,
+        17,
+        13,
+        16,
+        8
+      ],
+      "predicted_joint_counts": [
+        0,
+        0,
+        0,
+        55,
+        26,
+        0,
+        3,
+        6
+      ],
+      "target_region_counts": [
+        20,
+        33,
+        13,
+        24
+      ],
+      "predicted_region_counts": [
+        0,
+        82,
+        0,
+        8
+      ]
+    },
+    "injury": {
+      "injury_contact_f1": 0.46232050411112935,
+      "foot_contact_f1": 0.7154526438727072,
+      "first_contact_accuracy": 0.3888888888888889,
+      "first_contact_trials": 90,
+      "impact_joint_speed_mae_mps": 0.5401557412191003,
+      "floor_height_mae_m": 0.027027001020349103,
+      "pose_scale_mean": 0.060422932694909746,
+      "root_scale_mean": 0.28389214137635854
+    }
+  },
+  "selected_validation": {
+    "event": {
+      "event_trials": 90,
+      "timing_mae_frames": 29.244444444444444,
+      "timing_median_frames": 14.0,
+      "timing_hit_at_2": 0.13333333333333333,
+      "timing_hit_at_5": 0.2777777777777778,
+      "joint_accuracy": 0.16666666666666666,
+      "joint_top3_accuracy": 0.45555555555555555,
+      "joint_time_hit_at_2": 0.011111111111111112,
+      "joint_time_hit_at_5": 0.044444444444444446,
+      "region_accuracy": 0.35555555555555557,
+      "region_top2_accuracy": 0.5888888888888889,
+      "region_time_hit_at_2": 0.044444444444444446,
+      "region_time_hit_at_5": 0.1111111111111111,
+      "target_joint_counts": [
+        6,
+        10,
+        4,
+        16,
+        17,
+        13,
+        16,
+        8
+      ],
+      "predicted_joint_counts": [
+        0,
+        0,
+        0,
+        55,
+        26,
+        0,
+        3,
+        6
+      ],
+      "target_region_counts": [
+        20,
+        33,
+        13,
+        24
+      ],
+      "predicted_region_counts": [
+        0,
+        82,
+        0,
+        8
+      ]
+    },
+    "injury": {
+      "injury_contact_f1": 0.6383921109811131,
+      "foot_contact_f1": 0.7154526438727072,
+      "first_contact_accuracy": 0.3888888888888889,
+      "first_contact_trials": 90,
+      "impact_joint_speed_mae_mps": 0.5401557412191003,
+      "floor_height_mae_m": 0.027027001020349103,
+      "pose_scale_mean": 0.060422932694909746,
+      "root_scale_mean": 0.28389214137635854
+    }
+  },
+  "test": {
+    "event": {
+      "event_trials": 90,
+      "timing_mae_frames": 25.566666666666666,
+      "timing_median_frames": 13.5,
+      "timing_hit_at_2": 0.13333333333333333,
+      "timing_hit_at_5": 0.25555555555555554,
+      "joint_accuracy": 0.13333333333333333,
+      "joint_top3_accuracy": 0.35555555555555557,
+      "joint_time_hit_at_2": 0.011111111111111112,
+      "joint_time_hit_at_5": 0.03333333333333333,
+      "region_accuracy": 0.2777777777777778,
+      "region_top2_accuracy": 0.5111111111111111,
+      "region_time_hit_at_2": 0.022222222222222223,
+      "region_time_hit_at_5": 0.044444444444444446,
+      "target_joint_counts": [
+        10,
+        5,
+        6,
+        13,
+        13,
+        20,
+        12,
+        11
+      ],
+      "predicted_joint_counts": [
+        0,
+        1,
+        0,
+        58,
+        22,
+        2,
+        2,
+        5
+      ],
+      "target_region_counts": [
+        21,
+        26,
+        20,
+        23
+      ],
+      "predicted_region_counts": [
+        0,
+        83,
+        2,
+        5
+      ]
+    },
+    "injury": {
+      "injury_contact_f1": 0.42331953875205913,
+      "foot_contact_f1": 0.7010294297948861,
+      "first_contact_accuracy": 0.37777777777777777,
+      "first_contact_trials": 90,
+      "impact_joint_speed_mae_mps": 0.552902061284615,
+      "floor_height_mae_m": 0.027191810125921978,
+      "pose_scale_mean": 0.05999974240455937,
+      "root_scale_mean": 0.28419766727264545
+    }
+  },
+  "contact_candidates": [
+    {
+      "strength": 0.0,
+      "validation": {
+        "injury_contact_f1": 0.46232050411112935,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.3888888888888889,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5401557412191003,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    },
+    {
+      "strength": 0.25,
+      "validation": {
+        "injury_contact_f1": 0.5478352568984708,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.3888888888888889,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5401557412191003,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    },
+    {
+      "strength": 0.5,
+      "validation": {
+        "injury_contact_f1": 0.6107346837418851,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.3888888888888889,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5401557412191003,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    },
+    {
+      "strength": 0.75,
+      "validation": {
+        "injury_contact_f1": 0.6383921109811131,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.3888888888888889,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5401557412191003,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    },
+    {
+      "strength": 1.0,
+      "validation": {
+        "injury_contact_f1": 0.6246734121894447,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.3888888888888889,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5401557412191003,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    }
+  ],
+  "joint_candidates": [
+    {
+      "strength": 0.0,
+      "gate": true,
+      "score": 4.149444444444444,
+      "event_validation": {
+        "event_trials": 90,
+        "timing_mae_frames": 29.244444444444444,
+        "timing_median_frames": 14.0,
+        "timing_hit_at_2": 0.13333333333333333,
+        "timing_hit_at_5": 0.2777777777777778,
+        "joint_accuracy": 0.16666666666666666,
+        "joint_top3_accuracy": 0.45555555555555555,
+        "joint_time_hit_at_2": 0.011111111111111112,
+        "joint_time_hit_at_5": 0.044444444444444446,
+        "region_accuracy": 0.35555555555555557,
+        "region_top2_accuracy": 0.5888888888888889,
+        "region_time_hit_at_2": 0.044444444444444446,
+        "region_time_hit_at_5": 0.1111111111111111,
+        "target_joint_counts": [
+          6,
+          10,
+          4,
+          16,
+          17,
+          13,
+          16,
+          8
+        ],
+        "predicted_joint_counts": [
+          0,
+          0,
+          0,
+          55,
+          26,
+          0,
+          3,
+          6
+        ],
+        "target_region_counts": [
+          20,
+          33,
+          13,
+          24
+        ],
+        "predicted_region_counts": [
+          0,
+          82,
+          0,
+          8
+        ]
+      },
+      "injury_validation": {
+        "injury_contact_f1": 0.6383921109811131,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.3888888888888889,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5401557412191003,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    },
+    {
+      "strength": 0.25,
+      "gate": false,
+      "score": 4.00611111111111,
+      "event_validation": {
+        "event_trials": 90,
+        "timing_mae_frames": 27.42222222222222,
+        "timing_median_frames": 13.0,
+        "timing_hit_at_2": 0.13333333333333333,
+        "timing_hit_at_5": 0.25555555555555554,
+        "joint_accuracy": 0.15555555555555556,
+        "joint_top3_accuracy": 0.4777777777777778,
+        "joint_time_hit_at_2": 0.011111111111111112,
+        "joint_time_hit_at_5": 0.022222222222222223,
+        "region_accuracy": 0.3333333333333333,
+        "region_top2_accuracy": 0.5888888888888889,
+        "region_time_hit_at_2": 0.022222222222222223,
+        "region_time_hit_at_5": 0.06666666666666667,
+        "target_joint_counts": [
+          6,
+          10,
+          4,
+          16,
+          17,
+          13,
+          16,
+          8
+        ],
+        "predicted_joint_counts": [
+          0,
+          0,
+          0,
+          53,
+          24,
+          2,
+          4,
+          7
+        ],
+        "target_region_counts": [
+          20,
+          33,
+          13,
+          24
+        ],
+        "predicted_region_counts": [
+          0,
+          79,
+          2,
+          9
+        ]
+      },
+      "injury_validation": {
+        "injury_contact_f1": 0.6383921109811131,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.35555555555555557,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5401557412191003,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    },
+    {
+      "strength": 0.5,
+      "gate": false,
+      "score": 3.8388888888888895,
+      "event_validation": {
+        "event_trials": 90,
+        "timing_mae_frames": 25.555555555555557,
+        "timing_median_frames": 12.5,
+        "timing_hit_at_2": 0.13333333333333333,
+        "timing_hit_at_5": 0.28888888888888886,
+        "joint_accuracy": 0.15555555555555556,
+        "joint_top3_accuracy": 0.4888888888888889,
+        "joint_time_hit_at_2": 0.011111111111111112,
+        "joint_time_hit_at_5": 0.022222222222222223,
+        "region_accuracy": 0.3,
+        "region_top2_accuracy": 0.6,
+        "region_time_hit_at_2": 0.03333333333333333,
+        "region_time_hit_at_5": 0.08888888888888889,
+        "target_joint_counts": [
+          6,
+          10,
+          4,
+          16,
+          17,
+          13,
+          16,
+          8
+        ],
+        "predicted_joint_counts": [
+          0,
+          1,
+          0,
+          48,
+          26,
+          2,
+          5,
+          8
+        ],
+        "target_region_counts": [
+          20,
+          33,
+          13,
+          24
+        ],
+        "predicted_region_counts": [
+          1,
+          72,
+          2,
+          15
+        ]
+      },
+      "injury_validation": {
+        "injury_contact_f1": 0.6383921109811131,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.35555555555555557,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5401557412191003,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    },
+    {
+      "strength": 0.75,
+      "gate": false,
+      "score": 3.925555555555556,
+      "event_validation": {
+        "event_trials": 90,
+        "timing_mae_frames": 26.08888888888889,
+        "timing_median_frames": 13.5,
+        "timing_hit_at_2": 0.15555555555555556,
+        "timing_hit_at_5": 0.26666666666666666,
+        "joint_accuracy": 0.14444444444444443,
+        "joint_top3_accuracy": 0.4888888888888889,
+        "joint_time_hit_at_2": 0.03333333333333333,
+        "joint_time_hit_at_5": 0.044444444444444446,
+        "region_accuracy": 0.2777777777777778,
+        "region_top2_accuracy": 0.6333333333333333,
+        "region_time_hit_at_2": 0.022222222222222223,
+        "region_time_hit_at_5": 0.06666666666666667,
+        "target_joint_counts": [
+          6,
+          10,
+          4,
+          16,
+          17,
+          13,
+          16,
+          8
+        ],
+        "predicted_joint_counts": [
+          0,
+          1,
+          2,
+          43,
+          26,
+          3,
+          6,
+          9
+        ],
+        "target_region_counts": [
+          20,
+          33,
+          13,
+          24
+        ],
+        "predicted_region_counts": [
+          5,
+          66,
+          2,
+          17
+        ]
+      },
+      "injury_validation": {
+        "injury_contact_f1": 0.6383921109811131,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.32222222222222224,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5401557412191003,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    },
+    {
+      "strength": 1.0,
+      "gate": false,
+      "score": 3.783888888888889,
+      "event_validation": {
+        "event_trials": 90,
+        "timing_mae_frames": 25.144444444444446,
+        "timing_median_frames": 13.5,
+        "timing_hit_at_2": 0.16666666666666666,
+        "timing_hit_at_5": 0.24444444444444444,
+        "joint_accuracy": 0.16666666666666666,
+        "joint_top3_accuracy": 0.43333333333333335,
+        "joint_time_hit_at_2": 0.03333333333333333,
+        "joint_time_hit_at_5": 0.06666666666666667,
+        "region_accuracy": 0.3333333333333333,
+        "region_top2_accuracy": 0.6,
+        "region_time_hit_at_2": 0.06666666666666667,
+        "region_time_hit_at_5": 0.07777777777777778,
+        "target_joint_counts": [
+          6,
+          10,
+          4,
+          16,
+          17,
+          13,
+          16,
+          8
+        ],
+        "predicted_joint_counts": [
+          0,
+          6,
+          11,
+          25,
+          20,
+          7,
+          6,
+          15
+        ],
+        "target_region_counts": [
+          20,
+          33,
+          13,
+          24
+        ],
+        "predicted_region_counts": [
+          24,
+          34,
+          4,
+          28
+        ]
+      },
+      "injury_validation": {
+        "injury_contact_f1": 0.6383921109811131,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.2222222222222222,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5401557412191003,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    }
+  ],
+  "speed_candidates": [
+    {
+      "strength": 0.0,
+      "validation": {
+        "injury_contact_f1": 0.6383921109811131,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.3888888888888889,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5401557412191003,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    },
+    {
+      "strength": 0.25,
+      "validation": {
+        "injury_contact_f1": 0.6383921109811131,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.3888888888888889,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5408321716865145,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    },
+    {
+      "strength": 0.5,
+      "validation": {
+        "injury_contact_f1": 0.6383921109811131,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.3888888888888889,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5426564685237927,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    },
+    {
+      "strength": 0.75,
+      "validation": {
+        "injury_contact_f1": 0.6383921109811131,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.3888888888888889,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5455516739819187,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    },
+    {
+      "strength": 1.0,
+      "validation": {
+        "injury_contact_f1": 0.6383921109811131,
+        "foot_contact_f1": 0.7154526438727072,
+        "first_contact_accuracy": 0.3888888888888889,
+        "first_contact_trials": 90,
+        "impact_joint_speed_mae_mps": 0.5495386829009051,
+        "floor_height_mae_m": 0.027027001020349103,
+        "pose_scale_mean": 0.060422932694909746,
+        "root_scale_mean": 0.28389214137635854
+      }
+    }
+  ]
+}

@@ -111,6 +111,26 @@
       "impact_mpjpe_m": 0.5489342000764016,
       "root_error_m": 0.3180628557999929,
       "pose_speed_ratio": 1.1666141368582936
+    },
+    {
+      "plan": "8A",
+      "name": "Contact-calibrated impact event Stage A",
+      "protocol": "single_split_seen",
+      "source": "docs/results/impact_event_v8_calibration.json",
+      "mpjpe_m": 0.21286403985211141,
+      "dynamic_mpjpe_m": 0.2089781027944649,
+      "distal_mpjpe_m": 0.31527323722839357,
+      "impact_mpjpe_m": 0.5489342000764016,
+      "root_error_m": 0.3180628557999929,
+      "pose_speed_ratio": 1.1666141368582936,
+      "injury_contact_f1": 0.42331953875205913,
+      "first_contact_accuracy": 0.37777777777777777,
+      "calibration": {
+        "event_strength": 0.0,
+        "joint_strength": 0.0,
+        "contact_strength": 0.75,
+        "speed_strength": 0.0
+      }
     }
   ]
 }
