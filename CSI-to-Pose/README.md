@@ -4,24 +4,11 @@ Wi-Fi CSI만 입력받아 시간에 따른 사람의 **GVHMR SMPL-22 3D pose와 
 
 - 기존 코드: [NotiFi-CSI-to-Pose `feature/goal1`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1)
 - 현재 통합 위치: [NotiFi/CSI-to-Pose](https://github.com/jjyoon012-git/NotiFi/tree/main/CSI-to-Pose)
-- 현재 권장 seen 모델: **quality-weighted phase-aware 6D rotation + keyframe root refinement**
+- 현재 권장 seen 모델: **6안 - quality-weighted phase-aware 6D rotation + keyframe root refinement**
 - 현재 개발 순서: **seen 성능 확보 후 unseen/LOSO calibration 재개**
+- 문서 정렬 원칙: **현재 권장 모델을 맨 위에 두고, 이전 안은 최신순으로 기록**
 
-## 연구 목표
-
-단순 행동 분류가 아니라 프레임별 자세를 복원한다. 특히 낙상 시점에 머리, 손목, 무릎, 발목, 발이 어느 방향으로 움직이고 어느 부위가 바닥과 충돌했는지를 확인할 수 있어야 한다.
-
-입력과 출력은 다음과 같다.
-
-```text
-입력  CSI: [B, T=304, Link=3, Subcarrier=114, I/Q-derived channel=2]
-출력  pose_rel: [B, T, 22, 3]  # pelvis-relative SMPL-22
-      root:     [B, T, 3]      # world-space pelvis trajectory
-보조  action: 17 classes
-      risk:   safe / warning / danger
-```
-
-## 현재 Seen-First 모델
+## 현재 모델: 6안 - Seen Reconstruction V2
 
 현재는 사용자가 지정한
 [`feature/goal1/work_v2/splits`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1/work_v2/splits)의
@@ -111,7 +98,61 @@ impact 50cm 이하, root 25cm 이하, pose-speed ratio 0.8~1.2다. 이 기준에
 동일한 backbone을 고정하고 calibration/domain adaptation을 붙여 yja E02와 LOSO를
 unseen protocol로 다시 평가한다.
 
-## 기존 코드 설명
+## 기존 모델과의 차이
+
+직전 권장 모델은 **action-conditioned pose residual + validation scale 0.5 +
+keyframe root residual** 조합이었다. 6안은 이 출력을 coarse baseline으로 보존하고,
+그 위에 품질·위상·회전·접촉 표현과 제한적인 backbone 미세조정을 추가한다.
+
+| 구분 | 기준 GraphFormer | 직전 권장 모델 | 현재 6안 |
+|---|---|---|---|
+| 데이터 사용 | trial 동일 가중치 | 동일 가중치 | timestamp/link/관측성 품질 가중치 |
+| CSI motion | 단일 temporal 표현 | raw/delta motion-first | motion-first + gated feature fusion |
+| Pose decoder | Cartesian hybrid decoder | action-conditioned Cartesian residual | phase-aware keyframe 6D rotation + FK |
+| 고주파 보정 | 직접 pose 출력 | frame residual | 최대 2cm bounded residual, 현재 scale 0 |
+| Root | 직접 root 회귀 | keyframe root residual | anchor + root-step 적분 |
+| 보조 출력 | action/risk/phase/contact | action/risk/motion | feet/injury contact, 최초 충돌, impact speed, floor |
+| 학습 | backbone 전체 학습 | backbone 동결, head 학습 | head 학습 후 마지막 temporal block만 0.1배 LR |
+| 모델 선택 | validation MPJPE | residual scale 보정 | branch별 보정 + pose-speed 0.8~1.2 hard gate |
+
+직전 모델에서 현재 6안으로 MPJPE는 21.68→21.29cm, impact는
+55.27→54.72cm, root는 32.36→32.33cm로 개선됐다.
+
+## 현재 모델 문제점 및 개선 방향
+
+| 우선순위 | 문제 | 현재 근거 | 다음 개선 |
+|---:|---|---|---|
+| 1 | Root 절대 위치가 가장 큰 병목 | root 32.33cm, 직전 대비 0.03cm 개선 | body-centric root velocity, contact/floor 제약, anchor와 이동량 분리 학습 |
+| 2 | 회전 branch가 움직임을 과장 | 무보정 speed ratio 2.088, rotation-only 1.971 | angular velocity/geodesic loss, phase별 rotation 크기 제한, keyframe 보간 개선 |
+| 3 | 낙상 impact 복원이 부족 | impact 54.72cm, 목표 50cm 이하 | danger 전환 구간 oversampling, phase-specific decoder, 접촉 일관성 loss |
+| 4 | 고주파 branch가 실질적으로 미사용 | validation이 high-pose scale 0을 선택 | 2cm residual의 대역 분리와 temporal regularization 재설계 |
+| 5 | 부상 관련 head 정확도가 낮음 | injury F1 0.354, 최초 접촉 정확도 0.378 | event-level contact localization, class imbalance 보정, uncertainty calibration |
+| 6 | 아직 seen 성능만 검증 | 같은 사람·환경의 unseen trial 평가 | seen gate 통과 후 backbone을 고정하고 LOSO/domain calibration 진행 |
+| 7 | 저품질 trial이 남아 있음 | 품질 가중치 최솟값 0.443 | high-quality subset ablation, timestamp/link audit 강화, 자동 시간 이동은 금지 |
+
+다음 실험은 한 번에 여러 요소를 다시 섞지 않고 아래 순서로 진행한다.
+
+1. coarse pose를 고정하고 root 전용 표현과 contact/floor loss만 비교한다.
+2. rotation branch에 angular velocity와 geodesic amplitude 제약을 추가한다.
+3. danger transition 중심 impact/contact curriculum을 적용한다.
+4. MPJPE 20cm, impact 50cm, root 25cm, speed ratio 0.8~1.2를 seen gate로 재검증한다.
+5. gate에 가까워진 모델만 LOSO와 yja E02 unseen adaptation으로 넘긴다.
+
+## 연구 목표
+
+단순 행동 분류가 아니라 프레임별 자세를 복원한다. 특히 낙상 시점에 머리, 손목, 무릎, 발목, 발이 어느 방향으로 움직이고 어느 부위가 바닥과 충돌했는지를 확인할 수 있어야 한다.
+
+입력과 출력은 다음과 같다.
+
+```text
+입력  CSI: [B, T=304, Link=3, Subcarrier=114, I/Q-derived channel=2]
+출력  pose_rel: [B, T, 22, 3]  # pelvis-relative SMPL-22
+      root:     [B, T, 3]      # world-space pelvis trajectory
+보조  action: 17 classes
+      risk:   safe / warning / danger
+```
+
+## 기준 GraphFormer 코드 설명
 
 `feature/goal1`의 최신 GVHMR 경로는 다음 파이프라인을 사용한다.
 
@@ -137,117 +178,48 @@ flowchart LR
 6. **Domain robustness**: site baseline subtraction, RF augmentation, balanced cross-domain batches, GroupDRO, domain-adversarial head, supervised contrastive loss를 사용한다.
 7. **Auxiliary supervision**: action/risk뿐 아니라 fall phase, foot contact, velocity, acceleration, floor penetration을 함께 학습한다.
 
-## 현재 문제점
+## 이전 연구안: 최신순
 
-기존 robust GraphFormer의 위치 오차는 LOSO 평균 약 `29.38cm`지만 다음 문제가 남아 있다.
+6안의 배경이 된 이전 시도다. 최신 안부터 내려가며, 미채택 결과도 원인 분석을 위해 유지한다.
 
-- 사람과 환경이 바뀌면 CSI 분포가 크게 달라진다.
-- deterministic regression이 가능한 여러 동작을 평균내면서 정지 자세에 가까워진다.
-- raw prediction에는 고주파 흔들림이 있지만 5-frame smoothing 후 실제 동작 진폭이 작다.
-- LOSO smoothed pose-speed ratio가 평균 `0.369`다. GT 움직임을 1.0으로 볼 때 약 37%만 복원한다.
-- 낙상 impact 구간의 절대 위치 오차가 LOSO 평균 약 `66.58cm`로 여전히 크다.
-- action/risk 보조 head 정확도가 낮아 pose 생성에 강한 semantic condition을 공급하지 못한다.
+### 5안: CSI Motion Observability 진단
 
-## 1안: Robust GraphFormer
+**상태: 진단 완료, 다음 모델의 필수 통과 기준**
 
-**상태: 기준 모델, 채택**
-
-기존 GraphFormer에 환경 일반화 요소를 추가한 기준 모델이다.
-
-```text
-CSI encoder
-  -> link attention
-  -> temporal GraphFormer
-  -> hybrid SMPL-22 decoder
-  -> pose_rel + root
-
-보조 학습:
-  RF augmentation + GroupDRO + domain adversarial
-  + cross-domain supervised contrastive
-  + phase/contact/dynamics losses
-```
-
-장점:
-
-- 구조가 단순하고 추론이 결정론적이다.
-- 네 protocol에서 가장 안정적인 기본 성능을 보였다.
-- 새 모델은 이 체크포인트를 epoch 0 안전 기준으로 사용한다.
-
-한계:
-
-- MPJPE 중심 회귀라 평균 자세 수렴을 피하기 어렵다.
-- frame-to-frame velocity loss가 고주파 jitter에도 낮아질 수 있다.
-
-실행:
+decoder를 더 바꾸기 전에 현재 모델이 CSI의 trial별 동작을 실제로 사용하는지 검사했다.
 
 ```powershell
-python -m notifi_pose.tools.run_robust_protocols --only yja_e02
-python -m notifi_pose.tools.run_robust_protocols --only loso
-python -m notifi_pose.tools.summarize_robust_runs
+python -m notifi_pose.tools.diagnose_observability `
+  --probe-epochs 15 --overfit-steps 200 --overfit-trials 1 10
 ```
 
-## 2안: Impact-aware Temporal Refiner
+핵심 결과:
 
-**상태: 이전 unseen/LOSO 비교 기준, 현재 seen 모델의 baseline**
+- 정상 CSI 대신 다른 yja E02 trial의 CSI를 넣어도 MPJPE는 `29.57 -> 29.59cm`로 `0.02cm`만 악화됐다.
+- train mean-pose baseline도 `30.59cm`라 현재 모델과 차이가 `1.02cm`뿐이다.
+- frozen encoder의 speed R2는 source validation `0.004`, yja E02 `-0.109`였다.
+- impact F1은 source `0.148`, yja E02 `0.103`이고 timing MAE는 각각 `43.0`, `48.4` frames였다.
+- 가장 동적인 1개 trial을 200 step 외워도 `9.35cm`, pose-speed ratio `0.534`에 머물렀다.
 
-기존 robust checkpoint 뒤에 0으로 초기화된 temporal residual refiner를 붙인다. 초기 출력은 기준 모델과 정확히 같으며, validation 종합 점수가 좋아질 때만 체크포인트를 교체한다.
+따라서 주 병목은 더 큰 pose decoder가 아니라 **CSI encoder가 speed, phase, impact를 보존하지 못하고 pose objective가 평균 자세로 붕괴하는 것**이다. domain shift도 존재하지만 source 내부에서 이미 motion observability가 낮으므로 domain adaptation만 강화해서는 해결되지 않는다.
 
-추가 요소:
+다음 개발 순서는 다음과 같이 고정한다.
 
-1. GT acceleration peak를 기준으로 danger trial의 impact window를 만든다.
-2. 머리, 손목, 무릎, 발목, 발을 distal/injury-relevant joint로 가중한다.
-3. velocity, acceleration, jerk, foot slide, floor penetration을 함께 제약한다.
-4. validation에서 관절별 residual scale을 `0, 0.25, 0.5, 0.75, 1.0` 중 선택한다.
-5. 일반 관절 오차가 기준 모델보다 `0.05cm` 넘게 나빠지는 scale은 금지한다.
-6. test 결과는 checkpoint나 residual scale 선택에 사용하지 않는다.
+1. trial별 CSI motion energy와 GT speed의 lag/correlation으로 alignment 불량 데이터를 격리한다.
+2. speed, moving, phase, impact를 먼저 예측하는 motion-first CSI encoder를 pretrain한다.
+3. 정상 CSI 대비 shuffled CSI가 dynamic/impact 지표에서 명확히 나빠지는지 확인한다.
+4. 1-trial overfit `MPJPE < 3cm`, pose-speed ratio `0.9-1.1`을 통과시킨다.
+5. 그 뒤 velocity-space sequence decoder와 calibration을 붙이고 LOSO를 재개한다.
 
-```mermaid
-flowchart LR
-    A["Robust GraphFormer pose"] --> B["Identity-initialized temporal refiner"]
-    C["GT acceleration"] --> D["Impact window"]
-    D --> E["Impact and distal losses"]
-    B --> F["Validation-only joint calibration"]
-    F --> G["Final calibrated pose"]
-```
+전체 수치와 합격 기준은 [`docs/observability_diagnostics.md`](docs/observability_diagnostics.md), 원시 결과는 [`docs/results/observability_diagnostics.json`](docs/results/observability_diagnostics.json)에 있다.
 
-실행:
-
-```powershell
-python -m notifi_pose.tools.run_impact_protocols --only yja_e02
-python -m notifi_pose.tools.run_impact_protocols --only loso
-python -m notifi_pose.tools.summarize_impact_results
-```
-
-`run_impact_protocols`는 학습 후 `calibrated_model.pt`까지 자동 생성한다. 시각화 도구도 이 파일이 있으면 `best_model.pt`보다 먼저 사용한다.
-
-## 3안: Coherent Displacement Refiner
-
-**상태: 구현 및 실험 완료, 미채택**
-
-인접 frame velocity 대신 5 frame, 약 167ms 동안의 평균 변위를 맞춘다. 고주파 jitter가 loss를 속이지 못하게 하고 smoothing 후에도 남는 동작을 만들려는 접근이다.
-
-```text
-L_displacement = SmoothL1(
-  (pose[t+5] - pose[t]) * FPS/5,
-  (GT[t+5]   - GT[t])   * FPS/5
-)
-```
-
-yja E02에서 smoothed pose-speed ratio가 `0.721 -> 0.714`로 오히려 감소했다. 현재 residual decoder의 용량과 deterministic objective만으로는 motion-amplitude collapse를 해결하지 못한다고 판단해 채택하지 않았다.
-
-재현:
-
-```powershell
-python -m notifi_pose.tools.run_coherent_protocols --only yja_e02
-```
-
-## 4안: CSI-conditioned Latent Rectified Flow
+### 4안: CSI-conditioned Latent Rectified Flow
 
 **상태: 생성형 구조 구현 및 yja 실험 완료, 실험적/미채택**
 
 평균 자세 문제를 직접 다루기 위해 GT motion prior와 conditional rectified flow를 추가했다.
 
-### 4.1 GT-only kinematic motion prior
+#### 4.1 GT-only kinematic motion prior
 
 GVHMR pose를 parent-relative bone direction과 trial-level bone length code로 변환한다. decoder는 SMPL tree를 따라 pose를 복원한다. held-out subject의 GT는 prior 사전학습에 사용하지 않는다.
 
@@ -261,7 +233,7 @@ GT pose
 
 yja protocol의 source validation에서 prior 자체의 재구성 MPJPE는 표시 정밀도 기준 `0.00cm`였다. 따라서 병목은 motion decoder가 아니라 CSI에서 올바른 latent trajectory를 찾는 단계다.
 
-### 4.2 Conditional rectified flow
+#### 4.2 Conditional rectified flow
 
 CSI condition으로 만든 초기 latent `z0`에 noise를 추가하고 GT latent `z1`로 가는 vector field를 학습한다.
 
@@ -301,38 +273,100 @@ python -m notifi_pose.tools.run_latent_flow_protocols `
   --only yja_e02 --prior-epochs 12 --epochs 15
 ```
 
-## 5안: CSI Motion Observability 진단
+### 3안: Coherent Displacement Refiner
 
-**상태: 진단 완료, 다음 모델의 필수 통과 기준**
+**상태: 구현 및 실험 완료, 미채택**
 
-decoder를 더 바꾸기 전에 현재 모델이 CSI의 trial별 동작을 실제로 사용하는지 검사했다.
+인접 frame velocity 대신 5 frame, 약 167ms 동안의 평균 변위를 맞춘다. 고주파 jitter가 loss를 속이지 못하게 하고 smoothing 후에도 남는 동작을 만들려는 접근이다.
 
-```powershell
-python -m notifi_pose.tools.diagnose_observability `
-  --probe-epochs 15 --overfit-steps 200 --overfit-trials 1 10
+```text
+L_displacement = SmoothL1(
+  (pose[t+5] - pose[t]) * FPS/5,
+  (GT[t+5]   - GT[t])   * FPS/5
+)
 ```
 
-핵심 결과:
+yja E02에서 smoothed pose-speed ratio가 `0.721 -> 0.714`로 오히려 감소했다. 현재 residual decoder의 용량과 deterministic objective만으로는 motion-amplitude collapse를 해결하지 못한다고 판단해 채택하지 않았다.
 
-- 정상 CSI 대신 다른 yja E02 trial의 CSI를 넣어도 MPJPE는 `29.57 -> 29.59cm`로 `0.02cm`만 악화됐다.
-- train mean-pose baseline도 `30.59cm`라 현재 모델과 차이가 `1.02cm`뿐이다.
-- frozen encoder의 speed R2는 source validation `0.004`, yja E02 `-0.109`였다.
-- impact F1은 source `0.148`, yja E02 `0.103`이고 timing MAE는 각각 `43.0`, `48.4` frames였다.
-- 가장 동적인 1개 trial을 200 step 외워도 `9.35cm`, pose-speed ratio `0.534`에 머물렀다.
+재현:
 
-따라서 주 병목은 더 큰 pose decoder가 아니라 **CSI encoder가 speed, phase, impact를 보존하지 못하고 pose objective가 평균 자세로 붕괴하는 것**이다. domain shift도 존재하지만 source 내부에서 이미 motion observability가 낮으므로 domain adaptation만 강화해서는 해결되지 않는다.
+```powershell
+python -m notifi_pose.tools.run_coherent_protocols --only yja_e02
+```
 
-다음 개발 순서는 다음과 같이 고정한다.
+### 2안: Impact-aware Temporal Refiner
 
-1. trial별 CSI motion energy와 GT speed의 lag/correlation으로 alignment 불량 데이터를 격리한다.
-2. speed, moving, phase, impact를 먼저 예측하는 motion-first CSI encoder를 pretrain한다.
-3. 정상 CSI 대비 shuffled CSI가 dynamic/impact 지표에서 명확히 나빠지는지 확인한다.
-4. 1-trial overfit `MPJPE < 3cm`, pose-speed ratio `0.9-1.1`을 통과시킨다.
-5. 그 뒤 velocity-space sequence decoder와 calibration을 붙이고 LOSO를 재개한다.
+**상태: 이전 unseen/LOSO 비교 기준, 현재 seen 모델의 baseline**
 
-전체 수치와 합격 기준은 [`docs/observability_diagnostics.md`](docs/observability_diagnostics.md), 원시 결과는 [`docs/results/observability_diagnostics.json`](docs/results/observability_diagnostics.json)에 있다.
+기존 robust checkpoint 뒤에 0으로 초기화된 temporal residual refiner를 붙인다. 초기 출력은 기준 모델과 정확히 같으며, validation 종합 점수가 좋아질 때만 체크포인트를 교체한다.
 
-## 실험 결과
+추가 요소:
+
+1. GT acceleration peak를 기준으로 danger trial의 impact window를 만든다.
+2. 머리, 손목, 무릎, 발목, 발을 distal/injury-relevant joint로 가중한다.
+3. velocity, acceleration, jerk, foot slide, floor penetration을 함께 제약한다.
+4. validation에서 관절별 residual scale을 `0, 0.25, 0.5, 0.75, 1.0` 중 선택한다.
+5. 일반 관절 오차가 기준 모델보다 `0.05cm` 넘게 나빠지는 scale은 금지한다.
+6. test 결과는 checkpoint나 residual scale 선택에 사용하지 않는다.
+
+```mermaid
+flowchart LR
+    A["Robust GraphFormer pose"] --> B["Identity-initialized temporal refiner"]
+    C["GT acceleration"] --> D["Impact window"]
+    D --> E["Impact and distal losses"]
+    B --> F["Validation-only joint calibration"]
+    F --> G["Final calibrated pose"]
+```
+
+실행:
+
+```powershell
+python -m notifi_pose.tools.run_impact_protocols --only yja_e02
+python -m notifi_pose.tools.run_impact_protocols --only loso
+python -m notifi_pose.tools.summarize_impact_results
+```
+
+`run_impact_protocols`는 학습 후 `calibrated_model.pt`까지 자동 생성한다. 시각화 도구도 이 파일이 있으면 `best_model.pt`보다 먼저 사용한다.
+
+### 1안: Robust GraphFormer
+
+**상태: 기준 모델, 채택**
+
+기존 GraphFormer에 환경 일반화 요소를 추가한 기준 모델이다.
+
+```text
+CSI encoder
+  -> link attention
+  -> temporal GraphFormer
+  -> hybrid SMPL-22 decoder
+  -> pose_rel + root
+
+보조 학습:
+  RF augmentation + GroupDRO + domain adversarial
+  + cross-domain supervised contrastive
+  + phase/contact/dynamics losses
+```
+
+장점:
+
+- 구조가 단순하고 추론이 결정론적이다.
+- 네 protocol에서 가장 안정적인 기본 성능을 보였다.
+- 새 모델은 이 체크포인트를 epoch 0 안전 기준으로 사용한다.
+
+한계:
+
+- MPJPE 중심 회귀라 평균 자세 수렴을 피하기 어렵다.
+- frame-to-frame velocity loss가 고주파 jitter에도 낮아질 수 있다.
+
+실행:
+
+```powershell
+python -m notifi_pose.tools.run_robust_protocols --only yja_e02
+python -m notifi_pose.tools.run_robust_protocols --only loso
+python -m notifi_pose.tools.summarize_robust_runs
+```
+
+## 이전 Unseen/LOSO 실험 결과
 
 모든 수치는 CSI-only pose trial, validation-selected checkpoint, 5-frame smoothing 기준이다.
 
@@ -440,7 +474,7 @@ python -m unittest discover -s tests -v
 python -m py_compile notifi_pose\*.py notifi_pose\tools\*.py
 ```
 
-현재 20개 단위 테스트가 timestamp alignment, site baseline, GraphFormer shape, impact window, temporal refiner, latent flow objective, observability diagnostic, loss backward를 검증한다.
+현재 36개 단위 테스트가 timestamp alignment, site baseline, GraphFormer shape, impact window, temporal refiner, latent flow objective, observability diagnostic, loss backward를 검증한다.
 
 ## 폴더 구조
 
@@ -470,10 +504,13 @@ CSI-to-Pose/
 
 ## 결론
 
-현재 배포 가능한 권장안은 **2안 impact-aware calibrated GraphFormer**다. 기준 모델을 망가뜨리지 않으면서 전체·dynamic·distal·impact 오차를 작게 개선한다. 다만 5안 진단 결과, 이 모델도 trial별 CSI motion을 충분히 사용한다고 볼 수 없으므로 연구 목표를 달성한 최종 모델은 아니다.
+현재 권장안은 **6안 Seen Reconstruction V2의 validation-calibrated 구성**이다.
+기준 GraphFormer 대비 MPJPE, dynamic, distal, impact, root를 모두 개선했고
+pose-speed ratio 1.167로 물리 속도 gate를 통과했다.
 
-CSI-only 동작 진폭 복원은 아직 해결되지 않았다. 다음 연구 우선순위는 손실을 더 붙이는 것이 아니라 다음 세 가지다.
+무보정 6안의 MPJPE 18.11cm는 pose-speed ratio 2.088이라 채택하지 않는다.
+현재 공식 성능은 MPJPE 21.29cm, impact 54.72cm, root 32.33cm이며 연구 목표를
+완전히 달성한 최종 모델은 아니다.
 
-1. timestamp·lag·CSI/GT motion correlation audit으로 학습 가능한 trial만 확정한다.
-2. motion-first encoder가 speed·moving·phase·impact와 CSI-shuffle gate를 통과하도록 만든다.
-3. 그 뒤 velocity-space sequence decoder와 subject/environment calibration을 도입하고, MPJPE와 함께 dynamic·impact·speed ratio를 필수 선택 지표로 사용한다.
+다음 개발 순서는 root trajectory 개선, rotation dynamics 안정화,
+impact/contact curriculum, seen gate 재검증, LOSO/unseen 적응 순서다.
