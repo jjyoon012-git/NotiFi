@@ -1,0 +1,116 @@
+{
+  "unit": "meter unless noted",
+  "comparability": {
+    "yja_e02_unseen": "Plans 1-4 use the same sealed yja/E02 unseen protocol with 5-frame smoothing.",
+    "single_split_seen": "The seen baseline, previous seen model, plan 6, and plan 7 use the same single_split seen protocol.",
+    "warning": "Do not compare absolute values across protocol groups as a single progression."
+  },
+  "plans": [
+    {
+      "plan": "1",
+      "name": "Robust GraphFormer",
+      "protocol": "yja_e02_unseen",
+      "source": "work_v2/runs/robust_gf_yja_e02/eval_yja_E02_smooth5/summary.json",
+      "mpjpe_m": 0.2957,
+      "dynamic_mpjpe_m": 0.3094,
+      "distal_mpjpe_m": 0.4386,
+      "impact_mpjpe_m": 0.8414,
+      "root_error_m": 0.5923,
+      "pose_speed_ratio": 0.721
+    },
+    {
+      "plan": "2",
+      "name": "Impact-aware calibrated",
+      "protocol": "yja_e02_unseen",
+      "source": "work_v2/runs/impact_gf_yja_e02/eval_calibrated_yja_E02_smooth5/summary.json",
+      "mpjpe_m": 0.2945,
+      "dynamic_mpjpe_m": 0.3079,
+      "distal_mpjpe_m": 0.4375,
+      "impact_mpjpe_m": 0.8384,
+      "root_error_m": 0.5923,
+      "pose_speed_ratio": 0.718
+    },
+    {
+      "plan": "3",
+      "name": "Coherent displacement",
+      "protocol": "yja_e02_unseen",
+      "source": "work_v2/runs/coherent_gf_yja_e02/eval_yja_E02_smooth5/summary.json",
+      "mpjpe_m": 0.2948,
+      "dynamic_mpjpe_m": 0.3073,
+      "distal_mpjpe_m": 0.4377,
+      "impact_mpjpe_m": 0.8282,
+      "root_error_m": 0.5923,
+      "pose_speed_ratio": 0.714
+    },
+    {
+      "plan": "4",
+      "name": "CSI-conditioned latent rectified flow",
+      "protocol": "yja_e02_unseen",
+      "source": "work_v2/runs/latent_flow_yja_e02/eval_yja_E02_smooth5/summary.json",
+      "mpjpe_m": 0.2986,
+      "dynamic_mpjpe_m": 0.3102,
+      "distal_mpjpe_m": 0.4433,
+      "impact_mpjpe_m": 0.8103,
+      "root_error_m": 0.5952,
+      "pose_speed_ratio": 0.697
+    },
+    {
+      "plan": "5",
+      "name": "CSI motion observability diagnostic",
+      "protocol": "yja_e02_unseen_diagnostic",
+      "source": "docs/results/observability_diagnostics.json",
+      "normal_csi_mpjpe_m": 0.2957,
+      "shuffled_csi_mpjpe_m": 0.2959,
+      "mean_pose_mpjpe_m": 0.3059,
+      "note": "Diagnostic, not a new model result."
+    },
+    {
+      "plan": "seen_baseline",
+      "name": "GraphFormer seen baseline",
+      "protocol": "single_split_seen",
+      "source": "docs/experiment_log.md#exp-005-provided-single_split-baseline",
+      "mpjpe_m": 0.2417,
+      "dynamic_mpjpe_m": 0.2339,
+      "distal_mpjpe_m": 0.3544,
+      "impact_mpjpe_m": 0.5824,
+      "root_error_m": 0.3306,
+      "pose_speed_ratio": 1.058
+    },
+    {
+      "plan": "previous_seen",
+      "name": "Action residual plus keyframe root",
+      "protocol": "single_split_seen",
+      "source": "docs/results/keyframe_root_residual_seen.json",
+      "mpjpe_m": 0.2168,
+      "dynamic_mpjpe_m": 0.2122,
+      "distal_mpjpe_m": 0.3216,
+      "impact_mpjpe_m": 0.5527,
+      "root_error_m": 0.3236,
+      "pose_speed_ratio": 1.141
+    },
+    {
+      "plan": "6",
+      "name": "Seen Reconstruction V2 calibrated",
+      "protocol": "single_split_seen",
+      "source": "docs/results/seen_reconstruction_v2_calibration.json",
+      "mpjpe_m": 0.21286403985211141,
+      "dynamic_mpjpe_m": 0.2089781027944649,
+      "distal_mpjpe_m": 0.31527323722839357,
+      "impact_mpjpe_m": 0.5472044939932007,
+      "root_error_m": 0.3232695499251102,
+      "pose_speed_ratio": 1.1666141368582936
+    },
+    {
+      "plan": "7A",
+      "name": "Contact-guided root Stage A",
+      "protocol": "single_split_seen",
+      "source": "docs/results/seen_reconstruction_v3_contact_root.json",
+      "mpjpe_m": 0.21286403985211141,
+      "dynamic_mpjpe_m": 0.2089781027944649,
+      "distal_mpjpe_m": 0.31527323722839357,
+      "impact_mpjpe_m": 0.5489342000764016,
+      "root_error_m": 0.3180628557999929,
+      "pose_speed_ratio": 1.1666141368582936
+    }
+  ]
+}

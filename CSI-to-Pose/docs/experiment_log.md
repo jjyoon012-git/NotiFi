@@ -36,6 +36,7 @@ trial ID의 train/validation/test 교집합은 0이다. 같은 사람과 같은 
 | EXP-011 | 2026-08-03 23:53 | 저주파 keyframe root residual | root 33.06→32.36cm, impact 57.04→55.27cm | 최종 seen 조합에 채택 |
 | EXP-012 | 2026-08-04 10:50 | 개선안 1-7 통합 학습 | test MPJPE 18.11cm, speed ratio 2.088 | 위치는 개선, 물리 속도 위반으로 무보정 모델 거절 |
 | EXP-013 | 2026-08-04 11:06 | V2 branch별 validation calibration | rotation 0.10/high 0/root 0.50 선택, MPJPE 21.29cm, speed 1.167 | V2 calibrated 모델 채택 |
+| EXP-014 | 2026-08-04 11:59 | contact-guided root Stage A | strength 0.50 선택, test root 31.81cm, impact 54.89cm | root 개선으로 채택, impact는 다음 단계에서 재개선 |
 
 ## 상세 로그
 
@@ -158,16 +159,38 @@ trial ID의 train/validation/test 교집합은 0이다. 같은 사람과 같은 
 - 판단: 이전 최종 seen 모델보다 모든 위치 지표가 소폭 개선되고 speed gate도 통과해
   현재 권장 seen 모델로 채택한다. root 개선은 0.03cm에 불과해 여전히 별도 병목이다.
 
+### EXP-014: contact-guided root Stage A
+
+- 목적: V2의 상대 pose와 동작 진폭을 그대로 보존하면서 절대 pelvis trajectory만 개선한다.
+- 구조: calibrated V2를 동결하고 CSI temporal feature, V2 root velocity, 예측 foot contact,
+  fall phase, impact, 상대 foot speed를 dilated temporal block에 입력한다. 새 branch는 root
+  anchor와 velocity residual을 예측하며, 발이 지면을 지지한다고 예측한 구간에서는 상대 발
+  속도와 일관되는 support velocity를 혼합한다.
+- 손실: quality-weighted root position/velocity/5-frame displacement/anchor와 foot-contact BCE,
+  foot slip, contact height, floor penetration을 사용했다. GT contact와 floor는 학습 loss에만
+  사용하고 validation/test 추론 입력은 CSI뿐이다.
+- 선택: epoch 8 checkpoint에서 validation root+impact+MPJPE 점수가 가장 낮았다. test를
+  열기 전에 validation이 root strength `0.50`을 선택했다. strength `0`은 V2 출력을 정확히
+  보존하는 identity 후보로 함께 비교했다.
+- 결과: test root error `32.33 -> 31.81cm`, total evaluation loss
+  `0.2612 -> 0.2549`로 개선됐다. pose branch를 고정했으므로 MPJPE `21.29cm`, dynamic
+  `20.90cm`, distal `31.53cm`, pose-speed ratio `1.167`은 동일하다. impact MPJPE는
+  `54.72 -> 54.89cm`, foot-contact F1은 `0.708 -> 0.701`로 소폭 악화됐다. shuffled CSI는
+  root `58.54cm`로 악화돼 trial-specific CSI 의존성은 유지됐다.
+- 판단: 사전 정의한 root 중심 validation 선택과 test root 개선에 따라 7안 Stage A로
+  채택한다. 다만 낙상 impact 및 contact 성능 개선으로 해석하지 않으며, 다음 단계는 pose를
+  건드리지 않고 event-level impact/contact localization을 별도로 개선한다.
+
 ## 현재 seen 결과
 
-| Metric | 기존 기준선 | 이전 seen | V2 calibrated |
-|---|---:|---:|---:|
-| MPJPE | 24.17cm | 21.68cm | **21.29cm** |
-| Dynamic MPJPE | 23.39cm | 21.22cm | **20.90cm** |
-| Distal MPJPE | 35.44cm | 32.16cm | **31.53cm** |
-| Impact MPJPE | 58.24cm | 55.27cm | **54.72cm** |
-| Root error | 33.06cm | 32.36cm | **32.33cm** |
-| Pose-speed ratio | 1.058 | 1.141 | 1.167 |
+| Metric | 기존 기준선 | 이전 seen | 6안 V2 | 7안 Stage A |
+|---|---:|---:|---:|---:|
+| MPJPE | 24.17cm | 21.68cm | **21.29cm** | **21.29cm** |
+| Dynamic MPJPE | 23.39cm | 21.22cm | **20.90cm** | **20.90cm** |
+| Distal MPJPE | 35.44cm | 32.16cm | **31.53cm** | **31.53cm** |
+| Impact MPJPE | 58.24cm | 55.27cm | **54.72cm** | 54.89cm |
+| Root error | 33.06cm | 32.36cm | 32.33cm | **31.81cm** |
+| Pose-speed ratio | 1.058 | 1.141 | 1.167 | 1.167 |
 
 현재 seen gate는 완전히 통과하지 않았다. 다음 seen 우선순위는 root trajectory와 impact
 절대위치이며, 목표는 MPJPE 20cm 이하, impact 50cm 이하, root 25cm 이하,
@@ -190,4 +213,7 @@ python -m notifi_pose.tools.train_seen_v2 `
   --head-epochs 12 --finetune-epochs 6 --patience 4 --batch-size 8
 python -m notifi_pose.tools.diagnose_seen_v2_components --dataset val
 python -m notifi_pose.tools.calibrate_seen_v2
+python -m notifi_pose.tools.train_seen_v3_root `
+  --epochs 16 --patience 5 --batch-size 8 `
+  --run-dir work_v2/runs/seen_v3_contact_root
 ```
