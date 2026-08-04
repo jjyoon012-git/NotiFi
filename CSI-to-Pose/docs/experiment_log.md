@@ -34,6 +34,8 @@ trial ID의 train/validation/test 교집합은 0이다. 같은 사람과 같은 
 | EXP-009 | 2026-08-03 23:33 | action-conditioned pose residual | test MPJPE 19.94cm, speed ratio 1.64 | 위치 개선, 과도한 움직임으로 보정 필요 |
 | EXP-010 | 2026-08-03 23:40 | validation-only residual scale 보정 | scale 0.5 선택, test MPJPE 21.68cm, speed ratio 1.14 | 채택 |
 | EXP-011 | 2026-08-03 23:53 | 저주파 keyframe root residual | root 33.06→32.36cm, impact 57.04→55.27cm | 최종 seen 조합에 채택 |
+| EXP-012 | 2026-08-04 10:50 | 개선안 1-7 통합 학습 | test MPJPE 18.11cm, speed ratio 2.088 | 위치는 개선, 물리 속도 위반으로 무보정 모델 거절 |
+| EXP-013 | 2026-08-04 11:06 | V2 branch별 validation calibration | rotation 0.10/high 0/root 0.50 선택, MPJPE 21.29cm, speed 1.167 | V2 calibrated 모델 채택 |
 
 ## 상세 로그
 
@@ -131,16 +133,41 @@ trial ID의 train/validation/test 교집합은 0이다. 같은 사람과 같은 
   root 57.67cm로 악화돼 CSI 의존성도 유지됐다.
 - 판단: 개선 폭은 작지만 pose 회귀 없이 root와 impact가 함께 개선되어 최종 seen 조합에 채택했다.
 
+### EXP-012: seven-part seen reconstruction V2
+
+- 목적: 품질 가중, root 속도 표현, phase 조건, 6D rotation decoder, low/high 분리,
+  injury head, partial fine-tuning을 하나의 identity-initialized 모델에 통합한다.
+- 방법: timestamp/link/observability 품질 점수와 class-balanced sampler를 사용했다. 기존
+  calibrated pose/root cascade와 motion-first encoder를 먼저 동결해 12 epoch 학습한 뒤,
+  양쪽 마지막 temporal block만 0.1배 learning rate로 6 epoch 미세조정했다.
+- 결과: validation MPJPE 18.14cm, test MPJPE 18.11cm, distal 26.56cm까지 내려갔다.
+  injury-contact F1 0.354, feet-contact F1 0.708, floor-height MAE 2.72cm였다.
+  그러나 test pose-speed ratio가 2.088이었다.
+- 판단: 위치 정확도만 보면 최고지만 GT보다 두 배 빠른 자세 변화라 공식 모델로 채택하지
+  않는다. component 진단에서 rotation-only speed ratio가 1.971로 주원인임을 확인했다.
+
+### EXP-013: branch-wise validation calibration
+
+- 목적: V2 위치 개선 중 물리적으로 허용되는 부분만 사용한다.
+- 방법: validation에서 rotation strength 10개, high-pose strength 3개를 비교했다.
+  pose-speed ratio 0.8~1.2를 하드 게이트로 사용하고, 이후 root strength 0/0.5/1을
+  root+impact 점수로 선택했다. test는 선택에 사용하지 않았다.
+- 결과: rotation 0.10, high-pose 0, root 0.50이 선택됐다. test MPJPE 21.29cm,
+  dynamic 20.90cm, distal 31.53cm, impact 54.72cm, root 32.33cm,
+  pose-speed ratio 1.167이다.
+- 판단: 이전 최종 seen 모델보다 모든 위치 지표가 소폭 개선되고 speed gate도 통과해
+  현재 권장 seen 모델로 채택한다. root 개선은 0.03cm에 불과해 여전히 별도 병목이다.
+
 ## 현재 seen 결과
 
-| Metric | 기존 seen 기준선 | 최종 seen | 변화 |
+| Metric | 기존 기준선 | 이전 seen | V2 calibrated |
 |---|---:|---:|---:|
-| MPJPE | 24.17cm | **21.68cm** | -2.49cm (-10.3%) |
-| Dynamic MPJPE | 23.39cm | **21.22cm** | -2.17cm (-9.3%) |
-| Distal MPJPE | 35.44cm | **32.16cm** | -3.28cm (-9.3%) |
-| Impact MPJPE | 58.24cm | **55.27cm** | -2.97cm (-5.1%) |
-| Root error | 33.06cm | **32.36cm** | -0.70cm (-2.1%) |
-| Pose-speed ratio | 1.058 | 1.141 | 정상 범위 유지 |
+| MPJPE | 24.17cm | 21.68cm | **21.29cm** |
+| Dynamic MPJPE | 23.39cm | 21.22cm | **20.90cm** |
+| Distal MPJPE | 35.44cm | 32.16cm | **31.53cm** |
+| Impact MPJPE | 58.24cm | 55.27cm | **54.72cm** |
+| Root error | 33.06cm | 32.36cm | **32.33cm** |
+| Pose-speed ratio | 1.058 | 1.141 | 1.167 |
 
 현재 seen gate는 완전히 통과하지 않았다. 다음 seen 우선순위는 root trajectory와 impact
 절대위치이며, 목표는 MPJPE 20cm 이하, impact 50cm 이하, root 25cm 이하,
@@ -159,5 +186,8 @@ python -m notifi_pose.tools.train_seen_action_residual `
 python -m notifi_pose.tools.calibrate_seen_action_residual
 python -m notifi_pose.tools.train_seen_root_residual `
   --epochs 20 --patience 6 --batch-size 12
+python -m notifi_pose.tools.train_seen_v2 `
+  --head-epochs 12 --finetune-epochs 6 --patience 4 --batch-size 8
+python -m notifi_pose.tools.diagnose_seen_v2_components --dataset val
+python -m notifi_pose.tools.calibrate_seen_v2
 ```
-

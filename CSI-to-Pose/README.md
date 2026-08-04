@@ -4,7 +4,7 @@ Wi-Fi CSI만 입력받아 시간에 따른 사람의 **GVHMR SMPL-22 3D pose와 
 
 - 기존 코드: [NotiFi-CSI-to-Pose `feature/goal1`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1)
 - 현재 통합 위치: [NotiFi/CSI-to-Pose](https://github.com/jjyoon012-git/NotiFi/tree/main/CSI-to-Pose)
-- 현재 권장 seen 모델: **motion-first + action-conditioned calibrated residual + keyframe root residual**
+- 현재 권장 seen 모델: **quality-weighted phase-aware 6D rotation + keyframe root refinement**
 - 현재 개발 순서: **seen 성능 확보 후 unseen/LOSO calibration 재개**
 
 ## 연구 목표
@@ -45,37 +45,47 @@ flowchart LR
     A --> D["Temporal-difference branch"]
     C --> E["Motion-first encoder"]
     D --> E
-    B --> F["Predicted-action-conditioned pose residual"]
-    E --> F
-    F --> G["Validation scale = 0.5"]
-    G --> H["Keyframe root residual"]
-    H --> I["SMPL-22 pose + root"]
+    B --> F["Action-conditioned coarse pose"]
+    E --> G["Phase / impact conditioning"]
+    F --> H["Keyframe 6D bone rotations"]
+    G --> H
+    H --> I["Bounded high-frequency residual"]
+    I --> J["Anchor + root velocity integration"]
+    G --> K["Contact / injury heads"]
+    J --> L["Validation-only branch calibration"]
+    L --> M["SMPL-22 pose + root"]
 ```
 
-1. raw CSI와 temporal difference CSI를 별도 branch로 인코딩한다.
-2. speed, moving, fall phase, impact, action, risk를 먼저 학습해 CSI 동작 표현을 만든다.
-3. 기존 GraphFormer와 motion feature를 predicted action 확률로 condition한 pose residual에 넣는다.
-4. residual 강도는 test가 아니라 validation의 위치 오차와 pose-speed ratio로 선택한다.
-5. pose를 고정한 뒤 4-frame keyframe root residual로 pelvis 절대 이동 경로만 보정한다.
+1. timestamp 완전성, 유효 link 수, CSI-GT motion correlation으로 trial 품질 가중치를 만든다.
+2. root는 첫 anchor와 keyframe velocity residual을 적분해 궤적 연속성을 유지한다.
+3. speed, moving, fall phase, impact, predicted action/risk로 decoder를 condition한다.
+4. 4-frame keyframe의 6D bone rotation을 예측하고 SMPL tree FK로 bone length를 보존한다.
+5. 저주파 rotation branch와 최대 2cm의 고주파 Cartesian residual을 분리한다.
+6. 발 접촉, 부위별 충돌, 최초 접촉 관절, impact speed, 바닥 높이를 보조 학습한다.
+7. head-only 학습 후 기존 backbone의 마지막 temporal block만 낮은 learning rate로 미세조정한다.
 
 ### Seen test 결과
 
 | Metric | 기존 GraphFormer | 현재 모델 | 변화 |
 |---|---:|---:|---:|
-| MPJPE | 24.17cm | **21.68cm** | -10.3% |
-| Dynamic MPJPE | 23.39cm | **21.22cm** | -9.3% |
-| Distal MPJPE | 35.44cm | **32.16cm** | -9.3% |
-| Impact MPJPE | 58.24cm | **55.27cm** | -5.1% |
-| Root error | 33.06cm | **32.36cm** | -2.1% |
-| Pose-speed ratio | 1.058 | 1.141 | 정상 범위 유지 |
+| MPJPE | 24.17cm | **21.29cm** | -11.9% |
+| Dynamic MPJPE | 23.39cm | **20.90cm** | -10.6% |
+| Distal MPJPE | 35.44cm | **31.53cm** | -11.0% |
+| Impact MPJPE | 58.24cm | **54.72cm** | -6.0% |
+| Root error | 33.06cm | **32.33cm** | -2.2% |
+| Pose-speed ratio | 1.058 | 1.167 | 정상 범위 유지 |
 
-shuffled CSI에서는 MPJPE가 `31.25cm`, root error가 `57.67cm`로 악화된다.
-따라서 현재 개선은 action label을 GT로 주입한 결과가 아니라, predicted action과
-trial-specific CSI를 실제로 사용한 결과다.
+무보정 V2는 test MPJPE `18.11cm`까지 내려갔지만 pose-speed ratio가 `2.088`로
+실제 움직임의 두 배를 만들어 공식 결과에서 제외했다. validation에서만 branch 강도를
+`rotation=0.10`, `high-pose=0.00`, `root=0.50`으로 선택한 결과가 위 표다.
+무보정 checkpoint에 shuffled CSI를 넣으면 MPJPE `34.69cm`, root error `58.33cm`로
+악화되어 trial-specific CSI를 사용한다는 gate도 확인했다.
 
 실패한 구조를 포함한 번호·날짜·시간·목적·방법·결과·결정은
 [`docs/experiment_log.md`](docs/experiment_log.md)에 계속 누적한다. 원시 결과 JSON은
 [`docs/results`](docs/results)에 있으며 checkpoint와 데이터셋은 저장소에 포함하지 않는다.
+개선안 1-7의 코드 대응, 손실, 보정 규칙은
+[`docs/seen_reconstruction_v2.md`](docs/seen_reconstruction_v2.md)에 정리했다.
 
 ### 실행 순서
 
@@ -89,6 +99,11 @@ python -m notifi_pose.tools.train_seen_action_residual `
 python -m notifi_pose.tools.calibrate_seen_action_residual
 python -m notifi_pose.tools.train_seen_root_residual `
   --epochs 20 --patience 6 --batch-size 12
+python -m notifi_pose.tools.train_seen_v2 `
+  --head-epochs 12 --finetune-epochs 6 --patience 4 --batch-size 8 `
+  --run-dir work_v2/runs/seen_reconstruction_v2
+python -m notifi_pose.tools.diagnose_seen_v2_components
+python -m notifi_pose.tools.calibrate_seen_v2
 ```
 
 현재 seen gate는 완전히 통과하지 않았다. 다음 목표는 MPJPE 20cm 이하,
