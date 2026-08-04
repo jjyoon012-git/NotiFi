@@ -37,7 +37,7 @@ decoder에 site ID를 하드코딩하지 않는다.
 | 3 | trial motion collapse | danger local RMS GT의 23%, residual cosine 0.050 | global motion bank+progress+CSI residual end-to-end | shuffle/RMS/cosine gate 통과 |
 | 4 | 시간·선택 재현성 | fixed30 scale 0.45~1.41, V9A gate source drift | actual-time loss, policy/source hash | 3 seeds·bootstrap·test selection 0회 |
 | 5 | root/설치 좌표 | geometry 활성 checkpoint 0, TX 순열 root +17.24cm | canonical root+installation bundle | geometry 조건별 결과 분리 |
-| 6 | unseen domain shift | robust action chance 수준, objective 충돌 | seen 통과 후 semantic/kinematic 분리 | seen gate 전 LOSO/TTA 금지 |
+| 6 | unseen joint shift | robust action chance 수준, objective 충돌 | seen 통과 후 semantic/kinematic 분리 | seen gate 전 joint-shift/TTA 금지 |
 
 ## 2. 신뢰 가능한 사실과 신뢰할 수 없는 숫자
 
@@ -351,7 +351,7 @@ token과 calibration-conditioned equivariant kinematic token을 분리하고 dom
 - yja E01/E03 CSI가 파손돼 4인 대칭 LOSO는 불가능하다.
 
 현재 `loso`는 held-out subject의 미리 지정된 test role 135 pose만 평가하며, 그 사람 pose 789개 중
-17.1%만 쓴다. 이를 `LOSO-subsampled`로 이름을 바꾸고 정식 LOSO는 source 두 사람의 train+test
+17.1%만 쓴다. 이를 `LOSO-subsampled`로 이름을 바꾸고 새 joint-shift protocol은 source 두 사람의 train+test
 role로 학습, source val로 선택, held-out 사람 788/789개 전체 평가로 정의한다.
 
 다만 index에는 physical installation ID/geometry field가 하나도 없고 domain은 9개
@@ -513,7 +513,7 @@ dependence gate를 통과한 뒤 out-of-fold base error로만 학습한다.
 - raw/causal danger pooled speed ratio `0.8~1.2`, speed correlation 양수이며 CI가 0을 넘음.
 - learned progress가 GT-oracle timewarp 상한의 일부를 회복하되 static trial jitter를 키우지 않음.
 
-gate를 못 넘으면 prior, diffusion, LOSO로 넘어가지 않는다.
+gate를 못 넘으면 prior, diffusion, participant+installation joint shift로 넘어가지 않는다.
 
 ### 명시적으로 하지 않을 것
 
@@ -525,7 +525,7 @@ gate를 못 넘으면 prior, diffusion, LOSO로 넘어가지 않는다.
 - validation/test에 centered smoothing만 적용한 수치를 raw/causal 성능처럼 보고하지 않는다.
 - 현재 code-only V3/kinematic/geometry module을 검증된 backbone이라고 부르지 않는다.
 - selection threshold, smoother, split을 같은 experiment ID 아래 조용히 바꾸지 않는다.
-- seen CSI-dependence gate 이전에 LOSO, domain adversarial, TTA, diffusion을 실행하지 않는다.
+- seen CSI-dependence gate 이전에 joint-shift, domain adversarial, TTA, diffusion을 실행하지 않는다.
 - pose-only GT로 실제 부상 부위나 충격력을 맞혔다고 주장하지 않는다.
 
 ### V10-5 encoder ablation
@@ -547,7 +547,7 @@ shuffle gate를 동시에 개선할 때만 유지한다. parameter가 늘었지�
 
 ### V10-7 unseen
 
-seen gate를 모두 통과한 뒤 full LOSO와 LOEO를 실행한다. `no calibration`, `10s empty-room`,
+seen gate를 모두 통과한 뒤 participant+installation 3-fold와 LOEO를 실행한다. `no calibration`, `10s empty-room`,
 `known geometry`, `few-shot unlabeled/labeled`를 섞지 않고 별도 표로 보고한다. unseen absolute root는
 board-camera extrinsic 또는 calibration transform이 있을 때만 주 결과로 낸다.
 
@@ -557,7 +557,7 @@ board-camera extrinsic 또는 calibration transform이 있을 때만 주 결과�
 2. `dataio/dataset.py`: representation-aware augmentation, time/gap/RSSI 반환.
 3. `dataio/align.py`, `losses.py`: actual-time derivative와 discontinuity mask.
 4. `nets.py`: seconds positional encoding, frequency token 보존, causal option.
-5. `tools/build_splits.py`: `seen_dev`, full LOSO, LOEO, asymmetric yja protocol.
+5. `tools/build_splits.py`: `seen_dev`, participant+installation 3-fold, LOEO, asymmetric yja protocol.
 6. `tools/build_site_baseline.py`: 10초 runtime-compatible calibration bundle와 installation key.
 7. 새 `models/v10.py`: global motion bank, calibration adapter, action/progress, direction-or-rotation/root residual.
 8. 새 `tools/evaluate_v10.py`: raw/causal/offline, subgroup, counterfactual, CI.
@@ -580,7 +580,7 @@ board-camera extrinsic 또는 calibration transform이 있을 때만 주 결과�
 - amp/phase augmentation에서 amplitude nonnegative, phase perturbation bound, mask 보존.
 - source GT/CSI/timestamp/split 변경 시 cache invalidation.
 - irregular delta-t에서 velocity/acceleration 정답과 gap 차단.
-- full LOSO가 held-out subject 100%를 평가하는지.
+- participant+installation fold가 held-out participant의 pose 100%를 평가하는지.
 - prior mask의 train/inference 동일성.
 - raw/causal/offline metric 분리와 padding 독립성.
 - corrected GT orientation/jump/height 전수 QC.
@@ -629,7 +629,7 @@ V10의 성공은 “MPJPE가 몇 mm 내려갔다”가 아니다.
 > 같은 사람·장소·행동의 CSI를 서로 바꿨을 때 출력이 실제 trial별 낙상 방식과 함께 바뀌고,
 > raw/causal 평가에서 관절 움직임과 root trajectory의 크기·방향·시간이 GT를 따라가야 한다.
 
-이를 증명하기 전에는 더 큰 backbone, diffusion, LOSO calibration을 붙이지 않는다. 먼저 GT와 lineage를
+이를 증명하기 전에는 더 큰 backbone, diffusion, joint-shift calibration을 붙이지 않는다. 먼저 GT와 lineage를
 정상화하고 corrected baseline을 다시 세운 뒤, motion bank를 넘는 CSI-specific residual을 만든다.
 
 ## 12. 근거 파일

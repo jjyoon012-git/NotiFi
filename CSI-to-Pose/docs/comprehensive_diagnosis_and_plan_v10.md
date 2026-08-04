@@ -229,7 +229,7 @@ split 자체에는 trial 중복이 없고 site×class 연속 block과 validation
 - 현재 405개는 `dev_test`로 이름을 바꿔 진단과 ablation에 계속 쓴다.
 - 아직 한 번도 열지 않은 trial 또는 새 촬영분을 `final_seen_holdout`으로 봉인한다.
 - final holdout은 10안 구조와 hyperparameter를 동결한 뒤 한 번만 연다.
-- yja E02와 LOSO는 seen gate 이후 unseen 평가용으로 유지한다.
+- yja E02와 participant+installation 3-fold는 seen gate 이후 joint-shift 평가용으로 유지한다.
 
 또한 현 domain은 `subject_environment` 9개이고 physical installation ID/geometry field가 0개다. 같은
 E01이 사람 간 같은 물리 장소라는 근거가 없어 LOSO는 participant와 그 사람의 installation shift를
@@ -538,7 +538,7 @@ seen 최종 gate:
 - 3 seed, 95% CI, action별 결과, perturbation 결과 완비.
 - soft prototype baseline보다 유의하게 우수.
 
-그 뒤 LOSO ajh/lmh/mhw와 yja E02를 연다. unseen에서는 canonical local pose/root-relative trajectory를 먼저 평가하고, absolute root는 calibration 조건별로 분리한다.
+그 뒤 ajh/lmh/mhw participant+installation 3-fold와 yja E02를 연다. joint shift에서는 canonical local pose/root-relative trajectory를 먼저 평가하고, absolute root는 calibration 조건별로 분리한다.
 
 ## 6. 최신 연구와 코드 연결
 
@@ -609,4 +609,4 @@ seen 최종 gate:
 
 > **10안이 site/action 평균 동작을 복사하는 데서 멈추지 않고, 같은 site/action의 다른 trial CSI를 넣었을 때 실제 trial별 자세와 궤적 차이를 복원하는가?**
 
-이 질문을 10-C의 shuffle gate로 통과하기 전에는 unseen calibration을 시작하지 않는다. 통과하면 그때부터 site-conditioned prior를 universal action prior와 explicit calibration adapter로 분해해 LOSO와 yja E02로 확장한다.
+이 질문을 10-C의 shuffle gate로 통과하기 전에는 unseen calibration을 시작하지 않는다. 통과하면 그때부터 site-conditioned prior를 universal action prior와 explicit calibration adapter로 분해해 participant+installation 3-fold와 yja E02로 확장한다.

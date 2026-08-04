@@ -332,7 +332,7 @@ L_uncert = calibrated heteroscedastic or Fisher likelihood
 8. **V10-7**: actual-time loss와 CSI-pose contrastive.
 9. **V10-8**: time/gap/RSSI, frequency token, Doppler 순차 ablation.
 10. **V10-9**: deterministic gate 통과 뒤 uncertainty/prior.
-11. **V10-U**: full LOSO/LOEO/calibration protocol.
+11. **V10-U**: participant+installation 3-fold/LOEO/calibration protocol.
 
 각 stage는 seed별 checkpoint, raw prediction, trial metric CSV, bootstrap JSON을 별도 디렉터리에 저장한다.
 한 stage가 gate를 못 넘으면 다음 stage를 실행하지 않는다.
@@ -378,7 +378,7 @@ flowchart TD
     I --> J{"seen gate"}
     J -->|fail| H
     J -->|pass| K["uncertainty / OOF prior"]
-    K --> L["full LOSO + LOEO + calibration"]
+    K --> L["participant+installation 3-fold + LOEO + calibration"]
 ```
 
 가장 먼저 작성할 코드는 더 큰 backbone이 아니라 `gt_qc.py`, cache fingerprint, representation-aware
