@@ -199,12 +199,137 @@ def selection_score(metrics: dict) -> float:
     )
 
 
+def _balanced_weight(index, column: str, classes: int, device: str,
+                     danger_boost: float = 1.0) -> torch.Tensor:
+    labels = index[column].to_numpy(dtype=np.int64)
+    counts = np.bincount(labels, minlength=classes).astype(np.float64)
+    weights = counts.sum() / (classes * np.maximum(counts, 1.0))
+    if column == "risk_id":
+        weights[C.N_RISK - 1] *= danger_boost
+        weights *= counts.sum() / max(float((weights * counts).sum()), 1e-8)
+    return torch.tensor(weights, dtype=torch.float32, device=device)
+
+
+def _confusion_summary(confusion: torch.Tensor) -> dict:
+    true_positive = confusion.diag().float()
+    precision = true_positive / confusion.sum(0).clamp(min=1).float()
+    recall = true_positive / confusion.sum(1).clamp(min=1).float()
+    f1 = 2 * precision * recall / (precision + recall).clamp(min=1e-8)
+    present = confusion.sum(1) > 0
+    return {
+        "accuracy": float(true_positive.sum() / confusion.sum().clamp(min=1)),
+        "macro_f1": float(f1[present].mean()),
+        "precision": [float(value) for value in precision],
+        "recall": [float(value) for value in recall],
+        "f1": [float(value) for value in f1],
+        "support": [int(value) for value in confusion.sum(1)],
+        "confusion": confusion.tolist(),
+    }
+
+
+@torch.no_grad()
+def collect_classification_logits(model, loader: DataLoader,
+                                  device: str) -> dict:
+    model.eval()
+    values = {key: [] for key in (
+        "class_logits", "risk_logits", "class_target", "risk_target"
+    )}
+    for batch in loader:
+        output = model(
+            batch["csi"].to(device), batch["link_mask"].to(device)
+        )
+        values["class_logits"].append(output["class_logits"].float().cpu())
+        values["risk_logits"].append(output["risk_logits"].float().cpu())
+        values["class_target"].append(batch["class_id"].long())
+        values["risk_target"].append(batch["risk_id"].long())
+    return {key: torch.cat(items) for key, items in values.items()}
+
+
+def classification_metrics(logits: dict, danger_bias: float = 0.0) -> dict:
+    class_confusion = torch.zeros(C.N_CLASSES, C.N_CLASSES, dtype=torch.long)
+    risk_confusion = torch.zeros(C.N_RISK, C.N_RISK, dtype=torch.long)
+    class_target = logits["class_target"]
+    risk_target = logits["risk_target"]
+    class_pred = logits["class_logits"].argmax(-1)
+    risk_logits = logits["risk_logits"].clone()
+    risk_logits[:, C.N_RISK - 1] += danger_bias
+    risk_pred = risk_logits.argmax(-1)
+    class_confusion += torch.bincount(
+        class_target * C.N_CLASSES + class_pred,
+        minlength=C.N_CLASSES * C.N_CLASSES,
+    ).reshape(C.N_CLASSES, C.N_CLASSES)
+    risk_confusion += torch.bincount(
+        risk_target * C.N_RISK + risk_pred,
+        minlength=C.N_RISK * C.N_RISK,
+    ).reshape(C.N_RISK, C.N_RISK)
+    class_metrics = _confusion_summary(class_confusion)
+    risk_metrics = _confusion_summary(risk_confusion)
+    danger = C.N_RISK - 1
+    safe_support = max(int(risk_confusion[0].sum()), 1)
+    risk_metrics.update({
+        "danger_recall": risk_metrics["recall"][danger],
+        "danger_precision": risk_metrics["precision"][danger],
+        "danger_f1": risk_metrics["f1"][danger],
+        "danger_tp": int(risk_confusion[danger, danger]),
+        "danger_support": int(risk_confusion[danger].sum()),
+        "safe_to_danger": int(risk_confusion[0, danger]),
+        "safe_to_danger_rate": float(risk_confusion[0, danger]) / safe_support,
+    })
+    return {
+        "class": class_metrics,
+        "risk": risk_metrics,
+        "danger_logit_bias": float(danger_bias),
+    }
+
+
+@torch.no_grad()
+def evaluate_classification(model, loader: DataLoader, device: str,
+                            danger_bias: float = 0.0) -> dict:
+    return classification_metrics(
+        collect_classification_logits(model, loader, device), danger_bias
+    )
+
+
+@torch.no_grad()
+def calibrate_danger_bias(model, loader: DataLoader, device: str,
+                          minimum_recall: float = 0.97) -> tuple[dict, list[dict]]:
+    logits = collect_classification_logits(model, loader, device)
+    candidates = []
+    for bias in np.linspace(0.0, 2.0, 41):
+        metrics = classification_metrics(logits, float(bias))
+        risk = metrics["risk"]
+        candidates.append({
+            "danger_logit_bias": float(bias),
+            "feasible": risk["danger_recall"] >= minimum_recall,
+            "score": (
+                risk["macro_f1"] - 0.50 * risk["safe_to_danger_rate"]
+            ),
+            "validation": metrics,
+        })
+    feasible = [item for item in candidates if item["feasible"]]
+    selected = max(feasible or candidates, key=lambda item: item["score"])
+    return selected, candidates
+
+
+def multitask_selection_score(pose_metrics: dict, classification: dict,
+                              args) -> float:
+    risk = classification["risk"]
+    return (
+        selection_score(pose_metrics)
+        + args.selection_danger_recall_weight * (1.0 - risk["danger_recall"])
+        + args.selection_risk_macro_f1_weight * (1.0 - risk["macro_f1"])
+        + args.selection_safe_to_danger_weight * risk["safe_to_danger_rate"]
+        + args.danger_recall_gate_penalty
+        * max(args.min_danger_recall - risk["danger_recall"], 0.0)
+    )
+
+
 def make_loaders(args, device: str):
     datasets = build_datasets(
-        exp="single_split", baseline="sub",
+        exp=args.exp, baseline="sub",
         dropout=DropoutConfig(p=0.0, rf_augment=False), seed=args.seed,
     )
-    train = QualityWeightedDataset(pose_only(datasets["train"]))
+    train = QualityWeightedDataset(datasets["train"])
     validation = QualityWeightedDataset(pose_only(datasets["val"]))
     test = QualityWeightedDataset(pose_only(datasets["test"]))
     weights = train.sampler_weights()
@@ -233,12 +358,24 @@ def make_loaders(args, device: str):
             test, batch_size=args.batch_size * 2,
             shuffle=False, num_workers=0,
         ),
+        "val_class": DataLoader(
+            datasets["val"], batch_size=args.batch_size * 2,
+            shuffle=False, num_workers=0,
+        ),
+        "test_class": DataLoader(
+            datasets["test"], batch_size=args.batch_size * 2,
+            shuffle=False, num_workers=0,
+        ),
     }
     return (train, validation, test), loaders
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--exp", default="single_split",
+        choices=("single_split", "single_split_lmh_e01"),
+    )
     parser.add_argument(
         "--v3-checkpoint", type=Path,
         default=C.WORK_ROOT / "runs" / "seen_v3_contact_root" / "calibrated_model.pt",
@@ -268,6 +405,14 @@ def main() -> int:
     parser.add_argument("--batch-size", type=int, default=6)
     parser.add_argument("--learning-rate", type=float, default=2e-4)
     parser.add_argument("--danger-weight", type=float, default=4.0)
+    parser.add_argument("--lambda-class", type=float, default=0.2)
+    parser.add_argument("--lambda-risk", type=float, default=0.2)
+    parser.add_argument("--risk-danger-boost", type=float, default=1.5)
+    parser.add_argument("--selection-danger-recall-weight", type=float, default=0.10)
+    parser.add_argument("--selection-risk-macro-f1-weight", type=float, default=0.03)
+    parser.add_argument("--selection-safe-to-danger-weight", type=float, default=0.05)
+    parser.add_argument("--min-danger-recall", type=float, default=0.0)
+    parser.add_argument("--danger-recall-gate-penalty", type=float, default=10.0)
     parser.add_argument("--alignment-weight", type=float, default=0.15)
     parser.add_argument("--max-shift", type=int, default=15)
     parser.add_argument("--seed", type=int, default=7)
@@ -289,6 +434,12 @@ def main() -> int:
     datasets, loaders = make_loaders(args, device)
     train, validation, test = datasets
     model = AlignmentRobustTrajectoryNet(load_v3(args, device)).to(device)
+    class_weight = _balanced_weight(
+        train.index, "class_id", C.N_CLASSES, device
+    )
+    risk_weight = _balanced_weight(
+        train.index, "risk_id", C.N_RISK, device, args.risk_danger_boost
+    )
     optimizer = torch.optim.AdamW(
         [parameter for parameter in model.parameters() if parameter.requires_grad],
         lr=args.learning_rate, weight_decay=1e-4,
@@ -318,6 +469,10 @@ def main() -> int:
                     output, batch,
                     alignment_weight=args.alignment_weight,
                     max_shift=args.max_shift,
+                    class_weight=class_weight,
+                    risk_weight=risk_weight,
+                    lambda_class=args.lambda_class,
+                    lambda_risk=args.lambda_risk,
                 )
             scaler.scale(loss).backward()
             scaler.unscale_(optimizer)
@@ -334,18 +489,26 @@ def main() -> int:
         validation_metrics = evaluate_trajectory(
             model, loaders["val"], device, args.max_shift
         )
-        score = selection_score(validation_metrics)
+        validation_classification = evaluate_classification(
+            model, loaders["val_class"], device
+        )
+        score = multitask_selection_score(
+            validation_metrics, validation_classification, args
+        )
         history.append({
             "epoch": epoch,
             "train": train_metrics,
             "selection_score": score,
             "validation": validation_metrics,
+            "validation_classification": validation_classification,
         })
         print(
             f"epoch={epoch:02d} loss={train_metrics['total']:.4f} "
             f"mpjpe={validation_metrics['mpjpe_m'] * 100:.2f}cm "
             f"danger={validation_metrics['danger_mpjpe_m'] * 100:.2f}cm "
             f"root={validation_metrics['root_error_m'] * 100:.2f}cm "
+            f"class={validation_classification['class']['accuracy']:.3f} "
+            f"danger-R={validation_classification['risk']['danger_recall']:.3f} "
             f"score={score:.4f}"
         )
         if score < best_score:
@@ -354,6 +517,7 @@ def main() -> int:
             torch.save({
                 "model": model.state_dict(), "epoch": epoch,
                 "validation": validation_metrics,
+                "validation_classification": validation_classification,
                 "alignment_weight": args.alignment_weight,
                 "max_shift": args.max_shift,
             }, checkpoint_path)
@@ -406,9 +570,12 @@ def main() -> int:
     test_metrics = evaluate_trajectory(
         model, loaders["test"], device, args.max_shift
     )
+    test_classification = evaluate_classification(
+        model, loaders["test_class"], device
+    )
     result = {
         "run": "seen_v4_alignment_robust_trajectory_v9",
-        "protocol": "single_split",
+        "protocol": args.exp,
         "selection_split": "validation",
         "test_used_for_selection": False,
         "objective": "full fall trajectory; no impact-frame or first-contact target",
@@ -422,6 +589,8 @@ def main() -> int:
         },
         "selected_validation": selected["validation"],
         "test": test_metrics,
+        "validation_classification": checkpoint["validation_classification"],
+        "test_classification": test_classification,
         "shuffled_test": evaluate_model(
             model, ShuffledSignalDataset(test, args.seed),
             device, args.batch_size * 2, 5,
@@ -449,6 +618,8 @@ def main() -> int:
         "max_shift_frames": args.max_shift,
         "validation": selected["validation"],
         "test": test_metrics,
+        "validation_classification": checkpoint["validation_classification"],
+        "test_classification": test_classification,
     }, calibrated_path)
     print(json.dumps(result, indent=2, ensure_ascii=False))
     return 0

@@ -23,7 +23,7 @@ def main() -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument(
         "--exp", default="single_split",
-        choices=["single_split", "yja_holdout", "loso"],
+        choices=["single_split", "single_split_lmh_e01", "yja_holdout", "loso"],
     )
     ap.add_argument("--fold", default=None, help="exp=loso 일 때 test_ajh 등")
     ap.add_argument(

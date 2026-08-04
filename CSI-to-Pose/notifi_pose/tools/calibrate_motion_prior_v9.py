@@ -13,6 +13,8 @@ from ..motion_prior_v9 import MotionPriorTrajectoryWrapper, TemporalMotionDenois
 from ..seen_v4 import AlignmentRobustTrajectoryNet
 from .diagnose_observability import ShuffledSignalDataset, evaluate_model, report_path
 from .train_seen_v4_trajectory import (
+    calibrate_danger_bias,
+    evaluate_classification,
     evaluate_trajectory,
     load_v3,
     make_loaders,
@@ -22,6 +24,10 @@ from .train_seen_v4_trajectory import (
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--exp", default="single_split",
+        choices=("single_split", "single_split_lmh_e01"),
+    )
     parser.add_argument(
         "--v9-checkpoint", type=Path,
         default=C.WORK_ROOT / "runs" / "seen_v4_v9a_no_impact" / "calibrated_model.pt",
@@ -62,6 +68,7 @@ def main() -> int:
     parser.add_argument("--max-shift", type=int, default=15)
     parser.add_argument("--batch-size", type=int, default=12)
     parser.add_argument("--danger-weight", type=float, default=4.0)
+    parser.add_argument("--minimum-danger-recall", type=float, default=0.97)
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument(
         "--run-dir", type=Path,
@@ -120,9 +127,20 @@ def main() -> int:
     test_metrics = evaluate_trajectory(
         model, loaders["test"], device, args.max_shift
     )
+    selected_risk, risk_candidates = calibrate_danger_bias(
+        model, loaders["val_class"], device, args.minimum_danger_recall
+    )
+    validation_classification = selected_risk["validation"]
+    danger_bias = selected_risk["danger_logit_bias"]
+    raw_test_classification = evaluate_classification(
+        model, loaders["test_class"], device
+    )
+    test_classification = evaluate_classification(
+        model, loaders["test_class"], device, danger_bias
+    )
     result = {
         "run": "seen_v4_v9c_temporal_motion_prior",
-        "protocol": "single_split",
+        "protocol": args.exp,
         "selection_split": "validation",
         "test_used_for_selection": False,
         "source_v9": report_path(args.v9_checkpoint),
@@ -131,6 +149,14 @@ def main() -> int:
         "selected_validation": selected["validation"],
         "baseline_test": baseline_test,
         "test": test_metrics,
+        "validation_classification": validation_classification,
+        "test_classification": test_classification,
+        "raw_test_classification": raw_test_classification,
+        "risk_calibration": {
+            "minimum_validation_danger_recall": args.minimum_danger_recall,
+            "selected_danger_logit_bias": danger_bias,
+            "candidates": risk_candidates,
+        },
         "shuffled_test": evaluate_model(
             model, ShuffledSignalDataset(test, args.seed),
             device, args.batch_size, 5,
@@ -148,6 +174,10 @@ def main() -> int:
         "source_prior": report_path(args.prior_checkpoint),
         "validation": selected["validation"],
         "test": test_metrics,
+        "validation_classification": validation_classification,
+        "test_classification": test_classification,
+        "raw_test_classification": raw_test_classification,
+        "danger_logit_bias": danger_bias,
     }, args.run_dir / "calibrated_model.pt")
     print(json.dumps(result, indent=2, ensure_ascii=False))
     return 0

@@ -4,11 +4,60 @@ Wi-Fi CSI만 입력받아 시간에 따른 사람의 **GVHMR SMPL-22 3D pose와 
 
 - 기존 코드: [NotiFi-CSI-to-Pose `feature/goal1`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1)
 - 현재 통합 위치: [NotiFi/CSI-to-Pose](https://github.com/jjyoon012-git/NotiFi/tree/main/CSI-to-Pose)
-- 현재 권장 seen 모델: **9안 Stage C - fall trajectory + temporal denoising prior**
+- 현재 권장 seen 모델: **V9C clean-split multi-task**
 - 현재 개발 순서: **seen 성능 확보 후 unseen/LOSO calibration 재개**
 - 문서 정렬 원칙: **현재 권장 모델을 맨 위에 두고, 이전 안은 최신순으로 기록**
 
-## 현재 모델: 9안 Stage C - Fall Trajectory Reconstruction
+## 현재 모델: V9C clean-split multi-task
+
+팀원 모델을 가져오지 않고 기존 V9 encoder/trajectory decoder를 그대로 확장했다. 동일한
+V9 temporal feature에 다음 세 head를 직접 연결한다.
+
+1. `pose head`: SMPL-22의 frame별 3D pose와 root trajectory 복원
+2. `class head`: safe 9개, warning 3개, danger 5개를 합친 17개 세부 동작 분류
+3. `risk head`: safe, warning, danger 3단계 위험 분류
+
+분할은 `single_split_lmh_e01`이다. `ajh/mhw`는 E01-E03을 모두 사용하고, 오류가 보고된
+`lmh` E02/E03은 완전히 제외해 E01만 사용한다. train/validation/test는 trial 단위로
+분리하며, test는 모델 선택이나 logit calibration에 사용하지 않는다.
+
+| Split | 전체 trials | Pose GT | Absence | Subjects / environments |
+|---|---:|---:|---:|---|
+| train | 1,266 | 1,210 | 56 | ajh/mhw E01-E03, lmh E01 |
+| validation | 329 | 315 | 14 | ajh/mhw E01-E03, lmh E01 |
+| test | 329 | 315 | 14 | ajh/mhw E01-E03, lmh E01 |
+
+학습에는 inverse-frequency class/risk weight와 danger 추가 가중치를 사용했다. checkpoint는
+validation danger-recall hard gate를 통과한 후보 중에서 고르고, 마지막 danger logit bias도
+validation에서만 선택한다. 선택값은 temporal-prior strength `0.75`, danger-logit bias
+`+1.75`이다.
+
+### 현재 test 결과
+
+| 평가 항목 | V9A raw | 현재 V9C | 해석 |
+|---|---:|---:|---|
+| MPJPE | 20.38cm | 20.41cm | prior로 0.03cm 악화 |
+| Dynamic MPJPE | 20.17cm | 20.19cm | 사실상 동일 |
+| Root error | 33.54cm | 33.54cm | 동일 |
+| Danger MPJPE | 51.16cm | 51.14cm | 0.02cm 개선 |
+| Danger distal MPJPE | 55.89cm | 55.78cm | 0.11cm 개선 |
+| Danger endpoint MPJPE | 71.42cm | 71.39cm | 0.03cm 개선 |
+| Pose-speed ratio | 1.196 | 1.150 | 과도한 움직임 감소 |
+| 17-class accuracy | 87.84% | 87.84% | pose prior와 무관 |
+| 17-class macro F1 | 84.89% | 84.89% | pose prior와 무관 |
+| Risk accuracy | 94.53% | **95.14%** | validation bias 적용 후 개선 |
+| Risk macro F1 | 93.33% | **94.43%** | validation bias 적용 후 개선 |
+| Danger recall | 62/70, 88.57% | **66/70, 94.29%** | 낙상 4건 추가 검출 |
+| Danger precision | 87.32% | 85.71% | recall 증가의 비용 |
+| Safe -> danger | 5/175, 2.86% | 7/175, 4.00% | 오경보 2건 증가 |
+
+현재 결론은 명확하다. 세 분류 head와 danger-recall calibration은 효과가 있지만 temporal
+denoising prior의 pose 개선은 매우 작고 전체 MPJPE는 오히려 소폭 나빠졌다. 따라서 현재
+V9C는 위험 분류 기준 모델로 채택하되, 낙상 자세 복원 자체가 해결됐다고 보지 않는다.
+특히 17-class에서 `D03 bed_exit_fall` recall이 `5/14=35.71%`로 가장 약하므로 다음 실험은
+낙상 세부 동작 간 구별과 CSI-conditioned trajectory 다양성에 집중한다.
+
+## 이전 모델: 9안 Stage C - Fall Trajectory Reconstruction
 
 현재는 사용자가 지정한
 [`feature/goal1/work_v2/splits`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1/work_v2/splits)의

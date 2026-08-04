@@ -53,6 +53,8 @@ class SeenV4Tests(unittest.TestCase):
         output = model(*self.make_inputs())
         self.assertTrue(torch.allclose(output["pose_rel"], output["pose_v7"], atol=1e-6))
         self.assertTrue(torch.equal(output["root"], output["root_v7"]))
+        self.assertEqual(output["class_logits"].shape, (2, C.N_CLASSES))
+        self.assertEqual(output["risk_logits"].shape, (2, C.N_RISK))
 
     def test_piecewise_alignment_recovers_small_shift(self):
         target = torch.zeros(1, 32, 2)
@@ -81,14 +83,18 @@ class SeenV4Tests(unittest.TestCase):
             "pose_rel": target_pose,
             "root": target_root,
             "valid": torch.ones(2, 24, dtype=torch.bool),
+            "class_id": torch.tensor([0, 12]),
             "risk_id": torch.tensor([0, 2]),
             "quality_weight": torch.ones(2),
         }
         loss, parts = trajectory_reconstruction_loss(
-            output, batch, alignment_weight=0.1, max_shift=3
+            output, batch, alignment_weight=0.1, max_shift=3,
+            lambda_class=0.2, lambda_risk=0.2,
         )
         self.assertTrue(torch.isfinite(loss))
         self.assertIn("alignment", parts)
+        self.assertGreater(parts["class"], 0)
+        self.assertGreater(parts["risk"], 0)
         loss.backward()
         gradients = [
             parameter.grad for parameter in model.parameters()

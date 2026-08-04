@@ -1,5 +1,24 @@
 # Seen-first experiment log
 
+## 최신 기록: V9C clean-split multi-task
+
+| 번호 | 완료 시각(KST) | 상세 내용 | 목적 | 결과 | 결정 |
+|---|---|---|---|---|---|
+| EXP-054 | 2026-08-04 23:26 | V9C temporal prior와 validation-only danger logit calibration | 낙상 recall을 높이면서 pose 안정화 여부 확인 | MPJPE 20.41cm, danger MPJPE 51.14cm, danger recall 66/70=94.29%, safe->danger 7/175=4.00% | 위험 분류 기준 모델로 채택, pose prior의 미미한 개선은 과대해석하지 않음 |
+| EXP-053 | 2026-08-04 23:10 | V9 encoder에 pose/17-class/3-risk head를 연결하고 `single_split_lmh_e01`로 학습 | 팀원 모델 없이 V9 자체의 multi-task 성능 평가 | 17-class accuracy 87.84%, macro F1 84.89%; raw danger recall 62/70=88.57% | validation danger-recall gate와 logit calibration 추가 |
+
+### EXP-054: V9C clean-split multi-task
+
+- 데이터는 ajh/mhw E01-E03과 lmh E01만 사용했다. 전체 trial 수는 train/validation/test
+  `1266/329/329`, pose GT trial 수는 `1210/315/315`이다.
+- V9 temporal feature에 pose, 17-class, safe/warning/danger risk head를 연결했다.
+- validation에서 temporal-prior strength `0.75`와 danger-logit bias `+1.75`를 선택했다.
+  test는 두 값을 고르는 데 사용하지 않았다.
+- risk calibration 전후 danger recall은 `62/70 -> 66/70`, risk macro F1은
+  `93.33% -> 94.43%`다. safe-to-danger 오경보는 `5/175 -> 7/175`로 증가했다.
+- temporal prior는 danger MPJPE를 `51.16 -> 51.14cm`로 0.02cm 낮췄지만 전체 MPJPE는
+  `20.38 -> 20.41cm`로 0.03cm 악화했다. 따라서 pose 성능 향상으로 주장하지 않는다.
+
 ## 최신 기록: 종합 감사와 10안 결정
 
 | 번호 | 완료 시각(KST) | 목적 | 방법 | 핵심 결과 | 결정 |

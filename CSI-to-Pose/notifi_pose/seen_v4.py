@@ -215,6 +215,12 @@ class AlignmentRobustTrajectoryNet(nn.Module):
             nn.LayerNorm(hidden), nn.Linear(hidden, hidden), nn.GELU(),
             nn.Linear(hidden, 3),
         )
+        self.class_head = nn.Sequential(
+            nn.LayerNorm(hidden), nn.Linear(hidden, C.N_CLASSES)
+        )
+        self.risk_head = nn.Sequential(
+            nn.LayerNorm(hidden), nn.Linear(hidden, C.N_RISK)
+        )
         for head in (self.rotation_head, self.root_anchor_head, self.root_step_head):
             nn.init.zeros_(head[-1].weight)
             nn.init.zeros_(head[-1].bias)
@@ -281,6 +287,7 @@ class AlignmentRobustTrajectoryNet(nn.Module):
             root[:, :1] + self.root_strength * anchor_delta[:, None]
             + torch.cumsum(base_step + self.root_strength * step_delta, dim=1)
         )
+        pooled = _masked_temporal_mean(feature, valid)
 
         output = dict(base)
         output.update({
@@ -292,6 +299,10 @@ class AlignmentRobustTrajectoryNet(nn.Module):
             "root_anchor_delta_v9": anchor_delta,
             "root_step_delta_v9": step_delta,
             "temporal_features_v9": feature,
+            "base_class_logits": base["class_logits"],
+            "base_risk_logits": base["risk_logits"],
+            "class_logits": self.class_head(pooled),
+            "risk_logits": self.risk_head(pooled),
         })
         return output
 
@@ -316,6 +327,10 @@ def trajectory_reconstruction_loss(
     batch: dict,
     alignment_weight: float = 0.15,
     max_shift: int = 15,
+    class_weight: torch.Tensor | None = None,
+    risk_weight: torch.Tensor | None = None,
+    lambda_class: float = 0.0,
+    lambda_risk: float = 0.0,
 ) -> tuple[torch.Tensor, dict]:
     """Full-sequence objective with no impact-frame or first-contact target."""
     valid = batch["valid"].bool()
@@ -399,10 +414,20 @@ def trajectory_reconstruction_loss(
         )
         alignment = alignment * danger.to(alignment.dtype)
 
+    class_loss = F.cross_entropy(
+        output["class_logits"], batch["class_id"],
+        weight=class_weight, reduction="none",
+    )
+    risk_loss = F.cross_entropy(
+        output["risk_logits"], batch["risk_id"],
+        weight=risk_weight, reduction="none",
+    )
+
     per_sample = (
         pose + root + 0.05 * bone + 0.15 * velocity
         + 0.25 * root_drop + 0.10 * torso + 0.05 * shoulder
         + 0.25 * endpoint + alignment_weight * alignment
+        + lambda_class * class_loss + lambda_risk * risk_loss
     )
     total = _quality_mean(per_sample, sample_weight)
     parts = {
@@ -420,5 +445,7 @@ def trajectory_reconstruction_loss(
             else alignment.new_zeros(())
         ),
         "danger_fraction": float(danger.float().mean().detach()),
+        "class": float(class_loss.mean().detach()),
+        "risk": float(risk_loss.mean().detach()),
     }
     return total, parts

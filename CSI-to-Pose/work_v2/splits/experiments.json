@@ -32,6 +32,36 @@
       ]
     }
   },
+  "single_split_lmh_e01": {
+    "description": "Clean seen-domain split: ajh/mhw use E01-E03 and lmh uses E01 only",
+    "train": {
+      "subjects": ["ajh", "mhw", "lmh"],
+      "roles": ["train"],
+      "environments_by_subject": {
+        "ajh": ["E01", "E02", "E03"],
+        "mhw": ["E01", "E02", "E03"],
+        "lmh": ["E01"]
+      }
+    },
+    "val": {
+      "subjects": ["ajh", "mhw", "lmh"],
+      "roles": ["val"],
+      "environments_by_subject": {
+        "ajh": ["E01", "E02", "E03"],
+        "mhw": ["E01", "E02", "E03"],
+        "lmh": ["E01"]
+      }
+    },
+    "test": {
+      "subjects": ["ajh", "mhw", "lmh"],
+      "roles": ["test"],
+      "environments_by_subject": {
+        "ajh": ["E01", "E02", "E03"],
+        "mhw": ["E01", "E02", "E03"],
+        "lmh": ["E01"]
+      }
+    }
+  },
   "yja_holdout": {
     "description": "Protocol A: use every source trial for train/validation and keep yja E02 pose trials as the unseen test set",
     "train": {

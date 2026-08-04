@@ -47,6 +47,17 @@ def load_experiments() -> dict:
 def select_rows(index: pd.DataFrame, spec: dict) -> np.ndarray:
     """experiments.json 의 한 항목({subjects, roles})으로 캐시 행 번호를 고른다."""
     m = index.subject.isin(spec["subjects"]) & index.role.isin(spec["roles"])
+    environments_by_subject = spec.get("environments_by_subject")
+    if environments_by_subject:
+        allowed = {
+            (subject, environment)
+            for subject, environments in environments_by_subject.items()
+            for environment in environments
+        }
+        m &= pd.Series(
+            [pair in allowed for pair in zip(index.subject, index.environment)],
+            index=index.index,
+        )
     m &= index.split_group == "dev"
     m &= index.cache_ok
     return np.flatnonzero(m.to_numpy())
@@ -377,8 +388,8 @@ def build_datasets(
         if not fold:
             raise ValueError("exp='loso' 에는 fold 가 필요하다 (예: test_ajh)")
         cfg = experiments["loso"][fold]
-    elif exp == "single_split":
-        cfg = experiments["single_split"]
+    elif exp in ("single_split", "single_split_lmh_e01"):
+        cfg = experiments[exp]
     else:
         raise ValueError(f"unknown exp {exp!r}")
 

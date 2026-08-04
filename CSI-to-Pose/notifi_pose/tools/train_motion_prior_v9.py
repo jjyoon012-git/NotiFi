@@ -123,6 +123,10 @@ def evaluate(model, loader: DataLoader, device: str,
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--exp", default="single_split",
+        choices=("single_split", "single_split_lmh_e01"),
+    )
     parser.add_argument("--epochs", type=int, default=12)
     parser.add_argument("--patience", type=int, default=4)
     parser.add_argument("--batch-size", type=int, default=32)
@@ -135,7 +139,7 @@ def main() -> int:
     args = parser.parse_args()
     set_seed(args.seed)
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    datasets = build_datasets(exp="single_split", baseline="none", seed=args.seed)
+    datasets = build_datasets(exp=args.exp, baseline="none", seed=args.seed)
     train = pose_only(datasets["train"])
     validation = pose_only(datasets["val"])
     labels = train.index.class_id.to_numpy(dtype=np.int64)
@@ -221,7 +225,7 @@ def main() -> int:
     checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
     result = {
         "run": "temporal_denoising_motion_prior_v9",
-        "protocol": "single_split_train_gt_only",
+        "protocol": f"{args.exp}_train_gt_only",
         "best_epoch": checkpoint["epoch"],
         "validation_noisy": checkpoint["validation_noisy"],
         "validation_clean": checkpoint["validation_clean"],
