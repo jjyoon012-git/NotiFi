@@ -101,6 +101,10 @@ def main() -> int:
         "--weight-average-start", type=int, default=10,
         help="epoch to start dense checkpoint averaging; <=0 disables it",
     )
+    ap.add_argument(
+        "--selection-mode", choices=("composite", "mpjpe"), default="composite",
+        help="validation checkpoint criterion; p2 uses mpjpe",
+    )
 
     args = ap.parse_args()
 
@@ -137,6 +141,7 @@ def main() -> int:
         flow_noise=args.flow_noise,
         domain_grl=args.domain_grl,
         weight_average_start=args.weight_average_start,
+        selection_mode=args.selection_mode,
         baseline=args.baseline,
     )
 

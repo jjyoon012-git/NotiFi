@@ -752,6 +752,7 @@ class PoseNet(nn.Module):
             "root": root,
             "class_logits": self.class_head(pooled),
             "risk_logits": self.risk_head(pooled),
+            "temporal_features": h,
         }
 
     def n_params(self) -> int:

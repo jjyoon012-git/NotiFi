@@ -4,11 +4,59 @@ Wi-Fi CSI만 입력받아 시간에 따른 사람의 **GVHMR SMPL-22 3D pose와 
 
 - 기존 코드: [NotiFi-CSI-to-Pose `feature/goal1`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1)
 - 현재 통합 위치: [NotiFi/CSI-to-Pose](https://github.com/jjyoon012-git/NotiFi/tree/main/CSI-to-Pose)
-- 현재 권장 seen 모델: **V9C clean-split multi-task**
+- 현재 권장 seen 모델: **V10 P2-V9 dual hybrid**
 - 현재 개발 순서: **seen 성능 확보 후 unseen/LOSO calibration 재개**
 - 문서 정렬 원칙: **현재 권장 모델을 맨 위에 두고, 이전 안은 최신순으로 기록**
 
-## 현재 모델: V9C clean-split multi-task
+## 현재 모델: V10 P2-V9 dual hybrid
+
+V10은 팀원 p2의 낮은 pose 오차와 안정적인 분류, V9의 낙상 trajectory 보정, V9C의
+root trajectory를 validation gate로 결합한다. 팀원 checkpoint를 그대로 복사하지 않고
+동일한 `single_split_lmh_e01`에서 p2를 재현·fine-tune한 뒤 결합했다.
+
+```text
+amplitude + sanitized phase -> absence baseline subtraction
+  -> shared LinkEncoder + FiLM + concat + 4.2s TCN
+  -> p2 coarse pose + 17-class/risk logits
+  -> V9 bone-rotation trajectory residual (strength 0.35)
+
+same CSI -> previous V9C root expert
+  -> p2 root와 validation blend (strength 0.50)
+
+classification: p2 class logits 유지
+risk: p2 risk logits 유지 + validation danger bias 2.95
+```
+
+모든 결합 강도에는 `0` 후보가 있다. pose, root, class, risk를 validation에서 독립적으로
+선택하며 test는 강도나 bias 선택에 사용하지 않는다. root residual은 validation root error가
+최소 `0.5cm` 개선될 때만 활성화한다.
+
+### V10 seen test 결과
+
+| Metric | 로컬 p2 기준 | 이전 V9C | 현재 V10 dual |
+|---|---:|---:|---:|
+| MPJPE | 16.57cm | 20.41cm | **16.31cm** |
+| Dynamic MPJPE | 19.70cm | 20.19cm | **19.38cm** |
+| Root error | 36.25cm | 33.54cm | **32.29cm** |
+| Danger MPJPE | 53.63cm | 51.14cm | **47.99cm** |
+| Danger distal | 55.68cm | 55.78cm | **51.19cm** |
+| Danger endpoint | 66.01cm | 71.39cm | **61.17cm** |
+| 17-class accuracy | **93.31%** | 87.84% | **93.31%** |
+| 17-class macro F1 | **91.44%** | 84.89% | **91.44%** |
+| Risk accuracy | 96.66% | 95.14% | **96.96%** |
+| Risk macro F1 | 95.81% | 94.43% | **96.44%** |
+| Danger recall | 63/70, 90.00% | 66/70, 94.29% | **67/70, 95.71%** |
+| Safe -> danger | 2/175, 1.14% | 7/175, 4.00% | 4/175, 2.29% |
+
+팀원이 보고한 원 p2 수치 `15.76cm`보다는 현재 V10 MPJPE가 `0.55cm` 높다. 반면 현재
+로컬 코드와 GT로 다시 학습한 p2를 동일 evaluator에서 비교하면 `16.57 -> 16.31cm`로
+개선됐다. 특히 root와 danger absolute trajectory는 두 이전 모델을 모두 앞섰다.
+
+현재 한계는 두 encoder를 함께 실행해 추론 비용이 증가한다는 점이다. 다음 단계는 이 dual
+모델을 teacher로 고정하고 p2 temporal feature 하나에 V9C root를 distillation해 단일 encoder로
+줄이는 것이다.
+
+## 이전 모델: V9C clean-split multi-task
 
 팀원 모델을 가져오지 않고 기존 V9 encoder/trajectory decoder를 그대로 확장했다. 동일한
 V9 temporal feature에 다음 세 head를 직접 연결한다.

@@ -88,6 +88,7 @@ class TrainConfig:
     flow_noise: float = 0.25
     domain_grl: float = 0.2
     weight_average_start: int = 10
+    selection_mode: str = "composite"
 
     #: 사이트별 빈방 기준선 제거 (Phase 2). "none" | "sub" | "sub_z"
     #: dataset.SiteBaseline 참조. PerLinkNorm(전역 정규화)은 이 뒤의 2차 정규화로 유지된다.
@@ -278,6 +279,14 @@ def _selection_score(metrics: dict) -> float:
     )
 
 
+def _checkpoint_score(metrics: dict, mode: str) -> float:
+    if mode == "mpjpe":
+        return float(metrics["mpjpe"])
+    if mode == "composite":
+        return _selection_score(metrics)
+    raise ValueError(f"unknown selection mode: {mode}")
+
+
 def train(datasets: dict, cfg: TrainConfig, out_dir: Path,
           device: str | None = None) -> dict:
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
@@ -436,7 +445,7 @@ def train(datasets: dict, cfg: TrainConfig, out_dir: Path,
 
     if cfg.init_checkpoint:
         initial_val = evaluate(model, loaders["val"], loss_fn, device)
-        best = _selection_score(initial_val)
+        best = _checkpoint_score(initial_val, cfg.selection_mode)
         torch.save(
             {
                 "model": model.state_dict(), "cfg": asdict(cfg), "epoch": 0,
@@ -512,8 +521,10 @@ def train(datasets: dict, cfg: TrainConfig, out_dir: Path,
 
         # Position remains primary; root and dynamics break ties between models that
         # predict a plausible but nearly static mean pose.
-        score = _selection_score({key.removeprefix("val_"): value
-                                  for key, value in va.items()})
+        score = _checkpoint_score(
+            {key.removeprefix("val_"): value for key, value in va.items()},
+            cfg.selection_mode,
+        )
         if score < best:
             best, patience = score, 0
             torch.save({"model": model.state_dict(), "cfg": asdict(cfg),
@@ -539,7 +550,7 @@ def train(datasets: dict, cfg: TrainConfig, out_dir: Path,
     if averaged is not None and int(averaged.n_averaged.item()) > 0:
         averaged.module.eval()
         avg_val = evaluate(averaged.module, loaders["val"], loss_fn, device)
-        avg_score = _selection_score(avg_val)
+        avg_score = _checkpoint_score(avg_val, cfg.selection_mode)
         averaged_path = out_dir / "averaged_model.pt"
         torch.save(
             {

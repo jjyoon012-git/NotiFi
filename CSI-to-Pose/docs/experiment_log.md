@@ -1,5 +1,30 @@
 # Seen-first experiment log
 
+## 최신 기록: V10 P2-V9 dual hybrid
+
+| 번호 | 완료 시각(KST) | 상세 내용 | 목적 | 결과 | 결정 |
+|---|---|---|---|---|---|
+| EXP-057 | 2026-08-05 00:37 | P2-V9 pose hybrid와 기존 V9C root expert를 validation blend | p2 pose/classification과 V9C root 강점 결합 | MPJPE 16.31cm, root 32.29cm, danger MPJPE 47.99cm, danger recall 95.71% | 현재 seen 권장 모델로 채택 |
+| EXP-056 | 2026-08-05 00:25 | 동결 p2 위에 V9 rotation/root/logit residual 학습 및 독립 gate | p2 성능을 보존하며 낙상 trajectory 개선 | pose strength 0.35, class/risk residual 0; MPJPE 16.31cm, danger endpoint 65.17cm | pose residual 채택, 자체 root residual 기각 |
+| EXP-055 | 2026-08-05 00:05 | p2 clean split 재현 후 LR 2e-4 fine-tune | 팀원 encoder 강점을 현재 코드·GT에서 재현 | val/test MPJPE 14.98/16.46cm, test class/risk 93.3/96.7% | V10 coarse checkpoint로 채택 |
+
+### EXP-057: V10 P2-V9 dual hybrid
+
+- 데이터는 ajh/mhw E01-E03과 lmh E01만 사용했다. train/validation/test는
+  `1266/329/329`이며 test는 어떤 gate 선택에도 사용하지 않았다.
+- p2의 amplitude/sanitized-phase 전처리, absence subtraction, shared LinkEncoder, FiLM,
+  concat fusion, 4.2초 TCN과 class/risk logits를 유지했다.
+- V9 residual은 p2 temporal feature, amplitude 차분, circular phase 차분, coarse motion을
+  입력받아 bone rotation trajectory를 보정했다. validation pose strength는 `0.35`다.
+- 자체 root residual은 validation 최소 개선폭을 못 넘어 `0`으로 기각했다. 기존 V9C root
+  expert와의 blend는 validation에서 `0.50`이 선택되어 test root를 `36.25 -> 32.29cm`,
+  danger MPJPE를 `53.63 -> 47.99cm`로 개선했다.
+- class residual은 `0`, risk residual은 `0`이므로 p2 logits를 유지한다. validation-only
+  danger bias `2.95`로 test danger recall은 `63/70 -> 67/70`, safe-to-danger는
+  `2/175 -> 4/175`가 됐다.
+- dual encoder의 계산량 증가는 남은 비용이다. 다음 실험은 V9C root expert를 p2 encoder에
+  distillation하는 단일-backbone student다.
+
 ## 최신 기록: V9C clean-split multi-task
 
 | 번호 | 완료 시각(KST) | 상세 내용 | 목적 | 결과 | 결정 |
