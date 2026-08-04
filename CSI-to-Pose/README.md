@@ -1,197 +1,483 @@
-# NotiFi CSI-to-Pose
+﻿# NotiFi CSI-to-Pose
 
-## 2026-08-04 최종 감사: 새 학습 전 P0 수리
+Wi-Fi CSI만 입력받아 시간에 따른 사람의 **GVHMR SMPL-22 3D pose와 root trajectory**를 복원하는 연구 코드입니다. 영상과 GVHMR은 학습용 GT 생성에만 사용하며, 검증과 실제 추론에는 CSI만 사용합니다.
 
-현재 **승격 가능한 모델은 없다.** 보정된 lmh GT 295개가 실제 D 드라이브 학습 데이터와
-cache에 한 건도 반영되지 않았고, 그중 50개가 반복 평가한 `seen_dev_test`에 들어 있다.
-old→corrected target 변화는 local 평균 `46.05cm`, absolute 평균 `68.10cm`이므로 지금까지의
-V9A/V9C와 prototype 수치는 모두 `pre-GT-repair historical`로만 보존한다.
+- 기존 코드: [NotiFi-CSI-to-Pose `feature/goal1`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1)
+- 현재 통합 위치: [NotiFi/CSI-to-Pose](https://github.com/jjyoon012-git/NotiFi/tree/main/CSI-to-Pose)
+- 현재 권장 seen 모델: **9안 Stage C - fall trajectory + temporal denoising prior**
+- 현재 개발 순서: **seen 성능 확보 후 unseen/LOSO calibration 재개**
+- 문서 정렬 원칙: **현재 권장 모델을 맨 위에 두고, 이전 안은 최신순으로 기록**
 
-또한 `amplitude + sanitized phase`를 I/Q처럼 회전한 RF augmentation 때문에 frozen motion
-encoder도 재사용할 수 없다. 64개 train trial 감사에서 증강 phase 표준편차는 원래의 31.4배였고,
-55.0%가 `|phase| > pi`였다. cache는 GT/CSI/timestamp/split hash를 저장하지 않아 원본이 바뀌어도
-stale 배열을 최신으로 판정한다.
+## 현재 모델: 9안 Stage C - Fall Trajectory Reconstruction
 
-V9C prior는 V9A보다 local MPJPE를 평균 `0.072cm` 악화했고 bootstrap 95% CI 전체가 음수라
-기각한다. 수정 전 비교 모델은 V9A지만, 이것도 새 baseline으로 재학습해야 한다. V9A danger의
-local 동작 크기는 GT의 약 23%뿐이며, 같은 site/action 안의 trial별 local residual cosine은
-`0.050`이라 사용자가 본 정지 자세 collapse를 수치로 확인했다.
+현재는 사용자가 지정한
+[`feature/goal1/work_v2/splits`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1/work_v2/splits)의
+`single_split`을 사용한다. `ajh/lmh/mhw`와 `E01/E02/E03`이 train, validation,
+test에 모두 포함되고 trial만 분리된 **seen-subject + seen-environment + unseen-trial**
+protocol이다.
 
-기존 robust 학습의 class-balanced replacement sampler도 epoch마다 고유 trial을 약 `60%`만 보여주고
-draw의 약 `40%`를 중복했다. raw danger `17.6%`는 sampled `29.4%`, inverse-risk CE 질량은
-`51~53%`가 되었는데 GroupDRO까지 동시에 적용됐다. 따라서 robust 수치는 도메인 기법 하나의 성능으로
-해석하지 않으며, V10은 기본 순회 sampler에서 balance/CE/DRO를 각각 독립 검증한다.
+| Split | Pose trials | Subjects | Environments |
+|---|---:|---|---|
+| train | 1,556 | ajh, lmh, mhw | E01, E02, E03 |
+| validation | 405 | ajh, lmh, mhw | E01, E02, E03 |
+| test | 405 | ajh, lmh, mhw | E01, E02, E03 |
 
-V9A 실행 때는 validation speed gate 상한이 `1.20`이라 strength `0.15`가 선택됐지만 V9B와 현재
-source는 `1.15`를 쓴다. 현재 코드로 V9A 후보를 재선택하면 strength `0.0`이므로 V9A 점수는 코드
-재현값이 아닌 historical artifact다. V10은 선택식·threshold·smoother·metric version과 source tree
-hash를 checkpoint에 함께 고정한다.
+split 간 trial ID 중복은 0이며 yja와 LOSO 데이터는 현재 seen 학습과 모델 선택에
+사용하지 않는다.
 
-현재 index에는 physical installation ID/geometry가 없어 `subject_environment` 9개 domain만 있다.
-따라서 기존 LOSO는 순수 사람 일반화가 아니라 participant와 그 사람의 설치를 함께 바꾸는 joint-shift
-진단이다. 사람/환경 효과를 분리하려면 여러 사람이 같은 설치를 공유하는 factorial 추가 수집이 필요하다.
+```mermaid
+flowchart LR
+    A["3-link CSI"] --> B["GraphFormer baseline"]
+    A --> C["Raw CSI branch"]
+    A --> D["Temporal-difference branch"]
+    C --> E["Motion-first encoder"]
+    D --> E
+    B --> F["Action-conditioned coarse pose"]
+    E --> G["Phase / impact conditioning"]
+    F --> H["Keyframe 6D bone rotations"]
+    G --> H
+    H --> I["Bounded high-frequency residual"]
+    I --> J["V2 anchor + root velocity integration"]
+    G --> K["Contact / injury heads"]
+    J --> L["Validation-only branch calibration"]
+    L --> M["Frozen calibrated V2"]
+    M --> N["Contact-guided root temporal encoder"]
+    K --> N
+    N --> O["Support-aware anchor / velocity refinement"]
+    O --> P["Validation-selected root strength"]
+    P --> Q["SMPL-22 pose + refined root"]
+    A --> R["Raw CSI multi-scale motion"]
+    Q --> S["Full-sequence trajectory features"]
+    R --> S
+    S --> T["Dilated temporal blocks + Transformer"]
+    T --> U["Bone-preserving rotation + root residual"]
+    U --> V["Validation scale: pose 0.15 / root 0.5"]
+    V --> W["GT-only temporal denoising prior"]
+    W --> X["Validation prior strength 1.0"]
+    X --> Y["CSI-only SMPL-22 trajectory"]
+```
 
-다음 **V10**은 GT 복구와 cache v4를 먼저 끝낸 뒤 `global action motion bank + 10초 empty-room
-calibration adapter + monotonic progress + CSI-specific bone-direction/root residual`을 하나의
-end-to-end 모델로 처음부터 학습한다. `site×action` prototype은 강한 seen 진단 기준선으로만 쓰고
-배포 decoder에 site ID를 하드코딩하지 않는다.
+1. timestamp 완전성, 유효 link 수, CSI-GT motion correlation으로 trial 품질 가중치를 만든다.
+2. root는 첫 anchor와 keyframe velocity residual을 적분해 궤적 연속성을 유지한다.
+3. speed, moving, fall phase, impact, predicted action/risk로 decoder를 condition한다.
+4. 4-frame keyframe의 6D bone rotation을 예측하고 SMPL tree FK로 bone length를 보존한다.
+5. 저주파 rotation branch와 최대 2cm의 고주파 Cartesian residual을 분리한다.
+6. 7안까지는 발 접촉, 부위별 충돌, 최초 접촉 관절, impact speed, 바닥 높이를 보조 학습했다.
+7. head-only 학습 후 기존 backbone의 마지막 temporal block만 낮은 learning rate로 미세조정한다.
+8. 7안 Stage A는 V2 pose를 고정하고 예측 foot contact, phase, impact, 상대 foot speed로
+   root anchor와 velocity만 보정한다.
+9. 8안은 raw CSI event feature를 추가하되 validation gate를 통과한 injury-contact
+   residual만 `0.75`로 사용한다.
+10. 9안은 최초 충돌 예측을 새 loss에서 제거하고 frame pose/root, 5-frame displacement,
+    root drop, torso/shoulder orientation, endpoint로 전체 낙상 궤적을 학습한다.
+11. train GT만 noise와 frame/joint masking으로 오염시켜 학습한 temporal denoising prior가
+    과도한 frame-to-frame 움직임을 안정화한다.
 
-단, 현재 ajh/lmh/mhw 2,366개 GT는 joint position만 있고 yja 263개에만 SMPL rotation이 있다.
-따라서 V10 local head는 네 사람의 SMPL body pose를 같은 버전으로 재추출할 때만 SO(3)를 쓰며,
-그 전에는 `unit bone direction + canonical FK`로 구현한다. joint position에서 식별할 수 없는 bone
-twist를 임의 정답으로 만들지 않는다.
+### Seen test 결과
 
-추가 감사에서 같은 사람의 GVHMR bone length도 trial마다 중앙 `2.85~3.17%` 흔들렸고, danger의
-동작 시작 progress는 p05~p95 `15~135 frame`에 퍼졌다. nonlinear time-warp oracle의 danger
-absolute 이득은 `2.40cm`로 유효하지만 주 병목을 해결할 크기는 아니었다. 반면 subcarrier를 고정
-permutation하면 V9A local/root가 `+7.54/+17.12cm` 악화해 주파수 구조는 확실히 유효했다. 따라서
-V10은 raw/canonical skeleton을 분리하고 dynamic-only progress를 쓰며 frequency token pooling을
-늦춘다. diffusion과 자유로운 DTW는 CSI residual gate 이후로 미룬다.
+| Metric | 기존 GraphFormer | 7안 | 9A trajectory | 9B alignment | 현재 9C |
+|---|---:|---:|---:|---:|---:|
+| MPJPE | 24.17cm | 21.29cm | **20.60cm** | 21.29cm | 20.68cm |
+| Dynamic MPJPE | 23.39cm | 20.90cm | **20.40cm** | 20.90cm | 20.41cm |
+| Root error | 33.06cm | 31.81cm | **31.61cm** | 31.94cm | **31.61cm** |
+| Danger MPJPE | - | - | 51.15cm | 51.95cm | **51.14cm** |
+| Danger distal | - | - | 55.72cm | 56.93cm | **55.64cm** |
+| Danger endpoint | - | - | 69.72cm | 71.23cm | **69.66cm** |
+| Pose-speed ratio | 1.058 | 1.167 | 1.217 | 1.167 | **1.163** |
 
-- 최종 코드 감사·복구 순서·V10 구조·실험 gate:
-  [`docs/final_code_audit_and_v10_execution_plan.md`](docs/final_code_audit_and_v10_execution_plan.md)
-- 파일별 cache/model/checkpoint API와 학습 ladder:
-  [`docs/v10_file_level_implementation_spec.md`](docs/v10_file_level_implementation_spec.md)
-- 선행 종합 진단과 최신 연구 연결:
-  [`docs/comprehensive_diagnosis_and_plan_v10.md`](docs/comprehensive_diagnosis_and_plan_v10.md)
-- 기계 판독 결과 요약:
-  [`docs/results/comprehensive_audit_v10.json`](docs/results/comprehensive_audit_v10.json)
-- 최신순 실험 기록: [`docs/experiment_log.md`](docs/experiment_log.md)
+무보정 V2는 test MPJPE `18.11cm`까지 내려갔지만 pose-speed ratio가 `2.088`로
+실제 움직임의 두 배를 만들어 공식 결과에서 제외했다. validation에서만 branch 강도를
+`rotation=0.10`, `high-pose=0.00`, `root=0.50`으로 선택한 결과가 위 표다.
+무보정 checkpoint에 shuffled CSI를 넣으면 MPJPE `34.69cm`, root error `58.33cm`로
+악화되어 trial-specific CSI를 사용한다는 gate도 확인했다.
 
-당장 하지 않는 경로는 V9 checkpoint warm-start, V9C prior, impact/injury heuristic, danger weight 추가,
-empty-room `PerLinkNorm` refit, site ID 기반 production prototype, smoothed-only 보고, seen gate 이전 LOSO/TTA다.
-이 항목들은 이미 실패했거나 현재 데이터로 식별할 수 없거나 원인 분리를 막는다.
+7안은 validation에서 epoch 8과 root strength `0.50`을 선택했다. test root error는
+`32.33 -> 31.81cm`로 개선됐고 pose를 고정했기 때문에 MPJPE와 speed ratio는 유지됐다.
+반면 impact MPJPE는 `54.72 -> 54.89cm`, foot-contact F1은 `0.708 -> 0.701`로 소폭
+악화됐다. 따라서 7안은 root Stage A로 채택하되 impact/contact 개선으로 해석하지 않는다.
 
-아래 9C 설명과 1~9안 기록은 수정 전 재현을 위한 historical baseline이며 현재 권장 실행 경로가 아니다.
+8안은 physical impact proxy와 `(frame, joint)` event head를 추가했다. 전체 event model은
+test에서 일반화하지 못해 event/joint/speed strength를 모두 `0`으로 되돌렸다. validation이
+contact strength `0.75`만 선택했고, test injury-contact F1은 `0.354 -> 0.423`으로
+개선됐다. first-contact, impact speed, pose, root는 7안과 동일하다.
 
-NotiFi CSI-to-Pose는 WiFi CSI 신호만으로 사람의 자세와 움직임 흐름을 **3D skeleton proxy**로 복원하는 실험 기능입니다.
+9A는 `어느 관절이 먼저 충돌했는가` 대신 전체 낙상 sequence를 복원한다. 최대 가속도
+frame과 휴리스틱 impact score를 새 loss에서 제거했고 MPJPE를 `21.29 -> 20.60cm`로
+낮췄다. 다만 speed ratio가 `1.217`로 gate 1.2를 넘어서 단독 최종 모델로 쓰지 않는다.
 
-![Unstable walking CSI-to-Pose reconstruction](assets/unstable-walking-csi-to-pose-human-readable.gif)
+9B는 timestamp를 유지하면서 8개 연속 구간에 ±15-frame offset을 허용한 constrained
+alignment loss를 시험했다. validation이 pose residual strength `0`을 선택했고 test도
+악화되어 기각했다. GT나 timestamp를 이동한 결과물은 저장하지 않았다.
 
-![CSI-to-Pose overview](assets/csi-to-pose-overview.png)
+9C는 내부 train GT만 사용한 temporal denoising prior를 9A에 적용한다. test MPJPE는
+`20.68cm`, dynamic MPJPE는 `20.41cm`, speed ratio는 `1.163`이다. danger MPJPE
+`51.14cm`와 endpoint `69.66cm`는 여전히 크므로 낙상 복원이 해결됐다고 해석하지 않는다.
+8안 contact 출력은 분석용으로 남아 있지만 9안의 새 stage는 impact/contact target을
+학습하지 않는다. 동결된 7안 base에 남은 과거 휴리스틱 영향은 base 재학습 때 제거한다.
 
-## Historical seen-first development status
+실패한 구조를 포함한 번호·날짜·시간·목적·방법·결과·결정은
+[`docs/experiment_log.md`](docs/experiment_log.md)에 계속 누적한다. 원시 결과 JSON은
+[`docs/results`](docs/results)에 있으며 checkpoint와 데이터셋은 저장소에 포함하지 않는다.
+6안의 코드 대응, 손실, 보정 규칙은
+[`docs/seen_reconstruction_v2.md`](docs/seen_reconstruction_v2.md), 7안 root stage는
+[`docs/seen_reconstruction_v3.md`](docs/seen_reconstruction_v3.md), 8안 event stage는
+[`docs/impact_event_v8.md`](docs/impact_event_v8.md), 현재 9안은
+[`docs/fall_trajectory_v9.md`](docs/fall_trajectory_v9.md)에 정리했다.
 
-현재 개발은 `work_v2/splits/experiments.json`의 `single_split`을 사용한다. 이 protocol은
-`ajh/lmh/mhw`와 `E01/E02/E03`을 train, validation, test에 모두 포함하고 trial만 분리한
-**seen-subject + seen-environment + unseen-trial** 평가다. pose trial 수는
-train 1,556 / validation 405 / test 405이며 split 간 trial 중복은 없다.
+## 모델안별 성능 이력
 
-아래 pipeline은 **수정 전 9안 Stage C 재현 경로**다. GT와 RF augmentation 감사 전에는 권장
-후보였지만 지금은 실행 기준이 아니다. 낙상 순간의 최대 가속도나 최초 충돌 관절을 정답으로
-강제하지 않고 전체 자세 궤적을 복원하려던 구조적 변천을 보존한다.
+서로 다른 test protocol의 숫자는 직접 우열 비교하지 않는다. 1~4안은 `yja/E02 unseen`
+동일 조건, seen 기준선~8안은 제공된 `single_split seen` 동일 조건이다. 5안은 새 모델이
+아니라 CSI observability 진단이므로 성능선에서 분리했다.
+
+| 안 | 핵심 변경 | 평가 protocol | MPJPE | Impact | Root | Speed ratio | 판정 |
+|---:|---|---|---:|---:|---:|---:|---|
+| 1안 | Robust GraphFormer | yja/E02 unseen | 29.57cm | 84.14cm | 59.23cm | 0.721 | 기준 |
+| 2안 | Impact-aware calibration | yja/E02 unseen | 29.45cm | 83.84cm | 59.23cm | 0.718 | 소폭 개선 |
+| 3안 | Coherent displacement | yja/E02 unseen | 29.48cm | 82.82cm | 59.23cm | 0.714 | impact 개선 |
+| 4안 | Latent rectified flow | yja/E02 unseen | 29.86cm | **81.03cm** | 59.52cm | 0.697 | impact만 개선, 전체 미채택 |
+| 5안 | CSI observability 진단 | yja/E02 unseen | 29.57cm 정상 / 29.59cm shuffled | - | - | - | encoder 병목 확인 |
+| 6안 | Seen Reconstruction V2 | single_split seen | **21.29cm** | **54.72cm** | 32.33cm | 1.167 | 채택 |
+| 7안 A | Contact-guided root | single_split seen | **21.29cm** | 54.89cm | **31.81cm** | 1.167 | 현재 root 모델 |
+| 8안 A | Contact-calibrated event | single_split seen | 21.29cm | 54.89cm | 31.81cm | 1.167 | contact F1 0.423 |
+| 9안 A | Full-sequence trajectory | single_split seen | **20.60cm** | - | **31.61cm** | 1.217 | 위치 개선, 속도 gate 초과 |
+| 9안 B | Bounded alignment | single_split seen | 21.29cm | - | 31.94cm | 1.167 | validation이 pose branch 기각 |
+| 9안 C | Temporal denoising prior | single_split seen | 20.68cm | - | **31.61cm** | **1.163** | 현재 모델, danger 51.14cm |
+
+### 1~4안: yja/E02 unseen 흐름
+
+```mermaid
+flowchart LR
+    A["1안 Robust GraphFormer<br/>MPJPE 29.57 / Impact 84.14"]
+    B["2안 Impact calibration<br/>MPJPE 29.45 / Impact 83.84"]
+    C["3안 Displacement<br/>MPJPE 29.48 / Impact 82.82"]
+    D["4안 Latent flow<br/>MPJPE 29.86 / Impact 81.03"]
+    A --> B --> C --> D
+```
+
+### Seen 모델 흐름
+
+```mermaid
+flowchart LR
+    A["GraphFormer 기준<br/>MPJPE 24.17 / Impact 58.24 / Root 33.06"]
+    B["이전 seen<br/>21.68 / 55.27 / 32.36"]
+    C["6안 V2<br/>21.29 / 54.72 / 32.33"]
+    D["7안 Stage A<br/>21.29 / 54.89 / 31.81"]
+    E["8안 Contact<br/>Pose 유지 / Contact F1 0.423"]
+    F["9A Trajectory<br/>20.60 / Danger 51.15 / Speed 1.217"]
+    G["9B Alignment<br/>Pose branch rejected"]
+    H["9C Prior<br/>20.68 / Danger 51.14 / Speed 1.163"]
+    A --> B --> C --> D --> E --> F --> G --> H
+```
+
+단위는 cm다. 각 안의 원시 출처와 protocol은
+[`docs/results/model_plan_history.json`](docs/results/model_plan_history.json)에 고정한다.
+
+### 실행 순서
+
+```powershell
+python -m notifi_pose.tools.audit_motion_alignment
+python -m notifi_pose.tools.train_motion_first --exp single_split `
+  --epochs 12 --patience 4 --batch-size 12 `
+  --run-dir work_v2/runs/motion_first_seen
+python -m notifi_pose.tools.train_seen_action_residual `
+  --epochs 20 --patience 6 --batch-size 12
+python -m notifi_pose.tools.calibrate_seen_action_residual
+python -m notifi_pose.tools.train_seen_root_residual `
+  --epochs 20 --patience 6 --batch-size 12
+python -m notifi_pose.tools.train_seen_v2 `
+  --head-epochs 12 --finetune-epochs 6 --patience 4 --batch-size 8 `
+  --run-dir work_v2/runs/seen_reconstruction_v2
+python -m notifi_pose.tools.diagnose_seen_v2_components
+python -m notifi_pose.tools.calibrate_seen_v2
+python -m notifi_pose.tools.train_seen_v3_root `
+  --epochs 16 --patience 5 --batch-size 8 `
+  --run-dir work_v2/runs/seen_v3_contact_root
+python -m notifi_pose.tools.audit_impact_targets --split val
+python -m notifi_pose.tools.audit_impact_alignment
+python -m notifi_pose.tools.train_impact_event `
+  --epochs 15 --patience 5 --batch-size 8 `
+  --run-dir work_v2/runs/impact_event_v8c_raw
+python -m notifi_pose.tools.calibrate_impact_event
+python -m notifi_pose.tools.train_seen_v4_trajectory `
+  --epochs 12 --batch-size 8 --alignment-weight 0 `
+  --run-dir work_v2/runs/seen_v4_v9a_no_impact
+python -m notifi_pose.tools.train_seen_v4_trajectory `
+  --epochs 12 --batch-size 8 --alignment-weight 0.15 `
+  --run-dir work_v2/runs/seen_v4_v9b_bounded_alignment
+python -m notifi_pose.tools.train_motion_prior_v9 `
+  --epochs 10 --batch-size 12 `
+  --run-dir work_v2/priors/temporal_denoiser_v9
+python -m notifi_pose.tools.calibrate_motion_prior_v9 `
+  --trajectory-run work_v2/runs/seen_v4_v9a_no_impact `
+  --prior-run work_v2/priors/temporal_denoiser_v9 `
+  --run-dir work_v2/runs/seen_v4_v9c_motion_prior
+```
+
+현재 seen gate는 완전히 통과하지 않았다. 다음 목표는 MPJPE 20cm 이하,
+danger MPJPE 45cm 이하, root 25cm 이하, pose-speed ratio 0.8~1.2다. 이 기준에 가까워지면
+동일한 backbone을 고정하고 calibration/domain adaptation을 붙여 yja E02와 LOSO를
+unseen protocol로 다시 평가한다.
+
+## 기존 모델과의 차이
+
+7안은 calibrated 6안을 동결한 뒤 contact-guided root branch를 추가했다. 현재 8안은
+7안 전체를 동결하고 event/contact head만 별도로 학습한 뒤 branch별로 보정한다.
+
+| 구분 | 6안 V2 | 7안 Stage A | 현재 8안 Stage A |
+|---|---|---|---|
+| CSI motion | motion-first + gated fusion | root/contact dynamics | raw amplitude/phase delta 1/3/7/15-frame 추가 |
+| Pose decoder | phase-aware 6D rotation + FK | 6안 pose 고정 | 7안 pose/root 완전 고정 |
+| Root | anchor + root-step 적분 | contact support-aware 적분 | 7안 root 그대로 유지 |
+| Event target | 가속도 peak/높이 heuristic | 동일 보조 head | 감속+가속도+하강+표면근접 physical proxy |
+| 학습 | head + 제한적 fine-tuning | 새 root branch만 학습 | event/contact head만 학습 |
+| 모델 선택 | branch calibration + speed gate | root/impact + identity 후보 | event/joint/contact/speed branch별 validation gate |
+
+7안에서 8안으로 pose/root는 유지되고 injury-contact F1만 0.354→0.423으로 개선됐다.
+event timing과 최초 충돌 부위 branch는 검증 실패로 비활성화했다.
+
+## 현재 모델 문제점 및 개선 방향
+
+| 우선순위 | 문제 | 현재 근거 | 다음 개선 |
+|---:|---|---|---|
+| 1 | Root 절대 위치가 여전히 가장 큰 병목 | root 31.81cm, Stage A에서 0.52cm 개선 | 장기 anchor drift와 horizontal/vertical trajectory를 분리 학습 |
+| 2 | 회전 branch가 움직임을 과장 | 무보정 speed ratio 2.088, rotation-only 1.971 | angular velocity/geodesic loss, phase별 rotation 크기 제한, keyframe 보간 개선 |
+| 3 | 낙상 impact 복원이 부족 | impact 54.89cm, event timing test 약 25.6프레임 오차 | 실제 영상 impact frame/body-region 표본 annotation과 proxy 검증 |
+| 4 | 고주파 branch가 실질적으로 미사용 | validation이 high-pose scale 0을 선택 | 2cm residual의 대역 분리와 temporal regularization 재설계 |
+| 5 | 최초 충돌 부위 정확도가 낮음 | injury F1 0.423, 최초 접촉 정확도 0.378 | 검증된 event label 확보 후 coarse-to-fine region/joint 재학습 |
+| 6 | 아직 seen 성능만 검증 | 같은 사람·환경의 unseen trial 평가 | seen gate 통과 후 backbone을 고정하고 LOSO/domain calibration 진행 |
+| 7 | 저품질 trial이 남아 있음 | 품질 가중치 최솟값 0.443 | high-quality subset ablation, timestamp/link audit 강화, 자동 시간 이동은 금지 |
+
+다음 실험은 한 번에 여러 요소를 다시 섞지 않고 아래 순서로 진행한다.
+
+1. 완료: coarse pose를 고정하고 contact-guided root 전용 표현을 학습했다.
+2. 완료: event/contact head를 적용하고 contact branch만 validation에서 채택했다.
+3. danger 영상에서 실제 impact frame/body region을 표본 annotation해 proxy를 검증한다.
+4. rotation branch에 angular velocity와 geodesic amplitude 제약을 추가한다.
+5. MPJPE 20cm, impact 50cm, root 25cm, speed ratio 0.8~1.2를 seen gate로 재검증한다.
+6. gate에 가까워진 모델만 LOSO와 yja E02 unseen adaptation으로 넘긴다.
+
+## 연구 목표
+
+단순 행동 분류가 아니라 프레임별 자세를 복원한다. 특히 낙상 시점에 머리, 손목, 무릎, 발목, 발이 어느 방향으로 움직이고 어느 부위가 바닥과 충돌했는지를 확인할 수 있어야 한다.
+
+입력과 출력은 다음과 같다.
 
 ```text
-GraphFormer baseline
-  + raw/delta dual-branch motion-first CSI encoder
-  + predicted-action-conditioned pose residual
-  + low-frequency keyframe root residual
-  + quality-weighted phase-aware 6D rotation refinement
-  + validation-selected V2 branch calibration
-  + contact-guided root anchor / velocity refinement
-  + validation-selected root strength 0.5
-  + full-sequence trajectory residual (9A, pose 0.15 / root 0.5)
-  + GT-only temporal denoising motion prior (9C, strength 1.0)
+입력  CSI: [B, T=304, Link=3, Subcarrier=114, I/Q-derived channel=2]
+출력  pose_rel: [B, T, 22, 3]  # pelvis-relative SMPL-22
+      root:     [B, T, 3]      # world-space pelvis trajectory
+보조  action: 17 classes
+      risk:   safe / warning / danger
 ```
 
-수정 전 seen dev_test에서 기존 7안 대비 MPJPE는 `21.29cm -> 20.68cm`, dynamic MPJPE는
-`20.90cm -> 20.41cm`, root error는 `31.81cm -> 31.61cm`, pose-speed ratio는
-`1.167 -> 1.163`이다. danger MPJPE는 `51.14cm`, danger distal MPJPE는
-`55.64cm`로 컸다. 이후 bootstrap에서 9C prior가 9A보다 유의하게 나빠 기각됐고, 두 모델 모두
-오염된 GT/cache와 잘못된 RF augmentation을 사용했으므로 corrected baseline 재학습 전에는 비교
-모델로만 남긴다. 구간별 시간 이동을 허용한 9B도 validation에서 pose branch가 `0`으로 선택돼
-기각했다.
+## 기준 GraphFormer 코드 설명
 
-8안의 contact 출력은 분석용으로 남아 있지만 9안의 새 학습 loss는 `최대 가속도 프레임`,
-`최초 충돌 관절`, 휴리스틱 impact score를 사용하지 않는다. 동결된 7안 base에는 과거
-학습의 영향이 남아 있으므로 다음 base 재학습 때 이 의존성도 완전히 제거할 예정이다.
+`feature/goal1`의 최신 GVHMR 경로는 다음 파이프라인을 사용한다.
 
-번호, 시각, 목적, 방법, 결과, 채택 여부를 포함한 누적 기록은
-[`docs/experiment_log.md`](docs/experiment_log.md)에 있다.
-개선안 1-7의 코드 대응과 실행 방법은
-[`docs/seen_reconstruction_v2.md`](docs/seen_reconstruction_v2.md)와
-[`docs/seen_reconstruction_v3.md`](docs/seen_reconstruction_v3.md),
-[`docs/impact_event_v8.md`](docs/impact_event_v8.md),
-[`docs/fall_trajectory_v9.md`](docs/fall_trajectory_v9.md)에 있다. 1안부터의
-protocol별 지표 이력은 [`docs/results/model_plan_history.json`](docs/results/model_plan_history.json)에 있다.
+```mermaid
+flowchart LR
+    A["CSI CSV + recorded timestamps"] --> B["30 Hz alignment and cache"]
+    B --> C["Per-link calibration normalization"]
+    C --> D["Shared subcarrier Conv encoder"]
+    D --> E["Masked link-attention fusion"]
+    E --> F["Local temporal Conv + Transformer"]
+    F --> G["SMPL-22 joint queries + graph blocks"]
+    G --> H["Hybrid direct/tree pose decoder"]
+    F --> I["Root, motion, action, risk heads"]
+```
 
-## Historical GVHMR v2 baseline execution
+핵심 기술은 다음과 같다.
 
-The historical code path uses 3 CSI links, exact/partial recorded timestamps, and
-GVHMR SMPL-22 targets. Do not use these commands for a new reported result until the
-P0 GT repair, cache v4 rebuild, and augmentation fix are complete. The MediaPipe
-13-point workflow later in this README is legacy.
+1. **Timestamp alignment**: CSI packet 시각과 `video_timestamps.csv`를 이용해 GT frame을 실제 촬영 시각에 정렬한다. `k/30` 가정은 기록이 일부 없을 때만 사용한다.
+2. **CSI representation**: guard/DC subcarrier를 제거한 114개 subcarrier를 사용한다. subject, environment, label 같은 누수 가능한 metadata는 모델 입력에서 제외한다.
+3. **Link-aware encoding**: TX1/TX2/TX3를 공유 encoder로 처리하고, 누락 link는 `link_mask`로 attention에서 제외한다.
+4. **Temporal modeling**: dilated local convolution으로 짧은 움직임을 포착하고 Transformer로 전체 trial 문맥을 결합한다.
+5. **Hybrid graph decoding**: 직접 관절 좌표와 SMPL kinematic tree 복원을 혼합해 손목·발까지 누적되는 parent error를 줄인다.
+6. **Domain robustness**: site baseline subtraction, RF augmentation, balanced cross-domain batches, GroupDRO, domain-adversarial head, supervised contrastive loss를 사용한다.
+7. **Auxiliary supervision**: action/risk뿐 아니라 fall phase, foot contact, velocity, acceleration, floor penetration을 함께 학습한다.
+
+## 이전 연구안: 최신순
+
+6안의 배경이 된 이전 시도다. 최신 안부터 내려가며, 미채택 결과도 원인 분석을 위해 유지한다.
+
+### 5안: CSI Motion Observability 진단
+
+**상태: 진단 완료, 다음 모델의 필수 통과 기준**
+
+decoder를 더 바꾸기 전에 현재 모델이 CSI의 trial별 동작을 실제로 사용하는지 검사했다.
+
+```powershell
+python -m notifi_pose.tools.diagnose_observability `
+  --probe-epochs 15 --overfit-steps 200 --overfit-trials 1 10
+```
+
+핵심 결과:
+
+- 정상 CSI 대신 다른 yja E02 trial의 CSI를 넣어도 MPJPE는 `29.57 -> 29.59cm`로 `0.02cm`만 악화됐다.
+- train mean-pose baseline도 `30.59cm`라 현재 모델과 차이가 `1.02cm`뿐이다.
+- frozen encoder의 speed R2는 source validation `0.004`, yja E02 `-0.109`였다.
+- impact F1은 source `0.148`, yja E02 `0.103`이고 timing MAE는 각각 `43.0`, `48.4` frames였다.
+- 가장 동적인 1개 trial을 200 step 외워도 `9.35cm`, pose-speed ratio `0.534`에 머물렀다.
+
+따라서 주 병목은 더 큰 pose decoder가 아니라 **CSI encoder가 speed, phase, impact를 보존하지 못하고 pose objective가 평균 자세로 붕괴하는 것**이다. domain shift도 존재하지만 source 내부에서 이미 motion observability가 낮으므로 domain adaptation만 강화해서는 해결되지 않는다.
+
+다음 개발 순서는 다음과 같이 고정한다.
+
+1. trial별 CSI motion energy와 GT speed의 lag/correlation으로 alignment 불량 데이터를 격리한다.
+2. speed, moving, phase, impact를 먼저 예측하는 motion-first CSI encoder를 pretrain한다.
+3. 정상 CSI 대비 shuffled CSI가 dynamic/impact 지표에서 명확히 나빠지는지 확인한다.
+4. 1-trial overfit `MPJPE < 3cm`, pose-speed ratio `0.9-1.1`을 통과시킨다.
+5. 그 뒤 velocity-space sequence decoder와 calibration을 붙이고 LOSO를 재개한다.
+
+전체 수치와 합격 기준은 [`docs/observability_diagnostics.md`](docs/observability_diagnostics.md), 원시 결과는 [`docs/results/observability_diagnostics.json`](docs/results/observability_diagnostics.json)에 있다.
+
+### 4안: CSI-conditioned Latent Rectified Flow
+
+**상태: 생성형 구조 구현 및 yja 실험 완료, 실험적/미채택**
+
+평균 자세 문제를 직접 다루기 위해 GT motion prior와 conditional rectified flow를 추가했다.
+
+#### 4.1 GT-only kinematic motion prior
+
+GVHMR pose를 parent-relative bone direction과 trial-level bone length code로 변환한다. decoder는 SMPL tree를 따라 pose를 복원한다. held-out subject의 GT는 prior 사전학습에 사용하지 않는다.
 
 ```text
-CSI [B,304,3,114,2]
-  -> per-link calibration normalization
-  -> shared subcarrier Conv encoder
-  -> masked link-attention fusion
-  -> local temporal convolution + Transformer
-  -> joint queries + SMPL-22 graph blocks
-  -> hybrid direct/tree pose decoder
-  -> separate root, motion, class, and risk heads
+GT pose
+  -> bone direction + bounded length code
+  -> latent z_gt [B,T,128]
+  -> frozen kinematic decoder
+  -> reconstructed SMPL-22 pose
 ```
 
-Prepare the index and cache:
+yja protocol의 source validation에서 prior 자체의 재구성 MPJPE는 표시 정밀도 기준 `0.00cm`였다. 따라서 병목은 motion decoder가 아니라 CSI에서 올바른 latent trajectory를 찾는 단계다.
+
+#### 4.2 Conditional rectified flow
+
+CSI condition으로 만든 초기 latent `z0`에 noise를 추가하고 GT latent `z1`로 가는 vector field를 학습한다.
+
+```text
+t ~ Uniform(0, 1)
+z_t = (1-t) z0 + t z1
+target velocity = z1 - z0
+L_flow = SmoothL1(v_theta(z_t, t, CSI), z1 - z0)
+```
+
+추론에서는 random sampling을 사용하지 않는다. CSI-derived `z0`에서 시작해 midpoint ODE solver를 고정 step으로 적분하므로 같은 CSI에 항상 같은 결과가 나온다.
+
+```mermaid
+flowchart TB
+    A["CSI"] --> B["Robust GraphFormer temporal condition"]
+    B --> C["CSI latent z0"]
+    C --> D["Conditional rectified flow ODE"]
+    D --> E["Frozen kinematic motion decoder"]
+    E --> F["Bounded residual mix with robust pose"]
+    G["GT pose, training only"] --> H["Frozen motion-prior encoder"]
+    H --> I["Target latent z1"]
+    I --> D
+```
+
+yja E02 결과:
+
+- impact MPJPE: `84.14 -> 81.03cm` 개선
+- 전체 MPJPE: `29.57 -> 29.86cm` 악화
+- smoothed pose-speed ratio: `0.721 -> 0.697` 악화
+
+충격 자세에는 이득이 있었지만 전체 복원과 동작 진폭이 나빠져 현재 모델로 채택하지 않았다. 데이터가 늘어나면 action-conditioned latent, multi-hypothesis sampling, velocity-space prior와 함께 재검토할 수 있다.
+
+재현:
 
 ```powershell
-python -m notifi_pose.tools.build_index --no-verify-files
-python -m notifi_pose.tools.link_quality --workers 8
-python -m notifi_pose.tools.build_splits
-python -m notifi_pose.tools.build_cache --workers 8 --rebuild
-python -m notifi_pose.tools.build_site_baseline
+python -m notifi_pose.tools.run_latent_flow_protocols `
+  --only yja_e02 --prior-epochs 12 --epochs 15
 ```
 
-Reproduce the historical GraphFormer baseline only:
+### 3안: Coherent Displacement Refiner
+
+**상태: 구현 및 실험 완료, 미채택**
+
+인접 frame velocity 대신 5 frame, 약 167ms 동안의 평균 변위를 맞춘다. 고주파 jitter가 loss를 속이지 못하게 하고 smoothing 후에도 남는 동작을 만들려는 접근이다.
+
+```text
+L_displacement = SmoothL1(
+  (pose[t+5] - pose[t]) * FPS/5,
+  (GT[t+5]   - GT[t])   * FPS/5
+)
+```
+
+yja E02에서 smoothed pose-speed ratio가 `0.721 -> 0.714`로 오히려 감소했다. 현재 residual decoder의 용량과 deterministic objective만으로는 motion-amplitude collapse를 해결하지 못한다고 판단해 채택하지 않았다.
+
+재현:
 
 ```powershell
-python -m notifi_pose.tools.train --exp single_split --arch graphformer `
-  --decoder hybrid --hidden 128 --temporal-layers 3 --heads 4 `
-  --graph-blocks 2 --epochs 50 --patience 10 --batch-size 16 `
-  --lr 0.0005 --lambda-velocity 0.1 --lambda-motion 0.05 `
-  --motion-weight 3.0 --baseline sub --link-dropout 0.25 `
-  --tag graphformer_hybrid_dynamic_v1
+python -m notifi_pose.tools.run_coherent_protocols --only yja_e02
 ```
 
-Run the historical LOSO-subsampled protocol used by `feature/goal1/work_v2/splits`:
+### 2안: Impact-aware Temporal Refiner
+
+**상태: 이전 unseen/LOSO 비교 기준, 현재 seen 모델의 baseline**
+
+기존 robust checkpoint 뒤에 0으로 초기화된 temporal residual refiner를 붙인다. 초기 출력은 기준 모델과 정확히 같으며, validation 종합 점수가 좋아질 때만 체크포인트를 교체한다.
+
+추가 요소:
+
+1. GT acceleration peak를 기준으로 danger trial의 impact window를 만든다.
+2. 머리, 손목, 무릎, 발목, 발을 distal/injury-relevant joint로 가중한다.
+3. velocity, acceleration, jerk, foot slide, floor penetration을 함께 제약한다.
+4. validation에서 관절별 residual scale을 `0, 0.25, 0.5, 0.75, 1.0` 중 선택한다.
+5. 일반 관절 오차가 기준 모델보다 `0.05cm` 넘게 나빠지는 scale은 금지한다.
+6. test 결과는 checkpoint나 residual scale 선택에 사용하지 않는다.
+
+```mermaid
+flowchart LR
+    A["Robust GraphFormer pose"] --> B["Identity-initialized temporal refiner"]
+    C["GT acceleration"] --> D["Impact window"]
+    D --> E["Impact and distal losses"]
+    B --> F["Validation-only joint calibration"]
+    F --> G["Final calibrated pose"]
+```
+
+실행:
 
 ```powershell
-$folds = "test_ajh", "test_lmh", "test_mhw"
-foreach ($fold in $folds) {
-  python -m notifi_pose.tools.train --exp loso --fold $fold `
-    --arch graphformer --decoder hybrid --hidden 128 `
-    --temporal-layers 3 --heads 4 --graph-blocks 2 `
-    --epochs 50 --patience 10 --batch-size 16 --lr 0.0005 `
-    --lambda-velocity 0.1 --lambda-motion 0.05 --motion-weight 3.0 `
-    --baseline sub --link-dropout 0.25 `
-    --tag "loso_graphformer_hybrid_$fold"
-}
+python -m notifi_pose.tools.run_impact_protocols --only yja_e02
+python -m notifi_pose.tools.run_impact_protocols --only loso
+python -m notifi_pose.tools.summarize_impact_results
 ```
 
-Each fold trains and validates on the other two source subjects and evaluates only
-the fixed test portion, about 17.1%, of the held-out source subject. This is not full
-LOSO and must be renamed before new experiments. `yja/E02` has already been inspected
-repeatedly and is an `unseen_dev_test`, not a sealed final holdout.
+`run_impact_protocols`는 학습 후 `calibrated_model.pt`까지 자동 생성한다. 시각화 도구도 이 파일이 있으면 `best_model.pt`보다 먼저 사용한다.
 
-Reproduce the historical CSI-only yja E02 evaluation with the validation-selected
-5-frame offline filter:
+### 1안: Robust GraphFormer
 
-```powershell
-python -m notifi_pose.tools.evaluate_sealed `
-  work_v2/runs/graphformer_hybrid_dynamic_v1/best_model.pt `
-  --dataset sealed --smooth-window 5
+**상태: 기준 모델, 채택**
+
+기존 GraphFormer에 환경 일반화 요소를 추가한 기준 모델이다.
+
+```text
+CSI encoder
+  -> link attention
+  -> temporal GraphFormer
+  -> hybrid SMPL-22 decoder
+  -> pose_rel + root
+
+보조 학습:
+  RF augmentation + GroupDRO + domain adversarial
+  + cross-domain supervised contrastive
+  + phase/contact/dynamics losses
 ```
 
-See `docs/graphformer_gvhmr_v2_experiment.md` for the data contract, ablation, LOSO
-results, and known limitations.
+장점:
 
-## Historical domain-robust protocol
+- 구조가 단순하고 추론이 결정론적이다.
+- 네 protocol에서 가장 안정적인 기본 성능을 보였다.
+- 새 모델은 이 체크포인트를 epoch 0 안전 기준으로 사용한다.
 
-The final robust experiment keeps the GraphFormer hybrid pose backbone and adds RF
-augmentation, cross-domain balanced batches, GroupDRO, domain-adversarial and
-supervised-contrastive heads, fall phase/contact supervision, dynamics losses, and
-validation-selected parameter averaging.
+한계:
+
+- MPJPE 중심 회귀라 평균 자세 수렴을 피하기 어렵다.
+- frame-to-frame velocity loss가 고주파 jitter에도 낮아질 수 있다.
+
+실행:
 
 ```powershell
 python -m notifi_pose.tools.run_robust_protocols --only yja_e02
@@ -199,434 +485,151 @@ python -m notifi_pose.tools.run_robust_protocols --only loso
 python -m notifi_pose.tools.summarize_robust_runs
 ```
 
-See `docs/robust_graphformer_experiment.md` and
-`work_v2/reports/robust_protocol_results.json` for exact split counts, metrics,
-comparison with the previous GraphFormer, and remaining temporal-coherence limits.
+## 이전 Unseen/LOSO 실험 결과
 
-> [!WARNING]
-> 아래 `1. 기능 요약`부터의 13-point/MediaPipe 수집·학습 절차는 초기 legacy 문서다.
-> 현재 GVHMR SMPL-22 V10 데이터/모델 경로에 사용하지 않는다. 현재 실행 기준은 이 README 최상단과
-> [`docs/final_code_audit_and_v10_execution_plan.md`](docs/final_code_audit_and_v10_execution_plan.md)다.
+모든 수치는 CSI-only pose trial, validation-selected checkpoint, 5-frame smoothing 기준이다.
 
-## 1. 기능 요약
+| Protocol | Robust MPJPE | 2안 MPJPE | Robust dynamic | 2안 dynamic | Robust impact | 2안 impact |
+|---|---:|---:|---:|---:|---:|---:|
+| yja E02 | 29.57 | **29.45** | 30.94 | **30.79** | 84.14 | **83.84** |
+| LOSO ajh | 28.10 | 28.10 | 25.98 | 25.98 | 67.14 | 67.14 |
+| LOSO lmh | 32.88 | **32.81** | 31.60 | **31.50** | 60.41 | **60.14** |
+| LOSO mhw | **27.16** | 27.19 | **26.23** | 26.23 | 72.18 | **72.00** |
+| LOSO mean | 29.38 | **29.36** | 27.94 | **27.91** | 66.58 | **66.43** |
 
-카메라 기반 낙상 감지는 노인의 얼굴, 신체, 생활 공간이 노출되어 사생활 침해 우려가 큽니다.
-단순 safe/alert 분류만으로는 왜 위험하다고 판단했는지 보호자와 사용자가 이해하기 어렵습니다.
-낙상, 불안정 보행, 무활동은 순간적인 결과보다 몸의 움직임 흐름을 함께 봐야 정확한 해석이 가능합니다.
-CSI-to-Pose는 WiFi CSI 신호만으로 사람의 자세와 움직임을 3D skeleton proxy로 복원하는 실험 기능입니다.
-학습 단계에서는 CSI와 동기화된 영상에서 pose teacher GT를 추출하고, 실제 사용 단계에서는 CSI만 입력받습니다.
-예측 대상은 머리, 어깨, 팔꿈치, 손목, 골반, 무릎, 발목으로 구성된 13-point skeleton입니다.
-시간에 따른 skeleton sequence를 통해 자세 변화, 낙상 시작/종료 구간, 움직임 후 정지 여부를 추정합니다.
-첫 설정 단계에서 body template 또는 SMPL-X 기반 체형 정보를 선택적으로 생성해 개인 체형 차이를 보정합니다.
-CSI-to-Pose는 safe/alert 모델의 판단 결과에 “어떤 움직임 때문에 위험했는지”를 설명하는 보조 기능으로 활용됩니다.
-이를 통해 카메라 없이도 낙상/보행/무활동 흐름을 해석하여 개인정보 보호와 위험 감지 설명 가능성을 동시에 높입니다.
+단위는 cm다. 자세한 관절·risk·label별 결과는 [`docs/results/impact_calibrated_results.md`](docs/results/impact_calibrated_results.md)와 JSON/CSV를 참고한다.
 
-## 2. 폴더 구성
+## 데이터 분리
+
+### Protocol A
+
+- train/validation: `ajh`, `lmh`, `mhw`의 사용 가능한 825개 전체 trial을 split 규약에 따라 사용
+- sealed test: `yja/E02`
+- yja E02 전체 275개 중 pose GT가 있는 263개를 pose 평가에 사용
+- 손상된 `yja/E01`, `yja/E03` CSI는 제외
+
+### Fixed LOSO
+
+- `test_ajh`: lmh+mhw로 학습/검증, ajh test만 평가
+- `test_lmh`: ajh+mhw로 학습/검증, lmh test만 평가
+- `test_mhw`: ajh+lmh로 학습/검증, mhw test만 평가
+- yja E02는 source LOSO에 섞지 않고 별도 sealed protocol로 유지
+
+split 정의는 [`work_v2/splits/experiments.json`](work_v2/splits/experiments.json)에 있다.
+
+## 데이터 계약
+
+trial 하나는 다음 세 파일이 같은 폴더에 있어야 한다.
 
 ```text
-NotiFi-CSI-to-Pose/
+data/pose_and_action/{subject}/{environment}/{risk}/{scenario}/{trial_id}/
+  csi.csv
+  gt_pose.npz
+  original_video.mp4
+```
+
+timestamp는 학습 ZIP 외부에 둘 수 있지만 trial ID와 상대 경로가 일치해야 한다.
+
+```text
+timestamp/{subject}/{environment}/{risk}/{scenario}/{trial_id}/
+  video_timestamps.csv
+```
+
+`gt_pose.npz`는 GVHMR SMPL-22 joint 순서, meter 단위, pelvis-relative pose와 world root를 제공해야 한다. 영상은 GT 재추출과 audit용이며 모델 입력에는 들어가지 않는다.
+
+## 설치
+
+Python 3.10과 CUDA 지원 PyTorch 환경을 권장한다.
+
+```powershell
+cd CSI-to-Pose
+python -m pip install -r requirements.txt
+```
+
+데이터와 timestamp 경로를 환경변수로 지정한다.
+
+```powershell
+$env:NOTIFI_DATASET_ROOT = "D:\mhw\Dataset_Splits\NotiFi_CSI_GVHMR_v2_LOSO_60_15_25"
+$env:NOTIFI_TIMESTAMP_ROOT = "D:\NotiFi-3D\Timestamp_Upload_Staging\timestamp"
+$env:NOTIFI_WORK_ROOT = "$PWD\work_v2"
+```
+
+## 인덱스와 캐시 생성
+
+```powershell
+python -m notifi_pose.tools.build_index --no-verify-files
+python -m notifi_pose.tools.link_quality --workers 8
+python -m notifi_pose.tools.build_splits
+python -m notifi_pose.tools.build_cache --workers 8 --rebuild
+python -m notifi_pose.tools.build_site_baseline
+python -m notifi_pose.tools.verify_alignment
+```
+
+## 단일 학습과 평가
+
+```powershell
+python -m notifi_pose.tools.train `
+  --exp yja_holdout --arch robust_graphformer --decoder hybrid `
+  --hidden 128 --temporal-layers 3 --heads 4 --graph-blocks 2 `
+  --epochs 40 --patience 10 --batch-size 16 --baseline sub `
+  --rf-augment --balanced-batches --tag robust_gf_yja_e02
+```
+
+```powershell
+python -m notifi_pose.tools.evaluate_sealed `
+  work_v2\runs\impact_gf_yja_e02\calibrated_model.pt `
+  --dataset sealed --fold yja_E02 --smooth-window 5
+```
+
+```powershell
+python -m notifi_pose.tools.visualize `
+  --run impact_gf_yja_e02 --split test --n 10
+```
+
+## 테스트
+
+```powershell
+python -m unittest discover -s tests -v
+python -m py_compile notifi_pose\*.py notifi_pose\tools\*.py
+```
+
+현재 36개 단위 테스트가 timestamp alignment, site baseline, GraphFormer shape, impact window, temporal refiner, latent flow objective, observability diagnostic, loss backward를 검증한다.
+
+## 폴더 구조
+
+```text
+CSI-to-Pose/
   README.md
   requirements.txt
-  scripts/
-    save_csi_raw.py
-    collect_csi_video.py
-    preview_pose_camera.py
-    extract_pose_features.py
-    build_body_shape_template.py
-    train_csi_to_pose.py
-    render_pose_comparison.py
+  notifi_pose/
+    contract.py
+    dataio/
+    nets.py
+    losses.py
+    trainer.py
+    latent_flow.py
+    v3.py
+    tools/
+  tests/
+  work_v2/splits/
   docs/
-    feature_spec_and_dataset_manual_2026-06-30.md
-  assets/
-    csi-to-pose-overview.png
-    unstable-walking-csi-to-pose-human-readable.gif
+    graphformer_gvhmr_v2_experiment.md
+    robust_graphformer_experiment.md
+    results/
+  scripts/                      # 초기 MediaPipe/pilot 코드, legacy
 ```
 
-생성 데이터는 기본적으로 아래에 저장됩니다.
+대용량 dataset, cache, checkpoint, prediction NPZ, 영상은 Git에 포함하지 않는다.
 
-```text
-csi_to_pose/
-  data/
-  videos/
-  pose_gt/
-  pose_overlays/
-  pose_plots/
-  body_templates/
-  models/
-  collection_logs/
-```
+## 결론
 
-`csi_to_pose/` 아래 산출물은 용량과 개인정보 이슈가 있어 git에 올리지 않습니다.
+현재 권장안은 **6안 Seen Reconstruction V2의 validation-calibrated 구성**이다.
+기준 GraphFormer 대비 MPJPE, dynamic, distal, impact, root를 모두 개선했고
+pose-speed ratio 1.167로 물리 속도 gate를 통과했다.
 
-## 3. 환경 준비
+무보정 6안의 MPJPE 18.11cm는 pose-speed ratio 2.088이라 채택하지 않는다.
+현재 공식 성능은 MPJPE 21.29cm, impact 54.72cm, root 32.33cm이며 연구 목표를
+완전히 달성한 최종 모델은 아니다.
 
-각자 로컬에서 레포를 받은 뒤 `CSI-to-Pose` 폴더로 이동합니다.
-
-```bash
-cd PATH_TO_REPO/NotiFi-CSI-to-Pose
-python -m pip install -r requirements.txt
-```
-
-macOS에서 matplotlib 캐시 권한 문제가 있으면 아래처럼 실행합니다.
-
-```bash
-export MPLCONFIGDIR=/private/tmp/mplconfig
-```
-
-Windows PowerShell 예시:
-
-```powershell
-cd PATH_TO_REPO\NotiFi-CSI-to-Pose
-python -m pip install -r requirements.txt
-```
-
-## 4. 포트와 카메라 확인
-
-### macOS 포트 확인
-
-```bash
-find /dev -maxdepth 1 \( -name 'cu.usbmodem*' -o -name 'cu.usbserial*' \) -print
-```
-
-예:
-
-```text
-/dev/cu.usbmodem101
-```
-
-### Windows 포트 확인
-
-장치 관리자에서 `USB Serial Device (COMx)`를 확인하거나 PowerShell에서 확인합니다.
-
-```powershell
-[System.IO.Ports.SerialPort]::GetPortNames()
-```
-
-예:
-
-```text
-COM4
-```
-
-### 카메라 확인
-
-먼저 skeleton이 잘 잡히는지 확인합니다.
-
-```bash
-python scripts/preview_pose_camera.py --camera 0
-```
-
-카메라가 여러 개면 `--camera 1`, `--camera 2`를 시도합니다.
-창이 뜨면 전신이 최대한 보이게 서고, `POSE DETECTED`가 안정적으로 나오는지 확인합니다.
-종료는 preview 창에서 `q`를 누릅니다.
-
-## 5. 수집 전 기기 세팅
-
-| 항목 | 기준 |
-| --- | --- |
-| 보드 | Seeed Studio XIAO ESP32-C6 기반 sender 3개(TX1/TX2/TX3), receiver 1개 |
-| 펌웨어 | ESP-CSI `csi_send`, `csi_recv` |
-| 송수신기 거리 | 각 TX-RX 경로 1.2m-2.0m, 좌표를 installation manifest에 기록 |
-| 허용 거리 | 1.2m-2.0m, 단 한 세션 중 위치 고정 |
-| 보드 높이 | 70-100cm, 4대 모두 높이 기록 |
-| 안테나 방향 | TX1/TX2/TX3/RX 방향을 고정하고 기록 |
-| 사람 위치 | 세 TX-RX 경로가 행동 영역을 서로 다른 방향에서 통과하도록 배치 |
-| 카메라 위치 | 정면 또는 대각 정면 |
-| 영상 범위 | 머리부터 발목까지 최대한 포함 |
-| 조명 | MediaPipe가 관절을 잡을 수 있을 정도로 밝게 |
-
-권장 배치:
-
-```text
-TX1 ---------\
-TX2 ---------- 행동 영역 ---------- RX
-TX3 ---------/
-```
-
-## 6. CSI + Video 동시 수집
-
-기본 명령 형식:
-
-```bash
-python scripts/collect_csi_video.py \
-  --port "COM_PORT" \
-  --subject "SUBJECT" \
-  --label "LABEL" \
-  --trial t001 \
-  --duration DURATION_SECONDS \
-  --repeat REPEAT_COUNT \
-  --ambient quiet \
-  --delay 3 \
-  --break_sec 1.5 \
-  --camera 0 \
-  --preview_pose \
-  --note "csi_to_pose_collection"
-```
-
-macOS 예시:
-
-```bash
-python scripts/collect_csi_video.py \
-  --port "/dev/cu.usbmodem101" \
-  --subject "yja" \
-  --label unstable_walking \
-  --trial t001 \
-  --duration 20 \
-  --repeat 25 \
-  --ambient quiet \
-  --delay 3 \
-  --break_sec 1.5 \
-  --camera 0 \
-  --preview_pose \
-  --note "camera_front, 1.5m, unstable_walking"
-```
-
-Windows PowerShell 예시:
-
-```powershell
-python scripts\collect_csi_video.py `
-  --port "COM4" `
-  --subject "mhw" `
-  --label unstable_walking `
-  --trial t001 `
-  --duration 20 `
-  --repeat 25 `
-  --ambient quiet `
-  --delay 3 `
-  --break_sec 1.5 `
-  --camera 0 `
-  --preview_pose `
-  --no_sound `
-  --note "camera_front, 1.5m, unstable_walking"
-```
-
-수집 중에는 시작 직후 손을 크게 들거나 박수 1회를 해서 CSI와 video sync 지점을 남깁니다.
-
-## 7. Pose GT 추출
-
-수집이 끝나면 각 MP4에서 13-point skeleton proxy와 derived feature를 추출합니다.
-
-```bash
-python scripts/extract_pose_features.py \
-  --video csi_to_pose/videos/warning/gait/unstable_walking/SUBJECT/SUBJECT_unstable_walking_t001.mp4 \
-  --label unstable_walking \
-  --subject SUBJECT \
-  --trial t001
-```
-
-예:
-
-```bash
-python scripts/extract_pose_features.py \
-  --video csi_to_pose/videos/warning/gait/unstable_walking/yja/yja_unstable_walking_t001.mp4 \
-  --label unstable_walking \
-  --subject yja \
-  --trial t001
-```
-
-생성 파일:
-
-```text
-csi_to_pose/pose_gt/full_33_landmarks/{label}/{subject}/...
-csi_to_pose/pose_gt/proxy_13/{label}/{subject}/...
-csi_to_pose/pose_overlays/{label}/{subject}/...
-csi_to_pose/pose_plots/{label}/{subject}/...
-```
-
-성공 기준:
-
-```text
-pose detected rate >= 90%
-head / shoulder / hip / knee가 안정적으로 잡힘
-overlay 영상에서 skeleton이 심하게 튀지 않음
-```
-
-## 8. Body Template 생성
-
-여러 trial의 proxy13 결과를 기반으로 사람 형태가 읽히는 body shape proxy를 만들 수 있습니다.
-
-```bash
-python scripts/build_body_shape_template.py \
-  --label unstable_walking \
-  --subject SUBJECT \
-  --trials t001 t002 t003 t004 t005 t006 t007 t008 t009 t010
-```
-
-출력:
-
-```text
-csi_to_pose/body_templates/{subject}/{subject}_body_shape_template.json
-```
-
-이 파일은 `render_pose_comparison.py`에서 skeleton 아래에 사람 형태 proxy를 덧그릴 때 사용됩니다.
-
-## 9. Pilot 학습 및 복원 확인
-
-`train_csi_to_pose.py`는 수집된 CSI와 proxy13 GT로 작은 TCN pilot 모델을 학습합니다.
-먼저 하나의 label에서 복원이 되는지 확인하는 용도입니다.
-
-```bash
-python scripts/train_csi_to_pose.py \
-  --label unstable_walking \
-  --subject SUBJECT \
-  --trials t001 t002 t003 t004 t005 t006 t007 t008 t009 t010 \
-  --train_trials t001 t002 t003 t004 t005 t006 t007 t008 \
-  --val_trials t009 \
-  --test_trials t010 \
-  --epochs 80 \
-  --log_every 10
-```
-
-예측 결과를 사람이 보기 좋게 렌더링합니다.
-
-```bash
-python scripts/render_pose_comparison.py \
-  --prediction csi_to_pose/models/unstable_walking/SUBJECT/predictions/SUBJECT_unstable_walking_t010_prediction.csv
-```
-
-출력:
-
-```text
-csi_to_pose/models/{label}/{subject}/human_readable/
-```
-
-## 10. 수집 라벨 및 개수
-
-라벨당 10회는 복원 성능 확인에 부족했습니다.
-시간이 빠듯한 v1 기준으로 아래처럼 수집합니다.
-
-### Priority A: 필수 수집
-
-총 275 trials.
-
-| label | 초/trial | 횟수 | 목적 |
-| --- | ---: | ---: | --- |
-| `standing_still` | 20 | 25 | 서 있는 기본 skeleton |
-| `sitting_still` | 20 | 25 | 앉은 자세 skeleton |
-| `lying_still` | 20 | 25 | 누운 자세 skeleton |
-| `walking` | 20 | 25 | 정상 보행 |
-| `unstable_walking` | 20 | 25 | 불안정 보행 |
-| `sit_to_stand` | 10 | 25 | 앉기에서 서기 |
-| `stand_to_sit` | 10 | 25 | 서기에서 앉기 |
-| `lie_to_stand` | 10 | 25 | 누운 상태에서 일어나기 |
-| `stand_to_lie_normal` | 10 | 25 | 선 상태에서 눕기 |
-| `bed_exit_failed` | 10 | 25 | 침대에서 일어나려다 실패 |
-| `post_fall_inactive` | 20 | 25 | 낙상 후 무활동 |
-
-### Priority B: 성능 개선용
-
-총 105 trials.
-
-| label | 초/trial | 횟수 | 목적 |
-| --- | ---: | ---: | --- |
-| `hand_move` | 20 | 15 | 손/팔 움직임 |
-| `bed_sitting_to_stand_fall` | 10 | 15 | 침대 앉은 상태에서 일어서다 낙상 |
-| `bed_lying_to_stand_fall` | 10 | 15 | 침대 누운 상태에서 일어나려다 낙상 |
-| `chair_sitting_to_stand_fall` | 10 | 15 | 의자에서 일어서다 낙상 |
-| `chair_stand_to_sit_fall` | 10 | 15 | 의자에 앉으려다 낙상 |
-| `lying_convulsive_like_movement` | 10 | 15 | 경련 의심 움직임 |
-| `normal_breathing_visible` | 20 | 15 | 정상 호흡 참고 |
-
-### Priority C: 시간이 남을 때
-
-| label | 초/trial | 횟수 | 목적 |
-| --- | ---: | ---: | --- |
-| `walking_trip_fall` | 10 | 10 | 보행 중 발 걸림 낙상 |
-| `walking_turn_fall` | 10 | 10 | 방향 전환 중 낙상 |
-| `lying_fast_breath` | 20 | 10 | 빠른 호흡 |
-| `lying_slow_breath` | 20 | 10 | 느린 호흡 |
-| `lying_irregular_breath` | 20 | 10 | 불규칙 호흡 |
-
-## 11. 품질 확인 체크리스트
-
-각 trial 이후 확인합니다.
-
-```text
-CSI_DATA frame이 0개가 아닌가?
-MP4 영상이 정상 재생되는가?
-사람 전신 또는 최소 머리/어깨/골반/무릎이 보이는가?
-pose detected rate가 90% 이상인가?
-overlay에서 skeleton이 심하게 튀거나 뒤집히지 않는가?
-label과 다른 행동이 섞이지 않았는가?
-```
-
-실패한 trial은 삭제하고 같은 trial 번호로 다시 수집합니다.
-
-## 12. 안전 수칙
-
-낙상 라벨은 실제로 세게 넘어지지 않습니다.
-
-```text
-매트, 침대, 이불 등 충격 완화 공간에서만 수행
-빠르게 쓰러지지 말고 천천히 무너지는 방식으로 수집
-혼자 수집할 경우 보행 낙상은 Priority C로 미룸
-어지러움, 통증, 호흡 불편이 있으면 즉시 중단
-```
-
-## 13. 팀원별 기본 실행 예시
-
-각자 아래 값만 바꿔서 사용합니다.
-
-```text
-SUBJECT: 본인 이니셜 또는 짧은 이름
-PORT: 본인 receiver 포트
-CAMERA: 본인 노트북 카메라 index
-LABEL: 현재 수집 라벨
-```
-
-macOS:
-
-```bash
-export SUBJECT="yja"
-export PORT="/dev/cu.usbmodem101"
-export CAMERA="0"
-
-python scripts/collect_csi_video.py \
-  --port "$PORT" \
-  --subject "$SUBJECT" \
-  --label standing_still \
-  --trial t001 \
-  --duration 20 \
-  --repeat 25 \
-  --ambient quiet \
-  --delay 3 \
-  --break_sec 1.5 \
-  --camera "$CAMERA" \
-  --preview_pose \
-  --note "csi_to_pose_v1, 1.5m, camera_front"
-```
-
-Windows PowerShell:
-
-```powershell
-$SUBJECT="mhw"
-$PORT="COM4"
-$CAMERA="0"
-
-python scripts\collect_csi_video.py `
-  --port "$PORT" `
-  --subject "$SUBJECT" `
-  --label standing_still `
-  --trial t001 `
-  --duration 20 `
-  --repeat 25 `
-  --ambient quiet `
-  --delay 3 `
-  --break_sec 1.5 `
-  --camera "$CAMERA" `
-  --preview_pose `
-  --no_sound `
-  --note "csi_to_pose_v1, 1.5m, camera_front"
-```
-
-## 14. 개인정보 원칙
-
-CSI-to-Pose는 영상 복원 기능이 아닙니다.
-영상은 학습용 pose GT를 만들기 위한 도구이며, 실제 배포 단계에서는 사용하지 않습니다.
-
-```text
-Training only: CSI + Video
-Deployment: CSI only
-```
-
-팀 공유 시에는 원본 영상보다 `proxy13.csv`, `overlay.mp4`, `derived_features.png`, 학습 결과를 우선 공유합니다.
+다음 개발 순서는 root trajectory 개선, rotation dynamics 안정화,
+impact/contact curriculum, seen gate 재검증, LOSO/unseen 적응 순서다.
