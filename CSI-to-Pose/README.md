@@ -1,14 +1,14 @@
-# NotiFi CSI-to-Pose
+﻿# NotiFi CSI-to-Pose
 
 Wi-Fi CSI만 입력받아 시간에 따른 사람의 **GVHMR SMPL-22 3D pose와 root trajectory**를 복원하는 연구 코드입니다. 영상과 GVHMR은 학습용 GT 생성에만 사용하며, 검증과 실제 추론에는 CSI만 사용합니다.
 
 - 기존 코드: [NotiFi-CSI-to-Pose `feature/goal1`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1)
 - 현재 통합 위치: [NotiFi/CSI-to-Pose](https://github.com/jjyoon012-git/NotiFi/tree/main/CSI-to-Pose)
-- 현재 권장 seen 모델: **8안 Stage A - contact-calibrated impact event model**
+- 현재 권장 seen 모델: **9안 Stage C - fall trajectory + temporal denoising prior**
 - 현재 개발 순서: **seen 성능 확보 후 unseen/LOSO calibration 재개**
 - 문서 정렬 원칙: **현재 권장 모델을 맨 위에 두고, 이전 안은 최신순으로 기록**
 
-## 현재 모델: 8안 Stage A - Contact-Calibrated Impact Event
+## 현재 모델: 9안 Stage C - Fall Trajectory Reconstruction
 
 현재는 사용자가 지정한
 [`feature/goal1/work_v2/splits`](https://github.com/NotiFi2026/NotiFi-CSI-to-Pose/tree/feature/goal1/work_v2/splits)의
@@ -46,12 +46,15 @@ flowchart LR
     N --> O["Support-aware anchor / velocity refinement"]
     O --> P["Validation-selected root strength"]
     P --> Q["SMPL-22 pose + refined root"]
-    A --> R["Raw CSI multi-scale event energy"]
-    Q --> S["Frozen 7안 event features"]
+    A --> R["Raw CSI multi-scale motion"]
+    Q --> S["Full-sequence trajectory features"]
     R --> S
-    S --> T["Impact / joint / contact / speed heads"]
-    T --> U["Validation branch calibration"]
-    U --> V["Contact 0.75; other event branches 0"]
+    S --> T["Dilated temporal blocks + Transformer"]
+    T --> U["Bone-preserving rotation + root residual"]
+    U --> V["Validation scale: pose 0.15 / root 0.5"]
+    V --> W["GT-only temporal denoising prior"]
+    W --> X["Validation prior strength 1.0"]
+    X --> Y["CSI-only SMPL-22 trajectory"]
 ```
 
 1. timestamp 완전성, 유효 link 수, CSI-GT motion correlation으로 trial 품질 가중치를 만든다.
@@ -59,25 +62,28 @@ flowchart LR
 3. speed, moving, fall phase, impact, predicted action/risk로 decoder를 condition한다.
 4. 4-frame keyframe의 6D bone rotation을 예측하고 SMPL tree FK로 bone length를 보존한다.
 5. 저주파 rotation branch와 최대 2cm의 고주파 Cartesian residual을 분리한다.
-6. 발 접촉, 부위별 충돌, 최초 접촉 관절, impact speed, 바닥 높이를 보조 학습한다.
+6. 7안까지는 발 접촉, 부위별 충돌, 최초 접촉 관절, impact speed, 바닥 높이를 보조 학습했다.
 7. head-only 학습 후 기존 backbone의 마지막 temporal block만 낮은 learning rate로 미세조정한다.
 8. 7안 Stage A는 V2 pose를 고정하고 예측 foot contact, phase, impact, 상대 foot speed로
    root anchor와 velocity만 보정한다.
 9. 8안은 raw CSI event feature를 추가하되 validation gate를 통과한 injury-contact
    residual만 `0.75`로 사용한다.
+10. 9안은 최초 충돌 예측을 새 loss에서 제거하고 frame pose/root, 5-frame displacement,
+    root drop, torso/shoulder orientation, endpoint로 전체 낙상 궤적을 학습한다.
+11. train GT만 noise와 frame/joint masking으로 오염시켜 학습한 temporal denoising prior가
+    과도한 frame-to-frame 움직임을 안정화한다.
 
 ### Seen test 결과
 
-| Metric | 기존 GraphFormer | 6안 V2 | 7안 | 현재 8안 |
-|---|---:|---:|---:|---:|
-| MPJPE | 24.17cm | 21.29cm | **21.29cm** | **21.29cm** |
-| Dynamic MPJPE | 23.39cm | 20.90cm | **20.90cm** | **20.90cm** |
-| Distal MPJPE | 35.44cm | 31.53cm | **31.53cm** | **31.53cm** |
-| Impact MPJPE | 58.24cm | **54.72cm** | 54.89cm | 54.89cm |
-| Root error | 33.06cm | 32.33cm | **31.81cm** | **31.81cm** |
-| Pose-speed ratio | 1.058 | 1.167 | 1.167 | 1.167 |
-| Injury-contact F1 | - | 0.354 | 0.354 | **0.423** |
-| First-contact accuracy | - | 37.8% | 37.8% | 37.8% |
+| Metric | 기존 GraphFormer | 7안 | 9A trajectory | 9B alignment | 현재 9C |
+|---|---:|---:|---:|---:|---:|
+| MPJPE | 24.17cm | 21.29cm | **20.60cm** | 21.29cm | 20.68cm |
+| Dynamic MPJPE | 23.39cm | 20.90cm | **20.40cm** | 20.90cm | 20.41cm |
+| Root error | 33.06cm | 31.81cm | **31.61cm** | 31.94cm | **31.61cm** |
+| Danger MPJPE | - | - | 51.15cm | 51.95cm | **51.14cm** |
+| Danger distal | - | - | 55.72cm | 56.93cm | **55.64cm** |
+| Danger endpoint | - | - | 69.72cm | 71.23cm | **69.66cm** |
+| Pose-speed ratio | 1.058 | 1.167 | 1.217 | 1.167 | **1.163** |
 
 무보정 V2는 test MPJPE `18.11cm`까지 내려갔지만 pose-speed ratio가 `2.088`로
 실제 움직임의 두 배를 만들어 공식 결과에서 제외했다. validation에서만 branch 강도를
@@ -95,13 +101,28 @@ test에서 일반화하지 못해 event/joint/speed strength를 모두 `0`으로
 contact strength `0.75`만 선택했고, test injury-contact F1은 `0.354 -> 0.423`으로
 개선됐다. first-contact, impact speed, pose, root는 7안과 동일하다.
 
+9A는 `어느 관절이 먼저 충돌했는가` 대신 전체 낙상 sequence를 복원한다. 최대 가속도
+frame과 휴리스틱 impact score를 새 loss에서 제거했고 MPJPE를 `21.29 -> 20.60cm`로
+낮췄다. 다만 speed ratio가 `1.217`로 gate 1.2를 넘어서 단독 최종 모델로 쓰지 않는다.
+
+9B는 timestamp를 유지하면서 8개 연속 구간에 ±15-frame offset을 허용한 constrained
+alignment loss를 시험했다. validation이 pose residual strength `0`을 선택했고 test도
+악화되어 기각했다. GT나 timestamp를 이동한 결과물은 저장하지 않았다.
+
+9C는 내부 train GT만 사용한 temporal denoising prior를 9A에 적용한다. test MPJPE는
+`20.68cm`, dynamic MPJPE는 `20.41cm`, speed ratio는 `1.163`이다. danger MPJPE
+`51.14cm`와 endpoint `69.66cm`는 여전히 크므로 낙상 복원이 해결됐다고 해석하지 않는다.
+8안 contact 출력은 분석용으로 남아 있지만 9안의 새 stage는 impact/contact target을
+학습하지 않는다. 동결된 7안 base에 남은 과거 휴리스틱 영향은 base 재학습 때 제거한다.
+
 실패한 구조를 포함한 번호·날짜·시간·목적·방법·결과·결정은
 [`docs/experiment_log.md`](docs/experiment_log.md)에 계속 누적한다. 원시 결과 JSON은
 [`docs/results`](docs/results)에 있으며 checkpoint와 데이터셋은 저장소에 포함하지 않는다.
 6안의 코드 대응, 손실, 보정 규칙은
 [`docs/seen_reconstruction_v2.md`](docs/seen_reconstruction_v2.md), 7안 root stage는
 [`docs/seen_reconstruction_v3.md`](docs/seen_reconstruction_v3.md), 8안 event stage는
-[`docs/impact_event_v8.md`](docs/impact_event_v8.md)에 정리했다.
+[`docs/impact_event_v8.md`](docs/impact_event_v8.md), 현재 9안은
+[`docs/fall_trajectory_v9.md`](docs/fall_trajectory_v9.md)에 정리했다.
 
 ## 모델안별 성능 이력
 
@@ -118,7 +139,10 @@ contact strength `0.75`만 선택했고, test injury-contact F1은 `0.354 -> 0.4
 | 5안 | CSI observability 진단 | yja/E02 unseen | 29.57cm 정상 / 29.59cm shuffled | - | - | - | encoder 병목 확인 |
 | 6안 | Seen Reconstruction V2 | single_split seen | **21.29cm** | **54.72cm** | 32.33cm | 1.167 | 채택 |
 | 7안 A | Contact-guided root | single_split seen | **21.29cm** | 54.89cm | **31.81cm** | 1.167 | 현재 root 모델 |
-| 8안 A | Contact-calibrated event | single_split seen | **21.29cm** | 54.89cm | **31.81cm** | 1.167 | contact F1 0.423, 현재 모델 |
+| 8안 A | Contact-calibrated event | single_split seen | 21.29cm | 54.89cm | 31.81cm | 1.167 | contact F1 0.423 |
+| 9안 A | Full-sequence trajectory | single_split seen | **20.60cm** | - | **31.61cm** | 1.217 | 위치 개선, 속도 gate 초과 |
+| 9안 B | Bounded alignment | single_split seen | 21.29cm | - | 31.94cm | 1.167 | validation이 pose branch 기각 |
+| 9안 C | Temporal denoising prior | single_split seen | 20.68cm | - | **31.61cm** | **1.163** | 현재 모델, danger 51.14cm |
 
 ### 1~4안: yja/E02 unseen 흐름
 
@@ -140,7 +164,10 @@ flowchart LR
     C["6안 V2<br/>21.29 / 54.72 / 32.33"]
     D["7안 Stage A<br/>21.29 / 54.89 / 31.81"]
     E["8안 Contact<br/>Pose 유지 / Contact F1 0.423"]
-    A --> B --> C --> D --> E
+    F["9A Trajectory<br/>20.60 / Danger 51.15 / Speed 1.217"]
+    G["9B Alignment<br/>Pose branch rejected"]
+    H["9C Prior<br/>20.68 / Danger 51.14 / Speed 1.163"]
+    A --> B --> C --> D --> E --> F --> G --> H
 ```
 
 단위는 cm다. 각 안의 원시 출처와 protocol은
@@ -172,10 +199,23 @@ python -m notifi_pose.tools.train_impact_event `
   --epochs 15 --patience 5 --batch-size 8 `
   --run-dir work_v2/runs/impact_event_v8c_raw
 python -m notifi_pose.tools.calibrate_impact_event
+python -m notifi_pose.tools.train_seen_v4_trajectory `
+  --epochs 12 --batch-size 8 --alignment-weight 0 `
+  --run-dir work_v2/runs/seen_v4_v9a_no_impact
+python -m notifi_pose.tools.train_seen_v4_trajectory `
+  --epochs 12 --batch-size 8 --alignment-weight 0.15 `
+  --run-dir work_v2/runs/seen_v4_v9b_bounded_alignment
+python -m notifi_pose.tools.train_motion_prior_v9 `
+  --epochs 10 --batch-size 12 `
+  --run-dir work_v2/priors/temporal_denoiser_v9
+python -m notifi_pose.tools.calibrate_motion_prior_v9 `
+  --trajectory-run work_v2/runs/seen_v4_v9a_no_impact `
+  --prior-run work_v2/priors/temporal_denoiser_v9 `
+  --run-dir work_v2/runs/seen_v4_v9c_motion_prior
 ```
 
 현재 seen gate는 완전히 통과하지 않았다. 다음 목표는 MPJPE 20cm 이하,
-impact 50cm 이하, root 25cm 이하, pose-speed ratio 0.8~1.2다. 이 기준에 가까워지면
+danger MPJPE 45cm 이하, root 25cm 이하, pose-speed ratio 0.8~1.2다. 이 기준에 가까워지면
 동일한 backbone을 고정하고 calibration/domain adaptation을 붙여 yja E02와 LOSO를
 unseen protocol로 다시 평가한다.
 

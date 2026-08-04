@@ -1,0 +1,17 @@
+{
+  "plan": "9A",
+  "name": "full-sequence trajectory residual",
+  "protocol": "single_split_seen",
+  "selected": {"pose_strength": 0.15, "root_strength": 0.5},
+  "test": {
+    "mpjpe_m": 0.2060410053457743,
+    "dynamic_mpjpe_m": 0.20398121125557844,
+    "root_error_m": 0.3160739316892477,
+    "pose_speed_ratio": 1.2166495583535835,
+    "danger_mpjpe_m": 0.5115316238668229,
+    "danger_distal_mpjpe_m": 0.5571883777777354,
+    "danger_endpoint_mpjpe_m": 0.6972259938716888,
+    "danger_speed_correlation": 0.35475728841912413
+  },
+  "decision": "position improved, rejected as final because speed ratio exceeded 1.2"
+}

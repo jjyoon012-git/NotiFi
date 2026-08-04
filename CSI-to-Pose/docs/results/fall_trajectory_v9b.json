@@ -1,0 +1,16 @@
+{
+  "plan": "9B",
+  "name": "bounded piecewise alignment",
+  "protocol": "single_split_seen",
+  "selected": {"pose_strength": 0.0, "root_strength": 0.5},
+  "test": {
+    "mpjpe_m": 0.21286403989810265,
+    "dynamic_mpjpe_m": 0.20897810296977268,
+    "root_error_m": 0.31936366812406497,
+    "pose_speed_ratio": 1.1666141311731257,
+    "danger_mpjpe_m": 0.5194813006454044,
+    "danger_distal_mpjpe_m": 0.5693410403198667,
+    "danger_endpoint_mpjpe_m": 0.7122687757015228
+  },
+  "decision": "rejected; validation selected zero pose residual"
+}

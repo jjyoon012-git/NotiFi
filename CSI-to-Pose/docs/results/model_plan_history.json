@@ -131,6 +131,49 @@
         "contact_strength": 0.75,
         "speed_strength": 0.0
       }
+    },
+    {
+      "plan": "9A",
+      "name": "Full-sequence fall trajectory residual",
+      "protocol": "single_split_seen",
+      "source": "docs/results/fall_trajectory_v9a.json",
+      "mpjpe_m": 0.2060410053457743,
+      "dynamic_mpjpe_m": 0.20398121125557844,
+      "root_error_m": 0.3160739316892477,
+      "pose_speed_ratio": 1.2166495583535835,
+      "danger_mpjpe_m": 0.5115316238668229,
+      "danger_distal_mpjpe_m": 0.5571883777777354,
+      "danger_endpoint_mpjpe_m": 0.6972259938716888,
+      "decision": "Not final: validation-selected trajectory improved position but test speed ratio exceeded 1.2."
+    },
+    {
+      "plan": "9B",
+      "name": "Bounded piecewise temporal alignment",
+      "protocol": "single_split_seen",
+      "source": "docs/results/fall_trajectory_v9b.json",
+      "mpjpe_m": 0.21286403989810265,
+      "dynamic_mpjpe_m": 0.20897810296977268,
+      "root_error_m": 0.31936366812406497,
+      "pose_speed_ratio": 1.1666141311731257,
+      "danger_mpjpe_m": 0.5194813006454044,
+      "danger_distal_mpjpe_m": 0.5693410403198667,
+      "danger_endpoint_mpjpe_m": 0.7122687757015228,
+      "decision": "Rejected: validation selected zero pose residual."
+    },
+    {
+      "plan": "9C",
+      "name": "Trajectory residual plus temporal denoising motion prior",
+      "protocol": "single_split_seen",
+      "source": "docs/results/fall_trajectory_v9c.json",
+      "mpjpe_m": 0.20676302729105508,
+      "dynamic_mpjpe_m": 0.2041115368332933,
+      "root_error_m": 0.31607388532088126,
+      "pose_speed_ratio": 1.1632563483558842,
+      "danger_mpjpe_m": 0.5114021862546603,
+      "danger_distal_mpjpe_m": 0.556442704796791,
+      "danger_endpoint_mpjpe_m": 0.6966397239102258,
+      "danger_speed_correlation": 0.3516074383010467,
+      "decision": "Current recommended seen model."
     }
   ]
 }

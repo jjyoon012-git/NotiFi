@@ -1,0 +1,26 @@
+{
+  "plan": "9C",
+  "name": "trajectory residual plus temporal denoising motion prior",
+  "protocol": "single_split_seen",
+  "selected": {
+    "trajectory_pose_strength": 0.15,
+    "trajectory_root_strength": 0.5,
+    "prior_strength": 1.0
+  },
+  "test": {
+    "mpjpe_m": 0.20676302729105508,
+    "dynamic_mpjpe_m": 0.2041115368332933,
+    "root_error_m": 0.31607388532088126,
+    "pose_speed_ratio": 1.1632563483558842,
+    "danger_mpjpe_m": 0.5114021862546603,
+    "danger_distal_mpjpe_m": 0.556442704796791,
+    "danger_root_error_m": 0.40111388092239697,
+    "danger_root_drop_mae_m": 0.14937535356730222,
+    "danger_torso_angle_deg": 42.62285910712348,
+    "danger_endpoint_mpjpe_m": 0.6966397239102258,
+    "danger_speed_correlation": 0.3516074383010467,
+    "danger_aligned_mpjpe_m": 0.49958444750971265,
+    "danger_abs_shift_frames": 11.533333333333333
+  },
+  "decision": "current recommended seen model; speed stabilized with small pose tradeoff"
+}

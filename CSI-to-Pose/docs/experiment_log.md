@@ -38,6 +38,9 @@ trial ID의 train/validation/test 교집합은 0이다. 같은 사람과 같은 
 | EXP-013 | 2026-08-04 11:06 | V2 branch별 validation calibration | rotation 0.10/high 0/root 0.50 선택, MPJPE 21.29cm, speed 1.167 | V2 calibrated 모델 채택 |
 | EXP-014 | 2026-08-04 11:59 | contact-guided root Stage A | strength 0.50 선택, test root 31.81cm, impact 54.89cm | root 개선으로 채택, impact는 다음 단계에서 재개선 |
 | EXP-015 | 2026-08-04 13:21 | event-centric impact/contact Stage | contact 0.75만 선택, test injury F1 0.354→0.423 | contact branch 채택, event/joint/speed branch 거절 |
+| EXP-016 | 2026-08-04 14:18 | 충돌 휴리스틱 없는 전체 낙상 궤적 9A | MPJPE 20.60cm, danger 51.15cm, speed 1.217 | 위치 개선, 속도 gate 초과로 단독 채택 보류 |
+| EXP-017 | 2026-08-04 14:34 | 구간 순서를 보존하는 bounded alignment 9B | pose strength 0 선택, MPJPE 21.29cm | 정렬 branch 기각 |
+| EXP-018 | 2026-08-04 14:56 | GT-only temporal denoising prior 9C | MPJPE 20.68cm, danger 51.14cm, speed 1.163 | 현재 권장 seen 모델로 채택 |
 
 ## 상세 로그
 
@@ -206,21 +209,66 @@ trial ID의 train/validation/test 교집합은 0이다. 같은 사람과 같은 
   개선됐다고 주장하지 않는다. 다음 단계는 영상을 이용해 최소한 danger trial의 실제 impact
   frame/body region annotation을 만들거나, 현재 proxy의 표본 검증을 먼저 해야 한다.
 
+### EXP-016: full-sequence fall trajectory without impact heuristic
+
+- 목적: 어디가 먼저 충돌했는지를 맞히는 대신 사람이 어떤 자세와 경로로 넘어지는지를
+  전체 sequence로 복원한다.
+- 구조: frozen 7안 base의 CSI/pose/root feature에 raw CSI multi-scale motion, body-group
+  speed, risk probability를 결합하고 dilation 1/2/4/8 temporal block과 Transformer를
+  통과시켰다. 6D rotation residual은 bone length를 보존하고 root는 anchor/step residual로
+  분리했다.
+- 손실: frame pose/root, 5-frame displacement, root drop, torso/shoulder orientation,
+  endpoint만 사용했다. 최대 가속도 frame, 최초 충돌 joint, impact score는 사용하지 않았다.
+- 선택: epoch 10에서 validation이 pose strength 0.15, root strength 0.5를 선택했다.
+- 결과: test MPJPE 20.60cm, dynamic 20.40cm, root 31.61cm, danger 51.15cm,
+  danger distal 55.72cm, danger endpoint 69.72cm였다. speed ratio는 1.217이었다.
+- 판단: 7안보다 위치는 좋아졌지만 움직임을 21.7% 과장해 1.2 speed gate를 넘었다.
+  trajectory branch는 9C의 source로만 사용하고 9A 단독 모델은 최종 채택하지 않는다.
+
+### EXP-017: bounded piecewise temporal alignment
+
+- 목적: timestamp를 버리거나 GT를 이동하지 않고, trial 내부의 작은 비선형 시차를 sequence
+  문맥으로 흡수한다.
+- 방법: 8개 연속 구간마다 ±15-frame offset 후보를 만들고 offset 크기/변화에 벌점을 둔
+  dynamic programming 경로를 trajectory descriptor loss에 추가했다. frame-aligned loss는
+  그대로 유지했다.
+- 결과: validation calibration이 pose strength 0, root strength 0.5를 선택했다. test
+  MPJPE 21.29cm, danger 51.95cm, danger endpoint 71.23cm로 9A보다 나빴다.
+- 판단: 현재 CSI/GT descriptor로 선택한 구간 offset은 학습 신호로 신뢰할 수 없다.
+  9B를 기각하고 alignment weight 0을 공식 설정으로 사용한다. timestamp와 원본 GT는
+  변경하지 않았다.
+
+### EXP-018: temporal denoising motion prior
+
+- 목적: 9A의 과도한 frame-to-frame 움직임을 줄이되 낙상 방향과 전체 경로를 보존한다.
+- 학습 데이터: `single_split` train GT만 사용했다. 외부 UP-Fall 33-joint 데이터는
+  MediaPipe camera 좌표라 GVHMR/SMPL-22 metric 좌표와 직접 섞지 않았다.
+- 방법: Gaussian noise와 frame/joint masking으로 GT trajectory를 오염시킨 뒤 temporal
+  convolution과 Transformer가 원본을 복구하도록 학습했다. impact/contact label은 없다.
+- prior 검증: noisy validation source MPJPE 4.55cm를 3.70cm로 낮췄고, clean GT에 대한
+  distortion은 1.74cm였다. validation calibration이 prior strength 1.0을 선택했다.
+- 결과: 9A 대비 test speed ratio가 1.217→1.163으로 개선됐다. MPJPE는
+  20.60→20.68cm로 0.07cm 악화됐지만 danger MPJPE 51.15→51.14cm, danger distal
+  55.72→55.64cm, endpoint 69.72→69.66cm로 소폭 개선됐다. shuffled CSI MPJPE는
+  31.72cm로 trial-specific CSI 의존성을 유지했다.
+- 판단: 9C를 현재 권장 seen 모델로 채택한다. 속도 안정화에는 성공했지만 danger
+  absolute pose 51.14cm는 여전히 크므로 낙상 복원 문제가 해결됐다고 보지 않는다.
+
 ## 현재 seen 결과
 
-| Metric | 기존 기준선 | 이전 seen | 6안 V2 | 7안 Stage A | 8안 contact |
-|---|---:|---:|---:|---:|---:|
-| MPJPE | 24.17cm | 21.68cm | **21.29cm** | **21.29cm** | **21.29cm** |
-| Dynamic MPJPE | 23.39cm | 21.22cm | **20.90cm** | **20.90cm** | **20.90cm** |
-| Distal MPJPE | 35.44cm | 32.16cm | **31.53cm** | **31.53cm** | **31.53cm** |
-| Impact MPJPE | 58.24cm | 55.27cm | **54.72cm** | 54.89cm | 54.89cm |
-| Root error | 33.06cm | 32.36cm | 32.33cm | **31.81cm** | **31.81cm** |
-| Pose-speed ratio | 1.058 | 1.141 | 1.167 | 1.167 | 1.167 |
-| Injury-contact F1 | - | - | 0.354 | 0.354 | **0.423** |
-| First-contact accuracy | - | - | 37.8% | 37.8% | 37.8% |
+| Metric | 기존 기준선 | 7안 Stage A | 8안 contact | 9A trajectory | 9B alignment | 9C prior |
+|---|---:|---:|---:|---:|---:|---:|
+| MPJPE | 24.17cm | 21.29cm | 21.29cm | **20.60cm** | 21.29cm | 20.68cm |
+| Dynamic MPJPE | 23.39cm | 20.90cm | 20.90cm | **20.40cm** | 20.90cm | 20.41cm |
+| Root error | 33.06cm | 31.81cm | 31.81cm | **31.61cm** | 31.94cm | **31.61cm** |
+| Danger MPJPE | - | - | - | 51.15cm | 51.95cm | **51.14cm** |
+| Danger distal | - | - | - | 55.72cm | 56.93cm | **55.64cm** |
+| Danger endpoint | - | - | - | 69.72cm | 71.23cm | **69.66cm** |
+| Pose-speed ratio | 1.058 | 1.167 | 1.167 | 1.217 | 1.167 | **1.163** |
+| Injury-contact F1 | - | 0.354 | **0.423** | - | - | - |
 
-현재 seen gate는 완전히 통과하지 않았다. 다음 seen 우선순위는 root trajectory와 impact
-절대위치이며, 목표는 MPJPE 20cm 이하, impact 50cm 이하, root 25cm 이하,
+현재 seen gate는 완전히 통과하지 않았다. 다음 seen 우선순위는 danger 전체 trajectory와
+endpoint 절대위치이며, 목표는 MPJPE 20cm 이하, danger MPJPE 45cm 이하, root 25cm 이하,
 pose-speed ratio 0.8~1.2다. 이 gate에 가까워진 뒤 동일 구조에 calibration/domain adaptation을
 붙여 LOSO와 yja E02 unseen 평가를 재개한다.
 
@@ -249,4 +297,17 @@ python -m notifi_pose.tools.train_impact_event `
   --epochs 15 --patience 5 --batch-size 8 `
   --run-dir work_v2/runs/impact_event_v8c_raw
 python -m notifi_pose.tools.calibrate_impact_event
+python -m notifi_pose.tools.train_seen_v4_trajectory `
+  --epochs 12 --batch-size 8 --alignment-weight 0 `
+  --run-dir work_v2/runs/seen_v4_v9a_no_impact
+python -m notifi_pose.tools.train_seen_v4_trajectory `
+  --epochs 12 --batch-size 8 --alignment-weight 0.15 `
+  --run-dir work_v2/runs/seen_v4_v9b_bounded_alignment
+python -m notifi_pose.tools.train_motion_prior_v9 `
+  --epochs 10 --batch-size 12 `
+  --run-dir work_v2/priors/temporal_denoiser_v9
+python -m notifi_pose.tools.calibrate_motion_prior_v9 `
+  --trajectory-run work_v2/runs/seen_v4_v9a_no_impact `
+  --prior-run work_v2/priors/temporal_denoiser_v9 `
+  --run-dir work_v2/runs/seen_v4_v9c_motion_prior
 ```
