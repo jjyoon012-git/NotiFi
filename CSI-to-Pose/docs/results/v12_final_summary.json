@@ -14,7 +14,7 @@
   },
   "validation": {
     "mpjpe_cm": 13.3028,
-    "pa_mpjpe_cm": 6.7684,
+    "pa_mpjpe_cm": 6.7926,
     "dynamic_mpjpe_cm": 16.5272,
     "root_cm": 31.2839,
     "danger_mpjpe_cm": 44.4463,
@@ -84,6 +84,16 @@
       "danger_support": 70,
       "safe_to_danger": 6
     }
+  },
+  "release_verification": {
+    "unit_tests_passed": 94,
+    "protocol_checks_passed": 20,
+    "manifest_artifacts": 40,
+    "public_artifacts_verified": 20,
+    "external_checkpoint_cache_artifacts": 20,
+    "hash_mismatches": 0,
+    "clean_git_archive_verified": true,
+    "test_reopened_for_candidate": false
   },
   "validation_progress": [
     {"name": "locked baseline", "mpjpe_cm": 13.6311, "root_cm": 33.8554, "danger_cm": 46.0562, "endpoint_cm": 56.9866},

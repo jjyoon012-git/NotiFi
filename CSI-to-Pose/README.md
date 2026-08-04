@@ -67,6 +67,9 @@ flowchart LR
 다만 pose trial 262개는 모두 `lmh/E01`의 `uniform_30fps`이고 나머지는 recorded timestamp다.
 validation에서 이 군의 root는 timestamp 군보다 `+7.43 cm`였지만 subject/environment도 동시에
 달라 원인을 시간 가정으로만 귀속할 수 없다. lmh pose timestamp 재수집이 다음 데이터 우선순위다.
+262개는 pose 16개 시나리오 전반에 `train/val/test=172/45/45`로 퍼져 있고 danger도
+`30/10/10`이므로 일부 낙상만 보정하지 않는다. 전체 timestamp를 복구한 뒤 dataset/split 버전을
+올리고, 현재 V12 test와 직접 섞지 않은 새 sealed 평가를 수행해야 한다.
 원시는 [`v12_protocol_integrity.json`](docs/results/v12_protocol_integrity.json)과
 [`v12_alignment_strata.json`](docs/results/v12_alignment_strata.json)에 있다.
 
@@ -75,7 +78,7 @@ validation에서 이 군의 root는 timestamp 군보다 `+7.43 cm`였지만 subj
 | Metric | Validation | Test |
 |---|---:|---:|
 | MPJPE | **13.30 cm** | **15.07 cm** |
-| PA-MPJPE | **6.77 cm** | **7.12 cm** |
+| PA-MPJPE | **6.79 cm** | **7.12 cm** |
 | Dynamic MPJPE | 16.53 cm | 18.02 cm |
 | Root error | 31.28 cm | 33.79 cm |
 | Danger MPJPE | 44.45 cm | 50.71 cm |
@@ -154,6 +157,13 @@ trajectory 개선은 크다. 따라서 V12RG는 **다음 sealed 평가 전 valid
 test 수치와 섞어 최종 성능으로 주장하지 않는다. 전체 결과는
 [`v12_link_failure_guard_robustness.json`](docs/results/v12_link_failure_guard_robustness.json)에 있다.
 
+V12RG validation의 danger 14 trial/class 분해에서는 `D02 fall_while_walking`의 MPJPE/root가
+`48.71/45.84 cm`로 가장 크고, `D03 bed_exit_fall`의 평균 정렬 이동이 `12.86 frame`,
+`D04 bed_fall`의 distal 오차가 `50.22 cm`, `D05 chair_exit_fall`의 endpoint가 `58.25 cm`로
+각각 가장 약했다. 다음 단계는 14개 표본에 맞춘 class 전용 head가 아니라, 학습기에 이미 있는
+root-displacement, shift/multiscale temporal, distal/end-state loss의 가중치와 lag를 하나씩 분리
+ablation하고 class별 지표로 회귀 여부를 확인하는 것이다.
+
 ![V12 versus V12RG under one-link loss](docs/results/v12_link_failure_comparison.png)
 
 ```powershell
@@ -198,8 +208,16 @@ python -m notifi_pose.tools.evaluate_v12_final `
 원시 최종 결과는 [`v12_final_evaluation.json`](docs/results/v12_final_evaluation.json),
 강건성 결과는 [`v12_input_robustness.json`](docs/results/v12_input_robustness.json), 압축 요약은
 [`v12_final_summary.json`](docs/results/v12_final_summary.json)에 있다. split, cache, checkpoint,
-calibration, 핵심 source 37개의 SHA-256은
+calibration, 핵심 source 40개의 SHA-256은
 [`v12_release_manifest.json`](docs/results/v12_release_manifest.json)에 고정했다.
+
+```powershell
+# checkpoint/cache까지 있는 연구 작업본의 완전 검증
+python -m notifi_pose.tools.verify_v12_release_manifest
+
+# Git 공개본: 외부 보관 checkpoint/cache의 누락만 허용
+python -m notifi_pose.tools.verify_v12_release_manifest --allow-missing-model-artifacts
+```
 
 ## 이전 모델: V10 P2-V9 dual hybrid
 
@@ -883,7 +901,7 @@ python -m unittest discover -s tests -v
 python -m py_compile notifi_pose\*.py notifi_pose\tools\*.py
 ```
 
-현재 90개 단위 테스트가 timestamp alignment, site baseline, GraphFormer shape, V12 expert
+현재 94개 단위 테스트가 timestamp alignment, site baseline, GraphFormer shape, V12 expert
 조합, amp-phase RF 증강, impact window, temporal refiner, latent flow objective, observability
 diagnostic, loss backward를 검증한다.
 

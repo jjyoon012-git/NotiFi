@@ -22,6 +22,9 @@ EXPECTED_COUNTS = {"train": 1266, "val": 329, "test": 329}
 
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
+    if path.suffix.lower() in {".csv", ".json"}:
+        digest.update(path.read_bytes().replace(b"\r\n", b"\n"))
+        return digest.hexdigest()
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
@@ -83,9 +86,9 @@ def main() -> int:
     parser.add_argument(
         "--calibrations", type=Path, nargs="+",
         default=(
-            Path("work_v2/runs/p2_v12aa_pose_seed23_w30/validation.json"),
+            Path("docs/results/v12_pose_root_calibration.json"),
             Path("docs/results/v12_shift_robust_root_calibration.json"),
-            Path("work_v2/runs/p2_v12w_robust_classification_ensemble/validation.json"),
+            Path("docs/results/v12_robust_classification_lock.json"),
             Path("docs/results/v12_link_failure_pose_calibration.json"),
             Path("docs/results/v12_link_failure_root_calibration.json"),
             Path("docs/results/v12_link_specific_classification_calibration.json"),

@@ -1,0 +1,38 @@
+{
+  "run": "p2_v12_robust_classification_ensemble_lock",
+  "protocol": "single_split_lmh_e01",
+  "selection_split": "validation",
+  "test_used_for_selection": false,
+  "source_validation": "work_v2/runs/p2_v12w_robust_classification_ensemble/validation.json",
+  "source_sha256": "3295aeb5fcc3bae0591f40a19aed1fff80ef69d5b2f0002890b654d528dca361",
+  "source_checkpoints": [
+    "work_v2/runs/p2_v11v_classification_expert_seed17/best_model.pt",
+    "work_v2/runs/p2_v12v_corrected_rf_classification/best_model.pt"
+  ],
+  "selected": {
+    "classification_expert_weights": [
+      0.5,
+      0.5
+    ],
+    "class_weight": 0.6,
+    "danger_logit_bias": 0.35,
+    "robust_expert_weight": 0.5
+  },
+  "validation": {
+    "class_accuracy": 0.9604862928390503,
+    "class_macro_f1": 0.9519333839416504,
+    "risk_accuracy": 0.978723406791687,
+    "risk_macro_f1": 0.9763397574424744,
+    "danger_recall": 0.9571428298950195,
+    "danger_precision": 0.9710144996643066,
+    "danger_tp": 67,
+    "danger_support": 70,
+    "safe_to_danger": 2
+  },
+  "constraints": {
+    "minimum_clean_class_macro_f1": 0.9519333739416503,
+    "minimum_clean_risk_macro_f1": 0.9763397474424743,
+    "minimum_clean_danger_recall": 0.9571428298950195,
+    "maximum_clean_safe_to_danger": 2
+  }
+}

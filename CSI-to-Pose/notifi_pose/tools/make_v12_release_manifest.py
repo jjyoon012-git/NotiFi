@@ -9,8 +9,20 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-def _sha256(path: Path) -> str:
+TEXT_SUFFIXES = frozenset({
+    ".csv", ".json", ".md", ".py", ".toml", ".txt", ".yaml", ".yml",
+})
+
+
+def _hash_mode(path: Path) -> str:
+    return "text-lf" if path.suffix.lower() in TEXT_SUFFIXES else "raw"
+
+
+def _sha256(path: Path, mode: str) -> str:
     digest = hashlib.sha256()
+    if mode == "text-lf":
+        digest.update(path.read_bytes().replace(b"\r\n", b"\n"))
+        return digest.hexdigest()
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(8 * 1024 * 1024), b""):
             digest.update(chunk)
@@ -20,11 +32,13 @@ def _sha256(path: Path) -> str:
 def _entry(path: Path, role: str) -> dict:
     if not path.is_file():
         raise FileNotFoundError(path)
+    mode = _hash_mode(path)
     return {
         "role": role,
         "path": path.as_posix(),
         "bytes": path.stat().st_size,
-        "sha256": _sha256(path),
+        "hash_mode": mode,
+        "sha256": _sha256(path, mode),
     }
 
 
@@ -56,8 +70,10 @@ def main() -> int:
     configuration = final["configuration"]
     paths: dict[Path, str] = {
         args.final_evaluation: "locked final evaluation",
-        Path(final["root_calibration"]): "root validation lock",
-        Path(final["classification_calibration"]): "classification validation lock",
+        Path("docs/results/v12_pose_root_calibration.json"): "root validation lock",
+        Path("docs/results/v12_robust_classification_lock.json"):
+            "classification validation lock",
+        Path("docs/results/v12_final_summary.json"): "final evaluation summary",
         Path(configuration["p2_checkpoint"]): "coarse P2 checkpoint",
         Path("work_v2/splits/experiments.json"): "split protocol",
         Path("work_v2/splits/dev_index.csv"): "development split index",
@@ -90,6 +106,8 @@ def main() -> int:
         Path("notifi_pose/tools/audit_v12_link_failure_guard.py"),
         Path("notifi_pose/tools/audit_v12_protocol_integrity.py"),
         Path("notifi_pose/tools/audit_v12_alignment_strata.py"),
+        Path("notifi_pose/tools/verify_v12_release_manifest.py"),
+        Path("docs/results/v12_protocol_integrity.json"),
     ):
         paths[path] = "core source"
 

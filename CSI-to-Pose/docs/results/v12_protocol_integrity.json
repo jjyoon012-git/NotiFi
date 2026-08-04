@@ -11,9 +11,9 @@
     "uniform_30fps": 262
   },
   "fingerprints": {
-    "work_v2/splits/dev_index.csv": "1f9ef0412eec31e8de2018a90acfd0ff503eb7bc3b1f17f627caafb6af84e798",
-    "work_v2/splits/sealed_index.csv": "85a83032e52618c671a53d6820d6b3c92c1dd33c8dfdbff5228191db7831627c",
-    "work_v2/splits/experiments.json": "c0ed312378d96a3e14e4d739d2dbd121f7b65ccb65e3c6597733eaaf304d2d8d"
+    "work_v2/splits/dev_index.csv": "642e2683095f793dc40d7d84d6fa0ff239dc557f7fa7ef3b96112291186d9d6d",
+    "work_v2/splits/sealed_index.csv": "3e719fbef2ed9b2b1fcbaab22fd6246e811dc45fef749909cda3d1bed13fe1f3",
+    "work_v2/splits/experiments.json": "976cb88f413c9624c88724935edda79e879716c40f88d8380ca007f7c488e1e1"
   },
   "checks": [
     {
@@ -142,14 +142,14 @@
       "passed": true,
       "detail": [
         {
-          "path": "work_v2/runs/p2_v12aa_pose_seed23_w30/validation.json",
+          "path": "docs/results/v12_pose_root_calibration.json",
           "protocol": "single_split_lmh_e01",
           "selection_split": "validation",
           "test_flags": {
             "test_used_for_selection": false
           },
           "safe": true,
-          "sha256": "7d7243f50651df32360370d1394b35c84d3ed870c94598a0b24fc08393b77f02"
+          "sha256": "8cd37ef6a54a34407a45bd8759e79dda84aa31ed606cd5eb23895162fe07dfef"
         },
         {
           "path": "docs/results/v12_shift_robust_root_calibration.json",
@@ -159,17 +159,17 @@
             "test_used_for_selection": false
           },
           "safe": true,
-          "sha256": "76382feb452e3da18da685b684f5ff7fc55ed8dd0ac6ff5b48bbccda15a720ba"
+          "sha256": "3796820c87f1f6072f558e0aca63e189056ca0014ea2dbd2eb40cbc8168c67b4"
         },
         {
-          "path": "work_v2/runs/p2_v12w_robust_classification_ensemble/validation.json",
+          "path": "docs/results/v12_robust_classification_lock.json",
           "protocol": "single_split_lmh_e01",
           "selection_split": "validation",
           "test_flags": {
             "test_used_for_selection": false
           },
           "safe": true,
-          "sha256": "3295aeb5fcc3bae0591f40a19aed1fff80ef69d5b2f0002890b654d528dca361"
+          "sha256": "7b252c2f8669cbfd6fc74fa6d1332bbf04b4ef33d4761e7ad031926f9616b98b"
         },
         {
           "path": "docs/results/v12_link_failure_pose_calibration.json",
@@ -179,7 +179,7 @@
             "test_used_for_selection": false
           },
           "safe": true,
-          "sha256": "27fb2350f6c953dab6d60edb5510ba3aea7089f5ae836eabe6c9e5457a8c3643"
+          "sha256": "2c6bf9a5d8e844aa9f6dd816b509685d90bfb7af9f6bc68fad5054a3af379680"
         },
         {
           "path": "docs/results/v12_link_failure_root_calibration.json",
@@ -189,7 +189,7 @@
             "test_used_for_selection": false
           },
           "safe": true,
-          "sha256": "2d13ef2a477720e52bd86aa04fb328c56e67600d90e2df374cf7217b9c020c41"
+          "sha256": "2a64ff9044c2e2a573fa64ebdaa295296390888a466cb323666f18d986cdba9d"
         },
         {
           "path": "docs/results/v12_link_specific_classification_calibration.json",
@@ -199,7 +199,7 @@
             "test_used_for_selection": false
           },
           "safe": true,
-          "sha256": "b17277d3b5c49c7e75a8ea1fd162b8090bfc040d84f0566da968c8cb4ac9827f"
+          "sha256": "4e7fa6c08b7f9287ac661bca6e87469b55241577e040c0076d7a3fb0ab6aa7da"
         }
       ]
     },

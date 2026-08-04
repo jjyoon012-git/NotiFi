@@ -7,6 +7,12 @@ EXP-075에서 한 번만 열었으며, 그 결과를 보고 추가로 모델이�
 
 | 번호 | 완료 시각(KST) | 상세 내용 | 목적 | 결과 | 결정 |
 |---|---|---|---|---|---|
+| EXP-101 | 2026-08-05 07:33 | raw final evaluation과 summary/config 28개 지표 자동 대조 | 수기 전사 오류 제거 | validation PA-MPJPE 6.7684→6.7926cm 1건 수정 후 28/28 일치 | 원시 JSON 기준값 채택, manifest 재고정 |
+| EXP-100 | 2026-08-05 07:30 | lmh/E01 uniform timestamp 262개를 scenario/risk/split별 재집계 | 부분 timestamp 보정의 분포 왜곡 여부 판단 | pose 16 scenario 전체, split 172/45/45, danger 30/10/10에 분산 | 262개 전체 복구 후 새 dataset/split version과 sealed 평가 |
+| EXP-099 | 2026-08-05 07:28 | V12RG danger 5-class validation 오차 분해 | 다음 shared loss의 과적합 없는 우선순위 결정 | D02 root 45.84cm, D03 shift 12.86f, D04 distal 50.22cm, D05 endpoint 58.25cm가 각 병목 | class 전용 head 대신 root/temporal/distal shared loss 순차 ablation |
+| EXP-098 | 2026-08-05 07:24 | Git archive clean-checkout audit와 text-lf/raw 이중 해시 | Windows CRLF로 인한 가짜 release mismatch 제거 | clean snapshot에서 문제 재현 후 LF-normalized text hash 구현, binary checkpoint는 raw 유지, 94/94 테스트 통과 | 플랫폼 독립 manifest 채택 |
+| EXP-097 | 2026-08-05 07:21 | release manifest 검증 CLI와 누락 역할 allowlist, 3개 회귀 테스트 추가 | Git 공개본과 전체 연구본의 재현 범위를 자동 구분 | 연구본 40/40, 공개본 20/20 문서 검증; 외부 checkpoint/cache 20개만 명시적 누락; 전체 93/93 테스트 통과 | 릴리스 검증 절차 채택 |
+| EXP-096 | 2026-08-05 07:15 | 공개본 protocol audit의 비공개 run-file 의존 제거와 분류 lock 요약 고정 | 체크포인트 없이도 split/selection 무결성 검사를 재현 | 공개된 lock만으로 20/20 통과, 원본 9MB 탐색 결과 SHA-256과 선택 제약 보존, manifest 39개로 확대 | 배포 재현성 수정 채택 |
 | EXP-095 | 2026-08-05 07:04 | danger root 5-frame shift-robust warm-start + seed7 ensemble + V12G 결합 | timestamp 혼재에 둔감한 absolute root 복원 | V12RG clean root 31.28→31.03cm, danger 44.45→44.35cm, endpoint 55.52→55.25cm; link 장애 성능 유지 | test 미개봉 validation candidate 채택 |
 | EXP-094 | 2026-08-05 06:55 | split/lock SHA-256 무결성 audit와 timestamp strata 진단 | 누수 및 정렬 품질 잔여 위험 확인 | 20/20 검사 통과; pose 262개가 lmh/E01 uniform_30fps, val root가 exact군보다 +7.43cm이나 subject와 confounded | 누수 없음, lmh timestamp 재수집 우선 |
 | EXP-093 | 2026-08-05 06:47 | best/last snapshot root simplex 66조합 | 추가 학습 없는 root 분산 감소 검증 | 선택 `[0.8,0.0,0.2]`; last snapshot 가중치 0 | 기각, 기존 두 best 유지 |
@@ -48,7 +54,7 @@ EXP-075에서 한 번만 열었으며, 그 결과를 보고 추가로 모델이�
 
 ### V12 최종 판정
 
-- validation: MPJPE `13.30cm`, PA-MPJPE `6.77cm`, root `31.28cm`, danger `44.45cm`,
+- validation: MPJPE `13.30cm`, PA-MPJPE `6.79cm`, root `31.28cm`, danger `44.45cm`,
   danger endpoint `55.52cm`, class/risk `96.05/97.87%`.
 - test: MPJPE `15.07cm`, PA-MPJPE `7.12cm`, root `33.79cm`, danger `50.71cm`,
   danger endpoint `64.28cm`, class/risk `94.22/97.26%`.
