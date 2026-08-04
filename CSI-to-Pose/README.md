@@ -203,6 +203,11 @@ See `docs/robust_graphformer_experiment.md` and
 `work_v2/reports/robust_protocol_results.json` for exact split counts, metrics,
 comparison with the previous GraphFormer, and remaining temporal-coherence limits.
 
+> [!WARNING]
+> 아래 `1. 기능 요약`부터의 13-point/MediaPipe 수집·학습 절차는 초기 legacy 문서다.
+> 현재 GVHMR SMPL-22 V10 데이터/모델 경로에 사용하지 않는다. 현재 실행 기준은 이 README 최상단과
+> [`docs/final_code_audit_and_v10_execution_plan.md`](docs/final_code_audit_and_v10_execution_plan.md)다.
+
 ## 1. 기능 요약
 
 카메라 기반 낙상 감지는 노인의 얼굴, 신체, 생활 공간이 노출되어 사생활 침해 우려가 큽니다.
