@@ -1,0 +1,213 @@
+{
+  "semantic_contract": {
+    "model_frame_valid": "link_mask.any(-1)",
+    "loss_target_valid": "batch['valid']",
+    "problem": "observation availability and target availability are conflated"
+  },
+  "splits": {
+    "train": {
+      "n_trials": 1556,
+      "target_valid_frames": 464793,
+      "target_valid_without_any_link": 84,
+      "target_valid_with_0_links": 84,
+      "target_valid_with_1_links": 18270,
+      "target_valid_with_2_links": 70824,
+      "target_valid_with_3_links": 375615,
+      "fraction_target_valid_without_any_link": 0.00018072561333755025,
+      "trial_missing_fraction": {
+        "median": 0.0,
+        "p95": 0.0,
+        "maximum": 0.06397306397306397,
+        "n_nonzero": 13
+      },
+      "longest_consecutive_missing_frames": {
+        "median": 0.0,
+        "p95": 0.0,
+        "maximum": 9
+      },
+      "by_site": {
+        "ajh/E01": {
+          "missing": 0,
+          "target": 51816,
+          "fraction": 0.0
+        },
+        "ajh/E02": {
+          "missing": 83,
+          "target": 51496,
+          "fraction": 0.0016117756718968463
+        },
+        "ajh/E03": {
+          "missing": 0,
+          "target": 51239,
+          "fraction": 0.0
+        },
+        "lmh/E01": {
+          "missing": 0,
+          "target": 51454,
+          "fraction": 0.0
+        },
+        "lmh/E02": {
+          "missing": 0,
+          "target": 51629,
+          "fraction": 0.0
+        },
+        "lmh/E03": {
+          "missing": 0,
+          "target": 51636,
+          "fraction": 0.0
+        },
+        "mhw/E01": {
+          "missing": 0,
+          "target": 51546,
+          "fraction": 0.0
+        },
+        "mhw/E02": {
+          "missing": 1,
+          "target": 51998,
+          "fraction": 1.9231508904188622e-05
+        },
+        "mhw/E03": {
+          "missing": 0,
+          "target": 51979,
+          "fraction": 0.0
+        }
+      }
+    },
+    "val": {
+      "n_trials": 405,
+      "target_valid_frames": 120909,
+      "target_valid_without_any_link": 15,
+      "target_valid_with_0_links": 15,
+      "target_valid_with_1_links": 5044,
+      "target_valid_with_2_links": 16319,
+      "target_valid_with_3_links": 99531,
+      "fraction_target_valid_without_any_link": 0.00012406024365431854,
+      "trial_missing_fraction": {
+        "median": 0.0,
+        "p95": 0.0,
+        "maximum": 0.026755852842809364,
+        "n_nonzero": 4
+      },
+      "longest_consecutive_missing_frames": {
+        "median": 0.0,
+        "p95": 0.0,
+        "maximum": 5
+      },
+      "by_site": {
+        "ajh/E01": {
+          "missing": 0,
+          "target": 13488,
+          "fraction": 0.0
+        },
+        "ajh/E02": {
+          "missing": 12,
+          "target": 13450,
+          "fraction": 0.0008921933085501858
+        },
+        "ajh/E03": {
+          "missing": 0,
+          "target": 13374,
+          "fraction": 0.0
+        },
+        "lmh/E01": {
+          "missing": 0,
+          "target": 13460,
+          "fraction": 0.0
+        },
+        "lmh/E02": {
+          "missing": 0,
+          "target": 13431,
+          "fraction": 0.0
+        },
+        "lmh/E03": {
+          "missing": 0,
+          "target": 13426,
+          "fraction": 0.0
+        },
+        "mhw/E01": {
+          "missing": 3,
+          "target": 13298,
+          "fraction": 0.0002255978342607911
+        },
+        "mhw/E02": {
+          "missing": 0,
+          "target": 13575,
+          "fraction": 0.0
+        },
+        "mhw/E03": {
+          "missing": 0,
+          "target": 13407,
+          "fraction": 0.0
+        }
+      }
+    },
+    "test": {
+      "n_trials": 405,
+      "target_valid_frames": 121008,
+      "target_valid_without_any_link": 7,
+      "target_valid_with_0_links": 7,
+      "target_valid_with_1_links": 5389,
+      "target_valid_with_2_links": 14969,
+      "target_valid_with_3_links": 100643,
+      "fraction_target_valid_without_any_link": 5.784741504693905e-05,
+      "trial_missing_fraction": {
+        "median": 0.0,
+        "p95": 0.0,
+        "maximum": 0.010033444816053512,
+        "n_nonzero": 4
+      },
+      "longest_consecutive_missing_frames": {
+        "median": 0.0,
+        "p95": 0.0,
+        "maximum": 3
+      },
+      "by_site": {
+        "ajh/E01": {
+          "missing": 0,
+          "target": 13487,
+          "fraction": 0.0
+        },
+        "ajh/E02": {
+          "missing": 7,
+          "target": 13448,
+          "fraction": 0.000520523497917906
+        },
+        "ajh/E03": {
+          "missing": 0,
+          "target": 13300,
+          "fraction": 0.0
+        },
+        "lmh/E01": {
+          "missing": 0,
+          "target": 13459,
+          "fraction": 0.0
+        },
+        "lmh/E02": {
+          "missing": 0,
+          "target": 13428,
+          "fraction": 0.0
+        },
+        "lmh/E03": {
+          "missing": 0,
+          "target": 13427,
+          "fraction": 0.0
+        },
+        "mhw/E01": {
+          "missing": 0,
+          "target": 13459,
+          "fraction": 0.0
+        },
+        "mhw/E02": {
+          "missing": 0,
+          "target": 13544,
+          "fraction": 0.0
+        },
+        "mhw/E03": {
+          "missing": 0,
+          "target": 13456,
+          "fraction": 0.0
+        }
+      }
+    }
+  }
+}

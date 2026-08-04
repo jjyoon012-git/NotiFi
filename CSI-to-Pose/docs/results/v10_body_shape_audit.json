@@ -1,0 +1,250 @@
+{
+  "protocol": "pre-GT-repair historical cache; shape-only oracle-direction audit",
+  "interpretation": "retargets exact GT bone directions with fixed source-subject bone lengths; error is the floor caused by skeleton scale/proportion mismatch alone",
+  "mean_bone_lengths_cm": {
+    "ajh": {
+      "left_hip": 11.455806972067045,
+      "right_hip": 12.644684344251372,
+      "spine1": 11.78164082251828,
+      "left_knee": 37.76932738127982,
+      "right_knee": 35.88804427351958,
+      "spine2": 14.279020188661809,
+      "left_ankle": 40.07855880132165,
+      "right_ankle": 40.5418486795148,
+      "spine3": 6.449012596133591,
+      "left_foot": 14.268636771894416,
+      "right_foot": 14.074526090687254,
+      "neck": 17.268102825705526,
+      "left_collar": 10.006143942092924,
+      "right_collar": 10.124652963475354,
+      "head": 16.69978834734,
+      "left_shoulder": 14.114810422188595,
+      "right_shoulder": 12.325000839630713,
+      "left_elbow": 26.609237303696197,
+      "right_elbow": 27.37584067443011,
+      "left_wrist": 25.386661122492356,
+      "right_wrist": 25.03198721326289
+    },
+    "lmh": {
+      "left_hip": 11.349322571735183,
+      "right_hip": 12.492574199720762,
+      "spine1": 11.563459583869975,
+      "left_knee": 39.86607399404648,
+      "right_knee": 38.02263281576168,
+      "spine2": 13.746344867918648,
+      "left_ankle": 42.162214674264995,
+      "right_ankle": 42.71736267280143,
+      "spine3": 6.123936177378759,
+      "left_foot": 14.435344608147634,
+      "right_foot": 14.250237786517733,
+      "neck": 17.05071055321571,
+      "left_collar": 9.812864514755441,
+      "right_collar": 9.859063294712946,
+      "head": 16.91644267506216,
+      "left_shoulder": 13.54163649170054,
+      "right_shoulder": 11.857906489194015,
+      "left_elbow": 27.33200798410667,
+      "right_elbow": 28.085735511880994,
+      "left_wrist": 26.154548553958044,
+      "right_wrist": 25.792026465225167
+    },
+    "mhw": {
+      "left_hip": 11.34431228467279,
+      "right_hip": 12.465090223000267,
+      "spine1": 11.4625742299185,
+      "left_knee": 38.46088764815729,
+      "right_knee": 36.679535112462105,
+      "spine2": 13.67995603036613,
+      "left_ankle": 40.605841303797924,
+      "right_ankle": 41.09666712155173,
+      "spine3": 6.148754124138932,
+      "left_foot": 14.054735214311323,
+      "right_foot": 13.874932851740803,
+      "neck": 16.984366171393933,
+      "left_collar": 9.78038347445408,
+      "right_collar": 9.851485096609393,
+      "head": 16.64084781110498,
+      "left_shoulder": 13.433595672267504,
+      "right_shoulder": 11.73765939456352,
+      "left_elbow": 26.581704595113415,
+      "right_elbow": 27.29308698355141,
+      "left_wrist": 25.17938174479121,
+      "right_wrist": 24.850308142679797
+    }
+  },
+  "largest_cross_subject_bone_spreads": [
+    {
+      "joint": "right_ankle",
+      "parent": "right_knee",
+      "spread_cm": 2.175513993286632,
+      "lengths_cm": {
+        "ajh": 40.5418486795148,
+        "lmh": 42.71736267280143,
+        "mhw": 41.09666712155173
+      }
+    },
+    {
+      "joint": "right_knee",
+      "parent": "right_hip",
+      "spread_cm": 2.1345885422420996,
+      "lengths_cm": {
+        "ajh": 35.88804427351958,
+        "lmh": 38.02263281576168,
+        "mhw": 36.679535112462105
+      }
+    },
+    {
+      "joint": "left_knee",
+      "parent": "left_hip",
+      "spread_cm": 2.096746612766659,
+      "lengths_cm": {
+        "ajh": 37.76932738127982,
+        "lmh": 39.86607399404648,
+        "mhw": 38.46088764815729
+      }
+    },
+    {
+      "joint": "left_ankle",
+      "parent": "left_knee",
+      "spread_cm": 2.0836558729433463,
+      "lengths_cm": {
+        "ajh": 40.07855880132165,
+        "lmh": 42.162214674264995,
+        "mhw": 40.605841303797924
+      }
+    },
+    {
+      "joint": "left_wrist",
+      "parent": "left_elbow",
+      "spread_cm": 0.9751668091668331,
+      "lengths_cm": {
+        "ajh": 25.386661122492356,
+        "lmh": 26.154548553958044,
+        "mhw": 25.17938174479121
+      }
+    },
+    {
+      "joint": "right_wrist",
+      "parent": "right_elbow",
+      "spread_cm": 0.9417183225453679,
+      "lengths_cm": {
+        "ajh": 25.03198721326289,
+        "lmh": 25.792026465225167,
+        "mhw": 24.850308142679797
+      }
+    },
+    {
+      "joint": "right_elbow",
+      "parent": "right_shoulder",
+      "spread_cm": 0.7926485283295814,
+      "lengths_cm": {
+        "ajh": 27.37584067443011,
+        "lmh": 28.085735511880994,
+        "mhw": 27.29308698355141
+      }
+    },
+    {
+      "joint": "left_elbow",
+      "parent": "left_shoulder",
+      "spread_cm": 0.7503033889932564,
+      "lengths_cm": {
+        "ajh": 26.609237303696197,
+        "lmh": 27.33200798410667,
+        "mhw": 26.581704595113415
+      }
+    }
+  ],
+  "within_subject_across_trial_bone_variation": {
+    "ajh": {
+      "n_train_trials": 519,
+      "bone_cv_median": 0.028461171031636125,
+      "bone_cv_p95": 0.04358609026769004,
+      "bone_cv_max": 0.05381612229012088,
+      "bone_range_cm_median": 2.6068787343658917,
+      "bone_range_cm_p95": 5.493418403613798,
+      "bone_range_cm_max": 5.778029589430783
+    },
+    "lmh": {
+      "n_train_trials": 518,
+      "bone_cv_median": 0.031517590140074034,
+      "bone_cv_p95": 0.050183486401061024,
+      "bone_cv_max": 0.05047124439834037,
+      "bone_range_cm_median": 3.164201043694026,
+      "bone_range_cm_p95": 7.648791914141784,
+      "bone_range_cm_max": 7.9033334429438495
+    },
+    "mhw": {
+      "n_train_trials": 519,
+      "bone_cv_median": 0.03168491317076889,
+      "bone_cv_p95": 0.050047813394160943,
+      "bone_cv_max": 0.058407362016209934,
+      "bone_range_cm_median": 2.912938049164837,
+      "bone_range_cm_p95": 6.780804063441015,
+      "bone_range_cm_max": 7.078602863059808
+    }
+  },
+  "seen_dev_test_by_subject": {
+    "ajh": {
+      "seen_global_train_skeleton": {
+        "n_trials": 135,
+        "local_shape_only_mpjpe_cm": 1.4032358815702402,
+        "distal_shape_only_mpjpe_cm": 2.014798170852804,
+        "trial_p95_local_cm": 2.5654512312643307
+      },
+      "own_train_skeleton_oracle": {
+        "n_trials": 135,
+        "local_shape_only_mpjpe_cm": 1.139968022152348,
+        "distal_shape_only_mpjpe_cm": 1.5631004948415208,
+        "trial_p95_local_cm": 1.957233045263144
+      }
+    },
+    "lmh": {
+      "seen_global_train_skeleton": {
+        "n_trials": 135,
+        "local_shape_only_mpjpe_cm": 1.4462948513844056,
+        "distal_shape_only_mpjpe_cm": 2.2439788835586736,
+        "trial_p95_local_cm": 3.002452253509253
+      },
+      "own_train_skeleton_oracle": {
+        "n_trials": 135,
+        "local_shape_only_mpjpe_cm": 1.177664729312313,
+        "distal_shape_only_mpjpe_cm": 1.7123065713024455,
+        "trial_p95_local_cm": 2.676012700201157
+      }
+    },
+    "mhw": {
+      "seen_global_train_skeleton": {
+        "n_trials": 135,
+        "local_shape_only_mpjpe_cm": 1.1540584216593204,
+        "distal_shape_only_mpjpe_cm": 1.5435587213886413,
+        "trial_p95_local_cm": 2.1456163588740544
+      },
+      "own_train_skeleton_oracle": {
+        "n_trials": 135,
+        "local_shape_only_mpjpe_cm": 1.0950453013806485,
+        "distal_shape_only_mpjpe_cm": 1.487944142962796,
+        "trial_p95_local_cm": 1.9054896560563053
+      }
+    }
+  },
+  "full_loso_shape_floor": {
+    "ajh": {
+      "n_trials": 789,
+      "local_shape_only_mpjpe_cm": 1.6612995701118924,
+      "distal_shape_only_mpjpe_cm": 2.4231119042192715,
+      "trial_p95_local_cm": 3.09320834578876
+    },
+    "lmh": {
+      "n_trials": 788,
+      "local_shape_only_mpjpe_cm": 1.6692169039439315,
+      "distal_shape_only_mpjpe_cm": 2.6615011371637447,
+      "trial_p95_local_cm": 3.0850733977157434
+    },
+    "mhw": {
+      "n_trials": 789,
+      "local_shape_only_mpjpe_cm": 1.2871807817683951,
+      "distal_shape_only_mpjpe_cm": 1.7265326826817917,
+      "trial_p95_local_cm": 2.6073375372231036
+    }
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "n_train_pose": 1556,
+  "danger_sampler_multiplier": 4.0,
+  "danger_loss_multiplier": 2.0,
+  "quality_is_used_in_sampler_and_loss": true,
+  "groups": {
+    "danger": {
+      "n": 270,
+      "raw_fraction": 0.17352185089974292,
+      "mean_quality": 0.7845757007598877,
+      "sampler_probability": 0.5527815243038885,
+      "expected_normalized_loss_mass": 0.7079602759005934,
+      "effective_trial_weight_median": 8.989246437229744,
+      "effective_trial_weight_p95": 13.871758462231982,
+      "median_relative_to_safe": 11.028357268808245
+    },
+    "safe": {
+      "n": 827,
+      "raw_fraction": 0.531491002570694,
+      "mean_quality": 0.8080893158912659,
+      "sampler_probability": 0.31353364878972523,
+      "expected_normalized_loss_mass": 0.20916268890165607,
+      "effective_trial_weight_median": 0.8151029403675772,
+      "effective_trial_weight_p95": 1.501661902931832,
+      "median_relative_to_safe": 1.0
+    },
+    "warning": {
+      "n": 459,
+      "raw_fraction": 0.294987146529563,
+      "mean_quality": 0.7544745802879333,
+      "sampler_probability": 0.13368482690638622,
+      "expected_normalized_loss_mass": 0.08287703519775083,
+      "effective_trial_weight_median": 0.607716174030025,
+      "effective_trial_weight_p95": 1.078714754952228,
+      "median_relative_to_safe": 0.7455698463754412
+    }
+  },
+  "by_subject": {
+    "ajh": {
+      "n": 519,
+      "raw_fraction": 0.33354755784061696,
+      "mean_quality": 0.8080847859382629,
+      "sampler_probability": 0.32717104192532853,
+      "expected_normalized_loss_mass": 0.3097662527268022,
+      "effective_trial_weight_median": 0.9311424923947633,
+      "effective_trial_weight_p95": 9.378441850859899
+    },
+    "lmh": {
+      "n": 518,
+      "raw_fraction": 0.3329048843187661,
+      "mean_quality": 0.6699535250663757,
+      "sampler_probability": 0.2880004575280976,
+      "expected_normalized_loss_mass": 0.24855470943329452,
+      "effective_trial_weight_median": 0.6108925558771408,
+      "effective_trial_weight_p95": 7.529598432615617
+    },
+    "mhw": {
+      "n": 519,
+      "raw_fraction": 0.33354755784061696,
+      "mean_quality": 0.8863145709037781,
+      "sampler_probability": 0.3848285005465738,
+      "expected_normalized_loss_mass": 0.4416790378399034,
+      "effective_trial_weight_median": 0.9497343777534539,
+      "effective_trial_weight_p95": 13.871758462231982
+    }
+  },
+  "by_time_method": {
+    "timestamps": {
+      "n": 1038,
+      "raw_fraction": 0.6670951156812339,
+      "mean_quality": 0.8471996784210205,
+      "sampler_probability": 0.7119995424719023,
+      "expected_normalized_loss_mass": 0.7514452905667056,
+      "effective_trial_weight_median": 0.9497343777534539,
+      "effective_trial_weight_p95": 13.431154607964505
+    },
+    "uniform_30fps": {
+      "n": 518,
+      "raw_fraction": 0.3329048843187661,
+      "mean_quality": 0.6699535250663757,
+      "sampler_probability": 0.2880004575280976,
+      "expected_normalized_loss_mass": 0.24855470943329452,
+      "effective_trial_weight_median": 0.6108925558771408,
+      "effective_trial_weight_p95": 7.529598432615617
+    }
+  },
+  "by_site": {
+    "ajh/E01": {
+      "n": 173,
+      "raw_fraction": 0.11118251928020566,
+      "mean_quality": 0.8135789036750793,
+      "sampler_probability": 0.10935095421058161,
+      "expected_normalized_loss_mass": 0.10313607717439184,
+      "effective_trial_weight_median": 0.9497343777534539,
+      "effective_trial_weight_p95": 9.452738056975052
+    },
+    "ajh/E02": {
+      "n": 173,
+      "raw_fraction": 0.11118251928020566,
+      "mean_quality": 0.7976941466331482,
+      "sampler_probability": 0.10679274562384901,
+      "expected_normalized_loss_mass": 0.09877701449989608,
+      "effective_trial_weight_median": 0.8648714499575048,
+      "effective_trial_weight_p95": 8.342695762725027
+    },
+    "ajh/E03": {
+      "n": 173,
+      "raw_fraction": 0.11118251928020566,
+      "mean_quality": 0.8129810690879822,
+      "sampler_probability": 0.11102734209089787,
+      "expected_normalized_loss_mass": 0.1078531610525143,
+      "effective_trial_weight_median": 0.9311424923947633,
+      "effective_trial_weight_p95": 9.606723489961148
+    },
+    "lmh/E01": {
+      "n": 172,
+      "raw_fraction": 0.11053984575835475,
+      "mean_quality": 0.6725694537162781,
+      "sampler_probability": 0.09848635383052018,
+      "expected_normalized_loss_mass": 0.08841861143328442,
+      "effective_trial_weight_median": 0.5186327184928509,
+      "effective_trial_weight_p95": 7.812907994751157
+    },
+    "lmh/E02": {
+      "n": 173,
+      "raw_fraction": 0.11118251928020566,
+      "mean_quality": 0.7181453704833984,
+      "sampler_probability": 0.10272399256048469,
+      "expected_normalized_loss_mass": 0.09371191314054131,
+      "effective_trial_weight_median": 0.6161599066086056,
+      "effective_trial_weight_p95": 8.989246437229744
+    },
+    "lmh/E03": {
+      "n": 173,
+      "raw_fraction": 0.11118251928020566,
+      "mean_quality": 0.6191607117652893,
+      "sampler_probability": 0.08679011113709273,
+      "expected_normalized_loss_mass": 0.06642418485946884,
+      "effective_trial_weight_median": 0.505558148002938,
+      "effective_trial_weight_p95": 6.211641787980137
+    },
+    "mhw/E01": {
+      "n": 173,
+      "raw_fraction": 0.11118251928020566,
+      "mean_quality": 0.890110969543457,
+      "sampler_probability": 0.1282356292337815,
+      "expected_normalized_loss_mass": 0.1467140260526298,
+      "effective_trial_weight_median": 0.9844112180724107,
+      "effective_trial_weight_p95": 13.871758462231982
+    },
+    "mhw/E02": {
+      "n": 173,
+      "raw_fraction": 0.11118251928020566,
+      "mean_quality": 0.8964415192604065,
+      "sampler_probability": 0.12944995697450434,
+      "expected_normalized_loss_mass": 0.14971010106231214,
+      "effective_trial_weight_median": 0.9497343777534539,
+      "effective_trial_weight_p95": 13.871758462231982
+    },
+    "mhw/E03": {
+      "n": 173,
+      "raw_fraction": 0.11118251928020566,
+      "mean_quality": 0.8723913431167603,
+      "sampler_probability": 0.12714291433828795,
+      "expected_normalized_loss_mass": 0.14525491072496136,
+      "effective_trial_weight_median": 0.9497343777534539,
+      "effective_trial_weight_p95": 13.871758462231982
+    }
+  }
+}

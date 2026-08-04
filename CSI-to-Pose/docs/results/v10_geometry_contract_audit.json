@@ -1,0 +1,18 @@
+{
+  "checkpoint_count": 51,
+  "loaded": 51,
+  "load_errors": [],
+  "repository_geometry_manifest_files": [],
+  "checkpoints_with_any_geometry_entry": 19,
+  "checkpoints_with_nonzero_board_geometry": [],
+  "checkpoints_with_geometry_available_true": [],
+  "checkpoints_with_configured_geometry_path": [],
+  "static_contract": {
+    "geometry_loaded_at_model_construction": true,
+    "one_geometry_tensor_shared_by_entire_batch_and_all_sites": true,
+    "geometry_available_gates_projection": false,
+    "zero_geometry_passes_through_biased_mlp": true,
+    "camera_extrinsic_supported": false
+  },
+  "decision": "replace global model-construction geometry with a per-installation hashed bundle; explicitly gate unavailable geometry and separate canonical from absolute root"
+}

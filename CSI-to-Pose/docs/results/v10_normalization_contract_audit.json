@@ -1,0 +1,61 @@
+{
+  "declared_norm_source_field_used_by_trainer": false,
+  "cli_norm_source_option_present": false,
+  "historical_fit_train_batches": 20,
+  "historical_fit_trials_sampled": 320,
+  "source_absence_trials": 108,
+  "train_norm_sigma_median": 0.6897808909416199,
+  "absence_norm_sigma_median": 0.5532024502754211,
+  "absence_to_train_sigma_ratio": {
+    "median": 0.19908316433429718,
+    "p05": 0.0568094477057457,
+    "p95": 0.7862993478775024
+  },
+  "absence_vs_train_mean_shift_in_train_sigma": {
+    "median": 0.262234628200531,
+    "p95": 0.5155150294303894
+  },
+  "validation_after_train_norm": {
+    "channel_mean": [
+      0.07701999694108963,
+      -0.0071299998089671135
+    ],
+    "channel_std": [
+      1.1354000568389893,
+      0.9186800122261047
+    ],
+    "channel_abs_p99": [
+      4.845180034637451,
+      3.0176401138305664
+    ],
+    "p99_uniform_stride": 14
+  },
+  "validation_after_empty_room_refit": {
+    "channel_mean": [
+      4.884809970855713,
+      -0.02985999919474125
+    ],
+    "channel_std": [
+      14.762149810791016,
+      2.002120018005371
+    ],
+    "channel_abs_p99": [
+      68.53008270263672,
+      6.599639892578125
+    ],
+    "p99_uniform_stride": 14
+  },
+  "per_site_absence_sigma_median": {
+    "ajh_E01": 0.4583209455013275,
+    "ajh_E02": 0.8282070755958557,
+    "ajh_E03": 0.17251718044281006,
+    "lmh_E01": 0.34597522020339966,
+    "lmh_E02": 0.6831742525100708,
+    "lmh_E03": 0.2605482041835785,
+    "mhw_E01": 0.4901987612247467,
+    "mhw_E02": 0.7369802594184875,
+    "mhw_E03": 0.32958507537841797
+  },
+  "per_site_absence_sigma_max_to_min": 4.800722301802334,
+  "decision": "Do not refit the model standardizer on empty-room CSI. Keep a train-fitted immutable standardizer and use a separate per-installation empty-room calibration adapter trained with the same contract."
+}

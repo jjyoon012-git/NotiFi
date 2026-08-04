@@ -1,0 +1,70 @@
+{
+  "protocol": "V9A single_split dev_test, pre-GT-repair historical cache",
+  "model": "V9A (V9C prior excluded)",
+  "variants": {
+    "normal": {
+      "local_cm": 20.604101969963974,
+      "root_cm": 31.607388532088127,
+      "danger_absolute_cm": 51.153162651591835,
+      "danger_speed_correlation": 0.35475722664139336
+    },
+    "reverse_subcarrier": {
+      "local_cm": 23.343621829041727,
+      "root_cm": 38.20629001077678,
+      "danger_absolute_cm": 57.97183331516054,
+      "danger_speed_correlation": 0.30459093307662344
+    },
+    "roll_subcarrier_10": {
+      "local_cm": 23.398427678111158,
+      "root_cm": 37.36591534850039,
+      "danger_absolute_cm": 54.839333875311745,
+      "danger_speed_correlation": 0.322427330000533
+    },
+    "fixed_subcarrier_permutation": {
+      "local_cm": 28.140420967046126,
+      "root_cm": 48.7311802767677,
+      "danger_absolute_cm": 62.21057193146812,
+      "danger_speed_correlation": 0.33281388110998605
+    },
+    "frequency_mean_repeated": {
+      "local_cm": 29.19002972267292,
+      "root_cm": 49.68444344162205,
+      "danger_absolute_cm": 65.67616389857398,
+      "danger_speed_correlation": 0.2856900646655251
+    },
+    "frequency_centered": {
+      "local_cm": 27.747421640856768,
+      "root_cm": 44.69638820001741,
+      "danger_absolute_cm": 62.44677589999304,
+      "danger_speed_correlation": 0.23247645567429975
+    }
+  },
+  "delta_from_normal": {
+    "reverse_subcarrier": {
+      "local_cm": 2.7395198590777525,
+      "root_cm": 6.598901478688656,
+      "danger_absolute_cm": 6.818670663568703
+    },
+    "roll_subcarrier_10": {
+      "local_cm": 2.794325708147184,
+      "root_cm": 5.75852681641226,
+      "danger_absolute_cm": 3.68617122371991
+    },
+    "fixed_subcarrier_permutation": {
+      "local_cm": 7.536318997082152,
+      "root_cm": 17.123791744679576,
+      "danger_absolute_cm": 11.057409279876282
+    },
+    "frequency_mean_repeated": {
+      "local_cm": 8.585927752708947,
+      "root_cm": 18.077054909533924,
+      "danger_absolute_cm": 14.52300124698214
+    },
+    "frequency_centered": {
+      "local_cm": 7.143319670892794,
+      "root_cm": 13.088999667929283,
+      "danger_absolute_cm": 11.293613248401208
+    }
+  },
+  "interpretation": "Sensitivity to order-preserving transforms indicates learned frequency topology; permutation and mean tests measure whether local subcarrier structure survives the current early pooling. These are destructive diagnostics, not augmentation recipes."
+}

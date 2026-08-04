@@ -1,0 +1,42 @@
+{
+  "protocol": "single_split GT site-action templates, ajh+mhw only, pre-GT-repair cache; oracle target-pose monotonic DTW, +/-45-frame band",
+  "n_test": 270,
+  "n_danger": 60,
+  "direct_normalized_time": {
+    "local_cm": 11.385523528979643,
+    "root_cm": 29.127601908146648,
+    "absolute_cm": 33.14244844642605
+  },
+  "oracle_monotonic_timewarp": {
+    "local_cm": 10.082929336133512,
+    "root_cm": 27.672118451457454,
+    "absolute_cm": 31.348550141930343
+  },
+  "oracle_gain_cm": {
+    "local_cm": 1.302594192846131,
+    "root_cm": 1.455483456689194,
+    "absolute_cm": 1.793898304495709
+  },
+  "danger_direct_normalized_time": {
+    "local_cm": 15.05444086048284,
+    "root_cm": 27.977620544859352,
+    "absolute_cm": 32.382015451208844
+  },
+  "danger_oracle_monotonic_timewarp": {
+    "local_cm": 12.681113386548853,
+    "root_cm": 26.373451048493017,
+    "absolute_cm": 29.98503067378875
+  },
+  "danger_oracle_gain_cm": {
+    "local_cm": 2.373327473933987,
+    "root_cm": 1.6041694963663353,
+    "absolute_cm": 2.3969847774200943
+  },
+  "warp_statistics": {
+    "mean_abs_warp_frames": 9.856859856076827,
+    "p95_abs_warp_frames": 18.48866128550032,
+    "max_abs_warp_frames": 18.745380084753553,
+    "path_cost_per_step": 0.8589572111933211
+  },
+  "interpretation": "This is a non-deployable GT oracle measuring the maximum value of nonlinear monotonic timing correction for a site-action prototype. A learned progress head must recover part of this gain from CSI without target pose access."
+}

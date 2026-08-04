@@ -1,0 +1,57 @@
+{
+  "protocol": "single_split, pre-GT-repair cache, ajh+mhw only; lmh excluded to avoid known stale orientation targets",
+  "coordinate_contract": {
+    "input": "CSI features and link mask; no board pose/extrinsics/camera transform",
+    "absolute_target": "GVHMR root in recording coordinate frame",
+    "site_identity_available_to_current_calibration": true,
+    "new_site_coordinate_frame_identifiable_from_current_inputs": false
+  },
+  "n_train": 1038,
+  "n_test": 270,
+  "template_decomposition": {
+    "global_action": {
+      "n_evaluated": 270,
+      "n_missing_template": 0,
+      "absolute_root_mpjpe_cm": 35.97264004403861,
+      "oracle_initial_translation_root_mpjpe_cm": 35.14019586690091,
+      "displacement_mpjpe_cm": 35.14019586690091,
+      "endpoint_displacement_error_cm": 59.349045729330754,
+      "translation_component_cm": 0.8324441771376978
+    },
+    "subject_action": {
+      "n_evaluated": 270,
+      "n_missing_template": 0,
+      "absolute_root_mpjpe_cm": 34.51821994520064,
+      "oracle_initial_translation_root_mpjpe_cm": 33.77626739511444,
+      "displacement_mpjpe_cm": 33.77626739511444,
+      "endpoint_displacement_error_cm": 59.152244670175705,
+      "translation_component_cm": 0.7419525500862001
+    },
+    "environment_name_action": {
+      "n_evaluated": 270,
+      "n_missing_template": 0,
+      "absolute_root_mpjpe_cm": 34.65889829860347,
+      "oracle_initial_translation_root_mpjpe_cm": 33.8560558402936,
+      "displacement_mpjpe_cm": 33.8560558402936,
+      "endpoint_displacement_error_cm": 55.50992600769782,
+      "translation_component_cm": 0.8028424583098714
+    },
+    "site_action": {
+      "n_evaluated": 270,
+      "n_missing_template": 0,
+      "absolute_root_mpjpe_cm": 29.125864955330517,
+      "oracle_initial_translation_root_mpjpe_cm": 28.60669604179913,
+      "displacement_mpjpe_cm": 28.60669604179913,
+      "endpoint_displacement_error_cm": 47.99289919619086,
+      "translation_component_cm": 0.519168913531387
+    }
+  },
+  "same_subject_across_environment": {
+    "n_subject_action_groups_with_multiple_environments": 32,
+    "raw_root_template_dispersion_cm": 17.53825346754459,
+    "start_aligned_trajectory_dispersion_cm": 16.88174943678004,
+    "initial_root_dispersion_cm": 3.7305077545058283,
+    "fraction_removed_by_start_alignment": 0.0374326914580998
+  },
+  "interpretation": "Oracle initial translation isolates trajectory-shape error from coordinate-origin error. Site-action is a seen-site diagnostic, not a deployable unseen decoder. Absolute root at a new installation needs measured geometry/extrinsics or must be reported in a canonical person-centric frame."
+}

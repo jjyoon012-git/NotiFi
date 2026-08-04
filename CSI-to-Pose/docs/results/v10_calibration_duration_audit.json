@@ -1,0 +1,223 @@
+{
+  "protocol": "single_split dev_test (pre-GT-repair historical cache)",
+  "model": "V9A trained with 12-trial site baseline",
+  "n_test": 405,
+  "durations": {
+    "0s": {
+      "repeats": [
+        {
+          "local_cm": 31.323940673912016,
+          "root_cm": 54.25154748085288,
+          "danger_absolute_cm": 69.38163552019331,
+          "danger_speed_correlation": 0.2780927292174763
+        }
+      ],
+      "summary": {
+        "local_cm": {
+          "mean": 31.323940673912016,
+          "std": 0.0,
+          "minimum": 31.323940673912016,
+          "maximum": 31.323940673912016
+        },
+        "root_cm": {
+          "mean": 54.25154748085288,
+          "std": 0.0,
+          "minimum": 54.25154748085288,
+          "maximum": 54.25154748085288
+        },
+        "danger_absolute_cm": {
+          "mean": 69.38163552019331,
+          "std": 0.0,
+          "minimum": 69.38163552019331,
+          "maximum": 69.38163552019331
+        },
+        "danger_speed_correlation": {
+          "mean": 0.2780927292174763,
+          "std": 0.0,
+          "minimum": 0.2780927292174763,
+          "maximum": 0.2780927292174763
+        }
+      }
+    },
+    "10s": {
+      "repeats": [
+        {
+          "local_cm": 20.589350186472323,
+          "root_cm": 31.67439568442879,
+          "danger_absolute_cm": 50.905330081780754,
+          "danger_speed_correlation": 0.3598777850365473
+        },
+        {
+          "local_cm": 20.580930045265475,
+          "root_cm": 31.581680988547976,
+          "danger_absolute_cm": 50.88600330882602,
+          "danger_speed_correlation": 0.3552465689937688
+        },
+        {
+          "local_cm": 20.626094255734372,
+          "root_cm": 31.682842439155518,
+          "danger_absolute_cm": 51.123891075452164,
+          "danger_speed_correlation": 0.35663865853307974
+        }
+      ],
+      "summary": {
+        "local_cm": {
+          "mean": 20.598791495824056,
+          "std": 0.019609610203946103,
+          "minimum": 20.580930045265475,
+          "maximum": 20.626094255734372
+        },
+        "root_cm": {
+          "mean": 31.64630637071076,
+          "std": 0.04582697117868428,
+          "minimum": 31.581680988547976,
+          "maximum": 31.682842439155518
+        },
+        "danger_absolute_cm": {
+          "mean": 50.97174148868631,
+          "std": 0.10787493871137852,
+          "minimum": 50.88600330882602,
+          "maximum": 51.123891075452164
+        },
+        "danger_speed_correlation": {
+          "mean": 0.35725433752113195,
+          "std": 0.0019401608130889731,
+          "minimum": 0.3552465689937688,
+          "maximum": 0.3598777850365473
+        }
+      }
+    },
+    "30s": {
+      "repeats": [
+        {
+          "local_cm": 20.60791498578993,
+          "root_cm": 31.64693868017675,
+          "danger_absolute_cm": 51.207082337803314,
+          "danger_speed_correlation": 0.35415328973904253
+        },
+        {
+          "local_cm": 20.594913994456515,
+          "root_cm": 31.61507479524539,
+          "danger_absolute_cm": 51.06195125314924,
+          "danger_speed_correlation": 0.35607001927370824
+        },
+        {
+          "local_cm": 20.568288974923853,
+          "root_cm": 31.469481746999573,
+          "danger_absolute_cm": 51.01762327882978,
+          "danger_speed_correlation": 0.3563937664756344
+        }
+      ],
+      "summary": {
+        "local_cm": {
+          "mean": 20.59037265172343,
+          "std": 0.01649288795519839,
+          "minimum": 20.568288974923853,
+          "maximum": 20.60791498578993
+        },
+        "root_cm": {
+          "mean": 31.57716507414057,
+          "std": 0.07724679496629007,
+          "minimum": 31.469481746999573,
+          "maximum": 31.64693868017675
+        },
+        "danger_absolute_cm": {
+          "mean": 51.09555228992744,
+          "std": 0.08091335287912171,
+          "minimum": 51.01762327882978,
+          "maximum": 51.207082337803314
+        },
+        "danger_speed_correlation": {
+          "mean": 0.35553902516279506,
+          "std": 0.0009887365881671806,
+          "minimum": 0.35415328973904253,
+          "maximum": 0.3563937664756344
+        }
+      }
+    },
+    "60s": {
+      "repeats": [
+        {
+          "local_cm": 20.594248550449624,
+          "root_cm": 31.53352268638066,
+          "danger_absolute_cm": 51.08312336934937,
+          "danger_speed_correlation": 0.3553797711825205
+        },
+        {
+          "local_cm": 20.59747381710712,
+          "root_cm": 31.56765463405553,
+          "danger_absolute_cm": 51.0546189546585,
+          "danger_speed_correlation": 0.3545006920169625
+        },
+        {
+          "local_cm": 20.613179666300617,
+          "root_cm": 31.59434776385257,
+          "danger_absolute_cm": 51.20853783355819,
+          "danger_speed_correlation": 0.3547295229509473
+        }
+      ],
+      "summary": {
+        "local_cm": {
+          "mean": 20.601634011285785,
+          "std": 0.008269510204927348,
+          "minimum": 20.594248550449624,
+          "maximum": 20.613179666300617
+        },
+        "root_cm": {
+          "mean": 31.565175028096252,
+          "std": 0.02489355802412812,
+          "minimum": 31.53352268638066,
+          "maximum": 31.59434776385257
+        },
+        "danger_absolute_cm": {
+          "mean": 51.11542671918869,
+          "std": 0.06685997870457877,
+          "minimum": 51.0546189546585,
+          "maximum": 51.20853783355819
+        },
+        "danger_speed_correlation": {
+          "mean": 0.3548699953834768,
+          "std": 0.00037237474230055416,
+          "minimum": 0.3545006920169625,
+          "maximum": 0.3553797711825205
+        }
+      }
+    },
+    "120s": {
+      "repeats": [
+        {
+          "local_cm": 20.604101969963974,
+          "root_cm": 31.607388532088127,
+          "danger_absolute_cm": 51.153162651591835,
+          "danger_speed_correlation": 0.35475722664139336
+        }
+      ],
+      "summary": {
+        "local_cm": {
+          "mean": 20.604101969963974,
+          "std": 0.0,
+          "minimum": 20.604101969963974,
+          "maximum": 20.604101969963974
+        },
+        "root_cm": {
+          "mean": 31.607388532088127,
+          "std": 0.0,
+          "minimum": 31.607388532088127,
+          "maximum": 31.607388532088127
+        },
+        "danger_absolute_cm": {
+          "mean": 51.153162651591835,
+          "std": 0.0,
+          "minimum": 51.153162651591835,
+          "maximum": 51.153162651591835
+        },
+        "danger_speed_correlation": {
+          "mean": 0.35475722664139336,
+          "std": 0.0,
+          "minimum": 0.35475722664139336,
+          "maximum": 0.35475722664139336
+        }
+      }
+    }
+  }
+}

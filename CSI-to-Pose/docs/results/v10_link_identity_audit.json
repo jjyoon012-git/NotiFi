@@ -1,0 +1,71 @@
+{
+  "protocol": "V9A single_split dev_test, pre-GT-repair historical cache",
+  "meaning": "CSI and link mask are permuted together after site baseline subtraction",
+  "geometry_manifest_available": false,
+  "variants": {
+    "123": {
+      "local_cm": 20.604101969963974,
+      "root_cm": 31.607388532088127,
+      "danger_absolute_cm": 51.153162651591835,
+      "danger_speed_correlation": 0.35475722664139336
+    },
+    "132": {
+      "local_cm": 25.31807467341423,
+      "root_cm": 43.750162271805756,
+      "danger_absolute_cm": 60.03462307982974,
+      "danger_speed_correlation": 0.3262142832390964
+    },
+    "213": {
+      "local_cm": 23.225367221935294,
+      "root_cm": 37.978675107207195,
+      "danger_absolute_cm": 53.3106746772925,
+      "danger_speed_correlation": 0.34436494549429175
+    },
+    "231": {
+      "local_cm": 26.842757703529465,
+      "root_cm": 48.84615194190432,
+      "danger_absolute_cm": 64.9757472674052,
+      "danger_speed_correlation": 0.32257677821649444
+    },
+    "312": {
+      "local_cm": 26.88668828871515,
+      "root_cm": 47.73141158491741,
+      "danger_absolute_cm": 61.24874744150374,
+      "danger_speed_correlation": 0.309796914882544
+    },
+    "321": {
+      "local_cm": 26.002695099163205,
+      "root_cm": 47.646978601905296,
+      "danger_absolute_cm": 63.09164199564192,
+      "danger_speed_correlation": 0.3376800184034639
+    }
+  },
+  "delta_from_123": {
+    "132": {
+      "local_cm": 4.713972703450256,
+      "root_cm": 12.14277373971763,
+      "danger_absolute_cm": 8.881460428237908
+    },
+    "213": {
+      "local_cm": 2.6212652519713195,
+      "root_cm": 6.371286575119068,
+      "danger_absolute_cm": 2.157512025700669
+    },
+    "231": {
+      "local_cm": 6.238655733565491,
+      "root_cm": 17.23876340981619,
+      "danger_absolute_cm": 13.822584615813362
+    },
+    "312": {
+      "local_cm": 6.282586318751175,
+      "root_cm": 16.124023052829283,
+      "danger_absolute_cm": 10.095584789911904
+    },
+    "321": {
+      "local_cm": 5.398593129199231,
+      "root_cm": 16.03959006981717,
+      "danger_absolute_cm": 11.938479344050087
+    }
+  },
+  "decision": "Bind each link to an explicit board identity and per-installation geometry hash. Use geometry-conditioned set fusion if permutation tolerance is desired; never rely on an undocumented CSV/TX ordering."
+}

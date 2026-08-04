@@ -1,0 +1,213 @@
+{
+  "protocol": "single_split dev_test (pre-GT-repair historical cache)",
+  "device": "cuda",
+  "n_trials": 405,
+  "sequence_excursion": {
+    "v7": {
+      "overall": {
+        "n": 405,
+        "prediction": {
+          "local_temporal_rms_cm": 4.270475113672423,
+          "root_temporal_rms_cm": 21.716813450725173,
+          "absolute_temporal_rms_cm": 22.021052612934582,
+          "root_vertical_range_cm": 21.173858609464432,
+          "root_endpoint_displacement_cm": 49.82906354073849,
+          "absolute_endpoint_displacement_cm": 49.90932127299868
+        },
+        "target": {
+          "local_temporal_rms_cm": 18.32018525638606,
+          "root_temporal_rms_cm": 34.04922122279481,
+          "absolute_temporal_rms_cm": 39.36571846152713,
+          "root_vertical_range_cm": 27.63226996969294,
+          "root_endpoint_displacement_cm": 74.65449875186162,
+          "absolute_endpoint_displacement_cm": 81.44635972118488
+        },
+        "prediction_over_target": {
+          "local_temporal_rms_cm": 0.5746132011647085,
+          "root_temporal_rms_cm": 1.0766222061561417,
+          "absolute_temporal_rms_cm": 0.9408244235723814,
+          "root_vertical_range_cm": 2.0837797110686886,
+          "root_endpoint_displacement_cm": 1.0441006709096872,
+          "absolute_endpoint_displacement_cm": 0.9197688073346381
+        }
+      },
+      "danger": {
+        "n": 90,
+        "prediction": {
+          "local_temporal_rms_cm": 5.646386968178882,
+          "root_temporal_rms_cm": 26.708550941612984,
+          "absolute_temporal_rms_cm": 27.403274319238133,
+          "root_vertical_range_cm": 28.889545500278473,
+          "root_endpoint_displacement_cm": 58.85192460483975,
+          "absolute_endpoint_displacement_cm": 59.60006950630082
+        },
+        "target": {
+          "local_temporal_rms_cm": 28.24652752942509,
+          "root_temporal_rms_cm": 42.140707820653915,
+          "absolute_temporal_rms_cm": 50.170702901151444,
+          "root_vertical_range_cm": 44.579446812470756,
+          "root_endpoint_displacement_cm": 86.58869723478954,
+          "absolute_endpoint_displacement_cm": 93.46855454974704
+        },
+        "prediction_over_target": {
+          "local_temporal_rms_cm": 0.20574808276106013,
+          "root_temporal_rms_cm": 0.6874823152037085,
+          "absolute_temporal_rms_cm": 0.5700803867084332,
+          "root_vertical_range_cm": 0.7771577464165854,
+          "root_endpoint_displacement_cm": 0.7995446165833128,
+          "absolute_endpoint_displacement_cm": 0.7080084045869466
+        }
+      }
+    },
+    "v9a": {
+      "overall": {
+        "n": 405,
+        "prediction": {
+          "local_temporal_rms_cm": 4.857353360656603,
+          "root_temporal_rms_cm": 23.510371574235183,
+          "absolute_temporal_rms_cm": 23.939109593859794,
+          "root_vertical_range_cm": 21.575519501427074,
+          "root_endpoint_displacement_cm": 55.45200692857673,
+          "absolute_endpoint_displacement_cm": 55.688747325337225
+        },
+        "target": {
+          "local_temporal_rms_cm": 18.32018525638606,
+          "root_temporal_rms_cm": 34.04922122279481,
+          "absolute_temporal_rms_cm": 39.36571846152713,
+          "root_vertical_range_cm": 27.63226996969294,
+          "root_endpoint_displacement_cm": 74.65449875186162,
+          "absolute_endpoint_displacement_cm": 81.44635972118488
+        },
+        "prediction_over_target": {
+          "local_temporal_rms_cm": 0.6241859760046611,
+          "root_temporal_rms_cm": 1.129311088083652,
+          "absolute_temporal_rms_cm": 0.9923469548189567,
+          "root_vertical_range_cm": 2.1332803030487093,
+          "root_endpoint_displacement_cm": 1.130602414155416,
+          "absolute_endpoint_displacement_cm": 0.9909588047401472
+        }
+      },
+      "danger": {
+        "n": 90,
+        "prediction": {
+          "local_temporal_rms_cm": 6.626217365264893,
+          "root_temporal_rms_cm": 29.349068519141937,
+          "absolute_temporal_rms_cm": 30.288251530792976,
+          "root_vertical_range_cm": 29.468443228138817,
+          "root_endpoint_displacement_cm": 65.97558013266988,
+          "absolute_endpoint_displacement_cm": 67.30187195870612
+        },
+        "target": {
+          "local_temporal_rms_cm": 28.24652752942509,
+          "root_temporal_rms_cm": 42.140707820653915,
+          "absolute_temporal_rms_cm": 50.170702901151444,
+          "root_vertical_range_cm": 44.579446812470756,
+          "root_endpoint_displacement_cm": 86.58869723478954,
+          "absolute_endpoint_displacement_cm": 93.46855454974704
+        },
+        "prediction_over_target": {
+          "local_temporal_rms_cm": 0.2413288402589749,
+          "root_temporal_rms_cm": 0.7402074430555249,
+          "absolute_temporal_rms_cm": 0.6197389938066451,
+          "root_vertical_range_cm": 0.7897821378526422,
+          "root_endpoint_displacement_cm": 0.8741742447886662,
+          "absolute_endpoint_displacement_cm": 0.7815698709214274
+        }
+      }
+    }
+  },
+  "within_site_action_trial_diversity": {
+    "v7": {
+      "overall": {
+        "n_groups": 144,
+        "n_trials": 405,
+        "local": {
+          "pred_between_trial_rms_cm": 2.4714386526978127,
+          "target_between_trial_rms_cm": 9.247467253690608,
+          "energy_ratio": 0.5528803678206455,
+          "residual_cosine": 0.08227605661204844
+        },
+        "root": {
+          "pred_between_trial_rms_cm": 8.782226496985482,
+          "target_between_trial_rms_cm": 20.748021833334164,
+          "energy_ratio": 1.2559576377732518,
+          "residual_cosine": 0.1497054070389519
+        },
+        "absolute": {
+          "pred_between_trial_rms_cm": 9.198123255549113,
+          "target_between_trial_rms_cm": 23.222641626050994,
+          "energy_ratio": 1.0286149623125425,
+          "residual_cosine": 0.13951304895159455
+        }
+      },
+      "danger": {
+        "n_groups": 45,
+        "n_trials": 90,
+        "local": {
+          "pred_between_trial_rms_cm": 3.8898053868777223,
+          "target_between_trial_rms_cm": 11.800173728002441,
+          "energy_ratio": 0.3652023025684886,
+          "residual_cosine": 0.024919698488277693
+        },
+        "root": {
+          "pred_between_trial_rms_cm": 12.323153523935211,
+          "target_between_trial_rms_cm": 17.324672804938423,
+          "energy_ratio": 0.8896271043353611,
+          "residual_cosine": 0.08475091101394759
+        },
+        "absolute": {
+          "pred_between_trial_rms_cm": 12.948926587899527,
+          "target_between_trial_rms_cm": 20.497182524866528,
+          "energy_ratio": 0.7286438278026051,
+          "residual_cosine": 0.08349171723756525
+        }
+      }
+    },
+    "v9a": {
+      "overall": {
+        "n_groups": 144,
+        "n_trials": 405,
+        "local": {
+          "pred_between_trial_rms_cm": 2.7291595147071797,
+          "target_between_trial_rms_cm": 9.247467253690608,
+          "energy_ratio": 0.5817854628702741,
+          "residual_cosine": 0.09809415156918544
+        },
+        "root": {
+          "pred_between_trial_rms_cm": 10.089500281890786,
+          "target_between_trial_rms_cm": 20.748021833334164,
+          "energy_ratio": 1.2818996849435347,
+          "residual_cosine": 0.15114004548960996
+        },
+        "absolute": {
+          "pred_between_trial_rms_cm": 10.571656399463981,
+          "target_between_trial_rms_cm": 23.222641626050994,
+          "energy_ratio": 1.057310454161079,
+          "residual_cosine": 0.14205492068151082
+        }
+      },
+      "danger": {
+        "n_groups": 45,
+        "n_trials": 90,
+        "local": {
+          "pred_between_trial_rms_cm": 4.417350586089823,
+          "target_between_trial_rms_cm": 11.800173728002441,
+          "energy_ratio": 0.4139813005924225,
+          "residual_cosine": 0.0500764023926523
+        },
+        "root": {
+          "pred_between_trial_rms_cm": 13.662603650656012,
+          "target_between_trial_rms_cm": 17.324672804938423,
+          "energy_ratio": 0.9558367245727115,
+          "residual_cosine": 0.10642001695103115
+        },
+        "absolute": {
+          "pred_between_trial_rms_cm": 14.436099181572596,
+          "target_between_trial_rms_cm": 20.497182524866528,
+          "energy_ratio": 0.789990218811565,
+          "residual_cosine": 0.10221040631747907
+        }
+      }
+    }
+  }
+}

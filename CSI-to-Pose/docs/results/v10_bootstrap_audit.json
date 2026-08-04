@@ -1,0 +1,58 @@
+{
+  "v9a_gain_over_v7_local_cm": {
+    "n": 405,
+    "mean": 0.6823028049167291,
+    "ci95_low": 0.6004686776985542,
+    "ci95_high": 0.7655265319655523,
+    "probability_positive": 1.0
+  },
+  "v9c_prior_gain_over_v9a_local_cm": {
+    "n": 405,
+    "mean": -0.07220075914153347,
+    "ci95_low": -0.0853603215497217,
+    "ci95_high": -0.059231507488422944,
+    "probability_positive": 0.0
+  },
+  "v9c_smoothing_gain_local_cm": {
+    "n": 405,
+    "mean": 0.007069259881973267,
+    "ci95_low": 0.006378089664158998,
+    "ci95_high": 0.007791425618860457,
+    "probability_positive": 1.0
+  },
+  "v9c_smoothing_gain_absolute_cm": {
+    "n": 405,
+    "mean": 0.03745415834365068,
+    "ci95_low": 0.03404368126741898,
+    "ci95_high": 0.04121227653260216,
+    "probability_positive": 1.0
+  },
+  "v9c_smoothing_gain_speed_correlation": {
+    "n": 405,
+    "mean": 0.06864705406931332,
+    "ci95_low": 0.05726012649403362,
+    "ci95_high": 0.08032055441295889,
+    "probability_positive": 1.0
+  },
+  "danger_v9a_gain_over_v7_local_cm": {
+    "n": 90,
+    "mean": 0.7822364072004954,
+    "ci95_low": 0.5729111594458421,
+    "ci95_high": 0.9782060976657603,
+    "probability_positive": 1.0
+  },
+  "danger_v9c_prior_gain_over_v9a_local_cm": {
+    "n": 90,
+    "mean": -0.035924282338884145,
+    "ci95_low": -0.05675476955042945,
+    "ci95_high": -0.01527096620864339,
+    "probability_positive": 0.0003
+  },
+  "danger_smoothing_gain_speed_correlation": {
+    "n": 90,
+    "mean": 0.09794011024318429,
+    "ci95_low": 0.07498692998106384,
+    "ci95_high": 0.1214041005793519,
+    "probability_positive": 1.0
+  }
+}

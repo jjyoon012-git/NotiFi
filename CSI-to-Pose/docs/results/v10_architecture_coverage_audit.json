@@ -1,0 +1,21 @@
+{
+  "checkpoint_count": 51,
+  "architecture_counts": {
+    "None": 24,
+    "graphformer": 8,
+    "impact_graphformer": 9,
+    "latent_flow": 2,
+    "robust_graphformer": 8
+  },
+  "v3_checkpoint_count": 0,
+  "checkpoints_with_kinematic_state": 0,
+  "kinematic_state_rows": [],
+  "load_errors": [],
+  "static_code_only_components": [
+    "V3PoseNet",
+    "DualViewFrequencyTokenizer",
+    "KinematicBoneDecoder",
+    "board geometry branch"
+  ],
+  "decision": "reuse these modules only as unvalidated implementation starting points; benchmark them from scratch after P0 repair"
+}

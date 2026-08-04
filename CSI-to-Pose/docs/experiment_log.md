@@ -1,5 +1,389 @@
 # Seen-first experiment log
 
+## 최신 기록: 종합 감사와 10안 결정
+
+| 번호 | 완료 시각(KST) | 목적 | 방법 | 핵심 결과 | 결정 |
+|---|---|---|---|---|---|
+| EXP-052 | 2026-08-04 18:10 | 3시간 코드·데이터·연구 종합 감사 확정 | EXP-001~051, 40 JSON, 48 tests, 최신 연구 메커니즘과 gate 통합 | 승격 모델 없음; P0→V10 seen→joint-shift 순서 확정 | 새 학습 보류, 최종 실행안과 구현 명세를 기준 문서로 고정 |
+| EXP-051 | 2026-08-04 18:06 | subject shift와 installation shift 분리 가능성 감사 | cache index field와 9 compound domain/geometry manifest 검사 | physical installation field 0, manifest 0; LOSO가 사람+설치를 동시 holdout | protocol 이름 정정, factorial 재수집 필요 |
+| EXP-050 | 2026-08-04 18:00 | TX identity/order 의존성 측정 | V9A에서 CSI+link mask를 6개 순열로 함께 변환 | worst local/root/danger +6.24/+17.24/+13.82cm | board identity+geometry hash 필수, unordered set은 geometry 조건부 |
+| EXP-049 | 2026-08-04 17:54 | subcarrier dropout의 mask 의미 검증 | zero band를 PerLinkNorm 전후로 측정 | mask 입력 없음, normalized band가 모든 frame 동일하고 temporal std 0 | mean impute+post-norm zero+subcarrier token |
+| EXP-048 | 2026-08-04 17:49 | PerLinkNorm의 train/empty-room 계약 검증 | historical 20-batch train fit과 108 absence refit 후 val 분포 비교 | absence/train sigma ratio median 0.199; val amplitude std 1.14→14.76, p99 4.85→68.53 | train standardizer 고정, empty-room adapter와 분리 |
+| EXP-047 | 2026-08-04 17:42 | V9 calibration 선택 재현성 확인 | 저장 후보를 현재 `0.8~1.15` gate와 score로 재선택 | V9A stored 0.15, current source 0.0; V9A/V9B 사이 gate 1.20→1.15 drift | V9 수치 historical 고정, V10은 resolved policy+source hash 저장 |
+| EXP-046 | 2026-08-04 17:36 | robust sampler와 역빈도 CE·GroupDRO의 중복 보정 감사 | 4개 robust split에서 replacement sampler 100 epoch 모의실험 | epoch 고유 trial 60%, 중복 draw 40%; danger 17.6→29.4%, risk CE 질량 51~53% | sampler/CE/DRO를 한 번에 쓰지 않고 독립 ablation, 기본은 순회 sampler |
+| EXP-045 | 2026-08-04 17:34 | domain invariance와 trial pose 목표 충돌 감사 | robust loss graph, 4 run history/metrics 분석 | SupCon 전 epoch 활성, action yja 4.18%·LOSO 5.93%로 chance 수준 | semantic invariant와 kinematic equivariant latent 분리 |
+| EXP-044 | 2026-08-04 17:30 | 코드에만 있는 V3/kinematic 경로의 학습 여부 확인 | 51 checkpoint arch/state key 전수 검사 | arch=v3 0, kinematic state 0 | 검증 모델로 간주 금지, P0 후 from-scratch ablation |
+| EXP-043 | 2026-08-04 17:27 | geometry-aware root 경로의 실제 활성 여부 | 51 checkpoint와 repository manifest 전수 검사 | nonzero geometry 0, available=true 0, configured path 0 | per-installation bundle로 재설계, 현 absolute root는 geometry-free로 표기 |
+| EXP-042 | 2026-08-04 17:20 | V10 rotation target의 실제 가용성 확인 | split index와 `targets.py` GT 공통 키 감사 | ajh/lmh/mhw 2,366개는 joints-only, yja 263개만 full SMPL | 전원 SMPL 재추출 전에는 bone direction+FK, SO(3) loss 금지 |
+| EXP-041 | 2026-08-04 17:15 | subcarrier 구조의 실효성 확인 | V9A에 reverse/roll/fixed permutation/frequency mean 반사실 입력 | permutation local/root +7.54/+17.12cm, mean danger absolute +14.52cm | frequency token 유지, 조기 pooling 지연, Doppler는 병렬 ablation |
+| EXP-040 | 2026-08-04 17:10 | 진행 시점 변동과 nonlinear 정렬 상한 | 누적 이동거리 progress와 GT-oracle monotonic DTW | danger p10 p05~p95 15~135 frame, DTW danger local/absolute gain 2.37/2.40cm | dynamic-only progress 채택, time warp는 보조로 제한 |
+| EXP-039 | 2026-08-04 17:07 | root 오차의 좌표 원점/궤적 성분 분해 | ajh+mhw global/site action template와 oracle initial translation | site가 root 6.85cm 개선하지만 시작점 oracle은 0.5~0.8cm뿐 | canonical displacement 우선, 새 설치 absolute는 geometry 조건부 |
+| EXP-038 | 2026-08-04 17:03 | GVHMR 체형 변동의 pose 하한 측정 | exact GT bone direction에 고정 skeleton을 FK retarget | 동일 사람 bone CV 2.85~3.17%, LOSO shape-only local 1.29~1.67cm | raw/canonical skeleton 분리, optional trial-static shape head |
+| EXP-037 | 2026-08-04 17:05 | amp/phase float16 cache 정밀도 검증 | 64 trial의 float32 resampling을 재실행해 632만 cache 값과 비교 | amplitude 상대 p99 0.0445%, phase 절대 p99 0.000405rad, mask mismatch 0 | float16 유지, `csi_iq` 이름과 문서만 수정 |
+| EXP-036 | 2026-08-04 16:57 | hidden weighting과 mask semantics 감사 | risk/subject/time-method별 기대 gradient mass, GT-valid와 observation-valid 비교 | danger loss mass 70.8%, lmh 24.9% vs raw 33.3%; no-link GT frame는 train 0.018% | quality 중복 제거, target/observation mask API 분리 |
+| EXP-035 | 2026-08-04 16:51 | offline/streaming 경계와 runtime 확인 | RTX 5060 Ti batch-1/24 timing, 미래 문맥 정적 감사 | batch-1 47.4ms/142MB지만 10.13초 양방향 문맥, streaming 불가 | offline reconstruction과 causal alert protocol 분리 |
+| EXP-034 | 2026-08-04 16:46 | 전체 감사를 실행 가능한 V10 순서로 고정 | 데이터→cache→encoder→decoder→평가→unseen 의존성 정리 | 승격 모델 없음, P0 복구 후 global motion bank+calibration adapter+CSI residual 재학습 | [`final_code_audit_and_v10_execution_plan.md`](final_code_audit_and_v10_execution_plan.md)를 최종 기준으로 채택 |
+| EXP-033 | 2026-08-04 16:39 | 정지 자세 collapse를 trial 다양성으로 측정 | V7/V9A의 temporal RMS와 같은 site/action 내 residual energy/cosine 비교 | V9A danger local RMS 6.63cm vs GT 28.25cm, danger trial residual cosine 0.050 | MPJPE 외 CSI-specific residual gate 신설 |
+| EXP-032 | 2026-08-04 16:31 | calibration 의존성과 필요한 길이 확인 | V9A를 baseline none과 빈방 10/30/60/120초로 반복 평가 | 0초 local/root 31.32/54.25cm, 10초 20.60/31.65cm, 120초 20.60/31.61cm | 10초 runtime calibration API 구현, 조건별 별도 보고 |
+| EXP-031 | 2026-08-04 16:24 | V9A/V9C와 smoothing의 실제 기여 검증 | raw/smoothed stage 비교와 trial bootstrap 10,000회 | V9A gain +0.682cm CI [0.600,0.766], V9C prior gain -0.072cm CI [-0.085,-0.059] | V9C prior 기각, V9A는 수정 전 비교용 |
+| EXP-030 | 2026-08-04 16:16 | split·중복·checkpoint 재현성 감사 | hash duplicate, LOSO coverage, 51 checkpoint metadata 전수 검사 | exact duplicate 0, 현 LOSO held-out 17.1%만 평가, data/cache/split/git fingerprint 0/51 | full LOSO 재정의, provenance 의무화 |
+| EXP-029 | 2026-08-04 16:08 | RF augmentation 표현 계약 검증 | 64 train trial 641만 값에서 증강 전후 채널 분포 비교 | phase std 31.4배, 55.0%가 abs(phase)>pi, amplitude 음수 발생 | 현 motion encoder 폐기, corrected augmentation으로 전면 재학습 |
+| EXP-028 | 2026-08-04 15:58 | 잘못된 GT가 평가를 어떻게 왜곡했는지 측정 | contaminated 50 vs clean 355 dev_test의 V9 metrics 분리 | contaminated absolute 33.97cm vs 나머지 42.65cm, 전체 absolute 약 1.07cm 낙관 | 기존 점수 승격 금지 |
+| EXP-027 | 2026-08-04 15:49 | pose GT 전체 품질과 frame index 감사 | 3,155 frame index, cached 2,629 pose의 orientation/jump/height 검사 | frame index 이상 0, patch 후에도 재추출 대상 16개 내외 | GT QC gate를 cache 이전 필수 단계로 이동 |
+| EXP-026 | 2026-08-04 15:36 | orientation 수정본의 실제 반영 여부 확인 | Desktop patch, ZIP, D current, cache의 SHA-256·pose 좌표 비교 | patch 295 중 D와 동일 0, cache는 D old와 295/295 동일, test 50 오염 | 모든 기존 모델/점수를 pre-repair historical로 격하 |
+| EXP-025 | 2026-08-04 16:04 | timestamp가 loss까지 보존되는지 감사 | 2,366 trial의 실제 frame Δt와 fixed-30Hz derivative 비교 | exact single-frame scale p05/med/p95 0.450/0.930/1.410, 3.312초 gap 발견 | cache에 time/Δt/gap 저장, actual-time loss로 교체 |
+| EXP-024 | 2026-08-04 15:55 | CSI embedding retrieval의 추가 가치 확인 | 동일 site/action train trajectory k-NN, k는 validation에서 선택 | soft top-5 test local/root 13.54/29.55cm, danger absolute 44.66cm | 평균 prototype을 보존하고 confidence-gated retrieval을 ablation |
+| EXP-023 | 2026-08-04 15:39 | 1~9안의 병목을 하나의 다음 설계로 통합 | 코드 실행 그래프, 데이터 contract, 반증 실험, 최신 연구 메커니즘을 종합 | `soft site×action prototype + monotonic progress + CSI trial residual` 초안 | cascade 중단은 유지, site prototype의 production 채택은 EXP-034에서 철회 |
+| EXP-022 | 2026-08-04 15:32 | 강한 seen baseline 확인 | train GT site×action prototype을 GT/CSI hard/CSI soft class로 test | CSI soft prototype local 13.92cm, root 30.81cm, danger absolute 44.27cm로 9C를 크게 상회 | 수정 전 diagnostic baseline, production decoder 채택은 철회 |
+| EXP-021 | 2026-08-04 15:30 | danger 분류 병목 확인 | risk/action별 accuracy, confidence, ECE 감사 | 전체 87.65%지만 danger 62.22%, D03 27.8% | hard class 금지, soft mixture와 hierarchy head 사용 |
+| EXP-020 | 2026-08-04 15:28 | subgroup failure mode 확인 | subject/environment/risk/action/timestamp quality별 local/root/absolute/speed 평가 | danger local speed 0.089 vs GT 0.223m/s, D03/D04 local pose 31cm대 | local articulation과 root를 분리해 개선 |
+| EXP-019 | 2026-08-04 15:21 | V9C가 trial별 CSI를 얼마나 쓰는지 확인 | same-site/class shuffle, reverse, shift, time mean, channel/link ablation | 같은 site/class trial shuffle은 local pose +0.22cm뿐, time mean은 +5.47cm | CSI는 쓰지만 local trial residual이 약함 |
+
+원시 결과는 `work_v2/reports/v9_*_audit.json`, 고정 요약은
+[`results/comprehensive_audit_v10.json`](results/comprehensive_audit_v10.json), 전체 진단과 다음
+실험 gate는 [`comprehensive_diagnosis_and_plan_v10.md`](comprehensive_diagnosis_and_plan_v10.md)에 있다.
+
+### EXP-052: final three-hour synthesis
+
+- EXP-001~051의 코드 흐름, 51 checkpoint, source/cache/split, GT/timestamp, calibration, sampling,
+  selection, counterfactual, runtime, 최신 연구 메커니즘을 하나의 dependency graph로 통합했다.
+- 기계 판독 결과는 40 JSON이며 JSON parse, Markdown relative links, audit script compile,
+  `git diff --check`, repository unit test `48/48`을 통과했다.
+- 최종 판단은 승격 모델 없음이다. V9A는 pre-GT-repair historical comparator, V9C prior와 현 frozen
+  cascade/robust encoder는 기각한다.
+- 실행 순서는 GT patch/QC/target schema → cache v4/fingerprint → corrected 3-seed baseline → global
+  motion bank+soft action+progress → CSI local/root residual → time/frequency ablation → uncertainty/OOF prior
+  → participant+installation joint shift다.
+- 새 학습을 실행하지 않은 이유는 P0 hard gate가 실패한 상태이기 때문이다. 잘못된 GT와 stale cache로
+  새 점수를 만드는 것은 진전이 아니며, P0를 통과하기 전의 학습 결과는 비교표에 넣지 않는다.
+- 기준 문서는 [`final_code_audit_and_v10_execution_plan.md`](final_code_audit_and_v10_execution_plan.md),
+  파일/API 계약은 [`v10_file_level_implementation_spec.md`](v10_file_level_implementation_spec.md)다.
+
+### EXP-051: subject-installation factorization audit
+
+- source index의 subject는 ajh/lmh/mhw, environment code는 E01/E02/E03이며 model domain은 9개
+  `subject_environment` compound key다.
+- `installation_id`, `room_id`, `physical_site_id`, `geometry_id`, TX/RX position, camera extrinsic을
+  검사했지만 index에 존재하는 필드는 0개이고 repository geometry manifest도 0개다.
+- 같은 E01 코드가 사람 간 같은 물리 장소라는 증거가 없으므로 한 사람 LOSO는 그 사람과 세 설치를
+  동시에 holdout한다. 이를 pure subject generalization으로 해석할 수 없다.
+- 결론: 현 full LOSO는 `leave_one_participant_plus_installations_out`, within-subject LOEO는
+  `seen_participant_unseen_installation`으로 표기한다. 세 participant fold는 진단이지 population estimate가
+  아니다. 다음 수집은 같은 설치에 여러 사람, 같은 사람이 여러 설치에 참여하는 factorial design과
+  installation/geometry ID를 필요로 한다.
+
+### EXP-050: link identity and ordering counterfactual
+
+- V9A seen dev test에서 site-baseline 적용 뒤 CSI와 `link_mask`를 함께 6개 TX 순열로 바꿨다. GT와
+  나머지 입력은 그대로라 단순 board identity/order 반사실이다.
+- TX2/TX3 swap만으로 local/root/danger absolute가 `20.60/31.61/51.15`에서
+  `25.32/43.75/60.03cm`로 악화했다.
+- worst `TX2,TX3,TX1`은 `26.84/48.85/64.98cm`, 정상 대비 `+6.24/+17.24/+13.82cm`다.
+  가장 작은 비정상 순열도 local/root/danger가 `+2.62/+6.37/+2.16cm` 나빠졌다.
+- 결론: shared link encoder가 permutation invariance를 주지 않는다. CSV row order에 의존하지 말고
+  board serial, TX identity, antenna/position/orientation, installation hash로 link를 bind한다. 순서 불변
+  set fusion을 쓸 경우에도 geometry/identity embedding으로 각 원소를 조건화하고 permutation unit test를 둔다.
+
+### EXP-049: subcarrier-mask semantics
+
+- `_augment_rf()`는 한 link의 4~16 subcarrier 두 채널을 0으로 만들지만 model input에는 frame×link
+  `link_mask`만 있고 subcarrier mask가 없다.
+- zeroing은 `PerLinkNorm` 전에 적용되므로 normalized 값은 0이 아니라 `-mu/sigma`다. TX1 live
+  subcarrier 48:60 실측에서 원래 band abs mean은 amplitude/phase `0.575/0.737`, zeroed band는
+  `0.322/0.350`이었고 모든 frame에 같은 값이라 temporal std 중앙이 정확히 `0`이었다.
+- 크기 outlier는 아니지만 실제 packet loss와 다른 완벽한 rectangular constant signature다. 모델은
+  이를 결손 견고성 대신 augmentation 식별자로 사용할 수 있다.
+- 결론: 결손 band는 train mean으로 impute해 normalization 뒤 0이 되게 하고, post-norm mask를 다시
+  적용하며 frequency encoder에 subcarrier-valid token을 전달한다. 이 세 경로를 끈 단독 ablation도 둔다.
+
+### EXP-048: normalization and empty-room calibration contract
+
+- `TrainConfig.norm_source`는 선언돼 있지만 trainer에서 읽히지 않고 CLI 옵션도 없다. 실제 fit은
+  shuffled train의 처음 20 batch, 320 trial로 고정된다.
+- `PerLinkNorm.fit()` 주석은 배포 때 빈방 10초로 다시 맞출 수 있다고 하지만, 모델은 사람 동작이 섞인
+  train 분포로 학습됐다. 게다가 `SiteBaseline(sub)`가 이미 설치별 빈방 평균을 뺀 뒤다.
+- train-fit과 source 9개 site의 absence 108 trial fit을 비교하면 subcarrier/channel별
+  `sigma_absence/sigma_train` 중앙은 `0.199`, p05~p95 `0.057~0.786`이다. 살아 있는 link만 본
+  site별 absence sigma도 최대/최소 `4.80x`다.
+- 같은 validation 입력은 train norm에서 amplitude mean/std/p99-abs `0.08/1.14/4.85`지만 empty-room
+  refit 후 `4.88/14.76/68.53`으로 폭증했다. 이것은 calibration이 아니라 encoder 입력 분포 파괴다.
+- 결론: V10의 model standardizer는 train에서 전 데이터로 fit한 뒤 immutable하게 checkpoint에
+  고정한다. empty-room CSI는 별도 installation adapter의 입력으로만 쓰며, 학습 때 동일 adapter 경로를
+  거친다. `sub`, `sub_z`, PerLinkNorm, runtime adapter를 서로 다른 이름과 hash로 관리한다.
+
+### EXP-047: selection-policy reproducibility audit
+
+- V9A/V9B `results.json`의 calibration 후보를 현재 `train_seen_v4_trajectory.py` score와
+  speed gate `0.8~1.15`로 다시 선택했다. score 수식 자체는 저장값과 일치했다.
+- V9A 저장 결과는 speed ratio `1.186`인 pose strength `0.15`를 `feasible=true`로 선택했다. 이는
+  실행 당시 상한이 `1.20`이었음을 뜻한다. 현재 source에서는 strength `0.05`도 `1.15061`로 탈락해
+  strength `0.0`이 선택된다.
+- V9B 저장 결과에서는 같은 `1.15` gate가 이미 적용돼 strength `0.0`이 선택됐다. 즉 V9A와 V9B
+  사이 source policy가 바뀌었지만 두 result 모두 git/source fingerprint가 없다.
+- 결론: V9A의 20.60cm는 당시 policy로 생성된 historical artifact이며 현재 source 재현값이 아니다.
+  V10 result/checkpoint는 resolved selection formula, thresholds, smoother, metric version, source hash를
+  함께 저장하고 policy 변경 시 새 experiment ID를 강제한다.
+
+### EXP-046: robust sampler and reweighting overlap
+
+- 네 robust split에서 `CrossDomainBatchSampler(batch=16)`를 100 epoch 모의실험했다. 모든 17개
+  class가 pairable하고, yja holdout은 class마다 9 domain, LOSO는 6 domain을 가진다.
+- sampler는 dataset을 순회하지 않고 class를 균등 복원추출한다. 한 epoch의 고유 trial은 평균
+  `59.9~60.2%`, 중복 draw는 `40.2%`였다. 100 epoch 누적 trial 노출 횟수는 최소 `35~37`, 최대
+  `206`으로 `5.6~5.9x` 차이였다.
+- yja holdout의 raw risk 분포 safe/warning/danger `54.8/27.6/17.6%`가 sampler 뒤
+  `52.9/17.7/29.4%`가 됐다. raw count로 계산한 inverse-risk CE까지 곱하면 보조 CE 질량은
+  `29.4/19.6/51.0%`가 된다. LOSO danger 질량은 `52.8%`다.
+- `GroupDRO(domain×risk)`와 별도의 danger/quality weighting까지 동시에 있으므로 기존 robust run은
+  한 기법의 검증이 아니다. 특히 class-balanced sampler 뒤 raw inverse-frequency weight를 다시 쓰면
+  희소 class가 이중 보정된다.
+- 결론: V10 기본은 without-replacement epoch traversal과 metric 로그다. class balance, risk CE weight,
+  GroupDRO는 한 번에 하나씩 추가하고, 같은 총 optimizer step/unique-trial exposure로 비교한다. sampler가
+  필요하면 epoch 전체 coverage를 보장하는 weighted permutation 또는 batch composition constraint를 쓴다.
+
+### EXP-045: domain-objective conflict audit
+
+- robust SupCon positive는 `same action + different domain`이고 domain adversarial과 같은 pooled shared
+  embedding을 쓴다. pose decoder도 같은 encoder의 temporal feature를 받는다.
+- 4개 robust run 모두 `lambda_supcon=0.03`, `lambda_domain=0.03`, GRL `0.2`, 잘못된 RF augmentation,
+  GroupDRO를 동시에 사용했다. train SupCon은 모든 epoch에 `2.50~2.74`로 활성됐다.
+- historical yja action accuracy는 `4.18%`, LOSO-subsampled 평균은 `5.93%`로 17-class chance
+  `5.88%` 수준이다. risk도 각각 `48.29/37.78%`였다.
+- 잘못된 augmentation과 다중 objective 때문에 SupCon 단독 인과는 주장하지 않는다.
+- 결론: action/risk용 domain-invariant semantic token과 calibration-conditioned trial kinematic token을
+  분리한다. domain adversarial/SupCon은 semantic에만 적용하고 pose 쪽은 자기 CSI-pose pair와 다른
+  같은-action trial을 구분하는 matching objective를 쓴다.
+
+### EXP-044: implemented-versus-trained architecture audit
+
+- 51개 checkpoint의 config/state를 전수 검사했다.
+- arch 분포는 graphformer 8, impact graphformer 9, robust graphformer 8, latent flow 2,
+  metadata 없는 cascade 24개다.
+- `arch=v3` checkpoint와 `kinematic`/`bone_direction` state key가 있는 checkpoint는 모두 0개다.
+- 결론: `V3PoseNet`, `DualViewFrequencyTokenizer`, `KinematicBoneDecoder`, geometry branch는 코드가
+  존재할 뿐 성능이 검증되지 않았다. V10에서 코드를 재사용할 수는 있지만 corrected GT에서 baseline과
+  같은 조건으로 처음부터 학습·비교한다.
+
+### EXP-043: geometry contract audit
+
+- 51개 `.pt`를 모두 열었고 load error는 없었다.
+- geometry 관련 state/config entry가 있는 checkpoint는 19개지만 nonzero `board_geometry`와
+  `geometry_available=True`는 0개, configured `geometry_path`도 0개다.
+- repository 안의 geometry/layout/extrinsic manifest도 0개다.
+- 현 `V3PoseNet`은 geometry unavailable일 때 zero vector를 biased MLP에 통과시키고, 파일이 있더라도
+  모델 생성 시 하나의 tensor를 모든 site와 batch에 공유한다. camera extrinsic 입력은 없다.
+- 결론: 현 결과는 geometry-aware가 아니다. V10은 availability-gated per-installation bundle과 hash를
+  batch/checkpoint에 넣고 canonical root와 absolute transform을 분리한다.
+
+### EXP-042: rotation target schema audit
+
+- ajh 789, lmh 788, mhw 789 pose trial은 모두 `gvhmr_joints_v1`이며 공통 키는
+  `joints_world/transl/frame_index`뿐이다.
+- yja E02 pose 263개만 `gvhmr_smpl_full_v1`이다.
+- joint position은 뼈 축 방향은 정하지만 그 축 주위 twist는 정하지 못하므로 full local rotation을
+  유일하게 역산할 수 없다.
+- 결론: 네 사람 모두 같은 GVHMR 버전의 SMPL body pose를 재추출하면 6D/SO(3)+FK를 사용한다. 그렇지
+  않으면 unit bone direction+canonical FK를 쓰고 geodesic rotation loss와 twist 주장을 제거한다.
+
+### EXP-041: frequency topology counterfactual
+
+- 수정 전 V9A normal local/root/danger absolute는 `20.60/31.61/51.15cm`다.
+- subcarrier reverse는 `23.34/38.21/57.97cm`, 10칸 roll은 `23.40/37.37/54.84cm`다.
+- 고정 permutation은 `28.14/48.73/62.21cm`, frequency mean 반복은 `29.19/49.68/65.68cm`다.
+- 결론: 현재 모델은 주파수 순서와 국소 구조를 실제로 쓴다. V10은 frequency branch를 제거하지 않고
+  mean+max pooling을 늦추며 Doppler branch를 병렬 ablation한다.
+
+### EXP-040: monotonic progress and oracle time-warp
+
+- danger 누적 이동거리 p10 frame은 중앙 `66.5`, p05/p95 `15/135`로 시작·진행 시점 변동이 크다.
+- GT를 보는 비배포 monotonic DTW는 ajh+mhw site/action prototype의 danger local을
+  `15.05 -> 12.68cm`, absolute를 `32.38 -> 29.99cm`로 개선했다.
+- 전체 평균 warp는 `9.86 frame`, p95는 `18.49 frame`이다.
+- S02/S03/S04의 총 이동량은 중앙 `0.08~0.13m`라 progress가 실제 동작보다 GT jitter를 나타낸다.
+- 결론: progress는 이동량 `>=0.5m` 동적 trial에만 적용한다. 시간 정렬은 유효하지만 주 병목을 해결할
+  크기는 아니며, target pose를 보는 자유 DTW는 학습·평가에 쓰지 않는다.
+
+### EXP-039: coordinate frame and root decomposition
+
+- stale orientation GT를 피하려고 ajh+mhw 270 test trial만 사용했다.
+- global action root template는 `35.97cm`, site/action은 `29.13cm`다.
+- test 첫 root를 oracle로 맞춰도 각각 `35.14/28.61cm`로 `0.83/0.52cm`만 개선됐다.
+- 같은 사람·행동의 환경별 initial root dispersion은 `3.73cm`, 전체 trajectory dispersion은 `17.54cm`다.
+- 결론: 현재 root 병목은 단순 원점보다 이동 경로와 진행을 못 읽는 문제다. 다만 unseen 설치의 절대
+  좌표·방향은 board/camera geometry 없이는 식별할 수 없으므로 canonical displacement를 주 지표로 둔다.
+
+### EXP-038: body shape target audit
+
+- 같은 사람의 train trial 사이 bone length CV 중앙값은 ajh/lmh/mhw `2.85/3.15/3.17%`다.
+- bone length 범위 p95는 사람별 `5.49~7.65cm`, 최대 `5.78~7.90cm`다.
+- GT bone direction을 완벽히 알아도 자기 train 평균 skeleton이면 seen local `1.10~1.18cm`가 남는다.
+- 다른 두 사람 평균 skeleton을 쓰는 LOSO shape-only 하한은 local `1.29~1.67cm`, distal
+  `1.73~2.66cm`다.
+- 결론: GVHMR joint position은 articulation과 trial-varying shape noise를 섞는다. raw metric GT와
+  canonical skeleton GT를 분리하고 rotation/direction을 주 타깃으로 학습한다.
+
+### EXP-037: cache quantization audit
+
+- 64 trial의 CSI를 float32로 다시 parse/resample하고 기존 float16 cache 632만 값과 비교했다.
+- amplitude absolute p99 error는 `0.0588`, relative p99는 `0.0445%`다.
+- sanitized phase absolute p99 error는 `0.000405rad`, maximum은 `0.00299rad`다.
+- link mask mismatch는 0건이다.
+- 결론: float16은 충분하다. `csi_iq`를 `csi_features`로 바꾸고 현재 amp/phase 표현에 맞는 주석과
+  quantization regression threshold를 추가한다.
+
+### EXP-036: hidden weighting and mask semantics
+
+- danger는 train pose의 17.35%지만 sampler 4배, loss 2배, quality 중복으로 기대 loss mass 70.8%다.
+- lmh는 raw 33.3%에서 기대 loss mass 24.9%로 줄고 mhw는 44.2%로 늘어난다.
+- `uniform_30fps` compatibility 518 train trial은 partial-scaled timestamp이며 quality가 sampler와
+  loss에 두 번 들어가 median effective weight가 낮다.
+- GT-valid인데 세 link가 모두 없는 frame은 train 0.018%, dev_test 0.0058%라 현 성능 주 병목은 아니다.
+- 결론: class/quality balance는 sampler 또는 loss 한 곳에서만 적용하고 실제 epoch mass를 로그로 남긴다.
+  cache/model API의 target-valid와 observation-valid는 의미상 분리한다.
+
+### EXP-035: runtime and streaming contract
+
+- 수정 전 V9A는 RTX 5060 Ti batch-1에서 평균 `47.4ms`, p95 `52.7ms`, peak allocation `142MB`다.
+- batch 24는 trial당 평균 `20.0ms`지만 peak allocation 약 `1.95GB`다.
+- 입력은 304 frame=`10.13초`이고 symmetric temporal convolution, bidirectional Transformer,
+  centered 5-frame smoothing을 사용한다.
+- 결론: 계산 지연은 작지만 알고리즘상 10초 미래 문맥을 요구한다. 현재 모델은 offline reconstruction이며
+  real-time alert가 필요하면 causal sliding-window 모델을 별도 평가한다.
+
+### EXP-034: final integrated audit and V10 execution plan
+
+- 현재 승격 가능한 checkpoint는 없다. V9A/V9C와 prototype 결과는 모두 수정 전 역사적 기준선이다.
+- 실행 순서를 GT 복구 → cache v4/fingerprint → corrected baseline 재학습 → global action motion bank →
+  monotonic progress → CSI rotation/root residual → encoder ablation → prior → unseen으로 고정했다.
+- site×action prototype은 seen diagnostic으로만 유지하고 V10 production decoder는 global action bank와
+  empty-room calibration adapter로 분해한다.
+- 최종 문서: [`final_code_audit_and_v10_execution_plan.md`](final_code_audit_and_v10_execution_plan.md).
+
+### EXP-033: motion diversity and collapse audit
+
+- V9A danger local temporal RMS는 `6.63cm`, GT는 `28.25cm`다. 평균 크기 기준 약 23%다.
+- 같은 site/action danger trial 사이 local 차이는 예측 `4.42cm`, GT `11.80cm`다.
+- 예측 trial residual과 GT residual cosine은 danger local `0.050`, root `0.106`, absolute `0.102`다.
+- 결론: 모델은 CSI를 쓰지만 trial마다 어떻게 넘어졌는지보다 평균 궤적을 출력한다. shuffle penalty,
+  temporal RMS, residual cosine을 V10의 필수 gate로 추가한다.
+
+### EXP-032: calibration dependency and duration
+
+- baseline 없음은 V9A local/root `31.32/54.25cm`, danger absolute `69.38cm`다.
+- random 10초 빈방 calibration 3회 평균은 `20.60/31.65/50.97cm`다.
+- 120초 전체 baseline은 `20.60/31.61/51.15cm`로 10초와 실질적으로 같다.
+- 현재 `calibrated_model.pt`는 environment adaptation이 아니라 validation-selected residual strength다.
+- 결론: 10초 baseline은 유망하지만 runtime API와 installation-keyed bundle로 구현하고 no-cal/10/30/120초를
+  별도 protocol로 보고한다.
+
+### EXP-031: cascade, prior, smoothing bootstrap
+
+- V9A는 V7 local을 평균 `0.682cm` 개선했고 95% CI는 `[0.600,0.766]cm`다.
+- V9C prior는 V9A를 평균 `0.072cm` 악화했고 CI는 `[-0.085,-0.059]cm`다.
+- danger에서도 prior gain은 `-0.036cm`, CI `[-0.057,-0.015]cm`다.
+- centered 5-frame smoothing의 local gain은 `0.007cm`뿐이지만 speed correlation은 `0.069` 증가한다.
+- 결론: V9C prior를 기각한다. raw/causal/offline-smoothed metric을 분리한다.
+
+### EXP-030: split, duplicate, and provenance audit
+
+- 2,749 cached trial의 CSI/GT exact hash duplicate는 0건이고 train/val/test exact copy도 없다.
+- 현 LOSO는 held-out subject의 pose 788/789개 중 135개, 약 17.1%만 평가한다.
+- 정식 full LOSO는 source train+test로 학습, source val로 선택, held-out subject 전체를 평가한다.
+- 51개 `.pt` 중 split/cache/data fingerprint와 git commit을 기록한 것은 모두 0개다. source checkpoint를
+  참조하는 6개도 path만 저장하고 SHA-256은 없다.
+- 결론: checkpoint와 cache에 source lineage를 강제하고 현재 yja E02도 `unseen_dev_test`로 이름을 바꾼다.
+
+### EXP-029: RF augmentation contract audit
+
+- cache representation은 amplitude+sanitized phase인데 `_augment_rf()`는 두 채널을 complex I/Q로 회전한다.
+- 64 train trial의 유효 값 641만 개에서 원 phase std `0.504`, 증강 phase std `15.856`이었다.
+- 증강 phase의 55.0%가 `abs(phase)>pi`, 22.5%가 `abs(phase)>10`이고 amplitude 채널도 음수가 된다.
+- motion-first/motion-pose/seen-residual pretraining이 이 경로를 사용했다.
+- 결론: 현재 frozen motion encoder를 재사용하지 않고 representation-aware augmentation으로 처음부터 학습한다.
+
+### EXP-028: metric contamination from stale orientation GT
+
+- dev_test 405개 중 50개가 stale lmh orientation GT다.
+- V9C absolute error는 contaminated 50에서 `33.97cm`, 나머지 355에서 `42.65cm`다.
+- 같은 잘못된 좌표계를 train과 test가 공유해 전체 absolute 결과가 약 `1.07cm` 낙관적으로 보였다.
+- 결론: 기존 성능은 corrected GT와 비교할 수 없고 논문 결과로 승격하지 않는다.
+
+### EXP-027: full GT quality and frame index audit
+
+- 3,155 pose 파일의 frame index는 모두 0부터 연속이며 joints/video frame 수와 맞았다.
+- cached 2,629 pose에서 orientation warning 321, pose step `>0.2m` 15, absolute height `>2.5m` 3건이다.
+- orientation patch를 적용하면 lmh E03 jump 2건은 사라진다. 이후 lmh E01, mhw E02, yja E02의
+  추적 flip과 height 이상을 재추출하거나 제외해야 한다.
+- 결론: GT QC를 cache 이전의 hard gate로 만든다.
+
+### EXP-026: corrected GT lineage audit
+
+- Desktop corrected GT와 `GT수정본.zip`은 동일하지만 D dataset current는 backup-before와 동일했다.
+- patch 295개 중 D current와 같은 것은 0개, cache는 D current와 295/295 같고 patch와 0/295 같다.
+- old→corrected target 이동은 local 평균 `46.05cm`, root `47.49cm`, absolute `68.10cm`다.
+- 영향은 train/val/dev_test `195/50/50`개다.
+- patch에서도 `lmh_E02_S01_t001` 한 건은 잘못 뒤집혀 반대 회전으로 재추출해야 한다.
+- 결론: 모든 기존 checkpoint와 점수를 `pre-GT-repair historical`로 격하한다.
+
+### EXP-025: actual timebase audit
+
+- `frame_times()`는 CSI resampling에 사용되지만 cache schema에 frame time이 없어 이후 모델과 loss가 다시 모든 간격을 `1/30초`로 취급한다.
+- exact timestamp 1,578 trial에서 fixed-30Hz single-frame speed/true speed scale은 p05/median/p95 `0.450/0.930/1.410`이다.
+- exact frame transition의 14.5%는 0.75 미만, 23.4%는 1.25 초과다.
+- 5-frame scale은 `0.846/1.032/1.218`로 완화되지만 동일하지 않다.
+- train의 `ajh_E02_S04_t006`은 timestamp 마지막 구간에 `3.312초` gap이 있으며 index-based sequence에서는 바로 이웃으로 처리된다.
+- 결론: timestamp 존재 여부만 weight로 쓰는 것으로 부족하다. frame time/Δt/discontinuity를 cache와 batch에 보존하고 derivative 및 positional encoding을 seconds 기준으로 바꾼다.
+
+### EXP-024: CSI embedding trajectory retrieval
+
+- frozen motion-first embedding으로 동일 site/action train trajectory를 cosine 검색했다.
+- `k=1/3/5` 중 validation의 local+root+danger absolute 조합으로 선택했으며 GT/hard/soft class 모두 `k=5`였다.
+- GT class top-5 test는 local/root/absolute `11.29/26.92/30.77cm`, danger absolute `34.96cm`다.
+- CSI soft class top-5는 `13.54/29.55/34.28cm`, danger absolute `44.66cm`다.
+- soft 평균 prototype 대비 overall은 `13.92/30.81/35.64 -> 13.54/29.55/34.28cm`로 개선했지만 danger absolute는 `44.27 -> 44.66cm`로 소폭 악화했다.
+- 결론: retrieval은 유효한 CSI-conditioned prior지만 danger에서 무조건 우월하지 않다. 평균 prototype을 초기값으로 유지하고 confidence-gated retrieval만 ablation한다.
+
+### EXP-019: CSI counterfactual audit
+
+- 정상 입력은 local pose `20.68cm`, root `31.61cm`, danger absolute `51.14cm`다.
+- 같은 site/action의 다른 trial CSI를 넣으면 각각 `20.90cm`, `34.34cm`, `52.93cm`다.
+- 시간 평균 CSI는 `26.15cm`, `45.26cm`, `66.04cm`로 악화된다.
+- 시간 역순과 block 역순에서 speed correlation이 거의 0이 되므로 temporal order는 사용한다.
+- amplitude only, phase only, single-link는 모두 악화되어 두 채널과 세 링크의 정보가 유효하다.
+- 결론: 9C는 CSI를 무시하지 않지만 같은 site/action 내부의 local pose 차이는 대부분 복원하지 못한다.
+
+### EXP-020: subgroup and metric audit
+
+- danger predicted local speed는 `0.089m/s`, GT는 `0.223m/s`로 관절 동작을 과소 복원한다.
+- 기존 trial-average speed ratio는 정지 action의 작은 분모 때문에 S02/S03/S04에서 4~5배가 되어 danger under-motion을 가린다.
+- D03 local pose `31.72cm`, D04 `31.49cm`, D02 absolute `59.63cm`가 주요 failure mode다.
+- lmh approximate timestamp test는 local pose `22.11cm`, complete timestamp인 ajh+mhw는 `19.96cm`지만 subject가 섞인 비교이므로 인과로 단정하지 않는다.
+- 결론: 기존 speed ratio를 model-selection에서 내리고 pooled local/root/absolute motion metrics로 교체한다.
+
+### EXP-021: action classification audit
+
+- overall action accuracy `87.65%`, ECE `3.49%`다.
+- safe `96.14%`, warning `92.59%`, danger `62.22%`다.
+- D01 `50.0%`, D02 `72.2%`, D03 `27.8%`, D04 `72.2%`, D05 `88.9%`다.
+- 결론: danger trajectory decoder에 hard predicted class를 넣지 않고 soft distribution을 사용하며 D03를 별도 gate로 둔다.
+
+### EXP-022: train-only motion prototype baseline
+
+- train GT를 normalized frame 축에서 평균해 class, subject×class, environment×class, site×class prototype을 만들었다.
+- GT site×class는 local `11.68cm`, root `28.31cm`, absolute `32.31cm`다.
+- CSI hard site×class는 local `14.14cm`, CSI soft mixture는 `13.92cm`다.
+- CSI soft mixture의 danger local/root/absolute는 `23.55/36.92/44.27cm`로 9C의 `28.91/~31.61/51.14cm`보다 pose가 낫다.
+- 결론: site ID와 반복 choreography를 이용한 강한 seen baseline이다. unseen 성능으로 주장하지 않고, 10안이 반드시 넘어야 할 lower bound로 채택한다.
+
+### EXP-023: comprehensive code audit and V10 design
+
+- `amp_phase` contract인데 일부 pretraining에서 I/Q rotation augmentation을 적용한 오류를 확인했다.
+- 9C는 1.10M baseline에서 4.51M까지 8개 frozen stage를 누적해 upstream 오류를 공동 수정할 수 없다.
+- V9 prior의 observed-mask train/inference mismatch, 비현실적 corruption, local-only 보정, padding endpoint 문제를 확인했다.
+- lmh 788 trial이 `uniform_30fps` compatibility이며 exact/approx 결과를 분리해야 한다.
+- current 405 test는 반복 개발로 final holdout가 아니므로 `dev_test`로 취급한다.
+- 결론: 10안은 corrected raw+Doppler encoder, CSI soft action, monotonic progress, site-action prototype, rotation/root residual을 end-to-end로 학습한다. seen shuffle gate 통과 전에는 unseen adaptation과 diffusion prior를 시작하지 않는다.
+
 모든 시각은 KST(UTC+9)이다. 결과는 별도 표기가 없으면 pose task만 포함하고,
 5-frame smoothing을 적용한 CSI-only 추론 결과다. 모델 선택과 residual scale 선택에는
 validation만 사용하며 test는 최종 확인에만 사용한다.
@@ -40,7 +424,7 @@ trial ID의 train/validation/test 교집합은 0이다. 같은 사람과 같은 
 | EXP-015 | 2026-08-04 13:21 | event-centric impact/contact Stage | contact 0.75만 선택, test injury F1 0.354→0.423 | contact branch 채택, event/joint/speed branch 거절 |
 | EXP-016 | 2026-08-04 14:18 | 충돌 휴리스틱 없는 전체 낙상 궤적 9A | MPJPE 20.60cm, danger 51.15cm, speed 1.217 | 위치 개선, 속도 gate 초과로 단독 채택 보류 |
 | EXP-017 | 2026-08-04 14:34 | 구간 순서를 보존하는 bounded alignment 9B | pose strength 0 선택, MPJPE 21.29cm | 정렬 branch 기각 |
-| EXP-018 | 2026-08-04 14:56 | GT-only temporal denoising prior 9C | MPJPE 20.68cm, danger 51.14cm, speed 1.163 | 현재 권장 seen 모델로 채택 |
+| EXP-018 | 2026-08-04 14:56 | GT-only temporal denoising prior 9C | MPJPE 20.68cm, danger 51.14cm, speed 1.163 | 당시 채택, EXP-031 bootstrap과 EXP-026 lineage 감사 후 기각 |
 
 ## 상세 로그
 
@@ -160,8 +544,8 @@ trial ID의 train/validation/test 교집합은 0이다. 같은 사람과 같은 
 - 결과: rotation 0.10, high-pose 0, root 0.50이 선택됐다. test MPJPE 21.29cm,
   dynamic 20.90cm, distal 31.53cm, impact 54.72cm, root 32.33cm,
   pose-speed ratio 1.167이다.
-- 판단: 이전 최종 seen 모델보다 모든 위치 지표가 소폭 개선되고 speed gate도 통과해
-  현재 권장 seen 모델로 채택한다. root 개선은 0.03cm에 불과해 여전히 별도 병목이다.
+- 당시 판단: 이전 seen 모델보다 모든 위치 지표가 소폭 개선되고 speed gate도 통과해
+  당시 권장 seen 모델로 채택했다. root 개선은 0.03cm에 불과해 별도 병목이었다.
 
 ### EXP-014: contact-guided root Stage A
 
@@ -251,7 +635,7 @@ trial ID의 train/validation/test 교집합은 0이다. 같은 사람과 같은 
   20.60→20.68cm로 0.07cm 악화됐지만 danger MPJPE 51.15→51.14cm, danger distal
   55.72→55.64cm, endpoint 69.72→69.66cm로 소폭 개선됐다. shuffled CSI MPJPE는
   31.72cm로 trial-specific CSI 의존성을 유지했다.
-- 판단: 9C를 현재 권장 seen 모델로 채택한다. 속도 안정화에는 성공했지만 danger
+- 당시 판단: 9C를 당시 권장 seen 모델로 채택했다. 이후 EXP-031 bootstrap에서 기각했다. 속도 안정화에는 성공했지만 danger
   absolute pose 51.14cm는 여전히 크므로 낙상 복원 문제가 해결됐다고 보지 않는다.
 
 ## 현재 seen 결과

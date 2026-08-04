@@ -1,0 +1,458 @@
+{
+  "single_split": {
+    "train": {
+      "n": 1628,
+      "pose": 1556,
+      "classification_only": 72,
+      "subjects": {
+        "ajh": 543,
+        "lmh": 542,
+        "mhw": 543
+      },
+      "environments": {
+        "E01": 542,
+        "E02": 543,
+        "E03": 543
+      },
+      "classes": 17
+    },
+    "val": {
+      "n": 423,
+      "pose": 405,
+      "classification_only": 18,
+      "subjects": {
+        "ajh": 141,
+        "lmh": 141,
+        "mhw": 141
+      },
+      "environments": {
+        "E01": 141,
+        "E02": 141,
+        "E03": 141
+      },
+      "classes": 17
+    },
+    "test": {
+      "n": 423,
+      "pose": 405,
+      "classification_only": 18,
+      "subjects": {
+        "ajh": 141,
+        "lmh": 141,
+        "mhw": 141
+      },
+      "environments": {
+        "E01": 141,
+        "E02": 141,
+        "E03": 141
+      },
+      "classes": 17
+    }
+  },
+  "active_total": {
+    "n": 2474,
+    "pose": 2366,
+    "classification_only": 108,
+    "subjects": {
+      "ajh": 825,
+      "lmh": 824,
+      "mhw": 825
+    },
+    "environments": {
+      "E01": 824,
+      "E02": 825,
+      "E03": 825
+    },
+    "classes": 17
+  },
+  "sealed_yja_e02": {
+    "n": 275,
+    "pose": 263,
+    "classification_only": 12,
+    "subjects": {
+      "yja": 275
+    },
+    "environments": {
+      "E02": 275
+    },
+    "classes": 17
+  },
+  "current_loso_subsampled": {
+    "ajh": {
+      "train": {
+        "n": 1085,
+        "pose": 1037,
+        "classification_only": 48,
+        "subjects": {
+          "lmh": 542,
+          "mhw": 543
+        },
+        "environments": {
+          "E01": 361,
+          "E02": 362,
+          "E03": 362
+        },
+        "classes": 17
+      },
+      "val": {
+        "n": 282,
+        "pose": 270,
+        "classification_only": 12,
+        "subjects": {
+          "lmh": 141,
+          "mhw": 141
+        },
+        "environments": {
+          "E01": 94,
+          "E02": 94,
+          "E03": 94
+        },
+        "classes": 17
+      },
+      "test": {
+        "n": 141,
+        "pose": 135,
+        "classification_only": 6,
+        "subjects": {
+          "ajh": 141
+        },
+        "environments": {
+          "E01": 47,
+          "E02": 47,
+          "E03": 47
+        },
+        "classes": 17
+      },
+      "heldout_subject_unused": {
+        "n": 684,
+        "pose": 654,
+        "classification_only": 30,
+        "subjects": {
+          "ajh": 684
+        },
+        "environments": {
+          "E01": 228,
+          "E02": 228,
+          "E03": 228
+        },
+        "classes": 17
+      },
+      "source_subject_test_role_unused": {
+        "n": 282,
+        "pose": 270,
+        "classification_only": 12,
+        "subjects": {
+          "lmh": 141,
+          "mhw": 141
+        },
+        "environments": {
+          "E01": 94,
+          "E02": 94,
+          "E03": 94
+        },
+        "classes": 17
+      },
+      "heldout_test_fraction": 0.1709090909090909
+    },
+    "lmh": {
+      "train": {
+        "n": 1086,
+        "pose": 1038,
+        "classification_only": 48,
+        "subjects": {
+          "ajh": 543,
+          "mhw": 543
+        },
+        "environments": {
+          "E01": 362,
+          "E02": 362,
+          "E03": 362
+        },
+        "classes": 17
+      },
+      "val": {
+        "n": 282,
+        "pose": 270,
+        "classification_only": 12,
+        "subjects": {
+          "ajh": 141,
+          "mhw": 141
+        },
+        "environments": {
+          "E01": 94,
+          "E02": 94,
+          "E03": 94
+        },
+        "classes": 17
+      },
+      "test": {
+        "n": 141,
+        "pose": 135,
+        "classification_only": 6,
+        "subjects": {
+          "lmh": 141
+        },
+        "environments": {
+          "E01": 47,
+          "E02": 47,
+          "E03": 47
+        },
+        "classes": 17
+      },
+      "heldout_subject_unused": {
+        "n": 683,
+        "pose": 653,
+        "classification_only": 30,
+        "subjects": {
+          "lmh": 683
+        },
+        "environments": {
+          "E01": 227,
+          "E02": 228,
+          "E03": 228
+        },
+        "classes": 17
+      },
+      "source_subject_test_role_unused": {
+        "n": 282,
+        "pose": 270,
+        "classification_only": 12,
+        "subjects": {
+          "ajh": 141,
+          "mhw": 141
+        },
+        "environments": {
+          "E01": 94,
+          "E02": 94,
+          "E03": 94
+        },
+        "classes": 17
+      },
+      "heldout_test_fraction": 0.17111650485436894
+    },
+    "mhw": {
+      "train": {
+        "n": 1085,
+        "pose": 1037,
+        "classification_only": 48,
+        "subjects": {
+          "ajh": 543,
+          "lmh": 542
+        },
+        "environments": {
+          "E01": 361,
+          "E02": 362,
+          "E03": 362
+        },
+        "classes": 17
+      },
+      "val": {
+        "n": 282,
+        "pose": 270,
+        "classification_only": 12,
+        "subjects": {
+          "ajh": 141,
+          "lmh": 141
+        },
+        "environments": {
+          "E01": 94,
+          "E02": 94,
+          "E03": 94
+        },
+        "classes": 17
+      },
+      "test": {
+        "n": 141,
+        "pose": 135,
+        "classification_only": 6,
+        "subjects": {
+          "mhw": 141
+        },
+        "environments": {
+          "E01": 47,
+          "E02": 47,
+          "E03": 47
+        },
+        "classes": 17
+      },
+      "heldout_subject_unused": {
+        "n": 684,
+        "pose": 654,
+        "classification_only": 30,
+        "subjects": {
+          "mhw": 684
+        },
+        "environments": {
+          "E01": 228,
+          "E02": 228,
+          "E03": 228
+        },
+        "classes": 17
+      },
+      "source_subject_test_role_unused": {
+        "n": 282,
+        "pose": 270,
+        "classification_only": 12,
+        "subjects": {
+          "ajh": 141,
+          "lmh": 141
+        },
+        "environments": {
+          "E01": 94,
+          "E02": 94,
+          "E03": 94
+        },
+        "classes": 17
+      },
+      "heldout_test_fraction": 0.1709090909090909
+    }
+  },
+  "proposed_full_subject_loso": {
+    "ajh": {
+      "train": {
+        "n": 1367,
+        "pose": 1307,
+        "classification_only": 60,
+        "subjects": {
+          "lmh": 683,
+          "mhw": 684
+        },
+        "environments": {
+          "E01": 455,
+          "E02": 456,
+          "E03": 456
+        },
+        "classes": 17
+      },
+      "val": {
+        "n": 282,
+        "pose": 270,
+        "classification_only": 12,
+        "subjects": {
+          "lmh": 141,
+          "mhw": 141
+        },
+        "environments": {
+          "E01": 94,
+          "E02": 94,
+          "E03": 94
+        },
+        "classes": 17
+      },
+      "test": {
+        "n": 825,
+        "pose": 789,
+        "classification_only": 36,
+        "subjects": {
+          "ajh": 825
+        },
+        "environments": {
+          "E01": 275,
+          "E02": 275,
+          "E03": 275
+        },
+        "classes": 17
+      },
+      "heldout_test_fraction": 1.0
+    },
+    "lmh": {
+      "train": {
+        "n": 1368,
+        "pose": 1308,
+        "classification_only": 60,
+        "subjects": {
+          "ajh": 684,
+          "mhw": 684
+        },
+        "environments": {
+          "E01": 456,
+          "E02": 456,
+          "E03": 456
+        },
+        "classes": 17
+      },
+      "val": {
+        "n": 282,
+        "pose": 270,
+        "classification_only": 12,
+        "subjects": {
+          "ajh": 141,
+          "mhw": 141
+        },
+        "environments": {
+          "E01": 94,
+          "E02": 94,
+          "E03": 94
+        },
+        "classes": 17
+      },
+      "test": {
+        "n": 824,
+        "pose": 788,
+        "classification_only": 36,
+        "subjects": {
+          "lmh": 824
+        },
+        "environments": {
+          "E01": 274,
+          "E02": 275,
+          "E03": 275
+        },
+        "classes": 17
+      },
+      "heldout_test_fraction": 1.0
+    },
+    "mhw": {
+      "train": {
+        "n": 1367,
+        "pose": 1307,
+        "classification_only": 60,
+        "subjects": {
+          "ajh": 684,
+          "lmh": 683
+        },
+        "environments": {
+          "E01": 455,
+          "E02": 456,
+          "E03": 456
+        },
+        "classes": 17
+      },
+      "val": {
+        "n": 282,
+        "pose": 270,
+        "classification_only": 12,
+        "subjects": {
+          "ajh": 141,
+          "lmh": 141
+        },
+        "environments": {
+          "E01": 94,
+          "E02": 94,
+          "E03": 94
+        },
+        "classes": 17
+      },
+      "test": {
+        "n": 825,
+        "pose": 789,
+        "classification_only": 36,
+        "subjects": {
+          "mhw": 825
+        },
+        "environments": {
+          "E01": 275,
+          "E02": 275,
+          "E03": 275
+        },
+        "classes": 17
+      },
+      "heldout_test_fraction": 1.0
+    }
+  },
+  "notes": [
+    "Current LOSO evaluates only the held-out subject's preassigned test role.",
+    "Full LOSO should evaluate every active held-out-subject trial.",
+    "Keep source-subject validation roles for selection and move their test roles into training only after the seen protocol is frozen."
+  ]
+}

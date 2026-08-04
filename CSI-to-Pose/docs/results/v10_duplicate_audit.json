@@ -1,0 +1,11 @@
+{
+  "n_trials": 2749,
+  "n_files": 5378,
+  "duplicate_groups": [],
+  "counts": {
+    "duplicate_groups": 0,
+    "duplicate_csi_groups": 0,
+    "duplicate_gt_groups": 0,
+    "cross_role_groups": 0
+  }
+}

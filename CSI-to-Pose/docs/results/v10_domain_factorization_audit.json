@@ -1,0 +1,45 @@
+{
+  "source_subjects": [
+    "ajh",
+    "lmh",
+    "mhw"
+  ],
+  "environment_codes": [
+    "E01",
+    "E02",
+    "E03"
+  ],
+  "compound_subject_environment_domains": 9,
+  "domain_keys": [
+    "ajh_E01",
+    "ajh_E02",
+    "ajh_E03",
+    "lmh_E01",
+    "lmh_E02",
+    "lmh_E03",
+    "mhw_E01",
+    "mhw_E02",
+    "mhw_E03"
+  ],
+  "physical_installation_fields_checked": [
+    "installation_id",
+    "room_id",
+    "physical_site_id",
+    "geometry_id",
+    "rx_position",
+    "tx_positions",
+    "camera_extrinsic"
+  ],
+  "physical_installation_fields_present": [],
+  "repository_geometry_manifest_count": 0,
+  "same_installation_subject_only_shift_identifiable": false,
+  "within_subject_environment_shift_identifiable": true,
+  "cross_subject_shared_installation_effect_identifiable": false,
+  "reason": "Within-subject LOEO can measure a seen participant in another recorded environment. However, environment codes repeat across participants without a physical installation ID proving equal codes denote the same room. Participant holdout therefore also holds out that participant's three compound domains.",
+  "recommended_protocol_names": {
+    "current_full_loso": "leave_one_participant_plus_installations_out",
+    "within_subject_environment_holdout": "seen_participant_unseen_installation"
+  },
+  "collection_needed": "Factorial data: multiple participants in the same instrumented installations and the same participants across multiple installations, with installation/geometry IDs.",
+  "claim_limit": "Three held-out participants are diagnostic folds, not a population-level human generalization estimate. Report every fold and avoid a broad generalization claim."
+}

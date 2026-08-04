@@ -1,0 +1,28 @@
+{
+  "representation": "amp_phase",
+  "cache_array_legacy_name": "csi_iq",
+  "n_trials": 64,
+  "mask_mismatch_count": 0,
+  "amplitude_absolute_error": {
+    "n": 6319704,
+    "mean": 0.007767346687614918,
+    "p95": 0.02738189697265625,
+    "p99": 0.058807373046875,
+    "maximum": 0.2474365234375
+  },
+  "amplitude_relative_error": {
+    "n": 6319704,
+    "mean": 0.00017128573381341994,
+    "p95": 0.00037128457915969193,
+    "p99": 0.00044468557462096214,
+    "maximum": 0.00048804294783622026
+  },
+  "sanitized_phase_absolute_error_rad": {
+    "n": 6319704,
+    "mean": 7.836957956897095e-05,
+    "p95": 0.00022709369659423828,
+    "p99": 0.00040531158447265625,
+    "maximum": 0.0029878616333007812
+  },
+  "decision": "float16_is_acceptable_if_thresholds_hold_but_documentation_and_name_are_wrong"
+}

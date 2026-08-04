@@ -1,0 +1,31 @@
+{
+  "masked_link": "TX1",
+  "masked_live_subcarrier_range": [
+    48,
+    60
+  ],
+  "subcarrier_mask_is_model_input": false,
+  "mask_applied_before_per_link_norm": true,
+  "normalized_original_band": {
+    "channel_abs_mean": [
+      0.5750392079353333,
+      0.7371641397476196
+    ],
+    "channel_abs_p99": [
+      1.8265142440795898,
+      4.103989601135254
+    ]
+  },
+  "normalized_zeroed_band": {
+    "channel_abs_mean": [
+      0.32227835059165955,
+      0.3499177098274231
+    ],
+    "channel_abs_p99": [
+      0.3445129096508026,
+      0.4566880762577057
+    ],
+    "median_temporal_std_per_subcarrier_channel": 0.0
+  },
+  "decision": "Represent missing subcarriers explicitly. Impute to the train mean so normalized values are zero, apply masking after normalization, and pass a subcarrier mask/token to the frequency encoder."
+}

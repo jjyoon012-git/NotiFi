@@ -1,0 +1,43 @@
+{
+  "model": "V9A pre-GT-repair historical",
+  "device": "cuda",
+  "device_name": "NVIDIA GeForce RTX 5060 Ti",
+  "parameter_count": 4251617,
+  "trainable_parameter_count_at_inference_wrapper": 322314,
+  "checkpoint_bytes": 17317358,
+  "input_shape_per_trial": [
+    304,
+    3,
+    114,
+    2
+  ],
+  "algorithmic_context": {
+    "trial_seconds_nominal": 10.133333333333333,
+    "bidirectional_transformer": true,
+    "symmetric_local_convolutions": true,
+    "centered_smoothing_future_frames": 2,
+    "streaming_ready": false
+  },
+  "benchmarks": [
+    {
+      "batch_size": 1,
+      "iterations": 50,
+      "latency_ms_mean": 47.436821136474606,
+      "latency_ms_median": 47.09976005554199,
+      "latency_ms_p95": 52.73360061645508,
+      "latency_ms_per_trial_mean": 47.436821136474606,
+      "peak_allocated_mb": 141.64208984375,
+      "peak_reserved_mb": 170.0
+    },
+    {
+      "batch_size": 24,
+      "iterations": 50,
+      "latency_ms_mean": 480.6928967285156,
+      "latency_ms_median": 480.2663116455078,
+      "latency_ms_p95": 483.7911071777344,
+      "latency_ms_per_trial_mean": 20.028870697021485,
+      "peak_allocated_mb": 1953.0537109375,
+      "peak_reserved_mb": 2610.0
+    }
+  ]
+}
