@@ -8,7 +8,7 @@ from .cal42_kp10 import Cal42GuardedCalibrator
 
 
 class Cal43GuardedCalibrator(Cal42GuardedCalibrator):
-    """Use the source-locked 25% phase blend that passed the 8-site audit."""
+    """Post-hoc 25% phase candidate; requires a new sealed audit."""
 
     def __init__(
         self,

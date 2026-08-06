@@ -2,7 +2,7 @@
 
 ## Status
 
-The current calibration stack is **experimental**. CAL43 improves yja/E02
+The current leakage-free calibration stack is **experimental**. CAL42 improves yja/E02
 pose and action reconstruction by adding guarded physical-phase evidence to
 CAL27, while CAL33 improves danger-oriented retrieval
 on yja/E02. Neither passes the multi-subject unseen risk audit. Production code
@@ -60,7 +60,7 @@ score points in the correct direction in a new person/environment. Therefore
 can mark action/pose support as READY, but `accepted_for_normal_inference`
 remains false unless independent validated risk evidence is supplied.
 
-CAL43 also remains experimental. Its fixed 25% phase branch improved mean
+CAL42 remains experimental. Its pre-registered 15% phase branch improved mean
 action accuracy on all eight audited yja/ajh/mhw/lmh environments, but the energy branch's
 danger decision is immutable and the underlying ajh danger recall remains only
 10-20%. The guard prevents regression of already-correct danger actions; it
@@ -90,14 +90,18 @@ assert output["risk_certified"] is False
 assert output["accepted_for_normal_inference"] is False
 ```
 
-CAL43 requires independently fitted energy and physical-phase CAL27 branches.
+CAL43's 25% weight produced better post-hoc numbers, but it was promoted after
+inspecting target-query audits. It is therefore only a candidate for a new
+sealed subject and must not replace CAL42 in reported final performance.
+
+CAL42 requires independently fitted energy and physical-phase CAL27 branches.
 It adds a second explicit experimental gate. The wrapper also verifies that
 the branches use the expected feature modes and were fitted from the identical
 support-row list, so calibration artifacts from different users cannot mix:
 
 ```python
 from notifi_pose.cal27_kp10 import Cal27ActionCalibrator
-from notifi_pose.cal43_kp10 import Cal43GuardedCalibrator
+from notifi_pose.cal42_kp10 import Cal42GuardedCalibrator
 
 energy = Cal27ActionCalibrator.load(
     "energy_support_candidate.pt", allow_experimental=True
@@ -105,8 +109,8 @@ energy = Cal27ActionCalibrator.load(
 phase = Cal27ActionCalibrator.load(
     "physical_phase_support_candidate.pt", allow_experimental=True
 )
-calibrator = Cal43GuardedCalibrator(
-    energy, phase, allow_experimental=True
+calibrator = Cal42GuardedCalibrator(
+    energy, phase, phase_weight=0.15, allow_experimental=True
 )
 output = calibrator(csi, link_mask)
 assert output["calibration_status"] == "EXPERIMENTAL"

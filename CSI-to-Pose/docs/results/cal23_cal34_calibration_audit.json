@@ -1,5 +1,5 @@
 {
-  "generated_kst": "2026-08-07T06:11:00+09:00",
+  "generated_kst": "2026-08-07T06:20:00+09:00",
   "physical_contract": {
     "rx": "North",
     "tx1": "South",
@@ -16,24 +16,24 @@
   },
   "current": {
     "action_pose": {
-      "model": "CAL43-GUARDED-PHYSICAL-PHASE-KP10",
+      "model": "CAL42-GUARDED-PHYSICAL-PHASE-KP10",
       "status": "EXPERIMENTAL",
       "yja_e02_fixed_seed_272": {
         "query_trials": 211,
         "pose_trials": 199,
         "danger_trials": 50,
-        "overall_pose_cm": 28.8863,
-        "distal_pose_cm": 42.4530,
-        "danger_pose_cm": 37.7167,
-        "danger_distal_cm": 56.0402,
-        "danger_endpoint_cm": 44.1859,
-        "action_accuracy": 0.3555
+        "overall_pose_cm": 29.0931,
+        "distal_pose_cm": 42.7585,
+        "danger_pose_cm": 38.0079,
+        "danger_distal_cm": 56.4599,
+        "danger_endpoint_cm": 44.7755,
+        "action_accuracy": 0.3270
       },
-      "yja_e02_64_draw": {
-        "action_accuracy_mean": 0.3471,
-        "action_accuracy_std": 0.0215,
-        "danger_action_accuracy_mean": 0.2687,
-        "danger_action_accuracy_std": 0.0406
+      "yja_e02_16_draw": {
+        "action_accuracy_mean": 0.3229,
+        "action_accuracy_std": 0.0247,
+        "danger_action_accuracy_mean": 0.2750,
+        "danger_action_accuracy_std": 0.0350
       }
     },
     "danger_auxiliary": {
@@ -100,6 +100,9 @@
     "note": "diagnostic only; n=7 sites"
   },
   "cal43_paired_64_draw_stability": {
+    "status": "POST_HOC_EXPLORATORY_ONLY",
+    "target_query_used_for_weight_promotion": true,
+    "requires_new_sealed_subject": true,
     "sites": 8,
     "paired_draws": 512,
     "control": "CAL27",

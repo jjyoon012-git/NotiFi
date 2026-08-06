@@ -2,11 +2,11 @@
 
 Wi-Fi CSI만 입력받아 시간에 따른 사람의 **GVHMR SMPL-22 3D pose와 root trajectory**를 복원하는 연구 코드입니다. 영상과 GVHMR은 학습용 GT 생성에만 사용하며, 검증과 실제 추론에는 CSI만 사용합니다.
 
-## 현재 calibration 모델: CAL43-KP10 + CAL33 위험 보조
+## 현재 calibration 모델: CAL42-KP10 + CAL33 위험 보조
 
-2026-08-07 현재 **포즈·행동 보정 최선은 CAL43-GUARDED-PHYSICAL-PHASE-KP10**이다.
+2026-08-07 현재 **누출 없이 선택된 포즈·행동 보정 모델은 CAL42-GUARDED-PHYSICAL-PHASE-KP10**이다.
 CAL27의 환경 강건 energy encoder를 주 경로로 유지하고, 고정된 TX 방향에서 얻는 signed
-복소 위상 변화 encoder를 25% 보조 evidence로 결합한다. energy 경로가 danger 행동을
+복소 위상 변화 encoder를 사전 고정 15% 보조 evidence로 결합한다. energy 경로가 danger 행동을
 선택한 샘플은 phase branch가 절대 덮어쓰지 않는다.
 별도 **CAL33-EPISODIC-META-RISK-KP10**은 yja/E02의 danger 탐지를 개선했지만 다른
 LOSO subject에서 실패했으므로 실험적 보조 head로만 둔다. 둘을 합쳐도 아직
@@ -33,7 +33,7 @@ flowchart LR
     F --> G
     G --> H["CAL27 energy action logits"]
     P --> Q["CAL41 physical-phase action logits"]
-    H --> R["CAL43 guarded 25% blend"]
+    H --> R["CAL42 guarded 15% blend"]
     Q --> R
     R --> I["frozen KP10 train-only retrieval"]
     I --> J["CSI-only SMPL-22 pose simulation"]
@@ -52,14 +52,14 @@ pose GT, 영상은 calibration이나 설정 선택에 사용하지 않는다.
 support는 safe 8행동에서 각 8회, 총 64개다. 나머지 query는 211개이고 pose GT가 있는
 query는 199개, danger는 50개다. 동일한 고정 split seed 272를 사용했다.
 
-| Metric | KP10 no calibration | CAL27-KP10 | CAL42-KP10 | CAL43-KP10 |
+| Metric | KP10 no calibration | CAL27-KP10 | CAL42-KP10 | CAL43 탐색값* |
 |---|---:|---:|---:|---:|
-| Overall pose | 31.770 cm | 29.412 cm | 29.093 cm | **28.886 cm** |
-| Distal pose | 46.705 cm | 43.247 cm | 42.759 cm | **42.453 cm** |
-| Danger pose | 39.252 cm | 38.053 cm | 38.008 cm | **37.717 cm** |
-| Danger distal | 58.231 cm | 56.506 cm | 56.460 cm | **56.040 cm** |
-| Danger endpoint | 46.559 cm | 44.737 cm | 44.775 cm | **44.186 cm** |
-| Action accuracy | 8.04% | 30.15% | 32.70% | **35.55%** |
+| Overall pose | 31.770 cm | 29.412 cm | **29.093 cm** | 28.886 cm* |
+| Distal pose | 46.705 cm | 43.247 cm | **42.759 cm** | 42.453 cm* |
+| Danger pose | 39.252 cm | 38.053 cm | **38.008 cm** | 37.717 cm* |
+| Danger distal | 58.231 cm | 56.506 cm | **56.460 cm** | 56.040 cm* |
+| Danger endpoint | 46.559 cm | **44.737 cm** | 44.775 cm | 44.186 cm* |
+| Action accuracy | 8.04% | 30.15% | **32.70%** | 35.55%* |
 
 CAL27 support 16회 재추출 감사에서 query 행동 정확도는
 `29.95 +/- 2.86%`, danger 세부행동은 `25.88 +/- 4.66%`였다. 고정 1회 결과만 고른
@@ -76,11 +76,13 @@ CAL42는 CAL27 logits와 별도로 정적 위상을 상쇄한 시간차 복소 �
 구간은 energy `4.6 ms`, phase `14.2 ms`, dual `23.1 ms`였으며, 장비 종속 수치지만 기존
 energy-only보다 계산 비용이 약 5배라는 단점이 있다.
 
-CAL43은 같은 guard를 유지하면서 phase weight만 source-locked `0.25`로 올린 단순한
-후속 버전이다. support-only 가중치 선택기도 시험했지만 512 draw 중 451회가 0.25 상한을
-선택했고, 고정 0.25가 8개 site 모두 선택형 이상이어서 선택기는 폐기했다. 고정 0.25는
+CAL43은 같은 guard에서 phase weight를 `0.25`로 올린 탐색 후보다. support-only 가중치
+선택기도 시험했지만 512 draw 중 451회가 0.25 상한을 선택했다. 그러나 0.25 승격 결정은
+8개 target query 결과를 본 뒤 이루어졌으므로 아래 개선값은 **post-hoc 탐색값**이며 공식
+sealed 성능이 아니다. 고정 0.25는
 CAL42 대비 8-site action 평균 `+2.34%p`, macro-F1 `+3.15%p`였고, yja 고정 pose에서
-overall `29.093 -> 28.886 cm`, danger distal `56.460 -> 56.040 cm`로 개선됐다.
+overall `29.093 -> 28.886 cm`, danger distal `56.460 -> 56.040 cm`였다. 새 sealed subject로
+재검증하기 전에는 CAL42를 대체하지 않는다.
 
 CAL33은 source site마다 safe prompt를 떼고 나머지를 가상의 unseen query로 만드는
 episodic risk head다. yja 16회 감사에서 danger recall을 CAL27의 실험적 conformal risk
@@ -91,7 +93,7 @@ ajh E03에서 danger recall `3.13%`로 실패했다. 따라서 danger 출력은 
 고정 yja pose query에서 CAL33 risk gate를 KP10 retrieval에 연결하면 CAL27 대비 overall은
 `29.412 -> 29.590 cm`로 0.178 cm 나빠졌지만 danger pose는
 `38.052 -> 37.853 cm`, danger distal은 `56.506 -> 56.271 cm`, danger endpoint는
-`44.735 -> 44.624 cm`로 개선됐다. 따라서 **전체 포즈 기본값은 CAL43**, yja에서 위험
+`44.735 -> 44.624 cm`로 개선됐다. 따라서 **전체 포즈 기본값은 CAL42**, yja에서 위험
 장면 후보를 생성하는 실험 branch는 CAL33으로 분리한다.
 
 ### 다중 unseen 감사
@@ -100,7 +102,7 @@ ajh E03에서 danger recall `3.13%`로 실패했다. 따라서 danger 출력은 
 행동 값은 64개 paired support draw 평균, CAL33 위험 값은 기존 16개 draw 평균이며 query를
 hyperparameter 선택에 쓰지 않았다.
 
-| Target | CAL27 action | CAL42 action | CAL43 action | CAL27→CAL43 danger action | CAL33 danger recall |
+| Target | CAL27 action | CAL42 action | CAL43 탐색값* | CAL27→CAL43 탐색 danger* | CAL33 danger recall |
 |---|---:|---:|---:|---:|---:|
 | yja E02 | 29.44% | 32.01% | **34.71%** | 24.69→**26.87%** | 60.25% |
 | ajh E01 | 26.21% | 32.12% | **34.66%** | 4.00→**4.03%** | 13.75% |
@@ -111,7 +113,8 @@ hyperparameter 선택에 쓰지 않았다.
 | mhw E03 | 20.46% | 25.30% | **28.47%** | 0.56→**0.56%** | 미측정 |
 | lmh E01 | 24.70% | 34.23% | **36.90%** | 1.78→**6.31%** | 미측정 |
 
-CAL43 paired 64-draw audit는 8개 site x 64개, 총 512개 비교에서 CAL27 대비
+* CAL43은 target query를 본 뒤 weight를 채택한 탐색 결과로, 공정한 최종 비교가 아니다.
+참고로 paired 64-draw audit는 8개 site x 64개, 총 512개 비교에서 CAL27 대비
 `510승 0무 2패`, 평균 `+7.02%p`였다. site별 평균 개선은 `+3.98~+12.20%p`다. danger
 정답을 보존하는 guard 때문에 danger 세부행동은 512개 draw 모두 감소하지 않았다. phase
 branch는 각 held subject를 제외한 source만으로 별도 학습했다. 독립 단위를 512 draw가
@@ -135,7 +138,7 @@ danger 방향을 검증할 수는 없다. 따라서 artifact는
 다양한 source subject가 필요하다. CAL27도 support held-repeat `37.5%`, full support
 `57.8%`로 엄격한 배포 기준 `60%/70%`를 통과하지 못한다. 기본 runtime은 artifact를
 거부하며 연구 재현 시에만 `allow_experimental=True`를 명시한다. opt-in 뒤에도 링크별
-유효 frame이 50% 미만이거나 유효 CSI에 NaN/inf가 있으면 거부하고, CAL43의 두 branch가
+유효 frame이 50% 미만이거나 유효 CSI에 NaN/inf가 있으면 거부하고, CAL42의 두 branch가
 서로 다른 support row 또는 잘못된 feature mode를 쓰면 결합하지 않는다.
 
 7개 unseen site의 사후 진단에서 safe held-repeat CV와 query 전체 행동 정확도의 Pearson
@@ -148,7 +151,7 @@ danger 방향을 검증할 수는 없다. 따라서 artifact는
 
 | 번호 | 날짜/시간대 (KST) | 실험 | 목적 | 결과 |
 |---:|---|---|---|---|
-| 43 | 2026-08-07 05:55-06:05 | fixed 25% guarded phase | support 선택기 제거, 위상 기여 확대 | **현재 최선**: yja pose 28.886 cm; CAL27 대비 512 draw 평균 +7.02%p |
+| 43 | 2026-08-07 05:55-06:05 | fixed 25% guarded phase | 위상 기여 확대 탐색 | **승격 보류**: target audit 후 선택된 post-hoc 후보; 새 sealed 검증 필요 |
 | 42 | 2026-08-07 04:45-05:45 | guarded energy + physical-phase ensemble | 위상 방향 정보 추가, danger 정답 보존 | CAL43 이전 최선: yja pose 29.093 cm; 512 paired draw 평균 +4.69%p |
 | 41 | 2026-08-07 04:40-04:50 | physical-phase encoder | 정적 위상 상쇄 후 signed 동작 보존 | 단독 danger는 악화, 15% 보조 branch로 제한 |
 | 40 | 2026-08-07 04:30-04:39 | episodic safe-relative action head | safe prompt에서 17행동 직접 meta 분류 | **기각**: yja 20.41%, ajh E03 danger action 2% |
@@ -183,12 +186,12 @@ python -m notifi_pose.tools.train_cal23_dynamic_meta_kp10 `
 python -m notifi_pose.tools.evaluate_cal27_local_prototype_kp10 `
   --target-reserve-per-class 8
 
-# CAL41 signed phase encoder와 CAL43 guarded audit
+# CAL41 signed phase encoder와 CAL42 guarded audit
 python -m notifi_pose.tools.train_cal23_dynamic_meta_kp10 `
   --feature-mode physical_phase --classification-only `
   --run-dir work_v2/runs/cal41_physical_phase
 python -m notifi_pose.tools.audit_cal42_phase_ensemble `
-  --preserve-energy-danger --phase-weight 0.25 `
+  --preserve-energy-danger --phase-weight 0.15 `
   --energy-checkpoint work_v2/runs/cal23/calibration_candidate.pt `
   --phase-checkpoint work_v2/runs/cal41_physical_phase/calibration_candidate.pt `
   --run-dir work_v2/runs/cal42_audit
