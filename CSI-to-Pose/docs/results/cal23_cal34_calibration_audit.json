@@ -1,0 +1,164 @@
+{
+  "generated_kst": "2026-08-07T06:11:00+09:00",
+  "physical_contract": {
+    "rx": "North",
+    "tx1": "South",
+    "tx2": "West",
+    "tx3": "East",
+    "pose_and_risk_link_order": ["TX1", "TX2", "TX3"],
+    "physical_permutation_allowed": false
+  },
+  "selection_contract": {
+    "target_query_used_for_calibration_or_hyperparameter_selection": false,
+    "safe_support_per_action": 8,
+    "support_draws": 16,
+    "risk_certified_from_safe_only_support": false
+  },
+  "current": {
+    "action_pose": {
+      "model": "CAL43-GUARDED-PHYSICAL-PHASE-KP10",
+      "status": "EXPERIMENTAL",
+      "yja_e02_fixed_seed_272": {
+        "query_trials": 211,
+        "pose_trials": 199,
+        "danger_trials": 50,
+        "overall_pose_cm": 28.8863,
+        "distal_pose_cm": 42.4530,
+        "danger_pose_cm": 37.7167,
+        "danger_distal_cm": 56.0402,
+        "danger_endpoint_cm": 44.1859,
+        "action_accuracy": 0.3555
+      },
+      "yja_e02_64_draw": {
+        "action_accuracy_mean": 0.3471,
+        "action_accuracy_std": 0.0215,
+        "danger_action_accuracy_mean": 0.2687,
+        "danger_action_accuracy_std": 0.0406
+      }
+    },
+    "danger_auxiliary": {
+      "model": "CAL33-EPISODIC-META-RISK-KP10",
+      "status": "EXPERIMENTAL",
+      "yja_e02_16_draw": {
+        "action_accuracy_mean": 0.2479,
+        "danger_recall_mean": 0.6025,
+        "danger_recall_std": 0.0524,
+        "danger_action_accuracy_mean": 0.3088,
+        "safe_to_danger_mean": 12.3125,
+        "safe_total": 86
+      },
+      "yja_e02_fixed_seed_272_pose": {
+        "overall_pose_cm": 29.5902,
+        "danger_pose_cm": 37.8533,
+        "danger_distal_cm": 56.2711,
+        "danger_endpoint_cm": 44.6236
+      }
+    }
+  },
+  "loso_audit": {
+    "cal43": {
+      "yja_E02": {"action": 0.3471, "danger_action": 0.2687},
+      "ajh_E01": {"action": 0.3466, "danger_action": 0.0403},
+      "ajh_E02": {"action": 0.3680, "danger_action": 0.0875},
+      "ajh_E03": {"action": 0.3480, "danger_action": 0.0200},
+      "mhw_E01": {"action": 0.3017, "danger_action": 0.0781},
+      "mhw_E02": {"action": 0.3437, "danger_action": 0.1194},
+      "mhw_E03": {"action": 0.2847, "danger_action": 0.0056},
+      "lmh_E01": {"action": 0.3690, "danger_action": 0.0631}
+    },
+    "cal42": {
+      "yja_E02": {"action": 0.3201, "danger_action": 0.2650},
+      "ajh_E01": {"action": 0.3212, "danger_action": 0.0400},
+      "ajh_E02": {"action": 0.3504, "danger_action": 0.0819},
+      "ajh_E03": {"action": 0.3325, "danger_action": 0.0200},
+      "mhw_E01": {"action": 0.2744, "danger_action": 0.0475},
+      "mhw_E02": {"action": 0.3278, "danger_action": 0.1091},
+      "mhw_E03": {"action": 0.2530, "danger_action": 0.0056},
+      "lmh_E01": {"action": 0.3423, "danger_action": 0.0406}
+    },
+    "cal27": {
+      "yja_E02": {"action": 0.2944, "danger_action": 0.2469},
+      "ajh_E01": {"action": 0.2621, "danger_action": 0.04},
+      "ajh_E02": {"action": 0.3084, "danger_action": 0.0697},
+      "ajh_E03": {"action": 0.3082, "danger_action": 0.02},
+      "mhw_E01": {"action": 0.2355, "danger_action": 0.0362},
+      "mhw_E02": {"action": 0.2864, "danger_action": 0.1044},
+      "mhw_E03": {"action": 0.2046, "danger_action": 0.0056},
+      "lmh_E01": {"action": 0.2470, "danger_action": 0.0178}
+    },
+    "cal33_ajh": {
+      "E01": {"danger_recall": 0.1375, "danger_action": 0.08},
+      "E02": {"danger_recall": 0.2838, "danger_action": 0.1087},
+      "E03": {"danger_recall": 0.0313, "danger_action": 0.0025}
+    }
+  },
+  "support_gate_diagnostic_across_7_unseen_sites": {
+    "held_repeat_vs_query_action_pearson": 0.7048,
+    "full_support_vs_query_action_pearson": 0.7306,
+    "held_repeat_vs_danger_action_pearson": -0.2735,
+    "full_support_vs_danger_action_pearson": -0.2468,
+    "note": "diagnostic only; n=7 sites"
+  },
+  "cal43_paired_64_draw_stability": {
+    "sites": 8,
+    "paired_draws": 512,
+    "control": "CAL27",
+    "wins": 510,
+    "ties": 0,
+    "losses": 2,
+    "mean_action_improvement_percentage_points": 7.0246,
+    "median_action_improvement_percentage_points": 6.2870,
+    "site_level_95_percent_t_interval_percentage_points": [4.9006, 9.1486],
+    "mean_macro_f1_improvement_percentage_points": 9.3924,
+    "macro_f1_site_level_95_percent_t_interval_percentage_points": [6.4155, 12.3693],
+    "danger_action_regressions": 0
+  },
+  "cal42_nested_support_size_audit": {
+    "sites": 8,
+    "common_query_reserve_per_safe_action": 8,
+    "site_mean_action_accuracy": {
+      "16_trials": 0.2516,
+      "32_trials": 0.2944,
+      "48_trials": 0.3081,
+      "64_trials": 0.3122
+    },
+    "decision": "keep 64 trials for the performance-first reference; 48 is an operational candidate"
+  },
+  "local_artifact_sha256": {
+    "energy_yja": "1ea7b1701737cbc5214f826fa926d97e628d4f12b53bc572cc818ff9a4135df7",
+    "energy_ajh_loso": "9ac26d0ee02c674d76669602525744365bd20d58330089c783bcc2461154c1b7",
+    "energy_mhw_loso": "73c048cecb4b99931b0dcc2db3e59f4df0fad3cd93de7b583fdb893e0d7612a8",
+    "phase_yja": "6d262220fc77bebb831497174d1fe8a1ef2387844665922b1956a3b21aa3a9a0",
+    "phase_ajh_loso": "45ebd4d5fcb4e40309fbc46d074f899333c2fd8b7c41dd2ad6ea3cfb1c0f81da",
+    "phase_mhw_loso": "1ac61ac8f5c6e76cf18a5520884ae43ad5245ca5917b7f7ffb47595efcaf76cd",
+    "energy_lmh_loso": "fdd4582ec803ed78dc3aacf8fdb2f4450147a536ccce646271b18c4ea9982dbe",
+    "phase_lmh_loso": "4e36f0d483f5759c182c5597072018be3f9f47a354fff876da71a918e77a4717",
+    "cal42_control64_lmh_E01": "5b1507329a6ed702ca0bb72a856037a35acfb3bf46aa4ab18e2c016be4f6c0e8",
+    "cal42_guard64_lmh_E01": "add91dc97fce6a6750324f130d8a1bed6589a32682fc75796a5ee8233068b21d",
+    "cal42_nested2_lmh_E01": "21ec2369955deb3df17d362136994c15e7bcb2f66fd6388124d5ca9b971aed49",
+    "cal42_nested4_lmh_E01": "3d8a9a97d73cae73ab39732c204524b092c791144c95b6815dd6d3c122453b64",
+    "cal42_nested6_lmh_E01": "0ad266e6dbe95a1762ce1e9475ac7c1904ff5765fc81aa4c072b8d665413dbb0",
+    "cal43_fixed25_yja": "cfeac969d3c6885ed1f7d666d284f35110d5c6c9633e2fcc7d06035f007ae72c",
+    "cal43_fixed25_ajh_E01": "d99991eca40a1d3a53a2520e463bd6bde66fd7fafeb46e046050ac9338766e69",
+    "cal43_fixed25_ajh_E02": "6d863adf343f78044bc93592e979ab87484cee2e0665ce0b72e626371694b470",
+    "cal43_fixed25_ajh_E03": "fe358ae98a8a44e2378e62be1c94fb4c28155415c960154ffb0495ba77aa4a72",
+    "cal43_fixed25_mhw_E01": "81151fd1f283b622ba2ff302af9465f0002442850b11c1a61e327365f895eb0d",
+    "cal43_fixed25_mhw_E02": "e8c2232c125cc410f321d0d0be86359245e9d101d0934e2bf294a21129177d9e",
+    "cal43_fixed25_mhw_E03": "14057b37751fea681bf64297b23a87d0872810bd5a2779a85f8ff30eea5f44be",
+    "cal43_fixed25_lmh_E01": "9917e61ed7d8c8aa0c6a10bb16deeaf1464ed7cea9813159fc4a7a47bfefafa6",
+    "cal43_pose_yja_result": "d1f58720f2b9c23dc254fb7516ddc5f314f86862f33b8fd8be5e988164cdef72",
+    "cal42_pose_yja_result": "a17ca6f2862b7c422172af7b2e16b20b41daf98772608a7b16279795ffd49b3a"
+  },
+  "rejected": {
+    "CAL40_meta_action": "source validation improved but yja action was 0.2041 and ajh danger did not transfer",
+    "CAL39_selective_prediction": "safe-support confidence did not certify danger; accepted danger accuracy 0.027-0.055 on ajh",
+    "CAL38_link_ensemble": "action improved on yja/ajh E01/E02 but worsened on ajh E03 and danger",
+    "CAL37_summary_AdaBN": "yja selected identity; ajh E03 danger action fell to zero",
+    "CAL36_meta_prototype_transport": "yja danger action 0.18 and ajh E03 danger action 0.02",
+    "CAL35_cross_subject_ensemble": "ajh E01/E02/E03 danger recall 0.106/0.224/0.020",
+    "CAL30_MixStyle": "source validation improved but ajh E01/E02 action did not",
+    "CAL31_anchor_transport": "safe anchor transform degraded held-subject action",
+    "CAL32_conformal_action_gate": "danger recall varied from 0.06 to 0.26",
+    "CAL34_safe_warning_meta_risk": "ajh E03 danger recall remained 0.035"
+  }
+}

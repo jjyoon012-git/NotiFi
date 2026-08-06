@@ -2,25 +2,225 @@
 
 Wi-Fi CSI만 입력받아 시간에 따른 사람의 **GVHMR SMPL-22 3D pose와 root trajectory**를 복원하는 연구 코드입니다. 영상과 GVHMR은 학습용 GT 생성에만 사용하며, 검증과 실제 추론에는 CSI만 사용합니다.
 
-## 현재 unseen calibration 최선: CAL5-LINKMAP-SUPPORT-KP10
+## 현재 calibration 모델: CAL43-KP10 + CAL33 위험 보조
 
-2026-08-06 현재 unseen 환경 최선은 **CAL5-LINKMAP-SUPPORT-KP10**이다. 다만 아직
-seen 수준에 도달하지 못했으므로 배포 완료 모델로 부르지 않는다. CAL1의 post-encoder
-amortized token, CAL2의 raw moment 정렬, CAL3의 feature adaptation을 각각 분리해 감사한
-결과, yja/E02의 가장 큰 문제는 일반적인 방 변화만이 아니라 **파일의 TX1/TX2 순서와
-모델의 물리 방향 계약이 맞지 않는 것**이었다.
+2026-08-07 현재 **포즈·행동 보정 최선은 CAL43-GUARDED-PHYSICAL-PHASE-KP10**이다.
+CAL27의 환경 강건 energy encoder를 주 경로로 유지하고, 고정된 TX 방향에서 얻는 signed
+복소 위상 변화 encoder를 25% 보조 evidence로 결합한다. energy 경로가 danger 행동을
+선택한 샘플은 phase branch가 절대 덮어쓰지 않는다.
+별도 **CAL33-EPISODIC-META-RISK-KP10**은 yja/E02의 danger 탐지를 개선했지만 다른
+LOSO subject에서 실패했으므로 실험적 보조 head로만 둔다. 둘을 합쳐도 아직
+`어떤 unseen에서도 seen 성능`을 보장하지 못하며, 전체 시스템 상태는 **EXPERIMENTAL**이다.
+
+물리 설치 계약은 모든 데이터에서 동일하다.
+
+- RX: North
+- TX1: South
+- TX2: West
+- TX3: East
+- 모델의 pose/risk 입력 순서: 항상 `[TX1, TX2, TX3]`
+- 통계적 link permutation은 진단 view일 뿐 물리 배선 수정으로 사용하지 않는다.
+
+```mermaid
+flowchart LR
+    A["4-board CSI"] --> B["1/3/7 lag temporal difference"]
+    A --> P["signed phase: CSI(t) x conj(CSI(t-lag))"]
+    B --> C["trial normalization + temporal residual encoder"]
+    D["새 환경 safe 8행동 x 8회"] --> E["target-local safe prototypes"]
+    C --> F["17행동 direct evidence"]
+    C --> E
+    E --> G["support-repeat CV로 온도/가중치 선택"]
+    F --> G
+    G --> H["CAL27 energy action logits"]
+    P --> Q["CAL41 physical-phase action logits"]
+    H --> R["CAL43 guarded 25% blend"]
+    Q --> R
+    R --> I["frozen KP10 train-only retrieval"]
+    I --> J["CSI-only SMPL-22 pose simulation"]
+    C --> K["CAL33 safe-relative meta-risk head"]
+    K --> L["danger 보조 출력: experimental"]
+```
+
+CAL23 encoder는 정적 CSI level을 버리고 시간 차분만 사용한다. RF augmentation,
+link dropout consistency, site-adversarial loss로 source 환경 의존성을 줄인다. CAL27은 새
+환경의 알려진 safe support만으로 8개 local prototype을 만들고, support repeat를 둘로
+나눈 교차검증으로 prototype 온도와 결합 강도를 고른다. target query 행동·위험 라벨,
+pose GT, 영상은 calibration이나 설정 선택에 사용하지 않는다.
+
+### 고정 yja/E02 결과
+
+support는 safe 8행동에서 각 8회, 총 64개다. 나머지 query는 211개이고 pose GT가 있는
+query는 199개, danger는 50개다. 동일한 고정 split seed 272를 사용했다.
+
+| Metric | KP10 no calibration | CAL27-KP10 | CAL42-KP10 | CAL43-KP10 |
+|---|---:|---:|---:|---:|
+| Overall pose | 31.770 cm | 29.412 cm | 29.093 cm | **28.886 cm** |
+| Distal pose | 46.705 cm | 43.247 cm | 42.759 cm | **42.453 cm** |
+| Danger pose | 39.252 cm | 38.053 cm | 38.008 cm | **37.717 cm** |
+| Danger distal | 58.231 cm | 56.506 cm | 56.460 cm | **56.040 cm** |
+| Danger endpoint | 46.559 cm | 44.737 cm | 44.775 cm | **44.186 cm** |
+| Action accuracy | 8.04% | 30.15% | 32.70% | **35.55%** |
+
+CAL27 support 16회 재추출 감사에서 query 행동 정확도는
+`29.95 +/- 2.86%`, danger 세부행동은 `25.88 +/- 4.66%`였다. 고정 1회 결과만 고른
+수치가 아니다. 다만 seen KP10의 overall `12.885 cm`, danger `19.829 cm`와는 여전히
+큰 차이가 난다.
+
+CAL42는 CAL27 logits와 별도로 정적 위상을 상쇄한 시간차 복소 위상 회전·진폭비를
+인코딩한다. 고정된 `phase_weight=0.15`를 쓰며 target별 가중치 탐색은 하지 않는다.
+고정 yja split에서 CAL27 대비 overall pose는 `29.412 -> 29.093 cm`, distal은
+`43.247 -> 42.759 cm`로 개선됐다. danger pose/distal은 `38.053 -> 38.008 cm`,
+`56.506 -> 56.460 cm`로 변화가 작고 endpoint는 `44.737 -> 44.775 cm`로 0.039 cm
+악화됐다. 따라서 일반 행동·pose 개선으로만 채택하며 낙상 복원 해결로 해석하지 않는다.
+두 encoder는 총 698,226 parameters다. RTX 5060 Ti warm benchmark에서 batch 16의 encoder
+구간은 energy `4.6 ms`, phase `14.2 ms`, dual `23.1 ms`였으며, 장비 종속 수치지만 기존
+energy-only보다 계산 비용이 약 5배라는 단점이 있다.
+
+CAL43은 같은 guard를 유지하면서 phase weight만 source-locked `0.25`로 올린 단순한
+후속 버전이다. support-only 가중치 선택기도 시험했지만 512 draw 중 451회가 0.25 상한을
+선택했고, 고정 0.25가 8개 site 모두 선택형 이상이어서 선택기는 폐기했다. 고정 0.25는
+CAL42 대비 8-site action 평균 `+2.34%p`, macro-F1 `+3.15%p`였고, yja 고정 pose에서
+overall `29.093 -> 28.886 cm`, danger distal `56.460 -> 56.040 cm`로 개선됐다.
+
+CAL33은 source site마다 safe prompt를 떼고 나머지를 가상의 unseen query로 만드는
+episodic risk head다. yja 16회 감사에서 danger recall을 CAL27의 실험적 conformal risk
+`44.63%`에서 **60.25%**, danger 세부행동을 `25.88%`에서 **30.88%**로 올렸다. 그러나
+전체 행동은 `29.95% -> 24.79%`, safe-to-danger는 평균 `12.3/86`으로 trade-off가 있고,
+ajh E03에서 danger recall `3.13%`로 실패했다. 따라서 danger 출력은 인증되지 않았다.
+
+고정 yja pose query에서 CAL33 risk gate를 KP10 retrieval에 연결하면 CAL27 대비 overall은
+`29.412 -> 29.590 cm`로 0.178 cm 나빠졌지만 danger pose는
+`38.052 -> 37.853 cm`, danger distal은 `56.506 -> 56.271 cm`, danger endpoint는
+`44.735 -> 44.624 cm`로 개선됐다. 따라서 **전체 포즈 기본값은 CAL43**, yja에서 위험
+장면 후보를 생성하는 실험 branch는 CAL33으로 분리한다.
+
+### 다중 unseen 감사
+
+아래는 각 target subject를 source 학습에서 완전히 제외한 LOSO 결과다. CAL27/CAL42/CAL43
+행동 값은 64개 paired support draw 평균, CAL33 위험 값은 기존 16개 draw 평균이며 query를
+hyperparameter 선택에 쓰지 않았다.
+
+| Target | CAL27 action | CAL42 action | CAL43 action | CAL27→CAL43 danger action | CAL33 danger recall |
+|---|---:|---:|---:|---:|---:|
+| yja E02 | 29.44% | 32.01% | **34.71%** | 24.69→**26.87%** | 60.25% |
+| ajh E01 | 26.21% | 32.12% | **34.66%** | 4.00→**4.03%** | 13.75% |
+| ajh E02 | 30.84% | 35.04% | **36.80%** | 6.97→**8.75%** | 28.38% |
+| ajh E03 | 30.82% | 33.25% | **34.80%** | 2.00→**2.00%** | 3.13% |
+| mhw E01 | 23.55% | 27.44% | **30.17%** | 3.62→**7.81%** | 미측정 |
+| mhw E02 | 28.64% | 32.78% | **34.37%** | 10.44→**11.94%** | 미측정 |
+| mhw E03 | 20.46% | 25.30% | **28.47%** | 0.56→**0.56%** | 미측정 |
+| lmh E01 | 24.70% | 34.23% | **36.90%** | 1.78→**6.31%** | 미측정 |
+
+CAL43 paired 64-draw audit는 8개 site x 64개, 총 512개 비교에서 CAL27 대비
+`510승 0무 2패`, 평균 `+7.02%p`였다. site별 평균 개선은 `+3.98~+12.20%p`다. danger
+정답을 보존하는 guard 때문에 danger 세부행동은 512개 draw 모두 감소하지 않았다. phase
+branch는 각 held subject를 제외한 source만으로 별도 학습했다. 독립 단위를 512 draw가
+아니라 8 site로 잡은 평균 개선의 보수적 95% t-interval은 `+4.90~+9.15%p`다. lmh/E01에서도
+전체 action은 크게 개선됐지만 danger 세부행동은 6.31%에 불과해 위험 복원은 여전히
+해결되지 않았다. action macro-F1도 8개 site 모두 개선됐고 평균 `+9.39%p`, site-level
+95% t-interval은 `+6.42~+12.37%p`여서 다수 클래스만 더 맞힌 결과는 아니다.
+
+CAL42에서 support 수만 바꾸고 공통 query를 유지한 nested audit에서 총 16/32/48/64개 calibration
+trial의 8-site 평균 action은 각각 `25.16/29.44/30.81/31.22%`였다. 48개는 실용 후보지만
+64개보다 평균 0.41%p 낮고 site별 우열도 섞여 있어, 현재 성능 기준 prompt는 64개를
+유지한다. 32개 이하는 성능 손실이 명확하다.
+
+이 표가 보여주는 결론은 두 가지다. target-local prototype과 guarded phase evidence는
+평가한 unseen에서 일반 행동 정확도를 25~35%대로 끌어올렸다. 반면 safe support만으로 target의
+danger 방향을 검증할 수는 없다. 따라서 artifact는
+`experimental_action_pose_candidate=true`, `accepted_for_action_pose_inference=false`,
+`risk_ready=false`,
+`accepted_for_normal_inference=false`를 기록한다. danger가 필요한 제품은 불확실 시
+출력을 거부하거나, 실제 낙상이 아닌 별도의 검증된 dynamic-risk calibration 동작과 더
+다양한 source subject가 필요하다. CAL27도 support held-repeat `37.5%`, full support
+`57.8%`로 엄격한 배포 기준 `60%/70%`를 통과하지 못한다. 기본 runtime은 artifact를
+거부하며 연구 재현 시에만 `allow_experimental=True`를 명시한다. opt-in 뒤에도 링크별
+유효 frame이 50% 미만이거나 유효 CSI에 NaN/inf가 있으면 거부하고, CAL43의 두 branch가
+서로 다른 support row 또는 잘못된 feature mode를 쓰면 결합하지 않는다.
+
+7개 unseen site의 사후 진단에서 safe held-repeat CV와 query 전체 행동 정확도의 Pearson
+상관은 `r=0.705`, full-support 정확도와는 `r=0.731`이었다. 그러나 danger 세부행동과의
+상관은 각각 `r=-0.273/-0.247`이었다. 표본이 7개뿐인 진단값이지만, safe gate는 일반
+행동 가능성을 어느 정도 설명하면서도 danger 품질은 설명하지 못한다는 LOSO 결과와
+일치한다.
+
+### 최신 실험 로그
+
+| 번호 | 날짜/시간대 (KST) | 실험 | 목적 | 결과 |
+|---:|---|---|---|---|
+| 43 | 2026-08-07 05:55-06:05 | fixed 25% guarded phase | support 선택기 제거, 위상 기여 확대 | **현재 최선**: yja pose 28.886 cm; CAL27 대비 512 draw 평균 +7.02%p |
+| 42 | 2026-08-07 04:45-05:45 | guarded energy + physical-phase ensemble | 위상 방향 정보 추가, danger 정답 보존 | CAL43 이전 최선: yja pose 29.093 cm; 512 paired draw 평균 +4.69%p |
+| 41 | 2026-08-07 04:40-04:50 | physical-phase encoder | 정적 위상 상쇄 후 signed 동작 보존 | 단독 danger는 악화, 15% 보조 branch로 제한 |
+| 40 | 2026-08-07 04:30-04:39 | episodic safe-relative action head | safe prompt에서 17행동 직접 meta 분류 | **기각**: yja 20.41%, ajh E03 danger action 2% |
+| 39 | 2026-08-07 04:25-04:27 | support-LOO selective prediction | 불확실 trial 거부 | **기각**: accepted danger accuracy 2.7-5.5% |
+| 38 | 2026-08-07 04:23-04:25 | support-selected link ensemble | 특정 반사 link 의존 완화 | **기각**: 3 site action 개선, ajh E03·danger 악화 |
+| 37 | 2026-08-07 04:20-04:22 | motion-summary AdaBN | 사람/거리 energy 통계만 support 정렬 | **기각**: yja strength 0, ajh E03 danger 0% |
+| 36 | 2026-08-07 04:16-04:20 | meta prototype transport | safe shift로 danger prototype shift 예측 | **기각**: yja danger action 18%, ajh E03 2% |
+| 35 | 2026-08-07 04:12-04:15 | cross-subject meta-risk ensemble | lmh/mhw 상호 holdout로 subject 일반화 | **기각**: ajh E01/E02/E03 recall 10.6/22.4/2.0% |
+| 34 | 2026-08-07 04:04-04:08 | safe+warning episodic risk | warning prompt로 danger 방향 전달 | **기각**: ajh E03 recall 3.5%, yja 47.9% |
+| 33 | 2026-08-07 03:57-04:04 | safe-relative episodic meta-risk | source site를 가상 unseen으로 학습 | **부분 개선**: yja recall 60.25%, LOSO 불안정 |
+| 32 | 2026-08-07 03:55-03:57 | conformal action-group gate | safe/non-safe logit 경계 보정 | **기각**: yja/ajh/mhw recall 26/16/6% |
+| 31 | 2026-08-07 03:52-03:55 | safe-anchor low-rank transport | safe 변환을 danger prototype에 전달 | **기각**: ajh E01 action 20.38% |
+| 30 | 2026-08-07 03:45-03:52 | MixStyle CAL23 | 환경 style 통계 혼합 | **기각**: source만 개선, ajh action 소폭 악화 |
+| 29 | 2026-08-07 02시대 | risk+novelty 고정 융합 | 환경별 risk 방향 편차 완화 | **기각**: 하나의 가중치가 모든 site에서 실패 |
+| 28 | 2026-08-07 01시대 | safe novelty danger score | target safe manifold 밖 위험 탐지 | **기각**: ajh 개선, yja/mhw 악화 |
+| 27 | 2026-08-07 00-01시대 | target-local safe prototypes | 행동 evidence를 target prompt로 직접 보정 | **부분 승격**: yja pose -2.36 cm, LOSO action 개선 |
+| 23-24 | 2026-08-06 23시대 | dynamic encoder + global prompt | 정적 환경 제거와 support 안정성 확인 | CAL27의 기반, global shift 단독은 불충분 |
+
+재현 코드의 checkpoint는 용량 때문에 Git에 넣지 않는다. calibration 코드와 품질 게이트,
+고정 protocol audit만 저장한다. 핵심 수치의 기계 판독 원본은
+[`CAL23-CAL43 calibration audit`](docs/results/cal23_cal34_calibration_audit.json),
+실제 품질 게이트와 거부 규약은
+[`Calibration Deployment Contract`](docs/CALIBRATION_DEPLOYMENT.md)에 있다.
+
+```powershell
+# CAL23 source/LOSO dynamic encoder
+python -m notifi_pose.tools.train_cal23_dynamic_meta_kp10 `
+  --exp loso --fold test_ajh --classification-only `
+  --run-dir work_v2/runs/cal23_loso_test_ajh
+
+# CAL27 fixed yja pose/action audit
+python -m notifi_pose.tools.evaluate_cal27_local_prototype_kp10 `
+  --target-reserve-per-class 8
+
+# CAL41 signed phase encoder와 CAL43 guarded audit
+python -m notifi_pose.tools.train_cal23_dynamic_meta_kp10 `
+  --feature-mode physical_phase --classification-only `
+  --run-dir work_v2/runs/cal41_physical_phase
+python -m notifi_pose.tools.audit_cal42_phase_ensemble `
+  --preserve-energy-danger --phase-weight 0.25 `
+  --energy-checkpoint work_v2/runs/cal23/calibration_candidate.pt `
+  --phase-checkpoint work_v2/runs/cal41_physical_phase/calibration_candidate.pt `
+  --run-dir work_v2/runs/cal42_audit
+
+# CAL33 episodic risk 학습과 16-draw unseen 감사
+python -m notifi_pose.tools.train_cal33_meta_risk `
+  --cal23-checkpoint work_v2/runs/cal23/calibration_candidate.pt `
+  --exp loso --fold test_ajh --run-dir work_v2/runs/cal33
+python -m notifi_pose.tools.audit_cal33_meta_risk `
+  --cal23-checkpoint work_v2/runs/cal23/calibration_candidate.pt `
+  --cal33-checkpoint work_v2/runs/cal33/meta_risk_candidate.pt `
+  --loso-fold test_ajh --target-environment E01 `
+  --run-dir work_v2/runs/cal33_audit
+```
+
+## 폐기된 초기 calibration 해석: CAL1-CAL5
+
+CAL5 당시에는 yja/E02의 통계적 최적 순열 `[TX2,TX1,TX3]`을 물리 link mismatch로
+해석했다. 이후 raw CSV와 보드 계약을 다시 감사해 모든 subject가 동일한
+`TX1=South, TX2=West, TX3=East` 순서를 사용했음을 확인했다. 따라서 아래 CAL5 순열은
+통계적 action view 실험으로만 남기며, 물리 매핑 수정 또는 현재 최선으로 간주하지 않는다.
 
 calibration support 16개의 알려진 safe 행동만으로 TX 6개 순열을 비교하면 source의
 `ajh_E03/mhw_E03`는 모두 `[TX1,TX2,TX3]`를 선택하지만 yja/E02는
-`[TX2,TX1,TX3]`를 선택한다. 이 매핑은 모델 기준 `South←input TX2`,
-`West←input TX1`, `East←input TX3`를 뜻한다. support fused accuracy는 원래 순서
+`[TX2,TX1,TX3]`를 선택했다. 이는 물리 방향 변경이 아니라 통계적 view였다. support fused accuracy는 원래 순서
 `1/16`에서 교환 후 `4/16`으로 상승했다. query 행동·위험·pose GT는 이 선택에 사용하지
 않았다.
 
 ```mermaid
 flowchart LR
     A["safe support CSI 16개 + 알려진 행동"] --> B["TX 6순열 support-only 감사"]
-    B --> C["물리 방향에 맞는 link mapping"]
+    B --> C["통계적 action view (현재 폐기)"]
     C --> D["frozen directional KP4 encoder"]
     D --> E{"mapped support accuracy >= 80%"}
     E -->|"yes"| F["adapter 생략"]
@@ -46,14 +246,15 @@ branch, pose는 CAL5 adapted branch를 사용한다.
 | Danger recall | 0/50 | 0/50 | 0/50 | **15/50** | **15/50** |
 | Safe-to-danger | 21/134 | 26/134 | 21/134 | **7/134** | **7/134** |
 
-CAL5는 현재까지의 unseen 최선이지만 published seen KP10 `12.885 cm`, danger
-`19.829 cm`와 차이가 크다. 따라서 **“어떤 데이터에서도 seen 성능”은 달성하지 않았다**.
+CAL5는 당시 yja/E02 단일 audit에서만 가장 낮은 pose 오차를 보였고, 이후 multi-site
+감사에서는 물리 link 보정으로 일반화되지 않았다. published seen KP10 `12.885 cm`, danger
+`19.829 cm`와도 차이가 크다. 따라서 **“어떤 데이터에서도 seen 성능”은 달성하지 않았다**.
 보드 ID·물리 방향이 잘못되거나 support 자체가 인식되지 않으면 모델이 임의 pose를 내지
 않고 calibration 실패로 거부해야 한다. 현재 yja mapped support도 `4/16`이라 품질이 낮다.
 다음 데이터 수집부터는 trial 시작 전에 TX 방향/보드 ID 자동 검증을 필수로 저장해야 한다.
 요약 원본은 [`CAL2-CAL5 unseen audit`](docs/results/cal2_cal5_unseen_audit.json)에 있다.
 
-## 현재 calibration 후보: CAL1-KP10
+## 이전 calibration 후보: CAL1-KP10
 
 버전명은 `CAL1-KP10`처럼 **calibration 버전-행동 복원 모델 버전**으로 기록한다.
 CAL1은 사용자가 새 환경에서 수집한 safe support CSI를 먼저 읽고, 그 환경의 보정 토큰을
@@ -353,8 +554,8 @@ python -m notifi_pose.tools.evaluate_csi_proximity_profile
 
 | 번호 / 날짜(KST) | 상세 내용과 목적 | Validation | Fixed test | 결론 |
 |---|---|---|---|---|
-| CAL5-LINKMAP-SUPPORT-KP10 / 2026-08-06 23:15 | support-only TX mapping 후 support accuracy가 80% 미만인 site만 bounded adapter; pose와 classification branch 분리 | source E03는 identity mapping 및 adapter skip | yja overall **29.148**, danger **37.391**, distal **55.432** cm; action **16.60%**, recall **15/50** | 현재 unseen 최선, seen 수준 미달로 배포 완료 아님 |
-| CAL4-LINKMAP-KP10 / 2026-08-06 23:09 | 8 safe 행동 x 2 support로 TX 6순열 선택 | ajh/mhw E03 모두 `[0,1,2]` | yja `[1,0,2]`; overall 30.387→**29.339**, recall 0→**30%**, 오경보 21→**7** | yja TX1/TX2 입력 계약 불일치 발견, 채택 |
+| CAL5-LINKMAP-SUPPORT-KP10 / 2026-08-06 23:15 | support-only TX mapping 후 support accuracy가 80% 미만인 site만 bounded adapter; pose와 classification branch 분리 | source E03는 identity mapping 및 adapter skip | yja overall **29.148**, danger **37.391**, distal **55.432** cm; action **16.60%**, recall **15/50** | yja 단일 audit 개선이나 multi-site 물리 보정으로 일반화되지 않아 폐기 |
+| CAL4-LINKMAP-KP10 / 2026-08-06 23:09 | 8 safe 행동 x 2 support로 TX 6순열 선택 | ajh/mhw E03 모두 `[0,1,2]` | yja `[1,0,2]`; overall 30.387→**29.339**, recall 0→**30%**, 오경보 21→**7** | 물리 배선 차이가 아닌 통계적 view로 판명되어 폐기 |
 | CAL3-KP10 / 2026-08-06 23:03 | 알려진 safe support 행동을 source prototype에 맞추는 현장 feature adaptation | 120 step에서 source pose 악화, 승격 실패 | overall 30.387→30.193, action 9.27→12.36%, recall 0% | 단독 사용 기각, CAL5 pose branch에 제한 결합 |
 | CAL2-KP10 / 2026-08-06 22:52 | raw CSI 저주파 환경/고주파 동작 분리, domain adversarial held-site 학습 | strength 0.5에서 danger 소폭 개선, composite 동일권 | overall 30.387→30.280, danger 39.252→39.226, action 악화 | 통계 정렬 단독으로 의미 있는 일반화 실패 |
 | CAL1-KP10 / 2026-08-06 22:38 | safe 8행동 x 2 support-set token으로 frozen KP10 feature를 보정; source E03에서 strength 선택 후 yja/E02 1회 평가 | E03 overall 10.030→**9.999**, danger 11.354→**11.224**, distal 16.515→**16.326** cm | yja overall 30.472→**30.463**, danger 39.252→39.341, distal 58.231→58.373 cm; recall 0→2/50, safe 오경보 22→29 | source 개선이 yja danger로 일반화되지 않아 **승격 기각**, KP10 fallback 유지 |
