@@ -2,6 +2,57 @@
 
 Wi-Fi CSI만 입력받아 시간에 따른 사람의 **GVHMR SMPL-22 3D pose와 root trajectory**를 복원하는 연구 코드입니다. 영상과 GVHMR은 학습용 GT 생성에만 사용하며, 검증과 실제 추론에는 CSI만 사용합니다.
 
+## 현재 unseen calibration 최선: CAL5-LINKMAP-SUPPORT-KP10
+
+2026-08-06 현재 unseen 환경 최선은 **CAL5-LINKMAP-SUPPORT-KP10**이다. 다만 아직
+seen 수준에 도달하지 못했으므로 배포 완료 모델로 부르지 않는다. CAL1의 post-encoder
+amortized token, CAL2의 raw moment 정렬, CAL3의 feature adaptation을 각각 분리해 감사한
+결과, yja/E02의 가장 큰 문제는 일반적인 방 변화만이 아니라 **파일의 TX1/TX2 순서와
+모델의 물리 방향 계약이 맞지 않는 것**이었다.
+
+calibration support 16개의 알려진 safe 행동만으로 TX 6개 순열을 비교하면 source의
+`ajh_E03/mhw_E03`는 모두 `[TX1,TX2,TX3]`를 선택하지만 yja/E02는
+`[TX2,TX1,TX3]`를 선택한다. 이 매핑은 모델 기준 `South←input TX2`,
+`West←input TX1`, `East←input TX3`를 뜻한다. support fused accuracy는 원래 순서
+`1/16`에서 교환 후 `4/16`으로 상승했다. query 행동·위험·pose GT는 이 선택에 사용하지
+않았다.
+
+```mermaid
+flowchart LR
+    A["safe support CSI 16개 + 알려진 행동"] --> B["TX 6순열 support-only 감사"]
+    B --> C["물리 방향에 맞는 link mapping"]
+    C --> D["frozen directional KP4 encoder"]
+    D --> E{"mapped support accuracy >= 80%"}
+    E -->|"yes"| F["adapter 생략"]
+    E -->|"no"| G["bounded CAL3 site adapter"]
+    F --> H["KP10 action/risk/motion retrieval"]
+    G --> H
+    H --> I["pose: adapted branch"]
+    H --> J["action/risk: mapped-only branch"]
+```
+
+adapter는 mapped support가 80% 미만일 때만 scale/bias/dynamic/12-rank transform을
+120 step 학습한다. support의 알려진 행동만 사용하며 pose GT와 danger label은 쓰지 않는다.
+adapter가 yja pose는 개선했지만 행동 정확도는 낮췄으므로, 최종 분류는 CAL4 mapped-only
+branch, pose는 CAL5 adapted branch를 사용한다.
+
+| yja/E02 query metric | KP10 | CAL2 raw | CAL3 support | CAL4 link map | **CAL5 최종** |
+|---|---:|---:|---:|---:|---:|
+| Overall pose | 30.387 | 30.280 | 30.193 | 29.339 | **29.148 cm** |
+| Danger pose | 39.252 | 39.226 | 38.890 | 38.001 | **37.391 cm** |
+| Danger distal | 58.231 | 58.157 | 57.663 | 56.342 | **55.432 cm** |
+| Danger endpoint | 46.559 | 46.475 | 45.975 | 43.474 | **42.455 cm** |
+| Action accuracy | 9.27% | 8.11% | 12.36% | **16.60%** | **16.60%** |
+| Danger recall | 0/50 | 0/50 | 0/50 | **15/50** | **15/50** |
+| Safe-to-danger | 21/134 | 26/134 | 21/134 | **7/134** | **7/134** |
+
+CAL5는 현재까지의 unseen 최선이지만 published seen KP10 `12.885 cm`, danger
+`19.829 cm`와 차이가 크다. 따라서 **“어떤 데이터에서도 seen 성능”은 달성하지 않았다**.
+보드 ID·물리 방향이 잘못되거나 support 자체가 인식되지 않으면 모델이 임의 pose를 내지
+않고 calibration 실패로 거부해야 한다. 현재 yja mapped support도 `4/16`이라 품질이 낮다.
+다음 데이터 수집부터는 trial 시작 전에 TX 방향/보드 ID 자동 검증을 필수로 저장해야 한다.
+요약 원본은 [`CAL2-CAL5 unseen audit`](docs/results/cal2_cal5_unseen_audit.json)에 있다.
+
 ## 현재 calibration 후보: CAL1-KP10
 
 버전명은 `CAL1-KP10`처럼 **calibration 버전-행동 복원 모델 버전**으로 기록한다.
@@ -302,6 +353,10 @@ python -m notifi_pose.tools.evaluate_csi_proximity_profile
 
 | 번호 / 날짜(KST) | 상세 내용과 목적 | Validation | Fixed test | 결론 |
 |---|---|---|---|---|
+| CAL5-LINKMAP-SUPPORT-KP10 / 2026-08-06 23:15 | support-only TX mapping 후 support accuracy가 80% 미만인 site만 bounded adapter; pose와 classification branch 분리 | source E03는 identity mapping 및 adapter skip | yja overall **29.148**, danger **37.391**, distal **55.432** cm; action **16.60%**, recall **15/50** | 현재 unseen 최선, seen 수준 미달로 배포 완료 아님 |
+| CAL4-LINKMAP-KP10 / 2026-08-06 23:09 | 8 safe 행동 x 2 support로 TX 6순열 선택 | ajh/mhw E03 모두 `[0,1,2]` | yja `[1,0,2]`; overall 30.387→**29.339**, recall 0→**30%**, 오경보 21→**7** | yja TX1/TX2 입력 계약 불일치 발견, 채택 |
+| CAL3-KP10 / 2026-08-06 23:03 | 알려진 safe support 행동을 source prototype에 맞추는 현장 feature adaptation | 120 step에서 source pose 악화, 승격 실패 | overall 30.387→30.193, action 9.27→12.36%, recall 0% | 단독 사용 기각, CAL5 pose branch에 제한 결합 |
+| CAL2-KP10 / 2026-08-06 22:52 | raw CSI 저주파 환경/고주파 동작 분리, domain adversarial held-site 학습 | strength 0.5에서 danger 소폭 개선, composite 동일권 | overall 30.387→30.280, danger 39.252→39.226, action 악화 | 통계 정렬 단독으로 의미 있는 일반화 실패 |
 | CAL1-KP10 / 2026-08-06 22:38 | safe 8행동 x 2 support-set token으로 frozen KP10 feature를 보정; source E03에서 strength 선택 후 yja/E02 1회 평가 | E03 overall 10.030→**9.999**, danger 11.354→**11.224**, distal 16.515→**16.326** cm | yja overall 30.472→**30.463**, danger 39.252→39.341, distal 58.231→58.373 cm; recall 0→2/50, safe 오경보 22→29 | source 개선이 yja danger로 일반화되지 않아 **승격 기각**, KP10 fallback 유지 |
 | KP11-DYNAMIC-MOTION / 2026-08-06 21:36 | 잠긴 KP10 CSI-only anchor에 multi-scale dynamic CSI, predicted-action FiLM, 직접 bone rotation/FK, phase/contact/profile 보조 감독 적용 | epoch 1, overall **11.198**, danger **15.677**, danger distal **22.892** cm, speed corr 0.5441 | **미개봉** | 0.01 cm 미만 변화와 motion gate 실패로 기각, KP10 유지 |
 | MHW-GVHMR-STAGE-VIS / 2026-08-06 19:01 | mhw 자세 라벨별 중앙 trial을 KP10으로 CSI-only 추론하고 원본 영상 없는 stick/공식 GVHMR-style SMPL 영상 생성 | 성능 선택 없음, GT 오차로 샘플 선택 안 함 | 16라벨 x 2모드, 32/32 영상 QA 통과 | `hmr4d` PyTorch3D renderer + parent-relative SMPL IK/LBS, 84.5MB 로컬 산출물, absence는 GT가 없어 제외 |
