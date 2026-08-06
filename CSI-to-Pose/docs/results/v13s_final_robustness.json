@@ -1,0 +1,356 @@
+{
+  "run": "p2_v12_link_failure_guard_audit",
+  "protocol": "single_split_lmh_e01",
+  "selection_split": "validation",
+  "test_used": false,
+  "audit_modes": [
+    "clean",
+    "time_jitter_2",
+    "drop_one_link",
+    "drop_link_0",
+    "drop_link_1",
+    "drop_link_2",
+    "drop_link_burst",
+    "drop_link_burst_early",
+    "drop_link_burst_late",
+    "drop_link_burst_shifted",
+    "subcarrier_band",
+    "gain_phase",
+    "gain_phase_trial"
+  ],
+  "base_configuration": {
+    "p2_checkpoint": "work_v2\\runs\\p2_sub_single_clean_finetune\\best_model.pt",
+    "pose_checkpoints": [
+      "work_v2\\runs\\p2_v12r_corrected_rf_pose_finetune\\best_model.pt",
+      "work_v2\\runs\\p2_v12x_shift_rf_pose_seed23\\best_model.pt"
+    ],
+    "pose_weights": [
+      0.6,
+      0.4
+    ],
+    "root_checkpoints": [
+      "work_v2\\runs\\p2_v12p_direct_root_multiscale_seed7\\best_model.pt",
+      "work_v2\\runs\\p2_v13f_conditioned_root\\best_model.pt"
+    ],
+    "root_weights": [
+      0.19999999999999996,
+      0.8
+    ],
+    "residual_window": 31,
+    "residual_blend": 1.0,
+    "bone_blend": 0.25,
+    "bone_symmetric": true,
+    "classification_expert_checkpoints": [
+      "work_v2\\runs\\p2_v11v_classification_expert_seed17\\best_model.pt",
+      "work_v2\\runs\\p2_v12v_corrected_rf_classification\\best_model.pt"
+    ],
+    "classification_expert_weights": [
+      0.5,
+      0.5
+    ],
+    "classification_expert_strength": 1.0,
+    "hierarchical_class_weight": 0.6,
+    "final_danger_logit_bias": 0.35000000000000003,
+    "shared_backbone_execution": true
+  },
+  "shared_guard_backbone": true,
+  "minimum_link_coverage": 0.5,
+  "partial_pose_strength_scale": 1.0,
+  "partial_root_strength_scale": 1.0,
+  "classification_minimum_link_coverage": 0.0,
+  "pose_calibration": "docs\\results\\v12_link_failure_pose_calibration.json",
+  "root_calibration": "docs\\results\\v13_conditioned_link_failure_root_calibration.json",
+  "secondary_root_calibration": "docs\\results\\v12_link_failure_root_calibration.json",
+  "secondary_root_links": [
+    2
+  ],
+  "classification_calibration": "docs\\results\\v13_link_specific_danger_recall_calibration.json",
+  "results": {
+    "clean": {
+      "trajectory": {
+        "mpjpe_m": 0.13302871553552528,
+        "dynamic_mpjpe_m": 0.1656163082833388,
+        "root_error_m": 0.30919524758817657,
+        "pose_speed_ratio": 1.0069292832780443,
+        "danger_mpjpe_m": 0.4439189244593893,
+        "danger_distal_mpjpe_m": 0.45899289335523336,
+        "danger_endpoint_mpjpe_m": 0.5527434272425515,
+        "danger_pose_mpjpe_m": 0.2022727736404964,
+        "danger_pose_distal_mpjpe_m": 0.29480869876486915,
+        "danger_pose_endpoint_mpjpe_m": 0.23306476888912064,
+        "danger_speed_correlation": 0.3549632145091891
+      },
+      "class_accuracy": 0.9604862928390503,
+      "class_macro_f1": 0.9519333839416504,
+      "risk_accuracy": 0.978723406791687,
+      "risk_macro_f1": 0.9763397574424744,
+      "danger_recall": 0.9571428298950195,
+      "danger_precision": 0.9710144996643066,
+      "safe_to_danger": 2
+    },
+    "time_jitter_2": {
+      "trajectory": {
+        "mpjpe_m": 0.13311194830115824,
+        "dynamic_mpjpe_m": 0.1660831247720478,
+        "root_error_m": 0.3094747440652951,
+        "pose_speed_ratio": 1.0175592320785987,
+        "danger_mpjpe_m": 0.4413434509720121,
+        "danger_distal_mpjpe_m": 0.4560675629547664,
+        "danger_endpoint_mpjpe_m": 0.5494351212467466,
+        "danger_pose_mpjpe_m": 0.20240690665585653,
+        "danger_pose_distal_mpjpe_m": 0.29499721633536474,
+        "danger_pose_endpoint_mpjpe_m": 0.2329338268509933,
+        "danger_speed_correlation": 0.3207309121922923
+      },
+      "class_accuracy": 0.9604862928390503,
+      "class_macro_f1": 0.9519333839416504,
+      "risk_accuracy": 0.978723406791687,
+      "risk_macro_f1": 0.9763397574424744,
+      "danger_recall": 0.9571428298950195,
+      "danger_precision": 0.9710144996643066,
+      "safe_to_danger": 2
+    },
+    "drop_one_link": {
+      "trajectory": {
+        "mpjpe_m": 0.2044106422849591,
+        "dynamic_mpjpe_m": 0.21903582156371715,
+        "root_error_m": 0.42772002382174373,
+        "pose_speed_ratio": 1.4303817648779948,
+        "danger_mpjpe_m": 0.5728306670274054,
+        "danger_distal_mpjpe_m": 0.5878719859889575,
+        "danger_endpoint_mpjpe_m": 0.7403424822858402,
+        "danger_pose_mpjpe_m": 0.27514073635850633,
+        "danger_pose_distal_mpjpe_m": 0.4059695452451706,
+        "danger_pose_endpoint_mpjpe_m": 0.3236647098192147,
+        "danger_speed_correlation": 0.128512760132019
+      },
+      "class_accuracy": 0.6474164128303528,
+      "class_macro_f1": 0.6388251185417175,
+      "risk_accuracy": 0.8176291584968567,
+      "risk_macro_f1": 0.7995530962944031,
+      "danger_recall": 0.8857142925262451,
+      "danger_precision": 0.6391752362251282,
+      "safe_to_danger": 20
+    },
+    "drop_link_0": {
+      "trajectory": {
+        "mpjpe_m": 0.19766850337859185,
+        "dynamic_mpjpe_m": 0.21378156084066896,
+        "root_error_m": 0.4208856884685774,
+        "pose_speed_ratio": 1.427216880682294,
+        "danger_mpjpe_m": 0.5314800179430417,
+        "danger_distal_mpjpe_m": 0.554814667573997,
+        "danger_endpoint_mpjpe_m": 0.6939474838120597,
+        "danger_pose_mpjpe_m": 0.27186803594231607,
+        "danger_pose_distal_mpjpe_m": 0.40332944031272616,
+        "danger_pose_endpoint_mpjpe_m": 0.32706168868712016,
+        "danger_speed_correlation": 0.07229548130250935
+      },
+      "class_accuracy": 0.7264437675476074,
+      "class_macro_f1": 0.7073952555656433,
+      "risk_accuracy": 0.8358662724494934,
+      "risk_macro_f1": 0.8218600749969482,
+      "danger_recall": 0.8857142925262451,
+      "danger_precision": 0.6262626051902771,
+      "safe_to_danger": 25
+    },
+    "drop_link_1": {
+      "trajectory": {
+        "mpjpe_m": 0.2039204256816043,
+        "dynamic_mpjpe_m": 0.22580942603300758,
+        "root_error_m": 0.4203082449615948,
+        "pose_speed_ratio": 1.2224223642990513,
+        "danger_mpjpe_m": 0.5362896086914198,
+        "danger_distal_mpjpe_m": 0.5553036423666137,
+        "danger_endpoint_mpjpe_m": 0.6564203522035054,
+        "danger_pose_mpjpe_m": 0.25759690968053683,
+        "danger_pose_distal_mpjpe_m": 0.37879715114831924,
+        "danger_pose_endpoint_mpjpe_m": 0.29219281907592504,
+        "danger_speed_correlation": 0.23012351553354946
+      },
+      "class_accuracy": 0.5835866332054138,
+      "class_macro_f1": 0.5790388584136963,
+      "risk_accuracy": 0.7872340679168701,
+      "risk_macro_f1": 0.7593154907226562,
+      "danger_recall": 0.9142857193946838,
+      "danger_precision": 0.5423728823661804,
+      "safe_to_danger": 28
+    },
+    "drop_link_2": {
+      "trajectory": {
+        "mpjpe_m": 0.20338369370807732,
+        "dynamic_mpjpe_m": 0.21832947799963737,
+        "root_error_m": 0.4398349359631538,
+        "pose_speed_ratio": 1.3478640421117178,
+        "danger_mpjpe_m": 0.6072552331856319,
+        "danger_distal_mpjpe_m": 0.6179226562380791,
+        "danger_endpoint_mpjpe_m": 0.7486137049538749,
+        "danger_pose_mpjpe_m": 0.2873911126383713,
+        "danger_pose_distal_mpjpe_m": 0.4228401801415852,
+        "danger_pose_endpoint_mpjpe_m": 0.33439565524458886,
+        "danger_speed_correlation": 0.061342408624477686
+      },
+      "class_accuracy": 0.6930091381072998,
+      "class_macro_f1": 0.6916927099227905,
+      "risk_accuracy": 0.826747715473175,
+      "risk_macro_f1": 0.8120260834693909,
+      "danger_recall": 0.8142856955528259,
+      "danger_precision": 0.6951219439506531,
+      "safe_to_danger": 17
+    },
+    "drop_link_burst": {
+      "trajectory": {
+        "mpjpe_m": 0.16777534736763863,
+        "dynamic_mpjpe_m": 0.20523968722615668,
+        "root_error_m": 0.37284811793693473,
+        "pose_speed_ratio": 1.620165541838469,
+        "danger_mpjpe_m": 0.5172447681427002,
+        "danger_distal_mpjpe_m": 0.5294238290616444,
+        "danger_endpoint_mpjpe_m": 0.5750146467770849,
+        "danger_pose_mpjpe_m": 0.2359052310032504,
+        "danger_pose_distal_mpjpe_m": 0.3463679875646319,
+        "danger_pose_endpoint_mpjpe_m": 0.23906749646578515,
+        "danger_speed_correlation": 0.15250252233818173
+      },
+      "class_accuracy": 0.8966565132141113,
+      "class_macro_f1": 0.8858691453933716,
+      "risk_accuracy": 0.9392096996307373,
+      "risk_macro_f1": 0.9299024939537048,
+      "danger_recall": 0.9285714030265808,
+      "danger_precision": 0.8552631735801697,
+      "safe_to_danger": 7
+    },
+    "drop_link_burst_early": {
+      "trajectory": {
+        "mpjpe_m": 0.16604355309335958,
+        "dynamic_mpjpe_m": 0.190942906176866,
+        "root_error_m": 0.37022144899718346,
+        "pose_speed_ratio": 1.4056057521875875,
+        "danger_mpjpe_m": 0.4904351836868695,
+        "danger_distal_mpjpe_m": 0.5102960099067007,
+        "danger_endpoint_mpjpe_m": 0.5874423250555992,
+        "danger_pose_mpjpe_m": 0.22790432455284254,
+        "danger_pose_distal_mpjpe_m": 0.332441970705986,
+        "danger_pose_endpoint_mpjpe_m": 0.2419454770428794,
+        "danger_speed_correlation": 0.26817493912364754
+      },
+      "class_accuracy": 0.9209726452827454,
+      "class_macro_f1": 0.9088066220283508,
+      "risk_accuracy": 0.9665653705596924,
+      "risk_macro_f1": 0.962644636631012,
+      "danger_recall": 0.9571428298950195,
+      "danger_precision": 0.9305555820465088,
+      "safe_to_danger": 4
+    },
+    "drop_link_burst_late": {
+      "trajectory": {
+        "mpjpe_m": 0.1730778710827941,
+        "dynamic_mpjpe_m": 0.19510282450981103,
+        "root_error_m": 0.3838282556997405,
+        "pose_speed_ratio": 1.4484287007796415,
+        "danger_mpjpe_m": 0.5440069341233799,
+        "danger_distal_mpjpe_m": 0.5553733057209423,
+        "danger_endpoint_mpjpe_m": 0.7325050875544548,
+        "danger_pose_mpjpe_m": 0.251229923005615,
+        "danger_pose_distal_mpjpe_m": 0.37060934177466803,
+        "danger_pose_endpoint_mpjpe_m": 0.31421807993735584,
+        "danger_speed_correlation": 0.1992081324112535
+      },
+      "class_accuracy": 0.8844984769821167,
+      "class_macro_f1": 0.8718175292015076,
+      "risk_accuracy": 0.9392096996307373,
+      "risk_macro_f1": 0.9294679760932922,
+      "danger_recall": 0.9142857193946838,
+      "danger_precision": 0.8533333539962769,
+      "safe_to_danger": 7
+    },
+    "drop_link_burst_shifted": {
+      "trajectory": {
+        "mpjpe_m": 0.1690150257436529,
+        "dynamic_mpjpe_m": 0.20063331737113532,
+        "root_error_m": 0.3715156110387946,
+        "pose_speed_ratio": 1.5511561311719955,
+        "danger_mpjpe_m": 0.5237597061055047,
+        "danger_distal_mpjpe_m": 0.537154486988272,
+        "danger_endpoint_mpjpe_m": 0.5985377777900015,
+        "danger_pose_mpjpe_m": 0.24253591299057006,
+        "danger_pose_distal_mpjpe_m": 0.3572527091417994,
+        "danger_pose_endpoint_mpjpe_m": 0.25574622601270675,
+        "danger_speed_correlation": 0.14776992340838271
+      },
+      "class_accuracy": 0.8723404407501221,
+      "class_macro_f1": 0.8581065535545349,
+      "risk_accuracy": 0.93313068151474,
+      "risk_macro_f1": 0.9222726821899414,
+      "danger_recall": 0.9142857193946838,
+      "danger_precision": 0.8421052694320679,
+      "safe_to_danger": 7
+    },
+    "subcarrier_band": {
+      "trajectory": {
+        "mpjpe_m": 0.15157318119964902,
+        "dynamic_mpjpe_m": 0.18460498775230416,
+        "root_error_m": 0.3635343560860271,
+        "pose_speed_ratio": 1.0788005397088332,
+        "danger_mpjpe_m": 0.4973198024289949,
+        "danger_distal_mpjpe_m": 0.5102211422153882,
+        "danger_endpoint_mpjpe_m": 0.6358707800507546,
+        "danger_pose_mpjpe_m": 0.23104702521647727,
+        "danger_pose_distal_mpjpe_m": 0.3385828550372805,
+        "danger_pose_endpoint_mpjpe_m": 0.2762521933232035,
+        "danger_speed_correlation": 0.26345424290214264
+      },
+      "class_accuracy": 0.9088146090507507,
+      "class_macro_f1": 0.8976871967315674,
+      "risk_accuracy": 0.9665653705596924,
+      "risk_macro_f1": 0.9560659527778625,
+      "danger_recall": 0.9285714030265808,
+      "danger_precision": 0.9154929518699646,
+      "safe_to_danger": 1
+    },
+    "gain_phase": {
+      "trajectory": {
+        "mpjpe_m": 0.147393333586672,
+        "dynamic_mpjpe_m": 0.17611816011146822,
+        "root_error_m": 0.33949643265574225,
+        "pose_speed_ratio": 1.0634506887974289,
+        "danger_mpjpe_m": 0.48444654537098747,
+        "danger_distal_mpjpe_m": 0.4960676452943257,
+        "danger_endpoint_mpjpe_m": 0.5922443481428282,
+        "danger_pose_mpjpe_m": 0.21434028670191765,
+        "danger_pose_distal_mpjpe_m": 0.31280677456940925,
+        "danger_pose_endpoint_mpjpe_m": 0.24564543547374862,
+        "danger_speed_correlation": 0.32000064663256383
+      },
+      "class_accuracy": 0.914893627166748,
+      "class_macro_f1": 0.9067037105560303,
+      "risk_accuracy": 0.9696048498153687,
+      "risk_macro_f1": 0.9628376960754395,
+      "danger_recall": 0.9142857193946838,
+      "danger_precision": 0.9696969985961914,
+      "safe_to_danger": 1
+    },
+    "gain_phase_trial": {
+      "trajectory": {
+        "mpjpe_m": 0.1406671719241237,
+        "dynamic_mpjpe_m": 0.17299591210573467,
+        "root_error_m": 0.3292283453697723,
+        "pose_speed_ratio": 1.026128918035831,
+        "danger_mpjpe_m": 0.4659667053392955,
+        "danger_distal_mpjpe_m": 0.4788052761128971,
+        "danger_endpoint_mpjpe_m": 0.5881862595677376,
+        "danger_pose_mpjpe_m": 0.20725197259868894,
+        "danger_pose_distal_mpjpe_m": 0.3030554029558386,
+        "danger_pose_endpoint_mpjpe_m": 0.23976895936897824,
+        "danger_speed_correlation": 0.32073235896282964
+      },
+      "class_accuracy": 0.936170220375061,
+      "class_macro_f1": 0.9243277311325073,
+      "risk_accuracy": 0.9665653705596924,
+      "risk_macro_f1": 0.9610951542854309,
+      "danger_recall": 0.9285714030265808,
+      "danger_precision": 0.9558823704719543,
+      "safe_to_danger": 2
+    }
+  }
+}

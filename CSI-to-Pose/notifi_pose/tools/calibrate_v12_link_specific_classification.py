@@ -72,6 +72,14 @@ def main() -> int:
         "--danger-biases", type=float, nargs="+",
         default=(-0.5, -0.25, 0.0, 0.25, 0.5),
     )
+    parser.add_argument(
+        "--selection-profile", choices=("balanced", "danger_recall"),
+        default="balanced",
+    )
+    parser.add_argument("--max-accuracy-drop", type=float, default=0.03)
+    parser.add_argument(
+        "--max-safe-to-danger-increase", type=int, default=10
+    )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
@@ -136,13 +144,24 @@ def main() -> int:
                 metrics = _metrics(
                     pair, 0.0, float(strength), float(bias)
                 )["risk"]
+                accuracy_drop = (
+                    args.max_accuracy_drop
+                    if args.selection_profile == "danger_recall"
+                    else 0.005
+                )
+                false_alarm_increase = (
+                    args.max_safe_to_danger_increase
+                    if args.selection_profile == "danger_recall"
+                    else 2
+                )
                 feasible = (
                     metrics["accuracy"]
-                    >= baseline["risk"]["accuracy"] - 0.005
+                    >= baseline["risk"]["accuracy"] - accuracy_drop
                     and metrics["danger_recall"]
                     >= baseline["risk"]["danger_recall"]
                     and metrics["safe_to_danger"]
-                    <= baseline["risk"]["safe_to_danger"] + 2
+                    <= baseline["risk"]["safe_to_danger"]
+                    + false_alarm_increase
                 )
                 score = (
                     metrics["macro_f1"]
@@ -156,11 +175,25 @@ def main() -> int:
                     "score": float(score),
                     "metrics": metrics,
                 })
-        selected_risk = max(
+        feasible_risk = (
             [item for item in risk_candidates if item["feasible"]]
-            or risk_candidates,
-            key=lambda item: item["score"],
+            or risk_candidates
         )
+        if args.selection_profile == "danger_recall":
+            selected_risk = max(
+                feasible_risk,
+                key=lambda item: (
+                    item["metrics"]["danger_recall"],
+                    item["metrics"]["macro_f1"],
+                    item["metrics"]["accuracy"],
+                    -item["metrics"]["safe_to_danger"],
+                    -abs(item["danger_bias"]),
+                ),
+            )
+        else:
+            selected_risk = max(
+                feasible_risk, key=lambda item: item["score"]
+            )
         risk_selected.append((
             selected_risk["strength"], selected_risk["danger_bias"]
         ))
@@ -185,6 +218,11 @@ def main() -> int:
         "protocol": args.exp,
         "selection_split": "validation_drop_each_link",
         "test_used_for_selection": False,
+        "selection_profile": args.selection_profile,
+        "max_accuracy_drop": float(args.max_accuracy_drop),
+        "max_safe_to_danger_increase": int(
+            args.max_safe_to_danger_increase
+        ),
         "source_configuration": configuration,
         "expert_checkpoint": str(args.expert_checkpoint),
         "expert_training_config": checkpoint.get("training_config", {}),

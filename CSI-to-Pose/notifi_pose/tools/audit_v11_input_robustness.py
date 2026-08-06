@@ -131,7 +131,9 @@ def _summary(metrics: dict) -> dict:
     keys = (
         "mpjpe_m", "dynamic_mpjpe_m", "root_error_m", "pose_speed_ratio",
         "danger_mpjpe_m", "danger_distal_mpjpe_m",
-        "danger_endpoint_mpjpe_m", "danger_speed_correlation",
+        "danger_endpoint_mpjpe_m", "danger_pose_mpjpe_m",
+        "danger_pose_distal_mpjpe_m", "danger_pose_endpoint_mpjpe_m",
+        "danger_speed_correlation",
     )
     return {key: metrics[key] for key in keys}
 

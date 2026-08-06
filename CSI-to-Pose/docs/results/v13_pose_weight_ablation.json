@@ -1,0 +1,265 @@
+{
+  "run": "p2_v13_pose_candidate_audit",
+  "protocol": "single_split_lmh_e01",
+  "selection_split": "validation",
+  "test_used_for_selection": false,
+  "p2_checkpoint": "work_v2\\runs\\p2_sub_single_clean_finetune\\best_model.pt",
+  "candidates": [
+    {
+      "checkpoint": "work_v2\\runs\\p2_v12r_corrected_rf_pose_finetune\\best_model.pt",
+      "residual_decoder": "subcarrier",
+      "epoch": 6,
+      "training_config": {
+        "protocol": "single_split_lmh_e01",
+        "objective": "pose_only",
+        "residual_decoder": "subcarrier",
+        "seed": 17,
+        "epochs": 6,
+        "patience": 3,
+        "batch_size": 6,
+        "learning_rate": 2e-05,
+        "danger_weight": 2.5,
+        "pose_velocity_weight": 0.05,
+        "pose_velocity_lags": [
+          5
+        ],
+        "pose_bone_weight": 0.05,
+        "pose_endpoint_weight": 0.02,
+        "pose_euclidean_weight": 0.05,
+        "pose_danger_distal_weight": 0.0,
+        "pose_shift_robust_weight": 0.25,
+        "pose_checkpoint_score": "geometry",
+        "root_velocity_weight": 0.02,
+        "root_velocity_lags": [
+          5
+        ],
+        "root_displacement_weight": 0.25,
+        "root_endpoint_weight": 0.1,
+        "alignment_weight": 0.0,
+        "link_dropout_p": 0.1,
+        "max_link_drop": 1,
+        "rf_augment": true,
+        "source_p2": "work_v2/runs/p2_sub_single_clean_finetune/best_model.pt",
+        "warm_start": "work_v2/runs/p2_v12e_shift_robust_pose/best_model.pt"
+      },
+      "validation": {
+        "mpjpe_m": 0.1346963052948316,
+        "dynamic_mpjpe_m": 0.16667978972919398,
+        "pose_speed_ratio": 1.5658407754777783,
+        "danger_pose_mpjpe_m": 0.2060200035572052,
+        "danger_pose_distal_mpjpe_m": 0.3006676779261657,
+        "danger_pose_endpoint_mpjpe_m": 0.23954354311738696,
+        "danger_speed_correlation": 0.33412547172629276
+      }
+    },
+    {
+      "checkpoint": "work_v2\\runs\\p2_v12k_shift_robust_pose_seed7\\best_model.pt",
+      "residual_decoder": "subcarrier",
+      "epoch": 2,
+      "training_config": {
+        "protocol": "single_split_lmh_e01",
+        "objective": "pose_only",
+        "residual_decoder": "subcarrier",
+        "seed": 7,
+        "epochs": 10,
+        "patience": 4,
+        "batch_size": 6,
+        "learning_rate": 5e-05,
+        "danger_weight": 2.5,
+        "pose_velocity_weight": 0.05,
+        "pose_velocity_lags": [
+          5
+        ],
+        "pose_bone_weight": 0.05,
+        "pose_endpoint_weight": 0.02,
+        "pose_euclidean_weight": 0.05,
+        "pose_danger_distal_weight": 0.0,
+        "pose_shift_robust_weight": 0.25,
+        "pose_checkpoint_score": "geometry",
+        "root_velocity_weight": 0.02,
+        "root_velocity_lags": [
+          5
+        ],
+        "root_displacement_weight": 0.25,
+        "root_endpoint_weight": 0.1,
+        "alignment_weight": 0.0,
+        "link_dropout_p": 0.0,
+        "max_link_drop": 2,
+        "rf_augment": false,
+        "source_p2": "work_v2/runs/p2_sub_single_clean_finetune/best_model.pt",
+        "warm_start": "work_v2/runs/p2_v11k_subcarrier_pose_only/best_model.pt"
+      },
+      "validation": {
+        "mpjpe_m": 0.13841312830410307,
+        "dynamic_mpjpe_m": 0.17025063844369864,
+        "pose_speed_ratio": 1.7701220330712724,
+        "danger_pose_mpjpe_m": 0.2116960581924234,
+        "danger_pose_distal_mpjpe_m": 0.30942547917366026,
+        "danger_pose_endpoint_mpjpe_m": 0.24576897248625756,
+        "danger_speed_correlation": 0.3182965600730053
+      }
+    },
+    {
+      "checkpoint": "work_v2\\runs\\p2_v12x_shift_rf_pose_seed23\\best_model.pt",
+      "residual_decoder": "subcarrier",
+      "epoch": 9,
+      "training_config": {
+        "protocol": "single_split_lmh_e01",
+        "objective": "pose_only",
+        "residual_decoder": "subcarrier",
+        "seed": 23,
+        "epochs": 10,
+        "patience": 4,
+        "batch_size": 6,
+        "learning_rate": 5e-05,
+        "danger_weight": 2.5,
+        "pose_velocity_weight": 0.05,
+        "pose_velocity_lags": [
+          5
+        ],
+        "pose_bone_weight": 0.05,
+        "pose_endpoint_weight": 0.02,
+        "pose_euclidean_weight": 0.05,
+        "pose_danger_distal_weight": 0.0,
+        "pose_shift_robust_weight": 0.25,
+        "pose_checkpoint_score": "geometry",
+        "root_velocity_weight": 0.02,
+        "root_velocity_lags": [
+          5
+        ],
+        "root_displacement_weight": 0.25,
+        "root_endpoint_weight": 0.1,
+        "alignment_weight": 0.0,
+        "link_dropout_p": 0.1,
+        "max_link_drop": 1,
+        "rf_augment": true,
+        "source_p2": "work_v2/runs/p2_sub_single_clean_finetune/best_model.pt",
+        "warm_start": "work_v2/runs/p2_v11k_subcarrier_pose_only/best_model.pt"
+      },
+      "validation": {
+        "mpjpe_m": 0.13846853206909837,
+        "dynamic_mpjpe_m": 0.17201309624725758,
+        "pose_speed_ratio": 1.8018847392931738,
+        "danger_pose_mpjpe_m": 0.20797545611858367,
+        "danger_pose_distal_mpjpe_m": 0.3017699697187969,
+        "danger_pose_endpoint_mpjpe_m": 0.23806572588426725,
+        "danger_speed_correlation": 0.3162122044687359
+      }
+    }
+  ],
+  "skipped": [],
+  "ensembles": [
+    {
+      "weights": [
+        0.44999998807907104,
+        0.25,
+        0.30000001192092896
+      ],
+      "validation": {
+        "mpjpe_m": 0.1330284361091871,
+        "dynamic_mpjpe_m": 0.165271977310194,
+        "pose_speed_ratio": 1.003137465887025,
+        "danger_pose_mpjpe_m": 0.2021892137825489,
+        "danger_pose_distal_mpjpe_m": 0.2948771264936243,
+        "danger_pose_endpoint_mpjpe_m": 0.23340483637792722,
+        "danger_speed_correlation": 0.33155866554672164
+      }
+    },
+    {
+      "weights": [
+        0.6000000238418579,
+        0.0,
+        0.4000000059604645
+      ],
+      "validation": {
+        "mpjpe_m": 0.1328911905428247,
+        "dynamic_mpjpe_m": 0.16540135066511472,
+        "pose_speed_ratio": 1.0065677272658897,
+        "danger_pose_mpjpe_m": 0.20171442308596202,
+        "danger_pose_distal_mpjpe_m": 0.2938917494245938,
+        "danger_pose_endpoint_mpjpe_m": 0.23277584314346314,
+        "danger_speed_correlation": 0.3332963915824491
+      }
+    },
+    {
+      "weights": [
+        0.699999988079071,
+        0.0,
+        0.30000001192092896
+      ],
+      "validation": {
+        "mpjpe_m": 0.13281533378693794,
+        "dynamic_mpjpe_m": 0.16519391506131906,
+        "pose_speed_ratio": 1.0111052438332213,
+        "danger_pose_mpjpe_m": 0.2020674938602107,
+        "danger_pose_distal_mpjpe_m": 0.2945948211210115,
+        "danger_pose_endpoint_mpjpe_m": 0.23349836809294564,
+        "danger_speed_correlation": 0.33474422520957886
+      }
+    },
+    {
+      "weights": [
+        0.5,
+        0.0,
+        0.5
+      ],
+      "validation": {
+        "mpjpe_m": 0.13317935130307598,
+        "dynamic_mpjpe_m": 0.16584460623562336,
+        "pose_speed_ratio": 1.0069354571032834,
+        "danger_pose_mpjpe_m": 0.20173686136092459,
+        "danger_pose_distal_mpjpe_m": 0.2937554428619998,
+        "danger_pose_endpoint_mpjpe_m": 0.2324544214776584,
+        "danger_speed_correlation": 0.3313992615256991
+      }
+    },
+    {
+      "weights": [
+        0.5,
+        0.10000000149011612,
+        0.4000000059604645
+      ],
+      "validation": {
+        "mpjpe_m": 0.1329734577841702,
+        "dynamic_mpjpe_m": 0.16543333492339102,
+        "pose_speed_ratio": 1.003731753545013,
+        "danger_pose_mpjpe_m": 0.20175172186323576,
+        "danger_pose_distal_mpjpe_m": 0.2939843262944903,
+        "danger_pose_endpoint_mpjpe_m": 0.2326831976217883,
+        "danger_speed_correlation": 0.33189498096970577
+      }
+    },
+    {
+      "weights": [
+        0.550000011920929,
+        0.15000000596046448,
+        0.30000001192092896
+      ],
+      "validation": {
+        "mpjpe_m": 0.1327972207750593,
+        "dynamic_mpjpe_m": 0.16507609985045976,
+        "pose_speed_ratio": 1.00261724689498,
+        "danger_pose_mpjpe_m": 0.20187322412218367,
+        "danger_pose_distal_mpjpe_m": 0.29436248083199773,
+        "danger_pose_endpoint_mpjpe_m": 0.23312433628099305,
+        "danger_speed_correlation": 0.3329187524471698
+      }
+    },
+    {
+      "weights": [
+        0.6499999761581421,
+        0.10000000149011612,
+        0.25
+      ],
+      "validation": {
+        "mpjpe_m": 0.13272523814960133,
+        "dynamic_mpjpe_m": 0.1649640027517036,
+        "pose_speed_ratio": 1.0063198023733841,
+        "danger_pose_mpjpe_m": 0.2020392196519034,
+        "danger_pose_distal_mpjpe_m": 0.2946810188038009,
+        "danger_pose_endpoint_mpjpe_m": 0.23351723753980227,
+        "danger_speed_correlation": 0.334253614158037
+      }
+    }
+  ]
+}

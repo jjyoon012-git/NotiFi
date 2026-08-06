@@ -1,0 +1,320 @@
+{
+  "status": "validation_selected_csi_action_classifier",
+  "protocol": "single_split_lmh_e01",
+  "selection": {
+    "score": 0.10801651209592819,
+    "epoch": 13,
+    "validation": {
+      "action_accuracy": 0.9142857193946838,
+      "risk_accuracy": 0.9682539701461792,
+      "action_nll": 0.48497217893600464,
+      "risk_nll": 0.14038601517677307,
+      "selection_score": 0.10801651209592819
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 1.634134036929984,
+        "action": 1.5104056094822131,
+        "risk": 0.24745686313039378
+      },
+      "validation": {
+        "action_accuracy": 0.7174603343009949,
+        "risk_accuracy": 0.9015873074531555,
+        "action_nll": 0.899564802646637,
+        "risk_nll": 0.27345696091651917,
+        "selection_score": 0.33194371789693833
+      }
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 0.7057742256867258,
+        "action": 0.6623128652572632,
+        "risk": 0.08692271556509168
+      },
+      "validation": {
+        "action_accuracy": 0.8761904835700989,
+        "risk_accuracy": 0.961904764175415,
+        "action_nll": 0.5714218616485596,
+        "risk_nll": 0.1376294493675232,
+        "selection_score": 0.14994751393795014
+      }
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "loss": 0.5895767964814839,
+        "action": 0.5537075667004836,
+        "risk": 0.07173846642437734
+      },
+      "validation": {
+        "action_accuracy": 0.879365086555481,
+        "risk_accuracy": 0.9650793671607971,
+        "action_nll": 0.5479775667190552,
+        "risk_nll": 0.09976820647716522,
+        "selection_score": 0.14505604907870295
+      }
+    },
+    {
+      "epoch": 4,
+      "train": {
+        "loss": 0.5684283767875872,
+        "action": 0.5336536733727706,
+        "risk": 0.06954940075152799
+      },
+      "validation": {
+        "action_accuracy": 0.882539689540863,
+        "risk_accuracy": 0.9682539701461792,
+        "action_nll": 0.503194272518158,
+        "risk_nll": 0.12931931018829346,
+        "selection_score": 0.14019853770732882
+      }
+    },
+    {
+      "epoch": 5,
+      "train": {
+        "loss": 0.5679485844938379,
+        "action": 0.5317534012229819,
+        "risk": 0.07239037056110408
+      },
+      "validation": {
+        "action_accuracy": 0.8952381014823914,
+        "risk_accuracy": 0.9682539701461792,
+        "action_nll": 0.49731823801994324,
+        "risk_nll": 0.13595013320446014,
+        "selection_score": 0.1273901529610157
+      }
+    },
+    {
+      "epoch": 6,
+      "train": {
+        "loss": 0.5561387962416598,
+        "action": 0.5223208571735182,
+        "risk": 0.06763586862698982
+      },
+      "validation": {
+        "action_accuracy": 0.9079365134239197,
+        "risk_accuracy": 0.9714285731315613,
+        "action_nll": 0.4817972779273987,
+        "risk_nll": 0.13298599421977997,
+        "selection_score": 0.11356155022978782
+      }
+    },
+    {
+      "epoch": 7,
+      "train": {
+        "loss": 0.5545067551888918,
+        "action": 0.5208558573534614,
+        "risk": 0.06730179361214764
+      },
+      "validation": {
+        "action_accuracy": 0.9015873074531555,
+        "risk_accuracy": 0.9682539701461792,
+        "action_nll": 0.5126659274101257,
+        "risk_nll": 0.12825745344161987,
+        "selection_score": 0.12142445087432861
+      }
+    },
+    {
+      "epoch": 8,
+      "train": {
+        "loss": 0.5528515702799747,
+        "action": 0.519471714371129,
+        "risk": 0.06675970877863859
+      },
+      "validation": {
+        "action_accuracy": 0.9015873074531555,
+        "risk_accuracy": 0.9682539701461792,
+        "action_nll": 0.48748579621315,
+        "risk_nll": 0.13295231759548187,
+        "selection_score": 0.12071599557995796
+      }
+    },
+    {
+      "epoch": 9,
+      "train": {
+        "loss": 0.5529387287403408,
+        "action": 0.519665147128858,
+        "risk": 0.06654716773252738
+      },
+      "validation": {
+        "action_accuracy": 0.8984127044677734,
+        "risk_accuracy": 0.9714285731315613,
+        "action_nll": 0.5010464787483215,
+        "risk_nll": 0.13122397661209106,
+        "selection_score": 0.12364521503448486
+      }
+    },
+    {
+      "epoch": 10,
+      "train": {
+        "loss": 0.5528102666139603,
+        "action": 0.518543906902012,
+        "risk": 0.06853271824748892
+      },
+      "validation": {
+        "action_accuracy": 0.8952381014823914,
+        "risk_accuracy": 0.9714285731315613,
+        "action_nll": 0.49740415811538696,
+        "risk_nll": 0.1375340223312378,
+        "selection_score": 0.12677364885807038
+      }
+    },
+    {
+      "epoch": 11,
+      "train": {
+        "loss": 0.5374087142316919,
+        "action": 0.5058224177674243,
+        "risk": 0.06317259802630074
+      },
+      "validation": {
+        "action_accuracy": 0.9079365134239197,
+        "risk_accuracy": 0.9682539701461792,
+        "action_nll": 0.502091646194458,
+        "risk_nll": 0.13567142188549042,
+        "selection_score": 0.11483215615153312
+      }
+    },
+    {
+      "epoch": 12,
+      "train": {
+        "loss": 0.5475358131684755,
+        "action": 0.5147751530534342,
+        "risk": 0.06552132493571232
+      },
+      "validation": {
+        "action_accuracy": 0.9111111164093018,
+        "risk_accuracy": 0.9682539701461792,
+        "action_nll": 0.49258074164390564,
+        "risk_nll": 0.13592548668384552,
+        "selection_score": 0.11137476667761802
+      }
+    },
+    {
+      "epoch": 13,
+      "train": {
+        "loss": 0.5483571494880476,
+        "action": 0.5151150783425883,
+        "risk": 0.06648415297661957
+      },
+      "validation": {
+        "action_accuracy": 0.9142857193946838,
+        "risk_accuracy": 0.9682539701461792,
+        "action_nll": 0.48497217893600464,
+        "risk_nll": 0.14038601517677307,
+        "selection_score": 0.10801651209592819
+      }
+    },
+    {
+      "epoch": 14,
+      "train": {
+        "loss": 0.5463576434474242,
+        "action": 0.51363284729029,
+        "risk": 0.06544959574545685
+      },
+      "validation": {
+        "action_accuracy": 0.9111111164093018,
+        "risk_accuracy": 0.9682539701461792,
+        "action_nll": 0.49267494678497314,
+        "risk_nll": 0.13746176660060883,
+        "selection_score": 0.11139295563101768
+      }
+    },
+    {
+      "epoch": 15,
+      "train": {
+        "loss": 0.5459765580139662,
+        "action": 0.513238610405671,
+        "risk": 0.06547588168790466
+      },
+      "validation": {
+        "action_accuracy": 0.9047619104385376,
+        "risk_accuracy": 0.9682539701461792,
+        "action_nll": 0.5009904503822327,
+        "risk_nll": 0.1442709118127823,
+        "selection_score": 0.11805971816182137
+      }
+    },
+    {
+      "epoch": 16,
+      "train": {
+        "loss": 0.549025043060905,
+        "action": 0.5158036374732068,
+        "risk": 0.06644280931275141
+      },
+      "validation": {
+        "action_accuracy": 0.9079365134239197,
+        "risk_accuracy": 0.9682539701461792,
+        "action_nll": 0.4968273341655731,
+        "risk_nll": 0.13666296005249023,
+        "selection_score": 0.11468414217233658
+      }
+    },
+    {
+      "epoch": 17,
+      "train": {
+        "loss": 0.5494935990948426,
+        "action": 0.5157518049604014,
+        "risk": 0.0674835940528857
+      },
+      "validation": {
+        "action_accuracy": 0.9015873074531555,
+        "risk_accuracy": 0.9682539701461792,
+        "action_nll": 0.4996301531791687,
+        "risk_nll": 0.14422069489955902,
+        "selection_score": 0.1211930100619793
+      }
+    },
+    {
+      "epoch": 18,
+      "train": {
+        "loss": 0.5477152364818674,
+        "action": 0.5145143003840196,
+        "risk": 0.0664018771954273
+      },
+      "validation": {
+        "action_accuracy": 0.9079365134239197,
+        "risk_accuracy": 0.9682539701461792,
+        "action_nll": 0.49426600337028503,
+        "risk_nll": 0.14023543894290924,
+        "selection_score": 0.11464302703738213
+      }
+    },
+    {
+      "epoch": 19,
+      "train": {
+        "loss": 0.5517495172588449,
+        "action": 0.5182641509332155,
+        "risk": 0.0669707303964778
+      },
+      "validation": {
+        "action_accuracy": 0.9111111164093018,
+        "risk_accuracy": 0.9682539701461792,
+        "action_nll": 0.495227187871933,
+        "risk_nll": 0.13834789395332336,
+        "selection_score": 0.11147838413715362
+      }
+    },
+    {
+      "epoch": 20,
+      "train": {
+        "loss": 0.5478887714837727,
+        "action": 0.515078886559135,
+        "risk": 0.06561976965320737
+      },
+      "validation": {
+        "action_accuracy": 0.9015873074531555,
+        "risk_accuracy": 0.9682539701461792,
+        "action_nll": 0.5045614838600159,
+        "risk_nll": 0.14106550812721252,
+        "selection_score": 0.12130939811468124
+      }
+    }
+  ],
+  "test_used_for_selection": false,
+  "inference_inputs": "CSI and link mask only",
+  "feature_root": "work_v2/runs/kp5_mpr_selector_seed17"
+}

@@ -1,0 +1,58 @@
+{
+  "status": "fixed_test_complete_no_test_tuning",
+  "protocol": "single_split_lmh_e01",
+  "test_used_for_selection": false,
+  "selection_source": "validation",
+  "base_configuration": {
+    "name": "p0200_limbs_t050_top5_s750",
+    "weight": 0.2,
+    "pattern": "limbs",
+    "temperature": 0.5,
+    "top_k": 5,
+    "strength": 0.75
+  },
+  "fixed_configuration": {
+    "name": "scalar_limbs_f30_w050_b750",
+    "score": 1.0027397875979474
+  },
+  "metrics": {
+    "kp5_part_motion_profile": {
+      "mpjpe_m": 0.13216547455993435,
+      "distal_mpjpe_m": 0.19156155489266866,
+      "dynamic_mpjpe_m": 0.16715182962142072,
+      "high_motion_mpjpe_m": 0.16403727611223012,
+      "pose_speed_ratio": 0.7208328744299829,
+      "speed_correlation": 0.48999164052351957,
+      "danger_pose_mpjpe_m": 0.2121307180396148,
+      "danger_distal_mpjpe_m": 0.3139129053269114,
+      "danger_endpoint_mpjpe_m": 0.26568542814680507,
+      "danger_high_motion_mpjpe_m": 0.23511024521929877,
+      "danger_torso_angle_deg": 30.744789443697247,
+      "danger_speed_correlation": 0.5387012052615838,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "kp5_motion_warp": {
+      "mpjpe_m": 0.13194180467417316,
+      "distal_mpjpe_m": 0.19127375269456515,
+      "dynamic_mpjpe_m": 0.1660279007031108,
+      "high_motion_mpjpe_m": 0.16295090921764785,
+      "pose_speed_ratio": 0.7183639401273387,
+      "speed_correlation": 0.5088424889489063,
+      "danger_pose_mpjpe_m": 0.21065246649086475,
+      "danger_distal_mpjpe_m": 0.3117658189364842,
+      "danger_endpoint_mpjpe_m": 0.26570519490965777,
+      "danger_high_motion_mpjpe_m": 0.23125843522804124,
+      "danger_torso_angle_deg": 30.52633603640965,
+      "danger_speed_correlation": 0.5797448213079146,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "scores": {
+    "kp5_part_motion_profile": 1.2398664510810309,
+    "kp5_motion_warp": 1.233095982851253
+  },
+  "part_calibration": "work_v2/runs/kp5_part_motion_profile_seed83/reranking_calibration.json",
+  "warp_calibration": "work_v2/runs/kp5_motion_warp/warping_calibration.json"
+}

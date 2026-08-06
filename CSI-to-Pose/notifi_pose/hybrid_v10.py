@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import copy
+
 import torch
 import torch.nn.functional as F
 from torch import nn
@@ -493,6 +495,207 @@ class P2V11DirectRootHybridNet(P2V11SubcarrierHybridNet):
         }
 
 
+class P2V13StateRootHybridNet(P2V11DirectRootHybridNet):
+    """Fuse direct root observations with an integrated velocity trajectory."""
+
+    def __init__(self, base: nn.Module, hidden: int = 128,
+                 dropout: float = 0.05, raw_size: int = 64,
+                 max_delta: float = 0.75, max_step: float = 0.025):
+        super().__init__(
+            base, hidden=hidden, dropout=dropout, raw_size=raw_size,
+            max_delta=max_delta,
+        )
+        self.max_root_step = float(max_step)
+        self.root_velocity_head = nn.Sequential(
+            nn.LayerNorm(hidden), nn.Linear(hidden, hidden), nn.GELU(),
+            nn.Linear(hidden, 3),
+        )
+        self.root_state_gate = nn.Sequential(
+            nn.LayerNorm(hidden), nn.Linear(hidden, 3),
+        )
+        nn.init.zeros_(self.root_velocity_head[-1].weight)
+        nn.init.zeros_(self.root_velocity_head[-1].bias)
+        nn.init.zeros_(self.root_state_gate[-1].weight)
+        nn.init.constant_(self.root_state_gate[-1].bias, 8.0)
+
+    def root_candidate(
+        self, feature: torch.Tensor, root: torch.Tensor,
+        valid: torch.Tensor, pooled: torch.Tensor,
+    ) -> tuple[torch.Tensor, dict]:
+        anchor_delta = 0.30 * torch.tanh(self.root_anchor_head(pooled))
+        trajectory_feature = self.root_trajectory_context(
+            feature.transpose(1, 2)
+        ).transpose(1, 2)
+
+        position_delta = self.max_root_delta * torch.tanh(
+            self.root_position_head(trajectory_feature)
+        )
+        first = valid.to(torch.long).argmax(1)
+        origin = position_delta[
+            torch.arange(len(position_delta), device=position_delta.device), first,
+        ]
+        position_delta = (position_delta - origin[:, None]) * valid[..., None]
+        direct = root + anchor_delta[:, None] + position_delta
+
+        step_delta = self.max_root_step * torch.tanh(
+            self.root_velocity_head(trajectory_feature)
+        )
+        step_delta[:, 0] = 0.0
+        step_delta = step_delta * valid[..., None]
+        base_step = torch.zeros_like(root)
+        base_step[:, 1:] = root[:, 1:] - root[:, :-1]
+        integrated = (
+            root[:, :1] + anchor_delta[:, None]
+            + torch.cumsum(base_step + step_delta, dim=1)
+        )
+
+        gate = torch.sigmoid(self.root_state_gate(trajectory_feature))
+        gate = torch.where(valid[..., None], gate, torch.ones_like(gate))
+        adjusted = gate * direct + (1.0 - gate) * integrated
+        return adjusted, {
+            "root_anchor_delta_v10": anchor_delta,
+            "root_position_delta_v11": position_delta,
+            "root_velocity_delta_v13": step_delta,
+            "root_state_gate_v13": gate,
+            "root_integrated_candidate_v13": integrated,
+        }
+
+
+class P2V13MotionRootHybridNet(P2V11DirectRootHybridNet):
+    """Direct-root decoder with an auxiliary motion-observability head."""
+
+    def __init__(self, base: nn.Module, hidden: int = 128,
+                 dropout: float = 0.05, raw_size: int = 64,
+                 max_delta: float = 0.75):
+        super().__init__(
+            base, hidden=hidden, dropout=dropout, raw_size=raw_size,
+            max_delta=max_delta,
+        )
+        self.motion_observation_head = nn.Sequential(
+            nn.LayerNorm(hidden), nn.Linear(hidden, hidden), nn.GELU(),
+            nn.Linear(hidden, 4),
+        )
+        nn.init.zeros_(self.motion_observation_head[-1].weight)
+        nn.init.zeros_(self.motion_observation_head[-1].bias)
+
+    def root_candidate(
+        self, feature: torch.Tensor, root: torch.Tensor,
+        valid: torch.Tensor, pooled: torch.Tensor,
+    ) -> tuple[torch.Tensor, dict]:
+        adjusted, auxiliary = super().root_candidate(
+            feature, root, valid, pooled
+        )
+        trajectory_feature = self.root_trajectory_context(
+            feature.transpose(1, 2)
+        ).transpose(1, 2)
+        motion = self.motion_observation_head(trajectory_feature)
+        auxiliary.update({
+            "root_velocity_observation_v13": 1.5 * torch.tanh(motion[..., :3]),
+            "pose_speed_observation_v13": motion[..., 3],
+        })
+        return adjusted, auxiliary
+
+
+class P2V13ConditionedRootHybridNet(P2V13MotionRootHybridNet):
+    """Feed the supervised motion estimate back into direct-root decoding."""
+
+    def __init__(self, base: nn.Module, hidden: int = 128,
+                 dropout: float = 0.05, raw_size: int = 64,
+                 max_delta: float = 0.75):
+        super().__init__(
+            base, hidden=hidden, dropout=dropout, raw_size=raw_size,
+            max_delta=max_delta,
+        )
+        self.motion_condition = nn.Linear(4, hidden, bias=False)
+        nn.init.zeros_(self.motion_condition.weight)
+
+    def root_candidate(
+        self, feature: torch.Tensor, root: torch.Tensor,
+        valid: torch.Tensor, pooled: torch.Tensor,
+    ) -> tuple[torch.Tensor, dict]:
+        anchor_delta = 0.30 * torch.tanh(self.root_anchor_head(pooled))
+        trajectory_feature = self.root_trajectory_context(
+            feature.transpose(1, 2)
+        ).transpose(1, 2)
+        motion_raw = self.motion_observation_head(trajectory_feature)
+        motion = torch.cat((
+            1.5 * torch.tanh(motion_raw[..., :3]),
+            motion_raw[..., 3:4],
+        ), dim=-1)
+        conditioned = trajectory_feature + self.motion_condition(motion)
+        position_delta = self.max_root_delta * torch.tanh(
+            self.root_position_head(conditioned)
+        )
+        first = valid.to(torch.long).argmax(1)
+        origin = position_delta[
+            torch.arange(len(position_delta), device=position_delta.device), first,
+        ]
+        position_delta = (position_delta - origin[:, None]) * valid[..., None]
+        adjusted = root + anchor_delta[:, None] + position_delta
+        return adjusted, {
+            "root_anchor_delta_v10": anchor_delta,
+            "root_position_delta_v11": position_delta,
+            "root_velocity_observation_v13": motion[..., :3],
+            "pose_speed_observation_v13": motion[..., 3],
+            "motion_condition_v13": self.motion_condition(motion),
+        }
+
+
+class P2V13DecoupledMotionRootHybridNet(P2V13ConditionedRootHybridNet):
+    """Keep root context stable while a separate branch learns CSI motion."""
+
+    def __init__(self, base: nn.Module, hidden: int = 128,
+                 dropout: float = 0.05, raw_size: int = 64,
+                 max_delta: float = 0.75):
+        super().__init__(
+            base, hidden=hidden, dropout=dropout, raw_size=raw_size,
+            max_delta=max_delta,
+        )
+        self.motion_trajectory_context = copy.deepcopy(
+            self.root_trajectory_context
+        )
+
+    def initialize_motion_context_from_root(self) -> None:
+        self.motion_trajectory_context.load_state_dict(
+            self.root_trajectory_context.state_dict()
+        )
+
+    def root_candidate(
+        self, feature: torch.Tensor, root: torch.Tensor,
+        valid: torch.Tensor, pooled: torch.Tensor,
+    ) -> tuple[torch.Tensor, dict]:
+        anchor_delta = 0.30 * torch.tanh(self.root_anchor_head(pooled))
+        root_feature = self.root_trajectory_context(
+            feature.transpose(1, 2)
+        ).transpose(1, 2)
+        motion_feature = self.motion_trajectory_context(
+            feature.transpose(1, 2)
+        ).transpose(1, 2)
+        motion_raw = self.motion_observation_head(motion_feature)
+        motion = torch.cat((
+            1.5 * torch.tanh(motion_raw[..., :3]),
+            motion_raw[..., 3:4],
+        ), dim=-1)
+        conditioned = root_feature + self.motion_condition(motion)
+        position_delta = self.max_root_delta * torch.tanh(
+            self.root_position_head(conditioned)
+        )
+        first = valid.to(torch.long).argmax(1)
+        origin = position_delta[
+            torch.arange(len(position_delta), device=position_delta.device), first,
+        ]
+        position_delta = (position_delta - origin[:, None]) * valid[..., None]
+        adjusted = root + anchor_delta[:, None] + position_delta
+        return adjusted, {
+            "root_anchor_delta_v10": anchor_delta,
+            "root_position_delta_v11": position_delta,
+            "root_velocity_observation_v13": motion[..., :3],
+            "pose_speed_observation_v13": motion[..., 3],
+            "motion_condition_v13": self.motion_condition(motion),
+            "motion_temporal_features_v13": motion_feature,
+        }
+
+
 def build_residual_hybrid(base: nn.Module, decoder: str = "dense") -> P2V9HybridNet:
     if decoder == "dense":
         return P2V9HybridNet(base)
@@ -506,6 +709,14 @@ def build_residual_hybrid(base: nn.Module, decoder: str = "dense") -> P2V9Hybrid
         return P2V11SubcarrierHybridNet(base)
     if decoder == "direct_root":
         return P2V11DirectRootHybridNet(base)
+    if decoder == "state_root":
+        return P2V13StateRootHybridNet(base)
+    if decoder == "motion_root":
+        return P2V13MotionRootHybridNet(base)
+    if decoder == "conditioned_root":
+        return P2V13ConditionedRootHybridNet(base)
+    if decoder == "decoupled_motion_root":
+        return P2V13DecoupledMotionRootHybridNet(base)
     raise ValueError(f"unknown residual decoder: {decoder}")
 
 
@@ -1030,7 +1241,8 @@ class ConditionalLinkFailurePoseBlend(nn.Module):
 
     def __init__(self, primary: nn.Module, expert: nn.Module,
                  strength: float = 0.0, expected_links: int = C.N_LINKS,
-                 minimum_link_coverage: float = 0.0):
+                 minimum_link_coverage: float = 0.0,
+                 partial_strength_scale: float = 1.0):
         super().__init__()
         self.primary = primary
         self.expert = expert
@@ -1038,6 +1250,9 @@ class ConditionalLinkFailurePoseBlend(nn.Module):
         self.minimum_link_coverage = float(minimum_link_coverage)
         if not 0.0 <= self.minimum_link_coverage <= 1.0:
             raise ValueError("minimum link coverage must be in [0, 1]")
+        self.partial_strength_scale = float(partial_strength_scale)
+        if not 0.0 <= self.partial_strength_scale <= 1.0:
+            raise ValueError("partial pose strength scale must be in [0, 1]")
         for parameter in self.parameters():
             parameter.requires_grad_(False)
         self.set_strength(strength)
@@ -1055,21 +1270,26 @@ class ConditionalLinkFailurePoseBlend(nn.Module):
         with torch.no_grad():
             primary = self.primary(csi, link_mask)
         output = dict(primary)
-        available = link_mask.float().mean(dim=1).gt(
-            self.minimum_link_coverage
-        ).sum(dim=-1)
+        coverage = link_mask.float().mean(dim=1)
+        available = coverage.gt(self.minimum_link_coverage).sum(dim=-1)
         failed = available < self.expected_links
         if self.strength == 0.0 or not failed.any():
             output["link_failure_gate"] = failed
             return output
         with torch.no_grad():
             expert = self.expert(csi[failed], link_mask[failed])
+        partial = coverage[failed].amin(dim=-1).gt(0.0)
+        strength = torch.full_like(
+            partial, self.strength, dtype=primary["pose_rel"].dtype
+        )
+        strength[partial] *= self.partial_strength_scale
         pose = primary["pose_rel"].clone()
-        pose[failed] = pose[failed] + self.strength * (
+        pose[failed] = pose[failed] + strength[:, None, None, None] * (
             expert["pose_rel"] - pose[failed]
         )
         output["pose_rel"] = pose
         output["link_failure_gate"] = failed
+        output["link_failure_pose_strength"] = strength
         return output
 
 
@@ -1188,17 +1408,36 @@ class ConditionalLinkFailureRootBlend(nn.Module):
 
     def __init__(self, primary: nn.Module, expert: nn.Module,
                  strength: float = 0.0, expected_links: int = C.N_LINKS,
-                 minimum_link_coverage: float = 0.0):
+                 minimum_link_coverage: float = 0.0,
+                 secondary_expert: nn.Module | None = None,
+                 secondary_strength: float = 0.0,
+                 secondary_links: tuple[int, ...] = (),
+                 partial_strength_scale: float = 1.0):
         super().__init__()
         self.primary = primary
         self.expert = expert
+        self.secondary_expert = secondary_expert
         self.expected_links = int(expected_links)
         self.minimum_link_coverage = float(minimum_link_coverage)
         if not 0.0 <= self.minimum_link_coverage <= 1.0:
             raise ValueError("minimum link coverage must be in [0, 1]")
+        self.partial_strength_scale = float(partial_strength_scale)
+        if not 0.0 <= self.partial_strength_scale <= 1.0:
+            raise ValueError("partial root strength scale must be in [0, 1]")
         for parameter in self.parameters():
             parameter.requires_grad_(False)
         self.set_strength(strength)
+        self.secondary_strength = float(secondary_strength)
+        if not 0.0 <= self.secondary_strength <= 1.0:
+            raise ValueError("secondary root strength must be in [0, 1]")
+        self.secondary_links = tuple(int(link) for link in secondary_links)
+        if any(
+            link < 0 or link >= self.expected_links
+            for link in self.secondary_links
+        ):
+            raise ValueError("secondary root link is out of range")
+        if self.secondary_links and self.secondary_expert is None:
+            raise ValueError("secondary root links require a secondary expert")
 
     def set_strength(self, strength: float) -> None:
         if not 0.0 <= strength <= 1.0:
@@ -1213,19 +1452,48 @@ class ConditionalLinkFailureRootBlend(nn.Module):
         with torch.no_grad():
             primary = self.primary(csi, link_mask)
         output = dict(primary)
-        available = link_mask.float().mean(dim=1).gt(
-            self.minimum_link_coverage
-        ).sum(dim=-1)
+        coverage = link_mask.float().mean(dim=1)
+        available = coverage.gt(self.minimum_link_coverage).sum(dim=-1)
         failed = available < self.expected_links
-        if self.strength == 0.0 or not failed.any():
+        if not failed.any() or (
+            self.strength == 0.0 and self.secondary_strength == 0.0
+        ):
             output["link_failure_gate"] = failed
             return output
-        with torch.no_grad():
-            expert = self.expert(csi[failed], link_mask[failed])
         root = primary["root"].clone()
-        root[failed] = root[failed] + self.strength * (
-            expert["root"] - root[failed]
-        )
+        failed_index = torch.nonzero(failed, as_tuple=False).flatten()
+        missing = coverage[failed].argmin(dim=-1)
+        partial = coverage[failed].amin(dim=-1).gt(0.0)
+        scale = torch.ones_like(missing, dtype=root.dtype)
+        scale[partial] = self.partial_strength_scale
+        secondary = torch.zeros_like(missing, dtype=torch.bool)
+        for link in self.secondary_links:
+            secondary |= missing.eq(link)
+        main_index = failed_index[~secondary]
+        if self.strength and len(main_index):
+            with torch.no_grad():
+                expert = self.expert(csi[main_index], link_mask[main_index])
+            amount = self.strength * scale[~secondary]
+            root[main_index] = root[main_index] + amount[:, None, None] * (
+                expert["root"] - root[main_index]
+            )
+        secondary_index = failed_index[secondary]
+        if self.secondary_strength and len(secondary_index):
+            with torch.no_grad():
+                expert = self.secondary_expert(
+                    csi[secondary_index], link_mask[secondary_index]
+                )
+            amount = self.secondary_strength * scale[secondary]
+            root[secondary_index] = root[secondary_index] + (
+                amount[:, None, None]
+                * (expert["root"] - root[secondary_index])
+            )
         output["root"] = root
         output["link_failure_gate"] = failed
+        missing_link = torch.full(
+            (len(coverage),), -1, dtype=torch.long, device=coverage.device
+        )
+        missing_link[failed] = missing
+        output["link_failure_missing_link"] = missing_link
+        output["link_failure_root_strength_scale"] = scale
         return output

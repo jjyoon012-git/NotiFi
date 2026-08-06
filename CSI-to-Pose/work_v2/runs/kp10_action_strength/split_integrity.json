@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "protocol": "single_split_lmh_e01",
+  "test_used_for_selection": false,
+  "raw_counts": {
+    "train": 1266,
+    "val": 329,
+    "test": 329
+  },
+  "pose_counts": {
+    "train": 1210,
+    "val": 315,
+    "test": 315
+  },
+  "role_intersections": {
+    "train_val": 0,
+    "train_test": 0,
+    "val_test": 0
+  },
+  "duplicate_trial_ids": 0,
+  "duplicate_paths": {
+    "csi": 0,
+    "gt_pose": 0,
+    "original_video": 0
+  },
+  "missing_gt_trials": 84,
+  "missing_gt_is_classification_only_absence": true
+}

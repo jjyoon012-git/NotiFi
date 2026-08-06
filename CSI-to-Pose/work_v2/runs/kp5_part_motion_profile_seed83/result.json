@@ -1,0 +1,1480 @@
+{
+  "run": "KP5-PART-MOTION-PROFILE-EXP01",
+  "status": "validation_selected_test_untouched",
+  "protocol": "single_split_lmh_e01",
+  "test_used_for_selection": false,
+  "part_order": [
+    "head",
+    "torso",
+    "left_arm",
+    "right_arm",
+    "left_leg",
+    "right_leg"
+  ],
+  "config": {
+    "exp": "single_split_lmh_e01",
+    "epochs": 55,
+    "patience": 12,
+    "batch_size": 28,
+    "learning_rate": 0.0002,
+    "weight_decay": 0.0008,
+    "seed": 83,
+    "feature_root": "work_v2/runs/kp5_mpr_selector_seed17",
+    "run_dir": "work_v2/runs/kp5_part_motion_profile_seed83"
+  },
+  "selection": {
+    "epoch": 14,
+    "score": 0.19415003516737017
+  },
+  "validation": {
+    "mae_mps": 0.10724695026874542,
+    "danger_mae_mps": 0.16651970148086548,
+    "correlation_mean": 0.4746298780411554,
+    "danger_correlation_mean": 0.5588512268018299,
+    "per_part": {
+      "head": {
+        "mae_mps": 0.10617827624082565,
+        "danger_mae_mps": 0.18410703539848328,
+        "correlation_mean": 0.4480317526181886,
+        "danger_correlation_mean": 0.5146267358612802
+      },
+      "torso": {
+        "mae_mps": 0.04576078802347183,
+        "danger_mae_mps": 0.07966911047697067,
+        "correlation_mean": 0.4368961019284417,
+        "danger_correlation_mean": 0.5039134016127459
+      },
+      "left_arm": {
+        "mae_mps": 0.11793949455022812,
+        "danger_mae_mps": 0.19808429479599,
+        "correlation_mean": 0.4915020940762054,
+        "danger_correlation_mean": 0.5722172577998468
+      },
+      "right_arm": {
+        "mae_mps": 0.11354070901870728,
+        "danger_mae_mps": 0.17883865535259247,
+        "correlation_mean": 0.4869522784385712,
+        "danger_correlation_mean": 0.5780558886006475
+      },
+      "left_leg": {
+        "mae_mps": 0.11160469055175781,
+        "danger_mae_mps": 0.15175394713878632,
+        "correlation_mean": 0.4867082883297126,
+        "danger_correlation_mean": 0.5894953067946647
+      },
+      "right_leg": {
+        "mae_mps": 0.12097223848104477,
+        "danger_mae_mps": 0.17067041993141174,
+        "correlation_mean": 0.4769777224003707,
+        "danger_correlation_mean": 0.5638301821691649
+      }
+    },
+    "selection_score": 0.19415003516737017
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 0.2877532562071627,
+        "regression": 0.16527499123053116,
+        "motion": 0.5812250260602344,
+        "acceleration": 0.051943797787482086
+      },
+      "validation": {
+        "mae_mps": 0.15590804815292358,
+        "danger_mae_mps": 0.19984592497348785,
+        "correlation_mean": 0.3106960963874123,
+        "danger_correlation_mean": 0.49208040040435463,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.14341336488723755,
+            "danger_mae_mps": 0.19912369549274445,
+            "correlation_mean": 0.3462202467238678,
+            "danger_correlation_mean": 0.5010854901479823
+          },
+          "torso": {
+            "mae_mps": 0.09232478588819504,
+            "danger_mae_mps": 0.10442454367876053,
+            "correlation_mean": 0.25084374064638737,
+            "danger_correlation_mean": 0.4262804104281323
+          },
+          "left_arm": {
+            "mae_mps": 0.16461235284805298,
+            "danger_mae_mps": 0.22862066328525543,
+            "correlation_mean": 0.3435734739578846,
+            "danger_correlation_mean": 0.5172716718167066
+          },
+          "right_arm": {
+            "mae_mps": 0.16294246912002563,
+            "danger_mae_mps": 0.2179080843925476,
+            "correlation_mean": 0.3144841072186532,
+            "danger_correlation_mean": 0.5256024146186454
+          },
+          "left_leg": {
+            "mae_mps": 0.16513071954250336,
+            "danger_mae_mps": 0.19112569093704224,
+            "correlation_mean": 0.31398041839046137,
+            "danger_correlation_mean": 0.4986895602196455
+          },
+          "right_leg": {
+            "mae_mps": 0.176914244890213,
+            "danger_mae_mps": 0.2153562754392624,
+            "correlation_mean": 0.27373638035626047,
+            "danger_correlation_mean": 0.4556425016107304
+          }
+        },
+        "selection_score": 0.29101112826660536
+      }
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 0.18190428445285017,
+        "regression": 0.09110280939123848,
+        "motion": 0.42597941715608945,
+        "acceleration": 0.04671325797045773
+      },
+      "validation": {
+        "mae_mps": 0.12273640185594559,
+        "danger_mae_mps": 0.17242366075515747,
+        "correlation_mean": 0.39230212134096976,
+        "danger_correlation_mean": 0.5702196805237,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.11614155769348145,
+            "danger_mae_mps": 0.18503022193908691,
+            "correlation_mean": 0.40235573395731905,
+            "danger_correlation_mean": 0.5537614962352174
+          },
+          "torso": {
+            "mae_mps": 0.056777726858854294,
+            "danger_mae_mps": 0.08584164828062057,
+            "correlation_mean": 0.37414562854442807,
+            "danger_correlation_mean": 0.5426691680614437
+          },
+          "left_arm": {
+            "mae_mps": 0.13318221271038055,
+            "danger_mae_mps": 0.20253682136535645,
+            "correlation_mean": 0.4045133671471997,
+            "danger_correlation_mean": 0.5871938266857927
+          },
+          "right_arm": {
+            "mae_mps": 0.1295582503080368,
+            "danger_mae_mps": 0.1832125186920166,
+            "correlation_mean": 0.405112078690177,
+            "danger_correlation_mean": 0.6054067242358412
+          },
+          "left_leg": {
+            "mae_mps": 0.1302722692489624,
+            "danger_mae_mps": 0.1606915146112442,
+            "correlation_mean": 0.388219265094293,
+            "danger_correlation_mean": 0.564149322972766
+          },
+          "right_leg": {
+            "mae_mps": 0.14019432663917542,
+            "danger_mae_mps": 0.1806158721446991,
+            "correlation_mean": 0.37288652601585326,
+            "danger_correlation_mean": 0.5534546229988336
+          }
+        },
+        "selection_score": 0.21852298849168458
+      }
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "loss": 0.16016833145510068,
+        "regression": 0.07768722149458798,
+        "motion": 0.38421055200425064,
+        "acceleration": 0.0469916569577022
+      },
+      "validation": {
+        "mae_mps": 0.12095214426517487,
+        "danger_mae_mps": 0.16843809187412262,
+        "correlation_mean": 0.4296819206790716,
+        "danger_correlation_mean": 0.5840278353227412,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.11415139585733414,
+            "danger_mae_mps": 0.18105150759220123,
+            "correlation_mean": 0.4275353502533916,
+            "danger_correlation_mean": 0.5649301221328122
+          },
+          "torso": {
+            "mae_mps": 0.05203011631965637,
+            "danger_mae_mps": 0.08008294552564621,
+            "correlation_mean": 0.41987509153167635,
+            "danger_correlation_mean": 0.5592173417231866
+          },
+          "left_arm": {
+            "mae_mps": 0.13372400403022766,
+            "danger_mae_mps": 0.1976289600133896,
+            "correlation_mean": 0.44324963621717567,
+            "danger_correlation_mean": 0.5999269559979439
+          },
+          "right_arm": {
+            "mae_mps": 0.12722525000572205,
+            "danger_mae_mps": 0.17915835976600647,
+            "correlation_mean": 0.4379741009169569,
+            "danger_correlation_mean": 0.608571823287223
+          },
+          "left_leg": {
+            "mae_mps": 0.12846551835536957,
+            "danger_mae_mps": 0.15671172738075256,
+            "correlation_mean": 0.42782180562970185,
+            "danger_correlation_mean": 0.586784156518323
+          },
+          "right_leg": {
+            "mae_mps": 0.13847704231739044,
+            "danger_mae_mps": 0.17859473824501038,
+            "correlation_mean": 0.4169589382474355,
+            "danger_correlation_mean": 0.5708804352275495
+          }
+        },
+        "selection_score": 0.2095033565730698
+      }
+    },
+    {
+      "epoch": 4,
+      "train": {
+        "loss": 0.1503939242525534,
+        "regression": 0.07294537381015041,
+        "motion": 0.3592700971798463,
+        "acceleration": 0.04662107676267624
+      },
+      "validation": {
+        "mae_mps": 0.11835882067680359,
+        "danger_mae_mps": 0.1718769520521164,
+        "correlation_mean": 0.44212336539417435,
+        "danger_correlation_mean": 0.5836216813364011,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.11368466168642044,
+            "danger_mae_mps": 0.18696892261505127,
+            "correlation_mean": 0.43272598848737304,
+            "danger_correlation_mean": 0.561015170599733
+          },
+          "torso": {
+            "mae_mps": 0.050736576318740845,
+            "danger_mae_mps": 0.0809604600071907,
+            "correlation_mean": 0.4242107620652643,
+            "danger_correlation_mean": 0.5564735430226262
+          },
+          "left_arm": {
+            "mae_mps": 0.12864819169044495,
+            "danger_mae_mps": 0.1998973935842514,
+            "correlation_mean": 0.4558079196544852,
+            "danger_correlation_mean": 0.5990146851965359
+          },
+          "right_arm": {
+            "mae_mps": 0.12578342854976654,
+            "danger_mae_mps": 0.18339382112026215,
+            "correlation_mean": 0.45183536585287326,
+            "danger_correlation_mean": 0.6019383412120598
+          },
+          "left_leg": {
+            "mae_mps": 0.12471386045217514,
+            "danger_mae_mps": 0.158904567360878,
+            "correlation_mean": 0.44467243971598763,
+            "danger_correlation_mean": 0.593604586912053
+          },
+          "right_leg": {
+            "mae_mps": 0.1358393132686615,
+            "danger_mae_mps": 0.18296505510807037,
+            "correlation_mean": 0.43413435541137696,
+            "danger_correlation_mean": 0.5742688089609146
+          }
+        },
+        "selection_score": 0.20976743632557113
+      }
+    },
+    {
+      "epoch": 5,
+      "train": {
+        "loss": 0.14217406629838727,
+        "regression": 0.06797739313068715,
+        "motion": 0.3435415781357072,
+        "acceleration": 0.04573631947013465
+      },
+      "validation": {
+        "mae_mps": 0.12162334471940994,
+        "danger_mae_mps": 0.1703232228755951,
+        "correlation_mean": 0.4515454196664821,
+        "danger_correlation_mean": 0.5837595112297262,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.11476249247789383,
+            "danger_mae_mps": 0.18677464127540588,
+            "correlation_mean": 0.4414974267014288,
+            "danger_correlation_mean": 0.5574034514171736
+          },
+          "torso": {
+            "mae_mps": 0.051924675703048706,
+            "danger_mae_mps": 0.08081488311290741,
+            "correlation_mean": 0.43568888060038996,
+            "danger_correlation_mean": 0.5546257363898414
+          },
+          "left_arm": {
+            "mae_mps": 0.13270297646522522,
+            "danger_mae_mps": 0.1978742480278015,
+            "correlation_mean": 0.4658641315967081,
+            "danger_correlation_mean": 0.5977580273790019
+          },
+          "right_arm": {
+            "mae_mps": 0.1285904496908188,
+            "danger_mae_mps": 0.1813005805015564,
+            "correlation_mean": 0.46118350162259525,
+            "danger_correlation_mean": 0.6006011925404892
+          },
+          "left_leg": {
+            "mae_mps": 0.12947240471839905,
+            "danger_mae_mps": 0.15925286710262299,
+            "correlation_mean": 0.45445049966848083,
+            "danger_correlation_mean": 0.5981192967721394
+          },
+          "right_leg": {
+            "mae_mps": 0.1402934193611145,
+            "danger_mae_mps": 0.17857784032821655,
+            "correlation_mean": 0.44205213543988525,
+            "danger_correlation_mean": 0.5771964168974332
+          }
+        },
+        "selection_score": 0.2109933454887083
+      }
+    },
+    {
+      "epoch": 6,
+      "train": {
+        "loss": 0.13485524464737286,
+        "regression": 0.06495519676669077,
+        "motion": 0.3223202174360102,
+        "acceleration": 0.04530002862553705
+      },
+      "validation": {
+        "mae_mps": 0.11753062903881073,
+        "danger_mae_mps": 0.17056000232696533,
+        "correlation_mean": 0.459054830328873,
+        "danger_correlation_mean": 0.5835126687087846,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.11398821324110031,
+            "danger_mae_mps": 0.18743345141410828,
+            "correlation_mean": 0.4409650689364219,
+            "danger_correlation_mean": 0.5551911140659026
+          },
+          "torso": {
+            "mae_mps": 0.049757201224565506,
+            "danger_mae_mps": 0.08104375749826431,
+            "correlation_mean": 0.4338075370926942,
+            "danger_correlation_mean": 0.5490516715017812
+          },
+          "left_arm": {
+            "mae_mps": 0.12863099575042725,
+            "danger_mae_mps": 0.19893208146095276,
+            "correlation_mean": 0.4735454863868654,
+            "danger_correlation_mean": 0.597040189855865
+          },
+          "right_arm": {
+            "mae_mps": 0.12433703243732452,
+            "danger_mae_mps": 0.18148039281368256,
+            "correlation_mean": 0.47200578365859297,
+            "danger_correlation_mean": 0.6003273897937366
+          },
+          "left_leg": {
+            "mae_mps": 0.1236150860786438,
+            "danger_mae_mps": 0.15764707326889038,
+            "correlation_mean": 0.46660238165622725,
+            "danger_correlation_mean": 0.6014177082904748
+          },
+          "right_leg": {
+            "mae_mps": 0.13420885801315308,
+            "danger_mae_mps": 0.17953799664974213,
+            "correlation_mean": 0.4535017401985233,
+            "danger_correlation_mean": 0.5785361539040293
+          }
+        },
+        "selection_score": 0.20678662297845393
+      }
+    },
+    {
+      "epoch": 7,
+      "train": {
+        "loss": 0.12980482828888026,
+        "regression": 0.06243902664970268,
+        "motion": 0.3100292499769818,
+        "acceleration": 0.04466626810079271
+      },
+      "validation": {
+        "mae_mps": 0.11040721833705902,
+        "danger_mae_mps": 0.16657671332359314,
+        "correlation_mean": 0.455495342197444,
+        "danger_correlation_mean": 0.5667152421420228,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.1086462214589119,
+            "danger_mae_mps": 0.18408678472042084,
+            "correlation_mean": 0.4358846567135068,
+            "danger_correlation_mean": 0.535800760112969
+          },
+          "torso": {
+            "mae_mps": 0.04779388755559921,
+            "danger_mae_mps": 0.07997121661901474,
+            "correlation_mean": 0.4220729590822307,
+            "danger_correlation_mean": 0.5233659071116042
+          },
+          "left_arm": {
+            "mae_mps": 0.12080679088830948,
+            "danger_mae_mps": 0.1970163732767105,
+            "correlation_mean": 0.47184446957258,
+            "danger_correlation_mean": 0.5843795324010509
+          },
+          "right_arm": {
+            "mae_mps": 0.11700432002544403,
+            "danger_mae_mps": 0.17874914407730103,
+            "correlation_mean": 0.46793583373406106,
+            "danger_correlation_mean": 0.5839481391278761
+          },
+          "left_leg": {
+            "mae_mps": 0.11553920805454254,
+            "danger_mae_mps": 0.15251010656356812,
+            "correlation_mean": 0.46622556654222697,
+            "danger_correlation_mean": 0.588408007047006
+          },
+          "right_leg": {
+            "mae_mps": 0.12456386536359787,
+            "danger_mae_mps": 0.17122937738895416,
+            "correlation_mean": 0.45124888803277696,
+            "danger_correlation_mean": 0.5605428123580558
+          }
+        },
+        "selection_score": 0.19753764033657767
+      }
+    },
+    {
+      "epoch": 8,
+      "train": {
+        "loss": 0.12900415994226933,
+        "regression": 0.06170873200012879,
+        "motion": 0.30885288322513754,
+        "acceleration": 0.046040425415743484
+      },
+      "validation": {
+        "mae_mps": 0.11074331402778625,
+        "danger_mae_mps": 0.16749432682991028,
+        "correlation_mean": 0.46056199247325474,
+        "danger_correlation_mean": 0.5678730265122063,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10831207036972046,
+            "danger_mae_mps": 0.18438805639743805,
+            "correlation_mean": 0.43828781270348127,
+            "danger_correlation_mean": 0.5335556537711195
+          },
+          "torso": {
+            "mae_mps": 0.047112781554460526,
+            "danger_mae_mps": 0.07988499104976654,
+            "correlation_mean": 0.4268087660424441,
+            "danger_correlation_mean": 0.5211190507082003
+          },
+          "left_arm": {
+            "mae_mps": 0.1219988763332367,
+            "danger_mae_mps": 0.19770194590091705,
+            "correlation_mean": 0.47574005726695295,
+            "danger_correlation_mean": 0.5842430536236082
+          },
+          "right_arm": {
+            "mae_mps": 0.1179155483841896,
+            "danger_mae_mps": 0.18055842816829681,
+            "correlation_mean": 0.4734221121894994,
+            "danger_correlation_mean": 0.5841860388571929
+          },
+          "left_leg": {
+            "mae_mps": 0.11570026725530624,
+            "danger_mae_mps": 0.1527915745973587,
+            "correlation_mean": 0.47202626196076236,
+            "danger_correlation_mean": 0.5931726970842907
+          },
+          "right_leg": {
+            "mae_mps": 0.12477990984916687,
+            "danger_mae_mps": 0.1732061803340912,
+            "correlation_mean": 0.4587856319688615,
+            "danger_correlation_mean": 0.5650980646855065
+          }
+        },
+        "selection_score": 0.19842223858281316
+      }
+    },
+    {
+      "epoch": 9,
+      "train": {
+        "loss": 0.1270297369496389,
+        "regression": 0.060032350180501286,
+        "motion": 0.308032173324715,
+        "acceleration": 0.0449245876039971
+      },
+      "validation": {
+        "mae_mps": 0.11283116042613983,
+        "danger_mae_mps": 0.1698387712240219,
+        "correlation_mean": 0.46659203284922535,
+        "danger_correlation_mean": 0.5682893875284809,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.11150599271059036,
+            "danger_mae_mps": 0.18839320540428162,
+            "correlation_mean": 0.4458592030171689,
+            "danger_correlation_mean": 0.5345328107343188
+          },
+          "torso": {
+            "mae_mps": 0.047487400472164154,
+            "danger_mae_mps": 0.08067409694194794,
+            "correlation_mean": 0.43523185279235127,
+            "danger_correlation_mean": 0.5243869615718723
+          },
+          "left_arm": {
+            "mae_mps": 0.12268152087926865,
+            "danger_mae_mps": 0.19864660501480103,
+            "correlation_mean": 0.47949674889327043,
+            "danger_correlation_mean": 0.5833298752882651
+          },
+          "right_arm": {
+            "mae_mps": 0.11890486627817154,
+            "danger_mae_mps": 0.1817914843559265,
+            "correlation_mean": 0.47857247309737083,
+            "danger_correlation_mean": 0.5842826280210699
+          },
+          "left_leg": {
+            "mae_mps": 0.11935482919216156,
+            "danger_mae_mps": 0.15680232644081116,
+            "correlation_mean": 0.4780247897549074,
+            "danger_correlation_mean": 0.5933281255619867
+          },
+          "right_leg": {
+            "mae_mps": 0.12781435251235962,
+            "danger_mae_mps": 0.1758449524641037,
+            "correlation_mean": 0.4653577411562086,
+            "danger_correlation_mean": 0.565362760052085
+          }
+        },
+        "selection_score": 0.20251139125485237
+      }
+    },
+    {
+      "epoch": 10,
+      "train": {
+        "loss": 0.12563552148640156,
+        "regression": 0.06010516318069263,
+        "motion": 0.30000984567132866,
+        "acceleration": 0.04606989762661132
+      },
+      "validation": {
+        "mae_mps": 0.11330005526542664,
+        "danger_mae_mps": 0.16773870587348938,
+        "correlation_mean": 0.4728099905433505,
+        "danger_correlation_mean": 0.570796022810736,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10911816358566284,
+            "danger_mae_mps": 0.1846304088830948,
+            "correlation_mean": 0.4516768102164543,
+            "danger_correlation_mean": 0.5359752114196973
+          },
+          "torso": {
+            "mae_mps": 0.04710656777024269,
+            "danger_mae_mps": 0.07975352555513382,
+            "correlation_mean": 0.44111707842583575,
+            "danger_correlation_mean": 0.5234310296314236
+          },
+          "left_arm": {
+            "mae_mps": 0.1234014630317688,
+            "danger_mae_mps": 0.1967572271823883,
+            "correlation_mean": 0.486887882874229,
+            "danger_correlation_mean": 0.5844385674888534
+          },
+          "right_arm": {
+            "mae_mps": 0.11912187188863754,
+            "danger_mae_mps": 0.179518461227417,
+            "correlation_mean": 0.4836136063446276,
+            "danger_correlation_mean": 0.5869917815334962
+          },
+          "left_leg": {
+            "mae_mps": 0.1206154152750969,
+            "danger_mae_mps": 0.15457290410995483,
+            "correlation_mean": 0.48420444026086773,
+            "danger_correlation_mean": 0.596822500122445
+          },
+          "right_leg": {
+            "mae_mps": 0.1303979605436325,
+            "danger_mae_mps": 0.1745975762605667,
+            "correlation_mean": 0.47214354465286884,
+            "danger_correlation_mean": 0.5709072995398726
+          }
+        },
+        "selection_score": 0.2003186593306749
+      }
+    },
+    {
+      "epoch": 11,
+      "train": {
+        "loss": 0.11894505233927206,
+        "regression": 0.056092281063849274,
+        "motion": 0.28753289648077707,
+        "acceleration": 0.044551588340916416
+      },
+      "validation": {
+        "mae_mps": 0.10982668399810791,
+        "danger_mae_mps": 0.16754458844661713,
+        "correlation_mean": 0.4709880272960562,
+        "danger_correlation_mean": 0.5629260606526766,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10750985890626907,
+            "danger_mae_mps": 0.18520762026309967,
+            "correlation_mean": 0.447527807986822,
+            "danger_correlation_mean": 0.5248653918371669
+          },
+          "torso": {
+            "mae_mps": 0.04607857018709183,
+            "danger_mae_mps": 0.07947462797164917,
+            "correlation_mean": 0.4357747286599728,
+            "danger_correlation_mean": 0.5138662783670173
+          },
+          "left_arm": {
+            "mae_mps": 0.11978823691606522,
+            "danger_mae_mps": 0.19801753759384155,
+            "correlation_mean": 0.4850069701582903,
+            "danger_correlation_mean": 0.5758217934519052
+          },
+          "right_arm": {
+            "mae_mps": 0.11554472893476486,
+            "danger_mae_mps": 0.17978574335575104,
+            "correlation_mean": 0.4836745171146172,
+            "danger_correlation_mean": 0.5827084466415856
+          },
+          "left_leg": {
+            "mae_mps": 0.11562323570251465,
+            "danger_mae_mps": 0.15371064841747284,
+            "correlation_mean": 0.48292021264750806,
+            "danger_correlation_mean": 0.5889949799648353
+          },
+          "right_leg": {
+            "mae_mps": 0.12573972344398499,
+            "danger_mae_mps": 0.17254582047462463,
+            "correlation_mean": 0.47189798395108756,
+            "danger_correlation_mean": 0.5638565080506461
+          }
+        },
+        "selection_score": 0.19752926501465456
+      }
+    },
+    {
+      "epoch": 12,
+      "train": {
+        "loss": 0.11963176557963545,
+        "regression": 0.057165922512384976,
+        "motion": 0.2846098305149512,
+        "acceleration": 0.04619896987622434
+      },
+      "validation": {
+        "mae_mps": 0.11428657919168472,
+        "danger_mae_mps": 0.17066243290901184,
+        "correlation_mean": 0.46875103250638916,
+        "danger_correlation_mean": 0.5521509147520992,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10975871235132217,
+            "danger_mae_mps": 0.1881842315196991,
+            "correlation_mean": 0.4454240102158298,
+            "danger_correlation_mean": 0.5119744486042431
+          },
+          "torso": {
+            "mae_mps": 0.0476856529712677,
+            "danger_mae_mps": 0.08176585286855698,
+            "correlation_mean": 0.4348467479550487,
+            "danger_correlation_mean": 0.499083695587303
+          },
+          "left_arm": {
+            "mae_mps": 0.12561215460300446,
+            "danger_mae_mps": 0.2016647458076477,
+            "correlation_mean": 0.4836241440163807,
+            "danger_correlation_mean": 0.5687560754695109
+          },
+          "right_arm": {
+            "mae_mps": 0.12054476141929626,
+            "danger_mae_mps": 0.18317663669586182,
+            "correlation_mean": 0.4793312398807353,
+            "danger_correlation_mean": 0.5689338894827025
+          },
+          "left_leg": {
+            "mae_mps": 0.12028757482767105,
+            "danger_mae_mps": 0.15589450299739838,
+            "correlation_mean": 0.4806191622752637,
+            "danger_correlation_mean": 0.5802204905077815
+          },
+          "right_leg": {
+            "mae_mps": 0.13155940175056458,
+            "danger_mae_mps": 0.17637479305267334,
+            "correlation_mean": 0.47013646438274354,
+            "danger_correlation_mean": 0.5543993887092385
+          }
+        },
+        "selection_score": 0.20629636900016718
+      }
+    },
+    {
+      "epoch": 13,
+      "train": {
+        "loss": 0.11860005980865522,
+        "regression": 0.055991752835159954,
+        "motion": 0.2858629331670024,
+        "acceleration": 0.045297665606168186
+      },
+      "validation": {
+        "mae_mps": 0.10735450685024261,
+        "danger_mae_mps": 0.16680552065372467,
+        "correlation_mean": 0.4704834950536519,
+        "danger_correlation_mean": 0.5549393497663798,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10559456050395966,
+            "danger_mae_mps": 0.1833917796611786,
+            "correlation_mean": 0.44672871399735514,
+            "danger_correlation_mean": 0.5160412041071271
+          },
+          "torso": {
+            "mae_mps": 0.045484188944101334,
+            "danger_mae_mps": 0.07935310900211334,
+            "correlation_mean": 0.433068022706605,
+            "danger_correlation_mean": 0.5032738565999483
+          },
+          "left_arm": {
+            "mae_mps": 0.1181408017873764,
+            "danger_mae_mps": 0.1982761174440384,
+            "correlation_mean": 0.4846340279146615,
+            "danger_correlation_mean": 0.5694349204323121
+          },
+          "right_arm": {
+            "mae_mps": 0.11365746706724167,
+            "danger_mae_mps": 0.17928503453731537,
+            "correlation_mean": 0.4830480647981093,
+            "danger_correlation_mean": 0.5723584067608629
+          },
+          "left_leg": {
+            "mae_mps": 0.11238603293895721,
+            "danger_mae_mps": 0.1529770940542221,
+            "correlation_mean": 0.48316745583766274,
+            "danger_correlation_mean": 0.5834469706352268
+          },
+          "right_leg": {
+            "mae_mps": 0.12110531330108643,
+            "danger_mae_mps": 0.1711394339799881,
+            "correlation_mean": 0.4721063591336595,
+            "danger_correlation_mean": 0.5563556100640978
+          }
+        },
+        "selection_score": 0.1951419177746467
+      }
+    },
+    {
+      "epoch": 14,
+      "train": {
+        "loss": 0.11548046141185543,
+        "regression": 0.05458197099241344,
+        "motion": 0.2785577557303689,
+        "acceleration": 0.04322448127310385
+      },
+      "validation": {
+        "mae_mps": 0.10724695026874542,
+        "danger_mae_mps": 0.16651970148086548,
+        "correlation_mean": 0.4746298780411554,
+        "danger_correlation_mean": 0.5588512268018299,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10617827624082565,
+            "danger_mae_mps": 0.18410703539848328,
+            "correlation_mean": 0.4480317526181886,
+            "danger_correlation_mean": 0.5146267358612802
+          },
+          "torso": {
+            "mae_mps": 0.04576078802347183,
+            "danger_mae_mps": 0.07966911047697067,
+            "correlation_mean": 0.4368961019284417,
+            "danger_correlation_mean": 0.5039134016127459
+          },
+          "left_arm": {
+            "mae_mps": 0.11793949455022812,
+            "danger_mae_mps": 0.19808429479599,
+            "correlation_mean": 0.4915020940762054,
+            "danger_correlation_mean": 0.5722172577998468
+          },
+          "right_arm": {
+            "mae_mps": 0.11354070901870728,
+            "danger_mae_mps": 0.17883865535259247,
+            "correlation_mean": 0.4869522784385712,
+            "danger_correlation_mean": 0.5780558886006475
+          },
+          "left_leg": {
+            "mae_mps": 0.11160469055175781,
+            "danger_mae_mps": 0.15175394713878632,
+            "correlation_mean": 0.4867082883297126,
+            "danger_correlation_mean": 0.5894953067946647
+          },
+          "right_leg": {
+            "mae_mps": 0.12097223848104477,
+            "danger_mae_mps": 0.17067041993141174,
+            "correlation_mean": 0.4769777224003707,
+            "danger_correlation_mean": 0.5638301821691649
+          }
+        },
+        "selection_score": 0.19415003516737017
+      }
+    },
+    {
+      "epoch": 15,
+      "train": {
+        "loss": 0.11451729166914117,
+        "regression": 0.05484821698205038,
+        "motion": 0.27123830061067233,
+        "acceleration": 0.045178449458696625
+      },
+      "validation": {
+        "mae_mps": 0.11104972660541534,
+        "danger_mae_mps": 0.17051082849502563,
+        "correlation_mean": 0.4742776455023067,
+        "danger_correlation_mean": 0.5501173410927003,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10775689780712128,
+            "danger_mae_mps": 0.1877833604812622,
+            "correlation_mean": 0.45070258728302426,
+            "danger_correlation_mean": 0.5075069100329919
+          },
+          "torso": {
+            "mae_mps": 0.04628659412264824,
+            "danger_mae_mps": 0.08130814880132675,
+            "correlation_mean": 0.43798858861305884,
+            "danger_correlation_mean": 0.4978441774445985
+          },
+          "left_arm": {
+            "mae_mps": 0.12319915741682053,
+            "danger_mae_mps": 0.2035052627325058,
+            "correlation_mean": 0.4897632557115266,
+            "danger_correlation_mean": 0.563129330479673
+          },
+          "right_arm": {
+            "mae_mps": 0.11832141131162643,
+            "danger_mae_mps": 0.18315602838993073,
+            "correlation_mean": 0.48681191521223693,
+            "danger_correlation_mean": 0.5694200150136437
+          },
+          "left_leg": {
+            "mae_mps": 0.11616890877485275,
+            "danger_mae_mps": 0.15566854178905487,
+            "correlation_mean": 0.48515402951577147,
+            "danger_correlation_mean": 0.5790371796191072
+          },
+          "right_leg": {
+            "mae_mps": 0.12529391050338745,
+            "danger_mae_mps": 0.1745568960905075,
+            "correlation_mean": 0.47562442545572087,
+            "danger_correlation_mean": 0.5542212600154536
+          }
+        },
+        "selection_score": 0.20283493871605562
+      }
+    },
+    {
+      "epoch": 16,
+      "train": {
+        "loss": 0.11251494440842759,
+        "regression": 0.053278012285855686,
+        "motion": 0.27001024918122724,
+        "acceleration": 0.04362401831895113
+      },
+      "validation": {
+        "mae_mps": 0.11001941561698914,
+        "danger_mae_mps": 0.16938841342926025,
+        "correlation_mean": 0.4749374142422532,
+        "danger_correlation_mean": 0.5544811436349257,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.1072922945022583,
+            "danger_mae_mps": 0.18741682171821594,
+            "correlation_mean": 0.4518626895311865,
+            "danger_correlation_mean": 0.5107523550146392
+          },
+          "torso": {
+            "mae_mps": 0.04567872732877731,
+            "danger_mae_mps": 0.08044037222862244,
+            "correlation_mean": 0.43903115865523146,
+            "danger_correlation_mean": 0.49975196216255424
+          },
+          "left_arm": {
+            "mae_mps": 0.1210712268948555,
+            "danger_mae_mps": 0.20105664432048798,
+            "correlation_mean": 0.49186167597201547,
+            "danger_correlation_mean": 0.5665051758222814
+          },
+          "right_arm": {
+            "mae_mps": 0.11775847524404526,
+            "danger_mae_mps": 0.18220441043376923,
+            "correlation_mean": 0.4865721628882937,
+            "danger_correlation_mean": 0.5745768682632063
+          },
+          "left_leg": {
+            "mae_mps": 0.11495573073625565,
+            "danger_mae_mps": 0.1544116586446762,
+            "correlation_mean": 0.4853794819898977,
+            "danger_correlation_mean": 0.5846468357635396
+          },
+          "right_leg": {
+            "mae_mps": 0.12436006218194962,
+            "danger_mae_mps": 0.17393897473812103,
+            "correlation_mean": 0.4755405025898538,
+            "danger_correlation_mean": 0.5598512447306088
+          }
+        },
+        "selection_score": 0.20021284397064415
+      }
+    },
+    {
+      "epoch": 17,
+      "train": {
+        "loss": 0.11377909542484717,
+        "regression": 0.05397190856324001,
+        "motion": 0.2724615955217318,
+        "acceleration": 0.04429056249897589
+      },
+      "validation": {
+        "mae_mps": 0.10852006077766418,
+        "danger_mae_mps": 0.17003723978996277,
+        "correlation_mean": 0.47649064405001035,
+        "danger_correlation_mean": 0.5515955551480681,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.1065639927983284,
+            "danger_mae_mps": 0.18887588381767273,
+            "correlation_mean": 0.4535006618312013,
+            "danger_correlation_mean": 0.5128169336256438
+          },
+          "torso": {
+            "mae_mps": 0.04538702219724655,
+            "danger_mae_mps": 0.0807267501950264,
+            "correlation_mean": 0.4420512953177205,
+            "danger_correlation_mean": 0.5038914270977589
+          },
+          "left_arm": {
+            "mae_mps": 0.11918027698993683,
+            "danger_mae_mps": 0.2013089954853058,
+            "correlation_mean": 0.49096694472135,
+            "danger_correlation_mean": 0.5630854206691895
+          },
+          "right_arm": {
+            "mae_mps": 0.1155814453959465,
+            "danger_mae_mps": 0.18305636942386627,
+            "correlation_mean": 0.486829725142184,
+            "danger_correlation_mean": 0.5671810526666897
+          },
+          "left_leg": {
+            "mae_mps": 0.11389269679784775,
+            "danger_mae_mps": 0.15509767830371857,
+            "correlation_mean": 0.4881979042250249,
+            "danger_correlation_mean": 0.5808151566556522
+          },
+          "right_leg": {
+            "mae_mps": 0.12216600775718689,
+            "danger_mae_mps": 0.1742551028728485,
+            "correlation_mean": 0.47868503229988235,
+            "danger_correlation_mean": 0.5548365242247071
+          }
+        },
+        "selection_score": 0.19957321285031962
+      }
+    },
+    {
+      "epoch": 18,
+      "train": {
+        "loss": 0.115485511042855,
+        "regression": 0.05417784667489203,
+        "motion": 0.2789409543302926,
+        "acceleration": 0.04599560500884598
+      },
+      "validation": {
+        "mae_mps": 0.10989753156900406,
+        "danger_mae_mps": 0.17078934609889984,
+        "correlation_mean": 0.4816486105328101,
+        "danger_correlation_mean": 0.5513273417683263,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10826250165700912,
+            "danger_mae_mps": 0.19035744667053223,
+            "correlation_mean": 0.45739929113659034,
+            "danger_correlation_mean": 0.5092452452118907
+          },
+          "torso": {
+            "mae_mps": 0.045768853276968,
+            "danger_mae_mps": 0.08184143900871277,
+            "correlation_mean": 0.4461734009869692,
+            "danger_correlation_mean": 0.49943068902440635
+          },
+          "left_arm": {
+            "mae_mps": 0.12179382890462875,
+            "danger_mae_mps": 0.203471377491951,
+            "correlation_mean": 0.49676931965948334,
+            "danger_correlation_mean": 0.5629810868163726
+          },
+          "right_arm": {
+            "mae_mps": 0.11649367213249207,
+            "danger_mae_mps": 0.18305827677249908,
+            "correlation_mean": 0.49328296611248146,
+            "danger_correlation_mean": 0.567458823961871
+          },
+          "left_leg": {
+            "mae_mps": 0.11487645655870438,
+            "danger_mae_mps": 0.15536364912986755,
+            "correlation_mean": 0.49237567692891593,
+            "danger_correlation_mean": 0.5822156726249627
+          },
+          "right_leg": {
+            "mae_mps": 0.12344599515199661,
+            "danger_mae_mps": 0.17401035130023956,
+            "correlation_mean": 0.48453175655255715,
+            "danger_correlation_mean": 0.5573329689779452
+          }
+        },
+        "selection_score": 0.20147171296443078
+      }
+    },
+    {
+      "epoch": 19,
+      "train": {
+        "loss": 0.11158864284780892,
+        "regression": 0.053355678069320595,
+        "motion": 0.264037837697701,
+        "acceleration": 0.04521163696931167
+      },
+      "validation": {
+        "mae_mps": 0.10728313028812408,
+        "danger_mae_mps": 0.16898323595523834,
+        "correlation_mean": 0.47480532930568614,
+        "danger_correlation_mean": 0.5451086698831901,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.1054156944155693,
+            "danger_mae_mps": 0.1866030991077423,
+            "correlation_mean": 0.4496342243454863,
+            "danger_correlation_mean": 0.5050656331170883
+          },
+          "torso": {
+            "mae_mps": 0.044786155223846436,
+            "danger_mae_mps": 0.08056584745645523,
+            "correlation_mean": 0.4391455480023213,
+            "danger_correlation_mean": 0.4937303505505302
+          },
+          "left_arm": {
+            "mae_mps": 0.11867057532072067,
+            "danger_mae_mps": 0.20210158824920654,
+            "correlation_mean": 0.488018130182126,
+            "danger_correlation_mean": 0.5553070197946259
+          },
+          "right_arm": {
+            "mae_mps": 0.11440886557102203,
+            "danger_mae_mps": 0.1826101839542389,
+            "correlation_mean": 0.4844193621146833,
+            "danger_correlation_mean": 0.5594968897955758
+          },
+          "left_leg": {
+            "mae_mps": 0.11219103634357452,
+            "danger_mae_mps": 0.15364453196525574,
+            "correlation_mean": 0.4887636486123065,
+            "danger_correlation_mean": 0.5776789185724088
+          },
+          "right_leg": {
+            "mae_mps": 0.12017332017421722,
+            "danger_mae_mps": 0.1716877818107605,
+            "correlation_mean": 0.47927321804657813,
+            "danger_correlation_mean": 0.5506060968020132
+          }
+        },
+        "selection_score": 0.1980152327897591
+      }
+    },
+    {
+      "epoch": 20,
+      "train": {
+        "loss": 0.112257374281233,
+        "regression": 0.05261383518915285,
+        "motion": 0.27200260826132516,
+        "acceleration": 0.04369180166924542
+      },
+      "validation": {
+        "mae_mps": 0.10730578005313873,
+        "danger_mae_mps": 0.17062756419181824,
+        "correlation_mean": 0.4779454782078714,
+        "danger_correlation_mean": 0.5465050334607837,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10619859397411346,
+            "danger_mae_mps": 0.18958112597465515,
+            "correlation_mean": 0.45363692662212995,
+            "danger_correlation_mean": 0.505255285570664
+          },
+          "torso": {
+            "mae_mps": 0.04494651407003403,
+            "danger_mae_mps": 0.08118312060832977,
+            "correlation_mean": 0.44154987079128327,
+            "danger_correlation_mean": 0.49657233523071875
+          },
+          "left_arm": {
+            "mae_mps": 0.11752229928970337,
+            "danger_mae_mps": 0.20206108689308167,
+            "correlation_mean": 0.493851409886875,
+            "danger_correlation_mean": 0.5566412223436471
+          },
+          "right_arm": {
+            "mae_mps": 0.11385940760374069,
+            "danger_mae_mps": 0.18208566308021545,
+            "correlation_mean": 0.4893325002078662,
+            "danger_correlation_mean": 0.5660585061780044
+          },
+          "left_leg": {
+            "mae_mps": 0.11216223239898682,
+            "danger_mae_mps": 0.1561967432498932,
+            "correlation_mean": 0.48912325021219516,
+            "danger_correlation_mean": 0.5747645762349878
+          },
+          "right_leg": {
+            "mae_mps": 0.12126634269952774,
+            "danger_mae_mps": 0.1757124811410904,
+            "correlation_mean": 0.48040181883566435,
+            "danger_correlation_mean": 0.5514348908194474
+          }
+        },
+        "selection_score": 0.199385566988485
+      }
+    },
+    {
+      "epoch": 21,
+      "train": {
+        "loss": 0.11001077751544389,
+        "regression": 0.05257234739309007,
+        "motion": 0.2609492875635624,
+        "acceleration": 0.043738096190447155
+      },
+      "validation": {
+        "mae_mps": 0.1074068546295166,
+        "danger_mae_mps": 0.16882255673408508,
+        "correlation_mean": 0.4798641312429605,
+        "danger_correlation_mean": 0.5488425676994241,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10566358268260956,
+            "danger_mae_mps": 0.18721935153007507,
+            "correlation_mean": 0.4547535127294915,
+            "danger_correlation_mean": 0.5063199913927487
+          },
+          "torso": {
+            "mae_mps": 0.04492432624101639,
+            "danger_mae_mps": 0.0805349126458168,
+            "correlation_mean": 0.4445818788516113,
+            "danger_correlation_mean": 0.4982152815376009
+          },
+          "left_arm": {
+            "mae_mps": 0.11840846389532089,
+            "danger_mae_mps": 0.20111897587776184,
+            "correlation_mean": 0.496071838350257,
+            "danger_correlation_mean": 0.5608536468053769
+          },
+          "right_arm": {
+            "mae_mps": 0.11442909389734268,
+            "danger_mae_mps": 0.18138307332992554,
+            "correlation_mean": 0.4917779938406533,
+            "danger_correlation_mean": 0.5667001385507839
+          },
+          "left_leg": {
+            "mae_mps": 0.11216194182634354,
+            "danger_mae_mps": 0.15411928296089172,
+            "correlation_mean": 0.49077144233909037,
+            "danger_correlation_mean": 0.5778796666301786
+          },
+          "right_leg": {
+            "mae_mps": 0.1208253875374794,
+            "danger_mae_mps": 0.1720462441444397,
+            "correlation_mean": 0.48182702840320646,
+            "danger_correlation_mean": 0.5542860239744186
+          }
+        },
+        "selection_score": 0.19735194803151124
+      }
+    },
+    {
+      "epoch": 22,
+      "train": {
+        "loss": 0.11106135188178583,
+        "regression": 0.05193569824438204,
+        "motion": 0.26952800594947557,
+        "acceleration": 0.04350043409927325
+      },
+      "validation": {
+        "mae_mps": 0.11028724908828735,
+        "danger_mae_mps": 0.1697828769683838,
+        "correlation_mean": 0.4806883467405836,
+        "danger_correlation_mean": 0.5482790650887328,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10788501054048538,
+            "danger_mae_mps": 0.18806035816669464,
+            "correlation_mean": 0.45742510926525387,
+            "danger_correlation_mean": 0.5078026817712401
+          },
+          "torso": {
+            "mae_mps": 0.04546291381120682,
+            "danger_mae_mps": 0.08116152137517929,
+            "correlation_mean": 0.4466266898672551,
+            "danger_correlation_mean": 0.49892014533480894
+          },
+          "left_arm": {
+            "mae_mps": 0.12151200324296951,
+            "danger_mae_mps": 0.20247596502304077,
+            "correlation_mean": 0.4960739103094157,
+            "danger_correlation_mean": 0.5577552287972399
+          },
+          "right_arm": {
+            "mae_mps": 0.11738327890634537,
+            "danger_mae_mps": 0.18279357254505157,
+            "correlation_mean": 0.4911442760732912,
+            "danger_correlation_mean": 0.5649403135624848
+          },
+          "left_leg": {
+            "mae_mps": 0.11581689119338989,
+            "danger_mae_mps": 0.15451739728450775,
+            "correlation_mean": 0.49091830123456137,
+            "danger_correlation_mean": 0.5777143949684355
+          },
+          "right_leg": {
+            "mae_mps": 0.12449662387371063,
+            "danger_mae_mps": 0.17300891876220703,
+            "correlation_mean": 0.48335687372674574,
+            "danger_correlation_mean": 0.5546078268970762
+          }
+        },
+        "selection_score": 0.2012078022107687
+      }
+    },
+    {
+      "epoch": 23,
+      "train": {
+        "loss": 0.11095492541790009,
+        "regression": 0.05285052726553245,
+        "motion": 0.26345964250239456,
+        "acceleration": 0.045103908855129375
+      },
+      "validation": {
+        "mae_mps": 0.10666192322969437,
+        "danger_mae_mps": 0.16801835596561432,
+        "correlation_mean": 0.48274529340275635,
+        "danger_correlation_mean": 0.5483604463391927,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10542962700128555,
+            "danger_mae_mps": 0.18582949042320251,
+            "correlation_mean": 0.45907420358576234,
+            "danger_correlation_mean": 0.5060960793069431
+          },
+          "torso": {
+            "mae_mps": 0.04454362019896507,
+            "danger_mae_mps": 0.08010099828243256,
+            "correlation_mean": 0.44684355867812264,
+            "danger_correlation_mean": 0.496808644849807
+          },
+          "left_arm": {
+            "mae_mps": 0.1171344593167305,
+            "danger_mae_mps": 0.20069651305675507,
+            "correlation_mean": 0.49788662578674064,
+            "danger_correlation_mean": 0.5572198637362037
+          },
+          "right_arm": {
+            "mae_mps": 0.1134491041302681,
+            "danger_mae_mps": 0.1810271441936493,
+            "correlation_mean": 0.49441018982246215,
+            "danger_correlation_mean": 0.5659414763894997
+          },
+          "left_leg": {
+            "mae_mps": 0.1117154210805893,
+            "danger_mae_mps": 0.15327101945877075,
+            "correlation_mean": 0.4934201035569357,
+            "danger_correlation_mean": 0.5800346451944538
+          },
+          "right_leg": {
+            "mae_mps": 0.11990858614444733,
+            "danger_mae_mps": 0.1707492619752884,
+            "correlation_mean": 0.48537392405098273,
+            "danger_correlation_mean": 0.5548886687627861
+          }
+        },
+        "selection_score": 0.19570696989125158
+      }
+    },
+    {
+      "epoch": 24,
+      "train": {
+        "loss": 0.10840681855651466,
+        "regression": 0.05135329829698259,
+        "motion": 0.25858271291310136,
+        "acceleration": 0.044474819167093796
+      },
+      "validation": {
+        "mae_mps": 0.10847911238670349,
+        "danger_mae_mps": 0.16863739490509033,
+        "correlation_mean": 0.48197390027820775,
+        "danger_correlation_mean": 0.5455865925138744,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10626053065061569,
+            "danger_mae_mps": 0.18684260547161102,
+            "correlation_mean": 0.4577799715726296,
+            "danger_correlation_mean": 0.5053376205797706
+          },
+          "torso": {
+            "mae_mps": 0.04483122006058693,
+            "danger_mae_mps": 0.08052482455968857,
+            "correlation_mean": 0.44723415964150004,
+            "danger_correlation_mean": 0.4960435460587697
+          },
+          "left_arm": {
+            "mae_mps": 0.11900115013122559,
+            "danger_mae_mps": 0.20111989974975586,
+            "correlation_mean": 0.49645722061986963,
+            "danger_correlation_mean": 0.5531373871357314
+          },
+          "right_arm": {
+            "mae_mps": 0.11555888503789902,
+            "danger_mae_mps": 0.18182535469532013,
+            "correlation_mean": 0.4934956731132439,
+            "danger_correlation_mean": 0.5616056773370863
+          },
+          "left_leg": {
+            "mae_mps": 0.11401327699422836,
+            "danger_mae_mps": 0.15395422279834747,
+            "correlation_mean": 0.49258787413349464,
+            "danger_correlation_mean": 0.5759072677165802
+          },
+          "right_leg": {
+            "mae_mps": 0.12259294092655182,
+            "danger_mae_mps": 0.1710933893918991,
+            "correlation_mean": 0.4852643318769951,
+            "danger_correlation_mean": 0.5535061135355915
+          }
+        },
+        "selection_score": 0.198459153026496
+      }
+    },
+    {
+      "epoch": 25,
+      "train": {
+        "loss": 0.11071655357425864,
+        "regression": 0.052040637132119046,
+        "motion": 0.2667088088664142,
+        "acceleration": 0.04445127948102626
+      },
+      "validation": {
+        "mae_mps": 0.10772193223237991,
+        "danger_mae_mps": 0.16791969537734985,
+        "correlation_mean": 0.48677368258300063,
+        "danger_correlation_mean": 0.551429816443322,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10612430423498154,
+            "danger_mae_mps": 0.18632987141609192,
+            "correlation_mean": 0.46284658647131266,
+            "danger_correlation_mean": 0.5084927049332432
+          },
+          "torso": {
+            "mae_mps": 0.04456828534603119,
+            "danger_mae_mps": 0.07997969537973404,
+            "correlation_mean": 0.4522801861865446,
+            "danger_correlation_mean": 0.5012714914844505
+          },
+          "left_arm": {
+            "mae_mps": 0.11828996986150742,
+            "danger_mae_mps": 0.2001180499792099,
+            "correlation_mean": 0.5010553804462746,
+            "danger_correlation_mean": 0.5597719222041113
+          },
+          "right_arm": {
+            "mae_mps": 0.11495158076286316,
+            "danger_mae_mps": 0.18087686598300934,
+            "correlation_mean": 0.49911238792544554,
+            "danger_correlation_mean": 0.5688592668223594
+          },
+          "left_leg": {
+            "mae_mps": 0.11289150267839432,
+            "danger_mae_mps": 0.15332478284835815,
+            "correlation_mean": 0.49700574100993217,
+            "danger_correlation_mean": 0.5825901147909462
+          },
+          "right_leg": {
+            "mae_mps": 0.12120095640420914,
+            "danger_mae_mps": 0.17053183913230896,
+            "correlation_mean": 0.4894666153871055,
+            "danger_correlation_mean": 0.5589397557079792
+          }
+        },
+        "selection_score": 0.19615996183624754
+      }
+    },
+    {
+      "epoch": 26,
+      "train": {
+        "loss": 0.10608921403234656,
+        "regression": 0.05042839202691208,
+        "motion": 0.2520166337490082,
+        "acceleration": 0.04381245467811823
+      },
+      "validation": {
+        "mae_mps": 0.10671394318342209,
+        "danger_mae_mps": 0.16873860359191895,
+        "correlation_mean": 0.4816815264359992,
+        "danger_correlation_mean": 0.541399567880294,
+        "per_part": {
+          "head": {
+            "mae_mps": 0.10470185428857803,
+            "danger_mae_mps": 0.18574771285057068,
+            "correlation_mean": 0.4576533774989435,
+            "danger_correlation_mean": 0.49967323925479185
+          },
+          "torso": {
+            "mae_mps": 0.044351354241371155,
+            "danger_mae_mps": 0.08035100251436234,
+            "correlation_mean": 0.4458400447369232,
+            "danger_correlation_mean": 0.4906978639160765
+          },
+          "left_arm": {
+            "mae_mps": 0.11728452891111374,
+            "danger_mae_mps": 0.20159022510051727,
+            "correlation_mean": 0.49680477469523865,
+            "danger_correlation_mean": 0.5500197730559323
+          },
+          "right_arm": {
+            "mae_mps": 0.11324738711118698,
+            "danger_mae_mps": 0.18152926862239838,
+            "correlation_mean": 0.49452505615296855,
+            "danger_correlation_mean": 0.5582161411875859
+          },
+          "left_leg": {
+            "mae_mps": 0.11226493120193481,
+            "danger_mae_mps": 0.15448899567127228,
+            "correlation_mean": 0.49148280371187464,
+            "danger_correlation_mean": 0.5723608721180686
+          },
+          "right_leg": {
+            "mae_mps": 0.12041877955198288,
+            "danger_mae_mps": 0.17196086049079895,
+            "correlation_mean": 0.4842938283635747,
+            "danger_correlation_mean": 0.548713748476335
+          }
+        },
+        "selection_score": 0.19722851366551164
+      }
+    }
+  ]
+}

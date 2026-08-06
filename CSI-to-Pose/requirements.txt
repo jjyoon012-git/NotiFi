@@ -1,11 +1,9 @@
-numpy>=1.26
-pandas>=2.1
-torch>=2.3
-opencv-python>=4.9
-matplotlib>=3.8
-joblib>=1.3
-pillow>=10.0
-
-# Legacy collection and MediaPipe pilot scripts under scripts/.
-mediapipe>=0.10
-pyserial>=3.5
+numpy
+pandas
+scipy
+opencv-python
+mediapipe==0.10.9
+matplotlib
+pyserial
+torch
+joblib

@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "protocol": "single_split_lmh_e01",
+  "split": "val",
+  "test_split_touched": false,
+  "test_used_for_selection": false,
+  "purpose": "inference target-invariance audit only",
+  "poisoned_fields": [
+    "target_pose",
+    "target_valid",
+    "target_class",
+    "target_risk",
+    "pool.target_cost"
+  ],
+  "exact_prediction_equality": true,
+  "maximum_absolute_pose_difference": 0.0,
+  "trials": 315,
+  "strength_calibration": "work_v2/runs/kp10_action_strength/calibration.json"
+}

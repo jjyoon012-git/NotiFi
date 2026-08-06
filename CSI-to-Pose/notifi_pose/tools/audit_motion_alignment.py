@@ -180,19 +180,31 @@ def grouped_summary(frame: pd.DataFrame, columns: list[str]) -> list[dict]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--exp", default="yja_holdout", choices=("yja_holdout",))
+    parser.add_argument("--exp", default="yja_holdout")
     parser.add_argument("--baseline", default="none", choices=("none", "sub", "sub_z"))
     parser.add_argument("--max-lag", type=int, default=30)
     parser.add_argument("--smooth-width", type=int, default=7)
     parser.add_argument(
         "--output-csv", type=Path,
-        default=C.REPORT_DIR / "motion_alignment_audit.csv",
+        default=None,
     )
     parser.add_argument(
         "--output-json", type=Path,
-        default=C.REPORT_DIR / "motion_alignment_audit.json",
+        default=None,
     )
     args = parser.parse_args()
+    safe_protocol = "".join(
+        character if character.isalnum() or character in "-_" else "_"
+        for character in args.exp
+    )
+    if args.output_csv is None:
+        args.output_csv = (
+            C.REPORT_DIR / f"motion_alignment_audit_{safe_protocol}.csv"
+        )
+    if args.output_json is None:
+        args.output_json = (
+            C.REPORT_DIR / f"motion_alignment_audit_{safe_protocol}.json"
+        )
 
     datasets = build_datasets(exp=args.exp, baseline=args.baseline)
     rows = []

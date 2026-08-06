@@ -71,6 +71,27 @@ def root_selection_score(metrics: dict) -> float:
     )
 
 
+def configure_trainable_parameters(model, args) -> list[torch.nn.Parameter]:
+    """Isolate the decoupled motion branch during staged optimization."""
+    if args.objective == "motion_only" and (
+        args.residual_decoder == "decoupled_motion_root"
+    ):
+        prefixes = ("motion_trajectory_context.", "motion_observation_head.")
+        for name, parameter in model.named_parameters():
+            parameter.requires_grad_(name.startswith(prefixes))
+    elif args.freeze_motion_branch:
+        prefixes = ("motion_trajectory_context.", "motion_observation_head.")
+        for name, parameter in model.named_parameters():
+            if name.startswith(prefixes):
+                parameter.requires_grad_(False)
+    selected = [
+        parameter for parameter in model.parameters() if parameter.requires_grad
+    ]
+    if not selected:
+        raise RuntimeError("training configuration selected no parameters")
+    return selected
+
+
 class DeterministicValidationPerturbation(Dataset):
     """Apply a fixed validation corruption without modifying source examples."""
 
@@ -139,6 +160,10 @@ def _training_metadata(args: argparse.Namespace) -> dict:
         "root_displacement_weight": args.root_displacement_weight,
         "root_endpoint_weight": args.root_endpoint_weight,
         "root_shift_robust_weight": args.root_shift_robust_weight,
+        "root_uncertain_shift_weight": args.root_uncertain_shift_weight,
+        "uncertain_shift_temperature": args.uncertain_shift_temperature,
+        "motion_aux_weight": args.motion_aux_weight,
+        "motion_aux_lag": args.motion_aux_lag,
         "alignment_weight": args.alignment_weight,
         "link_dropout_p": args.link_dropout_p,
         "max_link_drop": args.max_link_drop,
@@ -149,6 +174,8 @@ def _training_metadata(args: argparse.Namespace) -> dict:
             report_path(args.init_hybrid_checkpoint)
             if args.init_hybrid_checkpoint is not None else None
         ),
+        "partial_warm_start": bool(args.partial_warm_start),
+        "freeze_motion_branch": bool(args.freeze_motion_branch),
     }
 
 
@@ -212,6 +239,48 @@ def global_shift_root_loss(predicted: torch.Tensor, target: torch.Tensor,
         cost = cost + shift_penalty * abs(shift) / max(max_shift, 1)
         candidates.append(cost)
     return torch.stack(candidates, dim=-1).min(-1).values
+
+
+def global_shift_root_soft_loss(
+    predicted: torch.Tensor,
+    target: torch.Tensor,
+    valid: torch.Tensor,
+    max_shift: int,
+    temperature: float,
+    shift_penalty: float = 0.001,
+) -> torch.Tensor:
+    """Marginalize one trial-level root offset without rewriting the target."""
+    if max_shift < 0:
+        raise ValueError("max_shift must be non-negative")
+    if temperature <= 0:
+        raise ValueError("temperature must be positive")
+    candidates = []
+    for shift in range(-max_shift, max_shift + 1):
+        shifted = torch.zeros_like(target)
+        shifted_valid = torch.zeros_like(valid)
+        if shift >= 0:
+            stop = target.shape[1] - shift
+            if stop > 0:
+                shifted[:, :stop] = target[:, shift:]
+                shifted_valid[:, :stop] = valid[:, shift:]
+        else:
+            start = -shift
+            if start < target.shape[1]:
+                shifted[:, start:] = target[:, :target.shape[1] - start]
+                shifted_valid[:, start:] = valid[:, :valid.shape[1] - start]
+        overlap = valid & shifted_valid
+        error = F.smooth_l1_loss(
+            predicted, shifted, beta=0.10, reduction="none"
+        ).mean(2)
+        mask = overlap.to(error.dtype)
+        cost = (error * mask).sum(1) / mask.sum(1).clamp_min(1.0)
+        cost = cost + shift_penalty * abs(shift) / max(max_shift, 1)
+        candidates.append(cost)
+    costs = torch.stack(candidates, dim=-1)
+    normalizer = math.log(costs.shape[-1])
+    return -temperature * (
+        torch.logsumexp(-costs / temperature, dim=-1) - normalizer
+    )
 
 
 def pose_only_reconstruction_loss(output: dict, batch: dict,
@@ -318,11 +387,147 @@ def pose_only_reconstruction_loss(output: dict, batch: dict,
     }
 
 
+def motion_observation_per_sample(
+    output: dict, batch: dict, lag: int = 5,
+) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
+    """Supervise motion evidence without requiring a pose/root prediction loss."""
+    required = (
+        "root_velocity_observation_v13", "pose_speed_observation_v13",
+    )
+    if any(key not in output for key in required):
+        raise KeyError("motion observation loss requires a motion-root decoder")
+    valid = batch["valid"].bool()
+    if lag < 1 or lag >= valid.shape[1]:
+        raise ValueError("invalid motion observation lag")
+    interval = valid[:, lag:] & valid[:, :-lag]
+    scale = C.TARGET_FPS / lag
+    target_root_velocity = (
+        batch["root"][:, lag:] - batch["root"][:, :-lag]
+    ) * scale
+    root_motion = L.smooth_l1_per_sample(
+        output["root_velocity_observation_v13"][:, lag:],
+        target_root_velocity, interval, beta=0.20,
+    )
+    pose_delta = (
+        batch["pose_rel"][:, lag:] - batch["pose_rel"][:, :-lag]
+    ) * scale
+    target_pose_speed = torch.linalg.vector_norm(
+        pose_delta, dim=-1
+    ).mean(-1)
+    pose_motion = L.masked_per_sample(
+        F.smooth_l1_loss(
+            output["pose_speed_observation_v13"][:, lag:],
+            target_pose_speed, beta=0.20, reduction="none",
+        ),
+        interval,
+    )
+    return root_motion + pose_motion, {
+        "root_motion": root_motion,
+        "pose_motion": pose_motion,
+        "interval": interval,
+        "target_root_velocity": target_root_velocity,
+        "target_pose_speed": target_pose_speed,
+    }
+
+
+def motion_only_loss(
+    output: dict, batch: dict, lag: int = 5,
+) -> tuple[torch.Tensor, dict]:
+    """Pretrain CSI motion observations before root fine-tuning."""
+    per_sample, parts = motion_observation_per_sample(output, batch, lag)
+    quality = batch.get(
+        "quality_weight", torch.ones(len(per_sample), device=per_sample.device)
+    ).to(per_sample.dtype)
+    total = (per_sample * quality).sum() / quality.sum().clamp_min(1e-6)
+    return total, {
+        "total": float(total.detach()),
+        "root_motion": float(parts["root_motion"].mean().detach()),
+        "pose_motion": float(parts["pose_motion"].mean().detach()),
+    }
+
+
+def _motion_regression_metrics(predicted: torch.Tensor,
+                               target: torch.Tensor) -> dict:
+    predicted = predicted.float().cpu()
+    target = target.float().cpu()
+    residual = (predicted - target).square().sum(0)
+    total = (target - target.mean(0)).square().sum(0).clamp_min(1e-8)
+    r2 = 1.0 - residual / total
+    left = predicted - predicted.mean(0)
+    right = target - target.mean(0)
+    correlation = (left * right).sum(0) / (
+        left.square().sum(0).sqrt() * right.square().sum(0).sqrt()
+    ).clamp_min(1e-8)
+    return {
+        "r2": [float(value) for value in r2.reshape(-1)],
+        "r2_mean": float(r2.mean()),
+        "correlation": [float(value) for value in correlation.reshape(-1)],
+        "correlation_mean": float(correlation.mean()),
+        "mae": [
+            float(value)
+            for value in (predicted - target).abs().mean(0).reshape(-1)
+        ],
+    }
+
+
+@torch.no_grad()
+def evaluate_motion_observation(model, loader, device: str,
+                                lag: int = 5) -> dict:
+    """Evaluate the learned motion head on every valid validation interval."""
+    model.eval()
+    root_predictions = []
+    root_targets = []
+    pose_predictions = []
+    pose_targets = []
+    weighted_loss = 0.0
+    quality_total = 0.0
+    for batch in loader:
+        batch = move_batch(batch, device)
+        output = model(batch["csi"], batch["link_mask"])
+        per_sample, parts = motion_observation_per_sample(output, batch, lag)
+        quality = batch.get(
+            "quality_weight",
+            torch.ones(len(per_sample), device=per_sample.device),
+        ).to(per_sample.dtype)
+        weighted_loss += float((per_sample * quality).sum())
+        quality_total += float(quality.sum())
+        interval = parts["interval"]
+        root_predictions.append(
+            output["root_velocity_observation_v13"][:, lag:][interval].cpu()
+        )
+        root_targets.append(parts["target_root_velocity"][interval].cpu())
+        pose_predictions.append(
+            output["pose_speed_observation_v13"][:, lag:][interval]
+            .cpu()[:, None]
+        )
+        pose_targets.append(parts["target_pose_speed"][interval].cpu()[:, None])
+    if not root_predictions:
+        raise RuntimeError("motion validation has no valid intervals")
+    root_prediction = torch.cat(root_predictions)
+    root_target = torch.cat(root_targets)
+    pose_prediction = torch.cat(pose_predictions)
+    pose_target = torch.cat(pose_targets)
+    return {
+        "loss": weighted_loss / max(quality_total, 1e-6),
+        "valid_intervals": int(len(root_prediction)),
+        "root_velocity": _motion_regression_metrics(
+            root_prediction, root_target
+        ),
+        "pose_speed": _motion_regression_metrics(
+            pose_prediction, pose_target
+        ),
+    }
+
+
 def root_only_reconstruction_loss(
     output: dict, batch: dict, velocity_weight: float,
     displacement_weight: float, endpoint_weight: float,
     velocity_lags: tuple[int, ...] = (5,),
     shift_robust_weight: float = 0.0, max_shift: int = 15,
+    uncertain_shift_weight: float = 0.0,
+    uncertain_shift_temperature: float = 0.01,
+    motion_aux_weight: float = 0.0,
+    motion_aux_lag: int = 5,
 ) -> tuple[torch.Tensor, dict]:
     """Train a clean-protocol root expert without pose/logit gradients."""
     valid = batch["valid"].bool()
@@ -338,6 +543,20 @@ def root_only_reconstruction_loss(
         )
         shift_robust = shifted * danger.to(root.dtype)
         mix = shift_robust_weight * danger.to(root.dtype)
+        root = root + mix * (shifted - root)
+
+    timestamp_exact = batch.get(
+        "timestamp_exact", torch.ones_like(danger, dtype=torch.bool)
+    ).bool()
+    uncertain = ~timestamp_exact
+    uncertain_shift = torch.zeros_like(root)
+    if uncertain_shift_weight and uncertain.any():
+        shifted = global_shift_root_soft_loss(
+            output["root"], batch["root"], valid, max_shift,
+            uncertain_shift_temperature,
+        )
+        uncertain_shift = shifted * uncertain.to(root.dtype)
+        mix = uncertain_shift_weight * uncertain.to(root.dtype)
         root = root + mix * (shifted - root)
 
     predicted_relative = output["root"] - output["root"][:, :1]
@@ -376,9 +595,16 @@ def root_only_reconstruction_loss(
                     - batch["root"][item, selected], dim=-1,
                 ).mean()
 
+    motion_aux = torch.zeros_like(root)
+    if motion_aux_weight:
+        motion_aux, _ = motion_observation_per_sample(
+            output, batch, int(motion_aux_lag)
+        )
+
     per_sample = (
         root + displacement_weight * displacement
         + velocity_weight * velocity + endpoint_weight * endpoint
+        + motion_aux_weight * motion_aux
     )
     total = (per_sample * quality).sum() / quality.sum().clamp_min(1e-6)
     return total, {
@@ -388,6 +614,11 @@ def root_only_reconstruction_loss(
         "velocity": float(velocity.mean().detach()),
         "endpoint": float(endpoint.mean().detach()),
         "shift_robust": float(shift_robust.mean().detach()),
+        "uncertain_shift": float(
+            uncertain_shift[uncertain].mean().detach() if uncertain.any()
+            else uncertain_shift.new_zeros(())
+        ),
+        "motion_aux": float(motion_aux.mean().detach()),
     }
 
 
@@ -543,7 +774,10 @@ def main() -> int:
     parser.add_argument("--alignment-weight", type=float, default=0.0)
     parser.add_argument(
         "--objective",
-        choices=("full", "pose_only", "root_only", "classification_only"),
+        choices=(
+            "full", "pose_only", "root_only", "classification_only",
+            "motion_only",
+        ),
         default="full",
     )
     parser.add_argument(
@@ -551,6 +785,10 @@ def main() -> int:
         choices=(
             "dense", "graph", "spectral", "cartesian", "subcarrier",
             "direct_root",
+            "state_root",
+            "motion_root",
+            "conditioned_root",
+            "decoupled_motion_root",
         ),
         default="dense"
     )
@@ -580,8 +818,32 @@ def main() -> int:
     parser.add_argument("--root-displacement-weight", type=float, default=0.25)
     parser.add_argument("--root-endpoint-weight", type=float, default=0.10)
     parser.add_argument(
+        "--partial-warm-start", action="store_true",
+        help="load compatible weights when extending a residual decoder",
+    )
+    parser.add_argument(
+        "--freeze-motion-branch", action="store_true",
+        help="keep a pretrained decoupled motion context fixed during root training",
+    )
+    parser.add_argument(
         "--root-shift-robust-weight", type=float, default=0.0,
         help="danger-root loss fraction using bounded trial-level alignment",
+    )
+    parser.add_argument(
+        "--root-uncertain-shift-weight", type=float, default=0.0,
+        help="root loss fraction marginalized only for non-recorded timestamps",
+    )
+    parser.add_argument(
+        "--uncertain-shift-temperature", type=float, default=0.01,
+        help="soft-min temperature for uncertain timestamp alignment",
+    )
+    parser.add_argument(
+        "--motion-aux-weight", type=float, default=0.0,
+        help="5-frame root-velocity and pose-speed feature supervision",
+    )
+    parser.add_argument(
+        "--motion-aux-lag", type=int, default=5,
+        help="frame interval used by motion observation supervision",
     )
     parser.add_argument("--link-dropout-p", type=float, default=0.0)
     parser.add_argument("--max-link-drop", type=int, default=2)
@@ -627,6 +889,19 @@ def main() -> int:
         raise ValueError("pose shift-robust weight must be in [0, 1]")
     if not 0.0 <= args.root_shift_robust_weight <= 1.0:
         raise ValueError("root shift-robust weight must be in [0, 1]")
+    if not 0.0 <= args.root_uncertain_shift_weight <= 1.0:
+        raise ValueError("root uncertain-shift weight must be in [0, 1]")
+    if args.uncertain_shift_temperature <= 0:
+        raise ValueError("uncertain shift temperature must be positive")
+    if args.motion_aux_lag < 1:
+        raise ValueError("motion auxiliary lag must be positive")
+    if args.objective == "motion_only":
+        if args.residual_decoder not in {
+            "motion_root", "conditioned_root", "decoupled_motion_root",
+        }:
+            raise ValueError("motion-only training requires a motion-root decoder")
+        if not args.skip_calibration:
+            raise ValueError("motion-only pretraining requires --skip-calibration")
 
     set_seed(args.seed)
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -643,7 +918,20 @@ def main() -> int:
             args.init_hybrid_checkpoint, map_location=device, weights_only=False
         )
         initial_decoder = initial.get("residual_decoder", "dense")
-        if initial_decoder != args.residual_decoder:
+        compatible_extension = (
+            args.partial_warm_start
+            and initial_decoder == "direct_root"
+            and args.residual_decoder in {
+                "state_root", "motion_root", "conditioned_root",
+            }
+        )
+        decoupled_extension = (
+            args.partial_warm_start
+            and initial_decoder == "conditioned_root"
+            and args.residual_decoder == "decoupled_motion_root"
+        )
+        compatible_extension = compatible_extension or decoupled_extension
+        if initial_decoder != args.residual_decoder and not compatible_extension:
             raise RuntimeError(
                 "hybrid decoder mismatch: "
                 f"checkpoint={initial_decoder}, requested={args.residual_decoder}"
@@ -654,13 +942,57 @@ def main() -> int:
                 "hybrid protocol mismatch: "
                 f"checkpoint={initial_protocol}, requested={args.exp}"
             )
-        model.load_state_dict(initial["model"])
+        incompatible = model.load_state_dict(
+            initial["model"], strict=not compatible_extension
+        )
+        if compatible_extension:
+            if decoupled_extension:
+                allowed_missing = {
+                    key for key in model.state_dict()
+                    if key.startswith("motion_trajectory_context.")
+                }
+            elif args.residual_decoder == "state_root":
+                allowed_missing = {
+                    "root_velocity_head.0.weight", "root_velocity_head.0.bias",
+                    "root_velocity_head.1.weight", "root_velocity_head.1.bias",
+                    "root_velocity_head.3.weight", "root_velocity_head.3.bias",
+                    "root_state_gate.0.weight", "root_state_gate.0.bias",
+                    "root_state_gate.1.weight", "root_state_gate.1.bias",
+                }
+            elif args.residual_decoder == "motion_root":
+                allowed_missing = {
+                    "motion_observation_head.0.weight",
+                    "motion_observation_head.0.bias",
+                    "motion_observation_head.1.weight",
+                    "motion_observation_head.1.bias",
+                    "motion_observation_head.3.weight",
+                    "motion_observation_head.3.bias",
+                }
+            else:
+                allowed_missing = {
+                    "motion_observation_head.0.weight",
+                    "motion_observation_head.0.bias",
+                    "motion_observation_head.1.weight",
+                    "motion_observation_head.1.bias",
+                    "motion_observation_head.3.weight",
+                    "motion_observation_head.3.bias",
+                    "motion_condition.weight",
+                }
+            missing = set(incompatible.missing_keys)
+            if missing != allowed_missing or incompatible.unexpected_keys:
+                raise RuntimeError(
+                    "unexpected partial warm-start keys: "
+                    f"missing={sorted(missing)}, "
+                    f"unexpected={incompatible.unexpected_keys}"
+                )
+            if decoupled_extension:
+                model.initialize_motion_context_from_root()
     class_weight = _balanced_weight(train.index, "class_id", C.N_CLASSES, device)
     risk_weight = _balanced_weight(
         train.index, "risk_id", C.N_RISK, device, args.risk_danger_boost
     )
     optimizer = torch.optim.AdamW(
-        [parameter for parameter in model.parameters() if parameter.requires_grad],
+        configure_trainable_parameters(model, args),
         lr=args.learning_rate, weight_decay=1e-4,
     )
     scaler = torch.amp.GradScaler("cuda", enabled=device == "cuda")
@@ -689,6 +1021,11 @@ def main() -> int:
             model, loaders["val_class"], device
         )
         initial_source = "warm_start_full_strength"
+    initial_motion = None
+    if args.objective == "motion_only":
+        initial_motion = evaluate_motion_observation(
+            model, loaders["val"], device, args.motion_aux_lag
+        )
     if args.objective == "root_only":
         best_score = root_selection_score(initial_validation)
     elif args.objective == "pose_only":
@@ -697,6 +1034,8 @@ def main() -> int:
         )
     elif args.objective == "classification_only":
         best_score = classification_selection_score(initial_classification)
+    elif args.objective == "motion_only":
+        best_score = float(initial_motion["loss"])
     else:
         best_score = float(initial_validation["mpjpe_m"])
     torch.save({
@@ -709,6 +1048,7 @@ def main() -> int:
         "training_config": _training_metadata(args),
         "validation": initial_validation,
         "validation_classification": initial_classification,
+        "validation_motion": initial_motion,
     }, checkpoint_path)
 
     model.set_calibration(1.0, 1.0, 1.0, 1.0)
@@ -747,11 +1087,19 @@ def main() -> int:
                         velocity_lags=tuple(args.root_velocity_lags),
                         shift_robust_weight=args.root_shift_robust_weight,
                         max_shift=args.max_shift,
+                        uncertain_shift_weight=args.root_uncertain_shift_weight,
+                        uncertain_shift_temperature=args.uncertain_shift_temperature,
+                        motion_aux_weight=args.motion_aux_weight,
+                        motion_aux_lag=args.motion_aux_lag,
                     )
                 elif args.objective == "classification_only":
                     loss, parts = classification_only_loss(
                         output, batch, class_weight, risk_weight,
                         args.lambda_class, args.lambda_risk,
+                    )
+                elif args.objective == "motion_only":
+                    loss, parts = motion_only_loss(
+                        output, batch, args.motion_aux_lag
                     )
                 else:
                     loss, parts = trajectory_reconstruction_loss(
@@ -776,12 +1124,20 @@ def main() -> int:
         train_metrics = {
             key: value / max(examples, 1) for key, value in totals.items()
         }
-        validation = evaluate_trajectory(
-            model, loaders["val"], device, args.max_shift
-        )
-        validation_classification = evaluate_classification(
-            model, loaders["val_class"], device
-        )
+        validation_motion = None
+        if args.objective == "motion_only":
+            validation = initial_validation
+            validation_classification = initial_classification
+            validation_motion = evaluate_motion_observation(
+                model, loaders["val"], device, args.motion_aux_lag
+            )
+        else:
+            validation = evaluate_trajectory(
+                model, loaders["val"], device, args.max_shift
+            )
+            validation_classification = evaluate_classification(
+                model, loaders["val_class"], device
+            )
         if args.objective == "root_only":
             score = root_selection_score(validation)
         elif args.objective == "pose_only":
@@ -790,6 +1146,8 @@ def main() -> int:
             )
         elif args.objective == "classification_only":
             score = classification_selection_score(validation_classification)
+        elif args.objective == "motion_only":
+            score = float(validation_motion["loss"])
         else:
             score = float(validation["mpjpe_m"])
         history.append({
@@ -798,6 +1156,7 @@ def main() -> int:
             "selection_score": score,
             "validation": validation,
             "validation_classification": validation_classification,
+            "validation_motion": validation_motion,
         })
         torch.save({
             "model": model.state_dict(),
@@ -808,15 +1167,27 @@ def main() -> int:
             "training_config": _training_metadata(args),
             "validation": validation,
             "validation_classification": validation_classification,
+            "validation_motion": validation_motion,
         }, args.run_dir / "last_model.pt")
-        print(
-            f"epoch={epoch:02d} loss={train_metrics['total']:.4f} "
-            f"mpjpe={validation['mpjpe_m'] * 100:.2f}cm "
-            f"danger={validation['danger_mpjpe_m'] * 100:.2f}cm "
-            f"root={validation['root_error_m'] * 100:.2f}cm "
-            f"class={validation_classification['class']['accuracy']:.3f} "
-            f"danger-R={validation_classification['risk']['danger_recall']:.3f}"
-        )
+        if validation_motion is not None:
+            print(
+                f"epoch={epoch:02d} loss={train_metrics['total']:.4f} "
+                f"motion-val={validation_motion['loss']:.4f} "
+                f"root-v-R2="
+                f"{validation_motion['root_velocity']['r2_mean']:.3f} "
+                f"pose-speed-R2="
+                f"{validation_motion['pose_speed']['r2_mean']:.3f}"
+            )
+        else:
+            print(
+                f"epoch={epoch:02d} loss={train_metrics['total']:.4f} "
+                f"mpjpe={validation['mpjpe_m'] * 100:.2f}cm "
+                f"danger={validation['danger_mpjpe_m'] * 100:.2f}cm "
+                f"root={validation['root_error_m'] * 100:.2f}cm "
+                f"class={validation_classification['class']['accuracy']:.3f} "
+                f"danger-R="
+                f"{validation_classification['risk']['danger_recall']:.3f}"
+            )
         if score < best_score:
             best_score = score
             stale = 0
@@ -829,6 +1200,7 @@ def main() -> int:
                 "training_config": _training_metadata(args),
                 "validation": validation,
                 "validation_classification": validation_classification,
+                "validation_motion": validation_motion,
             }, checkpoint_path)
         else:
             stale += 1
@@ -840,6 +1212,14 @@ def main() -> int:
         checkpoint_path, map_location=device, weights_only=False
     )
     model.load_state_dict(selected_checkpoint["model"])
+    if args.objective == "motion_only":
+        selected_checkpoint["validation"] = evaluate_trajectory(
+            model, loaders["val"], device, args.max_shift
+        )
+        selected_checkpoint["validation_classification"] = (
+            evaluate_classification(model, loaders["val_class"], device)
+        )
+        torch.save(selected_checkpoint, checkpoint_path)
     if args.skip_calibration:
         result = {
             "run": "p2_v9_hybrid_validation_only",
@@ -853,6 +1233,7 @@ def main() -> int:
             "validation_classification_full_strength": selected_checkpoint[
                 "validation_classification"
             ],
+            "validation_motion": selected_checkpoint.get("validation_motion"),
             "history": history,
         }
         (args.run_dir / "results.json").write_text(

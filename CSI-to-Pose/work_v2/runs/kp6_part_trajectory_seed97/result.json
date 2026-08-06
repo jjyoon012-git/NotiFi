@@ -1,0 +1,3316 @@
+{
+  "run": "KP6-PART-TRAJECTORY-EXP01",
+  "status": "validation_selected_test_untouched",
+  "protocol": "single_split_lmh_e01",
+  "test_used_for_selection": false,
+  "part_order": [
+    "head",
+    "torso",
+    "left_arm",
+    "right_arm",
+    "left_leg",
+    "right_leg"
+  ],
+  "config": {
+    "exp": "single_split_lmh_e01",
+    "epochs": 60,
+    "patience": 12,
+    "batch_size": 28,
+    "learning_rate": 0.0002,
+    "weight_decay": 0.001,
+    "seed": 97,
+    "feature_root": "work_v2/runs/kp5_mpr_selector_seed17",
+    "run_dir": "work_v2/runs/kp6_part_trajectory_seed97"
+  },
+  "selection": {
+    "epoch": 57,
+    "score": 0.5557472288608551
+  },
+  "validation": {
+    "mae_m": 0.14842942357063293,
+    "danger_mae_m": 0.22161638736724854,
+    "velocity_mae_mps": 0.42834508419036865,
+    "danger_velocity_mae_mps": 0.5830854177474976,
+    "per_part": {
+      "head": {
+        "mae_m": 0.14906680583953857,
+        "danger_mae_m": 0.24436084926128387,
+        "velocity_mae_mps": 0.4592097997665405,
+        "danger_velocity_mae_mps": 0.643913745880127
+      },
+      "torso": {
+        "mae_m": 0.06073296442627907,
+        "danger_mae_m": 0.10046182572841644,
+        "velocity_mae_mps": 0.1887974888086319,
+        "danger_velocity_mae_mps": 0.267483115196228
+      },
+      "left_arm": {
+        "mae_m": 0.17322656512260437,
+        "danger_mae_m": 0.24507182836532593,
+        "velocity_mae_mps": 0.46987900137901306,
+        "danger_velocity_mae_mps": 0.6489631533622742
+      },
+      "right_arm": {
+        "mae_m": 0.16914483904838562,
+        "danger_mae_m": 0.22280071675777435,
+        "velocity_mae_mps": 0.47749820351600647,
+        "danger_velocity_mae_mps": 0.6074080467224121
+      },
+      "left_leg": {
+        "mae_m": 0.1487516164779663,
+        "danger_mae_m": 0.22202268242835999,
+        "velocity_mae_mps": 0.43079307675361633,
+        "danger_velocity_mae_mps": 0.5846236348152161
+      },
+      "right_leg": {
+        "mae_m": 0.15077191591262817,
+        "danger_mae_m": 0.24450339376926422,
+        "velocity_mae_mps": 0.4419999122619629,
+        "danger_velocity_mae_mps": 0.6148645281791687
+      }
+    },
+    "selection_score": 0.5557472288608551
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 0.15288186276500876,
+        "position": 0.10360855659977956,
+        "velocity": 0.07116921660913662,
+        "configuration": 0.12182039886035702
+      },
+      "validation": {
+        "mae_m": 0.1957467794418335,
+        "danger_mae_m": 0.27440014481544495,
+        "velocity_mae_mps": 0.6160039305686951,
+        "danger_velocity_mae_mps": 0.7570118308067322,
+        "per_part": {
+          "head": {
+            "mae_m": 0.20609277486801147,
+            "danger_mae_m": 0.30444514751434326,
+            "velocity_mae_mps": 0.6570199131965637,
+            "danger_velocity_mae_mps": 0.8258191347122192
+          },
+          "torso": {
+            "mae_m": 0.10373236238956451,
+            "danger_mae_m": 0.13862991333007812,
+            "velocity_mae_mps": 0.49960049986839294,
+            "danger_velocity_mae_mps": 0.5928393602371216
+          },
+          "left_arm": {
+            "mae_m": 0.21733827888965607,
+            "danger_mae_m": 0.2950669825077057,
+            "velocity_mae_mps": 0.5847391486167908,
+            "danger_velocity_mae_mps": 0.7257474064826965
+          },
+          "right_arm": {
+            "mae_m": 0.19878113269805908,
+            "danger_mae_m": 0.26938676834106445,
+            "velocity_mae_mps": 0.5978562235832214,
+            "danger_velocity_mae_mps": 0.7309620976448059
+          },
+          "left_leg": {
+            "mae_m": 0.20688021183013916,
+            "danger_mae_m": 0.2869492173194885,
+            "velocity_mae_mps": 0.6340957880020142,
+            "danger_velocity_mae_mps": 0.753470242023468
+          },
+          "right_leg": {
+            "mae_m": 0.2022932767868042,
+            "danger_mae_m": 0.29603156447410583,
+            "velocity_mae_mps": 0.6770537495613098,
+            "danger_velocity_mae_mps": 0.8504607081413269
+          }
+        },
+        "selection_score": 0.713899128139019
+      }
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 0.08970931307836012,
+        "position": 0.059753353538160976,
+        "velocity": 0.04676492317495021,
+        "configuration": 0.06794118390164593
+      },
+      "validation": {
+        "mae_m": 0.17071938514709473,
+        "danger_mae_m": 0.24490401148796082,
+        "velocity_mae_mps": 0.6127831339836121,
+        "danger_velocity_mae_mps": 0.8524647355079651,
+        "per_part": {
+          "head": {
+            "mae_m": 0.17539675533771515,
+            "danger_mae_m": 0.2700178027153015,
+            "velocity_mae_mps": 0.676015317440033,
+            "danger_velocity_mae_mps": 0.9521970748901367
+          },
+          "torso": {
+            "mae_m": 0.07921228557825089,
+            "danger_mae_m": 0.11692580580711365,
+            "velocity_mae_mps": 0.43724897503852844,
+            "danger_velocity_mae_mps": 0.5807440280914307
+          },
+          "left_arm": {
+            "mae_m": 0.2005612552165985,
+            "danger_mae_m": 0.26787298917770386,
+            "velocity_mae_mps": 0.5890745520591736,
+            "danger_velocity_mae_mps": 0.8489158749580383
+          },
+          "right_arm": {
+            "mae_m": 0.18565137684345245,
+            "danger_mae_m": 0.24639225006103516,
+            "velocity_mae_mps": 0.6022446751594543,
+            "danger_velocity_mae_mps": 0.8189855217933655
+          },
+          "left_leg": {
+            "mae_m": 0.17038239538669586,
+            "danger_mae_m": 0.2459547072649002,
+            "velocity_mae_mps": 0.6357929706573486,
+            "danger_velocity_mae_mps": 0.8540904521942139
+          },
+          "right_leg": {
+            "mae_m": 0.17313528060913086,
+            "danger_mae_m": 0.26910173892974854,
+            "velocity_mae_mps": 0.6676747798919678,
+            "danger_velocity_mae_mps": 0.9538654685020447
+          }
+        },
+        "selection_score": 0.6659974232316017
+      }
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "loss": 0.06839689510789784,
+        "position": 0.04363427734510465,
+        "velocity": 0.04179290563545444,
+        "configuration": 0.050675507973540916
+      },
+      "validation": {
+        "mae_m": 0.16332179307937622,
+        "danger_mae_m": 0.22951850295066833,
+        "velocity_mae_mps": 0.6041565537452698,
+        "danger_velocity_mae_mps": 0.8426099419593811,
+        "per_part": {
+          "head": {
+            "mae_m": 0.16434893012046814,
+            "danger_mae_m": 0.25104668736457825,
+            "velocity_mae_mps": 0.6565456390380859,
+            "danger_velocity_mae_mps": 0.9258348941802979
+          },
+          "torso": {
+            "mae_m": 0.07413704693317413,
+            "danger_mae_m": 0.10872219502925873,
+            "velocity_mae_mps": 0.39163559675216675,
+            "danger_velocity_mae_mps": 0.5319464802742004
+          },
+          "left_arm": {
+            "mae_m": 0.19017453491687775,
+            "danger_mae_m": 0.25076553225517273,
+            "velocity_mae_mps": 0.6057043671607971,
+            "danger_velocity_mae_mps": 0.8747797012329102
+          },
+          "right_arm": {
+            "mae_m": 0.18123705685138702,
+            "danger_mae_m": 0.2325543612241745,
+            "velocity_mae_mps": 0.6272581219673157,
+            "danger_velocity_mae_mps": 0.84024578332901
+          },
+          "left_leg": {
+            "mae_m": 0.16314604878425598,
+            "danger_mae_m": 0.22980093955993652,
+            "velocity_mae_mps": 0.6153225898742676,
+            "danger_velocity_mae_mps": 0.8302596807479858
+          },
+          "right_leg": {
+            "mae_m": 0.16740167140960693,
+            "danger_mae_m": 0.2537233233451843,
+            "velocity_mae_mps": 0.641780436038971,
+            "danger_velocity_mae_mps": 0.9268498420715332
+          }
+        },
+        "selection_score": 0.6370270684361458
+      }
+    },
+    {
+      "epoch": 4,
+      "train": {
+        "loss": 0.05833777607503263,
+        "position": 0.0368327841332013,
+        "velocity": 0.03694388084113598,
+        "configuration": 0.04287316675551913
+      },
+      "validation": {
+        "mae_m": 0.16068173944950104,
+        "danger_mae_m": 0.2261320948600769,
+        "velocity_mae_mps": 0.6067657470703125,
+        "danger_velocity_mae_mps": 0.824627697467804,
+        "per_part": {
+          "head": {
+            "mae_m": 0.1630956083536148,
+            "danger_mae_m": 0.247486874461174,
+            "velocity_mae_mps": 0.6423664093017578,
+            "danger_velocity_mae_mps": 0.8849483132362366
+          },
+          "torso": {
+            "mae_m": 0.07257553189992905,
+            "danger_mae_m": 0.10712718963623047,
+            "velocity_mae_mps": 0.3647014796733856,
+            "danger_velocity_mae_mps": 0.49291133880615234
+          },
+          "left_arm": {
+            "mae_m": 0.18645954132080078,
+            "danger_mae_m": 0.24626383185386658,
+            "velocity_mae_mps": 0.6321370601654053,
+            "danger_velocity_mae_mps": 0.8725815415382385
+          },
+          "right_arm": {
+            "mae_m": 0.18045324087142944,
+            "danger_mae_m": 0.23021216690540314,
+            "velocity_mae_mps": 0.6628643274307251,
+            "danger_velocity_mae_mps": 0.8549190759658813
+          },
+          "left_leg": {
+            "mae_m": 0.16079048812389374,
+            "danger_mae_m": 0.2271708846092224,
+            "velocity_mae_mps": 0.6062299609184265,
+            "danger_velocity_mae_mps": 0.8144605755805969
+          },
+          "right_leg": {
+            "mae_m": 0.16191525757312775,
+            "danger_mae_m": 0.24880415201187134,
+            "velocity_mae_mps": 0.6299849152565002,
+            "danger_velocity_mae_mps": 0.8894519209861755
+          }
+        },
+        "selection_score": 0.6277175873517991
+      }
+    },
+    {
+      "epoch": 5,
+      "train": {
+        "loss": 0.05199435818940401,
+        "position": 0.03260598983615637,
+        "velocity": 0.033476348289034584,
+        "configuration": 0.038358233107084576
+      },
+      "validation": {
+        "mae_m": 0.15885530412197113,
+        "danger_mae_m": 0.2249799221754074,
+        "velocity_mae_mps": 0.5956425070762634,
+        "danger_velocity_mae_mps": 0.8068938851356506,
+        "per_part": {
+          "head": {
+            "mae_m": 0.16254641115665436,
+            "danger_mae_m": 0.24652284383773804,
+            "velocity_mae_mps": 0.6285971403121948,
+            "danger_velocity_mae_mps": 0.8687477111816406
+          },
+          "torso": {
+            "mae_m": 0.07032803446054459,
+            "danger_mae_m": 0.10655970126390457,
+            "velocity_mae_mps": 0.3439532518386841,
+            "danger_velocity_mae_mps": 0.4687127470970154
+          },
+          "left_arm": {
+            "mae_m": 0.18591783940792084,
+            "danger_mae_m": 0.24586287140846252,
+            "velocity_mae_mps": 0.638297438621521,
+            "danger_velocity_mae_mps": 0.87312251329422
+          },
+          "right_arm": {
+            "mae_m": 0.17699217796325684,
+            "danger_mae_m": 0.22989055514335632,
+            "velocity_mae_mps": 0.6508299112319946,
+            "danger_velocity_mae_mps": 0.8290330171585083
+          },
+          "left_leg": {
+            "mae_m": 0.1584833413362503,
+            "danger_mae_m": 0.22512485086917877,
+            "velocity_mae_mps": 0.5915673971176147,
+            "danger_velocity_mae_mps": 0.7964134216308594
+          },
+          "right_leg": {
+            "mae_m": 0.16006530821323395,
+            "danger_mae_m": 0.24647898972034454,
+            "velocity_mae_mps": 0.6136299967765808,
+            "danger_velocity_mae_mps": 0.8641944527626038
+          }
+        },
+        "selection_score": 0.6206785403192043
+      }
+    },
+    {
+      "epoch": 6,
+      "train": {
+        "loss": 0.0477200240235437,
+        "position": 0.029928019947626373,
+        "velocity": 0.030747428621080788,
+        "configuration": 0.035152020694857296
+      },
+      "validation": {
+        "mae_m": 0.15778043866157532,
+        "danger_mae_m": 0.22560662031173706,
+        "velocity_mae_mps": 0.5726726055145264,
+        "danger_velocity_mae_mps": 0.7781591415405273,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15969832241535187,
+            "danger_mae_m": 0.24866169691085815,
+            "velocity_mae_mps": 0.606407880783081,
+            "danger_velocity_mae_mps": 0.8401870727539062
+          },
+          "torso": {
+            "mae_m": 0.0679507628083229,
+            "danger_mae_m": 0.10513249784708023,
+            "velocity_mae_mps": 0.32122471928596497,
+            "danger_velocity_mae_mps": 0.4423045814037323
+          },
+          "left_arm": {
+            "mae_m": 0.18315061926841736,
+            "danger_mae_m": 0.24696901440620422,
+            "velocity_mae_mps": 0.6192808747291565,
+            "danger_velocity_mae_mps": 0.8503918051719666
+          },
+          "right_arm": {
+            "mae_m": 0.17881570756435394,
+            "danger_mae_m": 0.22968947887420654,
+            "velocity_mae_mps": 0.6239566802978516,
+            "danger_velocity_mae_mps": 0.791739284992218
+          },
+          "left_leg": {
+            "mae_m": 0.15716558694839478,
+            "danger_mae_m": 0.2236618995666504,
+            "velocity_mae_mps": 0.5660802721977234,
+            "danger_velocity_mae_mps": 0.764656126499176
+          },
+          "right_leg": {
+            "mae_m": 0.16026146709918976,
+            "danger_mae_m": 0.24939650297164917,
+            "velocity_mae_mps": 0.5923281908035278,
+            "danger_velocity_mae_mps": 0.8395962715148926
+          }
+        },
+        "selection_score": 0.6137798458337784
+      }
+    },
+    {
+      "epoch": 7,
+      "train": {
+        "loss": 0.0448822220787406,
+        "position": 0.028208553791046143,
+        "velocity": 0.028641628313132307,
+        "configuration": 0.0332454942505468
+      },
+      "validation": {
+        "mae_m": 0.15775318443775177,
+        "danger_mae_m": 0.22561246156692505,
+        "velocity_mae_mps": 0.5655316114425659,
+        "danger_velocity_mae_mps": 0.7718904614448547,
+        "per_part": {
+          "head": {
+            "mae_m": 0.1620560884475708,
+            "danger_mae_m": 0.2499370276927948,
+            "velocity_mae_mps": 0.5922289490699768,
+            "danger_velocity_mae_mps": 0.830331563949585
+          },
+          "torso": {
+            "mae_m": 0.06855952739715576,
+            "danger_mae_m": 0.10545875132083893,
+            "velocity_mae_mps": 0.3073396384716034,
+            "danger_velocity_mae_mps": 0.4288000166416168
+          },
+          "left_arm": {
+            "mae_m": 0.18191878497600555,
+            "danger_mae_m": 0.2456003725528717,
+            "velocity_mae_mps": 0.6162500977516174,
+            "danger_velocity_mae_mps": 0.8510558605194092
+          },
+          "right_arm": {
+            "mae_m": 0.1791451871395111,
+            "danger_mae_m": 0.23117540776729584,
+            "velocity_mae_mps": 0.6209529042243958,
+            "danger_velocity_mae_mps": 0.7855575680732727
+          },
+          "left_leg": {
+            "mae_m": 0.15807169675827026,
+            "danger_mae_m": 0.22458641231060028,
+            "velocity_mae_mps": 0.5631616115570068,
+            "danger_velocity_mae_mps": 0.7668372988700867
+          },
+          "right_leg": {
+            "mae_m": 0.15776360034942627,
+            "danger_mae_m": 0.24711874127388,
+            "velocity_mae_mps": 0.5824594497680664,
+            "danger_velocity_mae_mps": 0.8249333500862122
+          }
+        },
+        "selection_score": 0.6121054917573928
+      }
+    },
+    {
+      "epoch": 8,
+      "train": {
+        "loss": 0.04324574116617441,
+        "position": 0.02731869297779419,
+        "velocity": 0.027083720165220173,
+        "configuration": 0.0322387313300913
+      },
+      "validation": {
+        "mae_m": 0.15679629147052765,
+        "danger_mae_m": 0.22673334181308746,
+        "velocity_mae_mps": 0.5504602193832397,
+        "danger_velocity_mae_mps": 0.7498484253883362,
+        "per_part": {
+          "head": {
+            "mae_m": 0.1616945117712021,
+            "danger_mae_m": 0.252164751291275,
+            "velocity_mae_mps": 0.5778791904449463,
+            "danger_velocity_mae_mps": 0.8052499890327454
+          },
+          "torso": {
+            "mae_m": 0.06727557629346848,
+            "danger_mae_m": 0.10469049215316772,
+            "velocity_mae_mps": 0.29187682271003723,
+            "danger_velocity_mae_mps": 0.4073926508426666
+          },
+          "left_arm": {
+            "mae_m": 0.1818535476922989,
+            "danger_mae_m": 0.24830660223960876,
+            "velocity_mae_mps": 0.5993857979774475,
+            "danger_velocity_mae_mps": 0.8310253024101257
+          },
+          "right_arm": {
+            "mae_m": 0.1767352968454361,
+            "danger_mae_m": 0.22954681515693665,
+            "velocity_mae_mps": 0.6058867573738098,
+            "danger_velocity_mae_mps": 0.7629193067550659
+          },
+          "left_leg": {
+            "mae_m": 0.15589366853237152,
+            "danger_mae_m": 0.2243267148733139,
+            "velocity_mae_mps": 0.5488256812095642,
+            "danger_velocity_mae_mps": 0.74754798412323
+          },
+          "right_leg": {
+            "mae_m": 0.15826375782489777,
+            "danger_mae_m": 0.25089094042778015,
+            "velocity_mae_mps": 0.5680431723594666,
+            "danger_velocity_mae_mps": 0.8009602427482605
+          }
+        },
+        "selection_score": 0.6077362544834614
+      }
+    },
+    {
+      "epoch": 9,
+      "train": {
+        "loss": 0.04047281870787794,
+        "position": 0.025534919209100983,
+        "velocity": 0.02545033818618818,
+        "configuration": 0.0301514069380408
+      },
+      "validation": {
+        "mae_m": 0.15564773976802826,
+        "danger_mae_m": 0.2256755381822586,
+        "velocity_mae_mps": 0.5366677641868591,
+        "danger_velocity_mae_mps": 0.7344948649406433,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15962643921375275,
+            "danger_mae_m": 0.25050613284111023,
+            "velocity_mae_mps": 0.5656644105911255,
+            "danger_velocity_mae_mps": 0.7932199835777283
+          },
+          "torso": {
+            "mae_m": 0.06639604270458221,
+            "danger_mae_m": 0.10360758751630783,
+            "velocity_mae_mps": 0.2805311381816864,
+            "danger_velocity_mae_mps": 0.39342212677001953
+          },
+          "left_arm": {
+            "mae_m": 0.18184718489646912,
+            "danger_mae_m": 0.2507440745830536,
+            "velocity_mae_mps": 0.5873115062713623,
+            "danger_velocity_mae_mps": 0.8219825029373169
+          },
+          "right_arm": {
+            "mae_m": 0.1748729944229126,
+            "danger_mae_m": 0.2272338569164276,
+            "velocity_mae_mps": 0.5901574492454529,
+            "danger_velocity_mae_mps": 0.7483795285224915
+          },
+          "left_leg": {
+            "mae_m": 0.15502555668354034,
+            "danger_mae_m": 0.22306911647319794,
+            "velocity_mae_mps": 0.5362777709960938,
+            "danger_velocity_mae_mps": 0.7305341362953186
+          },
+          "right_leg": {
+            "mae_m": 0.15704017877578735,
+            "danger_mae_m": 0.2483185976743698,
+            "velocity_mae_mps": 0.5505213141441345,
+            "danger_velocity_mae_mps": 0.7765429019927979
+          }
+        },
+        "selection_score": 0.6015831686556339
+      }
+    },
+    {
+      "epoch": 10,
+      "train": {
+        "loss": 0.039703171446242115,
+        "position": 0.025278817311945288,
+        "velocity": 0.02413067848167636,
+        "configuration": 0.029893084556202997
+      },
+      "validation": {
+        "mae_m": 0.15501119196414948,
+        "danger_mae_m": 0.22446994483470917,
+        "velocity_mae_mps": 0.5305091142654419,
+        "danger_velocity_mae_mps": 0.725249171257019,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15842828154563904,
+            "danger_mae_m": 0.24791356921195984,
+            "velocity_mae_mps": 0.5585268139839172,
+            "danger_velocity_mae_mps": 0.7822225689888
+          },
+          "torso": {
+            "mae_m": 0.06626011431217194,
+            "danger_mae_m": 0.1037641242146492,
+            "velocity_mae_mps": 0.27331632375717163,
+            "danger_velocity_mae_mps": 0.3824997544288635
+          },
+          "left_arm": {
+            "mae_m": 0.18008017539978027,
+            "danger_mae_m": 0.24522775411605835,
+            "velocity_mae_mps": 0.5791289806365967,
+            "danger_velocity_mae_mps": 0.8092420697212219
+          },
+          "right_arm": {
+            "mae_m": 0.1763988882303238,
+            "danger_mae_m": 0.22710222005844116,
+            "velocity_mae_mps": 0.5825628042221069,
+            "danger_velocity_mae_mps": 0.7364146113395691
+          },
+          "left_leg": {
+            "mae_m": 0.1541655957698822,
+            "danger_mae_m": 0.22422954440116882,
+            "velocity_mae_mps": 0.5330815315246582,
+            "danger_velocity_mae_mps": 0.728233814239502
+          },
+          "right_leg": {
+            "mae_m": 0.15579533576965332,
+            "danger_mae_m": 0.24840857088565826,
+            "velocity_mae_mps": 0.5462809205055237,
+            "danger_velocity_mae_mps": 0.7689893841743469
+          }
+        },
+        "selection_score": 0.597436910122633
+      }
+    },
+    {
+      "epoch": 11,
+      "train": {
+        "loss": 0.03799800329249014,
+        "position": 0.024273538411679594,
+        "velocity": 0.02294781334190206,
+        "configuration": 0.028463651595467872
+      },
+      "validation": {
+        "mae_m": 0.15371942520141602,
+        "danger_mae_m": 0.22244636714458466,
+        "velocity_mae_mps": 0.5219085812568665,
+        "danger_velocity_mae_mps": 0.7145910263061523,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15634095668792725,
+            "danger_mae_m": 0.24474120140075684,
+            "velocity_mae_mps": 0.5458813905715942,
+            "danger_velocity_mae_mps": 0.7650920152664185
+          },
+          "torso": {
+            "mae_m": 0.06466169655323029,
+            "danger_mae_m": 0.10141023993492126,
+            "velocity_mae_mps": 0.2638571560382843,
+            "danger_velocity_mae_mps": 0.371023029088974
+          },
+          "left_arm": {
+            "mae_m": 0.17915812134742737,
+            "danger_mae_m": 0.24408116936683655,
+            "velocity_mae_mps": 0.5653676390647888,
+            "danger_velocity_mae_mps": 0.7919984459877014
+          },
+          "right_arm": {
+            "mae_m": 0.1737566739320755,
+            "danger_mae_m": 0.22604171931743622,
+            "velocity_mae_mps": 0.5761703252792358,
+            "danger_velocity_mae_mps": 0.7308613061904907
+          },
+          "left_leg": {
+            "mae_m": 0.15398091077804565,
+            "danger_mae_m": 0.22323189675807953,
+            "velocity_mae_mps": 0.5295190215110779,
+            "danger_velocity_mae_mps": 0.7241559624671936
+          },
+          "right_leg": {
+            "mae_m": 0.15522532165050507,
+            "danger_mae_m": 0.24468092620372772,
+            "velocity_mae_mps": 0.539517879486084,
+            "danger_velocity_mae_mps": 0.7592000365257263
+          }
+        },
+        "selection_score": 0.5911568962037563
+      }
+    },
+    {
+      "epoch": 12,
+      "train": {
+        "loss": 0.03736746556718241,
+        "position": 0.02385042328387499,
+        "velocity": 0.022367413790727205,
+        "configuration": 0.028442238584499468
+      },
+      "validation": {
+        "mae_m": 0.15419700741767883,
+        "danger_mae_m": 0.2233305275440216,
+        "velocity_mae_mps": 0.5120751857757568,
+        "danger_velocity_mae_mps": 0.7019022107124329,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15617519617080688,
+            "danger_mae_m": 0.2468765676021576,
+            "velocity_mae_mps": 0.5400864481925964,
+            "danger_velocity_mae_mps": 0.7568249702453613
+          },
+          "torso": {
+            "mae_m": 0.0642710030078888,
+            "danger_mae_m": 0.10206904262304306,
+            "velocity_mae_mps": 0.25700950622558594,
+            "danger_velocity_mae_mps": 0.3616686761379242
+          },
+          "left_arm": {
+            "mae_m": 0.17886283993721008,
+            "danger_mae_m": 0.24437130987644196,
+            "velocity_mae_mps": 0.5562171936035156,
+            "danger_velocity_mae_mps": 0.7806763052940369
+          },
+          "right_arm": {
+            "mae_m": 0.17508168518543243,
+            "danger_mae_m": 0.22679339349269867,
+            "velocity_mae_mps": 0.5626189112663269,
+            "danger_velocity_mae_mps": 0.7142444849014282
+          },
+          "left_leg": {
+            "mae_m": 0.15380063652992249,
+            "danger_mae_m": 0.2231036126613617,
+            "velocity_mae_mps": 0.5219180583953857,
+            "danger_velocity_mae_mps": 0.7142896056175232
+          },
+          "right_leg": {
+            "mae_m": 0.15731652081012726,
+            "danger_mae_m": 0.2463635355234146,
+            "velocity_mae_mps": 0.5253881216049194,
+            "danger_velocity_mae_mps": 0.7406307458877563
+          }
+        },
+        "selection_score": 0.5898530170321464
+      }
+    },
+    {
+      "epoch": 13,
+      "train": {
+        "loss": 0.035631058144975795,
+        "position": 0.02280647163702683,
+        "velocity": 0.021269800734113564,
+        "configuration": 0.02690078161487525
+      },
+      "validation": {
+        "mae_m": 0.15254178643226624,
+        "danger_mae_m": 0.22328948974609375,
+        "velocity_mae_mps": 0.5042001605033875,
+        "danger_velocity_mae_mps": 0.692429780960083,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15375302731990814,
+            "danger_mae_m": 0.2453741878271103,
+            "velocity_mae_mps": 0.5352986454963684,
+            "danger_velocity_mae_mps": 0.7531029582023621
+          },
+          "torso": {
+            "mae_m": 0.06398723274469376,
+            "danger_mae_m": 0.10243089497089386,
+            "velocity_mae_mps": 0.2516666352748871,
+            "danger_velocity_mae_mps": 0.35543596744537354
+          },
+          "left_arm": {
+            "mae_m": 0.17883364856243134,
+            "danger_mae_m": 0.2477772980928421,
+            "velocity_mae_mps": 0.5486531257629395,
+            "danger_velocity_mae_mps": 0.774861752986908
+          },
+          "right_arm": {
+            "mae_m": 0.1735282838344574,
+            "danger_mae_m": 0.22610630095005035,
+            "velocity_mae_mps": 0.5528462529182434,
+            "danger_velocity_mae_mps": 0.7036044001579285
+          },
+          "left_leg": {
+            "mae_m": 0.15191760659217834,
+            "danger_mae_m": 0.2207787185907364,
+            "velocity_mae_mps": 0.5094811320304871,
+            "danger_velocity_mae_mps": 0.6949726939201355
+          },
+          "right_leg": {
+            "mae_m": 0.15405265986919403,
+            "danger_mae_m": 0.24682635068893433,
+            "velocity_mae_mps": 0.5196248888969421,
+            "danger_velocity_mae_mps": 0.7318143248558044
+          }
+        },
+        "selection_score": 0.5859381318092346
+      }
+    },
+    {
+      "epoch": 14,
+      "train": {
+        "loss": 0.035415052944286304,
+        "position": 0.02275529986416752,
+        "velocity": 0.020731745668771593,
+        "configuration": 0.027018212162974207
+      },
+      "validation": {
+        "mae_m": 0.1531572788953781,
+        "danger_mae_m": 0.22325363755226135,
+        "velocity_mae_mps": 0.49822983145713806,
+        "danger_velocity_mae_mps": 0.6822645664215088,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15430960059165955,
+            "danger_mae_m": 0.24560566246509552,
+            "velocity_mae_mps": 0.5299429893493652,
+            "danger_velocity_mae_mps": 0.7418042421340942
+          },
+          "torso": {
+            "mae_m": 0.06439442187547684,
+            "danger_mae_m": 0.10246390104293823,
+            "velocity_mae_mps": 0.24645736813545227,
+            "danger_velocity_mae_mps": 0.34741461277008057
+          },
+          "left_arm": {
+            "mae_m": 0.1775723546743393,
+            "danger_mae_m": 0.24426084756851196,
+            "velocity_mae_mps": 0.5411779880523682,
+            "danger_velocity_mae_mps": 0.7604026198387146
+          },
+          "right_arm": {
+            "mae_m": 0.17387467622756958,
+            "danger_mae_m": 0.2271501123905182,
+            "velocity_mae_mps": 0.5470150113105774,
+            "danger_velocity_mae_mps": 0.6923810839653015
+          },
+          "left_leg": {
+            "mae_m": 0.15327118337154388,
+            "danger_mae_m": 0.22356678545475006,
+            "velocity_mae_mps": 0.5051543116569519,
+            "danger_velocity_mae_mps": 0.6895141005516052
+          },
+          "right_leg": {
+            "mae_m": 0.15624196827411652,
+            "danger_mae_m": 0.2461014986038208,
+            "velocity_mae_mps": 0.5124306082725525,
+            "danger_velocity_mae_mps": 0.722069501876831
+          }
+        },
+        "selection_score": 0.5843869939446449
+      }
+    },
+    {
+      "epoch": 15,
+      "train": {
+        "loss": 0.03444226826964454,
+        "position": 0.02225612992928787,
+        "velocity": 0.019928468264300715,
+        "configuration": 0.02605587379498915
+      },
+      "validation": {
+        "mae_m": 0.15218840539455414,
+        "danger_mae_m": 0.22265106439590454,
+        "velocity_mae_mps": 0.49262863397598267,
+        "danger_velocity_mae_mps": 0.6705493330955505,
+        "per_part": {
+          "head": {
+            "mae_m": 0.1545991450548172,
+            "danger_mae_m": 0.24651557207107544,
+            "velocity_mae_mps": 0.5223784446716309,
+            "danger_velocity_mae_mps": 0.7282743453979492
+          },
+          "torso": {
+            "mae_m": 0.06364951282739639,
+            "danger_mae_m": 0.1019512265920639,
+            "velocity_mae_mps": 0.23943094909191132,
+            "danger_velocity_mae_mps": 0.33649659156799316
+          },
+          "left_arm": {
+            "mae_m": 0.1779669225215912,
+            "danger_mae_m": 0.2460777908563614,
+            "velocity_mae_mps": 0.5342199206352234,
+            "danger_velocity_mae_mps": 0.7439975738525391
+          },
+          "right_arm": {
+            "mae_m": 0.17224939167499542,
+            "danger_mae_m": 0.2229676991701126,
+            "velocity_mae_mps": 0.5416511297225952,
+            "danger_velocity_mae_mps": 0.6802893280982971
+          },
+          "left_leg": {
+            "mae_m": 0.15291793644428253,
+            "danger_mae_m": 0.22294500470161438,
+            "velocity_mae_mps": 0.5033829808235168,
+            "danger_velocity_mae_mps": 0.6852412819862366
+          },
+          "right_leg": {
+            "mae_m": 0.1527540385723114,
+            "danger_mae_m": 0.24534004926681519,
+            "velocity_mae_mps": 0.5065833330154419,
+            "danger_velocity_mae_mps": 0.709080696105957
+          }
+        },
+        "selection_score": 0.5803474992513656
+      }
+    },
+    {
+      "epoch": 16,
+      "train": {
+        "loss": 0.03346184683455662,
+        "position": 0.02152230975810777,
+        "velocity": 0.019606221763586455,
+        "configuration": 0.025386798576536505
+      },
+      "validation": {
+        "mae_m": 0.15202148258686066,
+        "danger_mae_m": 0.22209136188030243,
+        "velocity_mae_mps": 0.48752352595329285,
+        "danger_velocity_mae_mps": 0.6657541990280151,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15406183898448944,
+            "danger_mae_m": 0.2458656281232834,
+            "velocity_mae_mps": 0.5174544453620911,
+            "danger_velocity_mae_mps": 0.7223551273345947
+          },
+          "torso": {
+            "mae_m": 0.06317637115716934,
+            "danger_mae_m": 0.10134642571210861,
+            "velocity_mae_mps": 0.23487792909145355,
+            "danger_velocity_mae_mps": 0.33096206188201904
+          },
+          "left_arm": {
+            "mae_m": 0.17716383934020996,
+            "danger_mae_m": 0.2442256212234497,
+            "velocity_mae_mps": 0.5262569189071655,
+            "danger_velocity_mae_mps": 0.7392529845237732
+          },
+          "right_arm": {
+            "mae_m": 0.17227795720100403,
+            "danger_mae_m": 0.22434818744659424,
+            "velocity_mae_mps": 0.5423183441162109,
+            "danger_velocity_mae_mps": 0.6856008172035217
+          },
+          "left_leg": {
+            "mae_m": 0.15229037404060364,
+            "danger_mae_m": 0.22137100994586945,
+            "velocity_mae_mps": 0.4966314435005188,
+            "danger_velocity_mae_mps": 0.6759200096130371
+          },
+          "right_leg": {
+            "mae_m": 0.15397405624389648,
+            "danger_mae_m": 0.24524889886379242,
+            "velocity_mae_mps": 0.49974921345710754,
+            "danger_velocity_mae_mps": 0.7000224590301514
+          }
+        },
+        "selection_score": 0.5782511673867703
+      }
+    },
+    {
+      "epoch": 17,
+      "train": {
+        "loss": 0.03298131008209153,
+        "position": 0.021285910413346508,
+        "velocity": 0.019077969672666353,
+        "configuration": 0.025090551935136318
+      },
+      "validation": {
+        "mae_m": 0.15236924588680267,
+        "danger_mae_m": 0.22481568157672882,
+        "velocity_mae_mps": 0.48424601554870605,
+        "danger_velocity_mae_mps": 0.6625100374221802,
+        "per_part": {
+          "head": {
+            "mae_m": 0.1536557525396347,
+            "danger_mae_m": 0.24734486639499664,
+            "velocity_mae_mps": 0.5145826935768127,
+            "danger_velocity_mae_mps": 0.7209376692771912
+          },
+          "torso": {
+            "mae_m": 0.06300894170999527,
+            "danger_mae_m": 0.10172410309314728,
+            "velocity_mae_mps": 0.23160313069820404,
+            "danger_velocity_mae_mps": 0.3270430862903595
+          },
+          "left_arm": {
+            "mae_m": 0.17724491655826569,
+            "danger_mae_m": 0.24847829341888428,
+            "velocity_mae_mps": 0.5252557992935181,
+            "danger_velocity_mae_mps": 0.7351750731468201
+          },
+          "right_arm": {
+            "mae_m": 0.17294181883335114,
+            "danger_mae_m": 0.22538448870182037,
+            "velocity_mae_mps": 0.5312024354934692,
+            "danger_velocity_mae_mps": 0.6729052066802979
+          },
+          "left_leg": {
+            "mae_m": 0.1518118530511856,
+            "danger_mae_m": 0.2235206961631775,
+            "velocity_mae_mps": 0.49549129605293274,
+            "danger_velocity_mae_mps": 0.675981342792511
+          },
+          "right_leg": {
+            "mae_m": 0.15602710843086243,
+            "danger_mae_m": 0.2510718107223511,
+            "velocity_mae_mps": 0.4995494484901428,
+            "danger_velocity_mae_mps": 0.7025768756866455
+          }
+        },
+        "selection_score": 0.5811899550259113
+      }
+    },
+    {
+      "epoch": 18,
+      "train": {
+        "loss": 0.032762928400188684,
+        "position": 0.021323419218374925,
+        "velocity": 0.01836316279050979,
+        "configuration": 0.02506201168183576
+      },
+      "validation": {
+        "mae_m": 0.15118595957756042,
+        "danger_mae_m": 0.22093859314918518,
+        "velocity_mae_mps": 0.4754301905632019,
+        "danger_velocity_mae_mps": 0.6473742723464966,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15233321487903595,
+            "danger_mae_m": 0.2436828464269638,
+            "velocity_mae_mps": 0.5085969567298889,
+            "danger_velocity_mae_mps": 0.7077611088752747
+          },
+          "torso": {
+            "mae_m": 0.06235706806182861,
+            "danger_mae_m": 0.10080847144126892,
+            "velocity_mae_mps": 0.2275560200214386,
+            "danger_velocity_mae_mps": 0.3194023668766022
+          },
+          "left_arm": {
+            "mae_m": 0.1758526861667633,
+            "danger_mae_m": 0.24277080595493317,
+            "velocity_mae_mps": 0.5140253901481628,
+            "danger_velocity_mae_mps": 0.714992105960846
+          },
+          "right_arm": {
+            "mae_m": 0.17238865792751312,
+            "danger_mae_m": 0.2229544073343277,
+            "velocity_mae_mps": 0.5209118723869324,
+            "danger_velocity_mae_mps": 0.657609224319458
+          },
+          "left_leg": {
+            "mae_m": 0.15172600746154785,
+            "danger_mae_m": 0.22181658446788788,
+            "velocity_mae_mps": 0.48703429102897644,
+            "danger_velocity_mae_mps": 0.663452684879303
+          },
+          "right_leg": {
+            "mae_m": 0.15314850211143494,
+            "danger_mae_m": 0.2435767948627472,
+            "velocity_mae_mps": 0.48920366168022156,
+            "danger_velocity_mae_mps": 0.6842087507247925
+          }
+        },
+        "selection_score": 0.5720083609223365
+      }
+    },
+    {
+      "epoch": 19,
+      "train": {
+        "loss": 0.03154898951338096,
+        "position": 0.02042640203779394,
+        "velocity": 0.01804379407655109,
+        "configuration": 0.0240362969819795
+      },
+      "validation": {
+        "mae_m": 0.15245816111564636,
+        "danger_mae_m": 0.22321543097496033,
+        "velocity_mae_mps": 0.47163107991218567,
+        "danger_velocity_mae_mps": 0.6447306871414185,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15399199724197388,
+            "danger_mae_m": 0.2477654367685318,
+            "velocity_mae_mps": 0.5039892196655273,
+            "danger_velocity_mae_mps": 0.7059394121170044
+          },
+          "torso": {
+            "mae_m": 0.0630197748541832,
+            "danger_mae_m": 0.10203046351671219,
+            "velocity_mae_mps": 0.22295479476451874,
+            "danger_velocity_mae_mps": 0.31404298543930054
+          },
+          "left_arm": {
+            "mae_m": 0.17687012255191803,
+            "danger_mae_m": 0.24459122121334076,
+            "velocity_mae_mps": 0.5116243362426758,
+            "danger_velocity_mae_mps": 0.7176249027252197
+          },
+          "right_arm": {
+            "mae_m": 0.17583416402339935,
+            "danger_mae_m": 0.22747890651226044,
+            "velocity_mae_mps": 0.5198202729225159,
+            "danger_velocity_mae_mps": 0.6578431129455566
+          },
+          "left_leg": {
+            "mae_m": 0.15202783048152924,
+            "danger_mae_m": 0.22245757281780243,
+            "velocity_mae_mps": 0.4799444377422333,
+            "danger_velocity_mae_mps": 0.6548567414283752
+          },
+          "right_leg": {
+            "mae_m": 0.1534818559885025,
+            "danger_mae_m": 0.24474602937698364,
+            "velocity_mae_mps": 0.4857243597507477,
+            "danger_velocity_mae_mps": 0.6801726222038269
+          }
+        },
+        "selection_score": 0.5753501608967782
+      }
+    },
+    {
+      "epoch": 20,
+      "train": {
+        "loss": 0.031699249732562086,
+        "position": 0.02060994709079916,
+        "velocity": 0.017813218545845964,
+        "configuration": 0.02427338156849146
+      },
+      "validation": {
+        "mae_m": 0.1515265554189682,
+        "danger_mae_m": 0.22332486510276794,
+        "velocity_mae_mps": 0.46912136673927307,
+        "danger_velocity_mae_mps": 0.6407868266105652,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15242335200309753,
+            "danger_mae_m": 0.24619080126285553,
+            "velocity_mae_mps": 0.4997921884059906,
+            "danger_velocity_mae_mps": 0.6985910534858704
+          },
+          "torso": {
+            "mae_m": 0.06253096461296082,
+            "danger_mae_m": 0.10135176032781601,
+            "velocity_mae_mps": 0.2194136083126068,
+            "danger_velocity_mae_mps": 0.3100817799568176
+          },
+          "left_arm": {
+            "mae_m": 0.17624783515930176,
+            "danger_mae_m": 0.24604308605194092,
+            "velocity_mae_mps": 0.5070012211799622,
+            "danger_velocity_mae_mps": 0.706869900226593
+          },
+          "right_arm": {
+            "mae_m": 0.17265304923057556,
+            "danger_mae_m": 0.22540283203125,
+            "velocity_mae_mps": 0.5208569169044495,
+            "danger_velocity_mae_mps": 0.6572884917259216
+          },
+          "left_leg": {
+            "mae_m": 0.15168733894824982,
+            "danger_mae_m": 0.22355139255523682,
+            "velocity_mae_mps": 0.4778575897216797,
+            "danger_velocity_mae_mps": 0.6536546945571899
+          },
+          "right_leg": {
+            "mae_m": 0.15419606864452362,
+            "danger_mae_m": 0.24658647179603577,
+            "velocity_mae_mps": 0.4833689332008362,
+            "danger_velocity_mae_mps": 0.6798184514045715
+          }
+        },
+        "selection_score": 0.5737127974629402
+      }
+    },
+    {
+      "epoch": 21,
+      "train": {
+        "loss": 0.03098208431831815,
+        "position": 0.020172050180421633,
+        "velocity": 0.017318279524757105,
+        "configuration": 0.023743179415098646
+      },
+      "validation": {
+        "mae_m": 0.15027041733264923,
+        "danger_mae_m": 0.22165659070014954,
+        "velocity_mae_mps": 0.46958303451538086,
+        "danger_velocity_mae_mps": 0.6357038021087646,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15081177651882172,
+            "danger_mae_m": 0.24456116557121277,
+            "velocity_mae_mps": 0.5004375576972961,
+            "danger_velocity_mae_mps": 0.6935828328132629
+          },
+          "torso": {
+            "mae_m": 0.06187833473086357,
+            "danger_mae_m": 0.10072390735149384,
+            "velocity_mae_mps": 0.21861226856708527,
+            "danger_velocity_mae_mps": 0.3062768578529358
+          },
+          "left_arm": {
+            "mae_m": 0.17564643919467926,
+            "danger_mae_m": 0.24398480355739594,
+            "velocity_mae_mps": 0.5106436014175415,
+            "danger_velocity_mae_mps": 0.7044302821159363
+          },
+          "right_arm": {
+            "mae_m": 0.17173372209072113,
+            "danger_mae_m": 0.2243775576353073,
+            "velocity_mae_mps": 0.5210714936256409,
+            "danger_velocity_mae_mps": 0.6514675617218018
+          },
+          "left_leg": {
+            "mae_m": 0.1499764323234558,
+            "danger_mae_m": 0.2220558077096939,
+            "velocity_mae_mps": 0.4778241813182831,
+            "danger_velocity_mae_mps": 0.6495656371116638
+          },
+          "right_leg": {
+            "mae_m": 0.1523706018924713,
+            "danger_mae_m": 0.24388162791728973,
+            "velocity_mae_mps": 0.48193758726119995,
+            "danger_velocity_mae_mps": 0.6710620522499084
+          }
+        },
+        "selection_score": 0.5696550294756889
+      }
+    },
+    {
+      "epoch": 22,
+      "train": {
+        "loss": 0.03070399927144701,
+        "position": 0.020006401718340137,
+        "velocity": 0.017122001937505873,
+        "configuration": 0.023524484258483757
+      },
+      "validation": {
+        "mae_m": 0.15066277980804443,
+        "danger_mae_m": 0.22238296270370483,
+        "velocity_mae_mps": 0.4673508107662201,
+        "danger_velocity_mae_mps": 0.6341502666473389,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15080200135707855,
+            "danger_mae_m": 0.2449740320444107,
+            "velocity_mae_mps": 0.5011096000671387,
+            "danger_velocity_mae_mps": 0.6961430907249451
+          },
+          "torso": {
+            "mae_m": 0.06193963810801506,
+            "danger_mae_m": 0.10116049647331238,
+            "velocity_mae_mps": 0.2162824273109436,
+            "danger_velocity_mae_mps": 0.30354073643684387
+          },
+          "left_arm": {
+            "mae_m": 0.1769493967294693,
+            "danger_mae_m": 0.24511589109897614,
+            "velocity_mae_mps": 0.5099786520004272,
+            "danger_velocity_mae_mps": 0.7068347930908203
+          },
+          "right_arm": {
+            "mae_m": 0.17166630923748016,
+            "danger_mae_m": 0.22415566444396973,
+            "velocity_mae_mps": 0.5191586017608643,
+            "danger_velocity_mae_mps": 0.651177167892456
+          },
+          "left_leg": {
+            "mae_m": 0.15021482110023499,
+            "danger_mae_m": 0.22211143374443054,
+            "velocity_mae_mps": 0.4717986285686493,
+            "danger_velocity_mae_mps": 0.6411164402961731
+          },
+          "right_leg": {
+            "mae_m": 0.1529926061630249,
+            "danger_mae_m": 0.24625025689601898,
+            "velocity_mae_mps": 0.4791923761367798,
+            "danger_velocity_mae_mps": 0.6683357954025269
+          }
+        },
+        "selection_score": 0.5704991042613983
+      }
+    },
+    {
+      "epoch": 23,
+      "train": {
+        "loss": 0.030184814029119232,
+        "position": 0.019655181052671236,
+        "velocity": 0.016807116970250554,
+        "configuration": 0.02323571029542522
+      },
+      "validation": {
+        "mae_m": 0.1506875902414322,
+        "danger_mae_m": 0.2236192673444748,
+        "velocity_mae_mps": 0.46243780851364136,
+        "danger_velocity_mae_mps": 0.6276254653930664,
+        "per_part": {
+          "head": {
+            "mae_m": 0.1515156328678131,
+            "danger_mae_m": 0.24657367169857025,
+            "velocity_mae_mps": 0.4934103488922119,
+            "danger_velocity_mae_mps": 0.687048077583313
+          },
+          "torso": {
+            "mae_m": 0.06226194277405739,
+            "danger_mae_m": 0.10162686556577682,
+            "velocity_mae_mps": 0.2127658575773239,
+            "danger_velocity_mae_mps": 0.29959869384765625
+          },
+          "left_arm": {
+            "mae_m": 0.17620953917503357,
+            "danger_mae_m": 0.24683722853660583,
+            "velocity_mae_mps": 0.5030988454818726,
+            "danger_velocity_mae_mps": 0.6947056651115417
+          },
+          "right_arm": {
+            "mae_m": 0.17105349898338318,
+            "danger_mae_m": 0.22537635266780853,
+            "velocity_mae_mps": 0.5129105448722839,
+            "danger_velocity_mae_mps": 0.6427295207977295
+          },
+          "left_leg": {
+            "mae_m": 0.15034766495227814,
+            "danger_mae_m": 0.22242288291454315,
+            "velocity_mae_mps": 0.47102272510528564,
+            "danger_velocity_mae_mps": 0.6412846446037292
+          },
+          "right_leg": {
+            "mae_m": 0.15355956554412842,
+            "danger_mae_m": 0.248060405254364,
+            "velocity_mae_mps": 0.4750417172908783,
+            "danger_velocity_mae_mps": 0.6633996367454529
+          }
+        },
+        "selection_score": 0.5705992750823498
+      }
+    },
+    {
+      "epoch": 24,
+      "train": {
+        "loss": 0.02985862303863872,
+        "position": 0.01950857767157934,
+        "velocity": 0.01649900028397414,
+        "configuration": 0.022876974957233124
+      },
+      "validation": {
+        "mae_m": 0.15033400058746338,
+        "danger_mae_m": 0.22194986045360565,
+        "velocity_mae_mps": 0.4601220488548279,
+        "danger_velocity_mae_mps": 0.6226940155029297,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15053972601890564,
+            "danger_mae_m": 0.24474917352199554,
+            "velocity_mae_mps": 0.49244752526283264,
+            "danger_velocity_mae_mps": 0.6821263432502747
+          },
+          "torso": {
+            "mae_m": 0.06205574795603752,
+            "danger_mae_m": 0.1007634624838829,
+            "velocity_mae_mps": 0.21127450466156006,
+            "danger_velocity_mae_mps": 0.29617995023727417
+          },
+          "left_arm": {
+            "mae_m": 0.17459280788898468,
+            "danger_mae_m": 0.24483731389045715,
+            "velocity_mae_mps": 0.49775218963623047,
+            "danger_velocity_mae_mps": 0.6840184330940247
+          },
+          "right_arm": {
+            "mae_m": 0.17019319534301758,
+            "danger_mae_m": 0.22155249118804932,
+            "velocity_mae_mps": 0.5093948245048523,
+            "danger_velocity_mae_mps": 0.6384546756744385
+          },
+          "left_leg": {
+            "mae_m": 0.15173888206481934,
+            "danger_mae_m": 0.22393998503684998,
+            "velocity_mae_mps": 0.4686666429042816,
+            "danger_velocity_mae_mps": 0.6378025412559509
+          },
+          "right_leg": {
+            "mae_m": 0.15367934107780457,
+            "danger_mae_m": 0.24537381529808044,
+            "velocity_mae_mps": 0.4753865897655487,
+            "danger_velocity_mae_mps": 0.6612693071365356
+          }
+        },
+        "selection_score": 0.5671876333653927
+      }
+    },
+    {
+      "epoch": 25,
+      "train": {
+        "loss": 0.030348965559493412,
+        "position": 0.019961924376812847,
+        "velocity": 0.01627543600360778,
+        "configuration": 0.02345319337804209
+      },
+      "validation": {
+        "mae_m": 0.15007691085338593,
+        "danger_mae_m": 0.22236162424087524,
+        "velocity_mae_mps": 0.4548109471797943,
+        "danger_velocity_mae_mps": 0.6197642087936401,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15110941231250763,
+            "danger_mae_m": 0.24575774371623993,
+            "velocity_mae_mps": 0.48943406343460083,
+            "danger_velocity_mae_mps": 0.6829966306686401
+          },
+          "torso": {
+            "mae_m": 0.061841413378715515,
+            "danger_mae_m": 0.10127834975719452,
+            "velocity_mae_mps": 0.20963647961616516,
+            "danger_velocity_mae_mps": 0.2958286702632904
+          },
+          "left_arm": {
+            "mae_m": 0.1760144978761673,
+            "danger_mae_m": 0.24744589626789093,
+            "velocity_mae_mps": 0.49584853649139404,
+            "danger_velocity_mae_mps": 0.6892714500427246
+          },
+          "right_arm": {
+            "mae_m": 0.16966193914413452,
+            "danger_mae_m": 0.22161716222763062,
+            "velocity_mae_mps": 0.5019688606262207,
+            "danger_velocity_mae_mps": 0.6338978409767151
+          },
+          "left_leg": {
+            "mae_m": 0.14951036870479584,
+            "danger_mae_m": 0.2216062843799591,
+            "velocity_mae_mps": 0.4591430127620697,
+            "danger_velocity_mae_mps": 0.6266456842422485
+          },
+          "right_leg": {
+            "mae_m": 0.1532609760761261,
+            "danger_mae_m": 0.24611546099185944,
+            "velocity_mae_mps": 0.46899768710136414,
+            "danger_velocity_mae_mps": 0.6553411483764648
+          }
+        },
+        "selection_score": 0.5664746671915054
+      }
+    },
+    {
+      "epoch": 26,
+      "train": {
+        "loss": 0.0296124232170934,
+        "position": 0.019406973363154313,
+        "velocity": 0.01609103464182805,
+        "configuration": 0.022867938630621542
+      },
+      "validation": {
+        "mae_m": 0.14983251690864563,
+        "danger_mae_m": 0.2216293215751648,
+        "velocity_mae_mps": 0.4530459940433502,
+        "danger_velocity_mae_mps": 0.6152795553207397,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15112175047397614,
+            "danger_mae_m": 0.24448180198669434,
+            "velocity_mae_mps": 0.48480677604675293,
+            "danger_velocity_mae_mps": 0.6748709678649902
+          },
+          "torso": {
+            "mae_m": 0.06188520789146423,
+            "danger_mae_m": 0.10076027363538742,
+            "velocity_mae_mps": 0.20602892339229584,
+            "danger_velocity_mae_mps": 0.29013770818710327
+          },
+          "left_arm": {
+            "mae_m": 0.17478343844413757,
+            "danger_mae_m": 0.24413655698299408,
+            "velocity_mae_mps": 0.48964282870292664,
+            "danger_velocity_mae_mps": 0.6756863594055176
+          },
+          "right_arm": {
+            "mae_m": 0.16985304653644562,
+            "danger_mae_m": 0.22191119194030762,
+            "velocity_mae_mps": 0.5044208765029907,
+            "danger_velocity_mae_mps": 0.6353225708007812
+          },
+          "left_leg": {
+            "mae_m": 0.15020819008350372,
+            "danger_mae_m": 0.2221766859292984,
+            "velocity_mae_mps": 0.45986664295196533,
+            "danger_velocity_mae_mps": 0.6263958811759949
+          },
+          "right_leg": {
+            "mae_m": 0.15224671363830566,
+            "danger_mae_m": 0.24597536027431488,
+            "velocity_mae_mps": 0.4684296250343323,
+            "danger_velocity_mae_mps": 0.6535844802856445
+          }
+        },
+        "selection_score": 0.5644657015800476
+      }
+    },
+    {
+      "epoch": 27,
+      "train": {
+        "loss": 0.02923667545176365,
+        "position": 0.01919858796860684,
+        "velocity": 0.015805925115604292,
+        "configuration": 0.022530069828710773
+      },
+      "validation": {
+        "mae_m": 0.1498289406299591,
+        "danger_mae_m": 0.22188493609428406,
+        "velocity_mae_mps": 0.4502795338630676,
+        "danger_velocity_mae_mps": 0.6111509799957275,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15089942514896393,
+            "danger_mae_m": 0.2450047731399536,
+            "velocity_mae_mps": 0.48342496156692505,
+            "danger_velocity_mae_mps": 0.6727645397186279
+          },
+          "torso": {
+            "mae_m": 0.0615793876349926,
+            "danger_mae_m": 0.10062972456216812,
+            "velocity_mae_mps": 0.20450471341609955,
+            "danger_velocity_mae_mps": 0.2878749966621399
+          },
+          "left_arm": {
+            "mae_m": 0.17511439323425293,
+            "danger_mae_m": 0.24409489333629608,
+            "velocity_mae_mps": 0.487223356962204,
+            "danger_velocity_mae_mps": 0.6723079681396484
+          },
+          "right_arm": {
+            "mae_m": 0.1702060103416443,
+            "danger_mae_m": 0.22302307188510895,
+            "velocity_mae_mps": 0.4997241199016571,
+            "danger_velocity_mae_mps": 0.6281992793083191
+          },
+          "left_leg": {
+            "mae_m": 0.1503113955259323,
+            "danger_mae_m": 0.2226296067237854,
+            "velocity_mae_mps": 0.45717301964759827,
+            "danger_velocity_mae_mps": 0.621720016002655
+          },
+          "right_leg": {
+            "mae_m": 0.1517994999885559,
+            "danger_mae_m": 0.24546140432357788,
+            "velocity_mae_mps": 0.46530401706695557,
+            "danger_velocity_mae_mps": 0.6494884490966797
+          }
+        },
+        "selection_score": 0.5638857111334801
+      }
+    },
+    {
+      "epoch": 28,
+      "train": {
+        "loss": 0.029004013800824232,
+        "position": 0.01902477726848288,
+        "velocity": 0.015702200841835955,
+        "configuration": 0.02241733187640255
+      },
+      "validation": {
+        "mae_m": 0.14966747164726257,
+        "danger_mae_m": 0.22183650732040405,
+        "velocity_mae_mps": 0.4477165639400482,
+        "danger_velocity_mae_mps": 0.6081429719924927,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15100067853927612,
+            "danger_mae_m": 0.24497145414352417,
+            "velocity_mae_mps": 0.4811055362224579,
+            "danger_velocity_mae_mps": 0.6709128022193909
+          },
+          "torso": {
+            "mae_m": 0.06184845417737961,
+            "danger_mae_m": 0.10088842362165451,
+            "velocity_mae_mps": 0.20318271219730377,
+            "danger_velocity_mae_mps": 0.28652462363243103
+          },
+          "left_arm": {
+            "mae_m": 0.17419135570526123,
+            "danger_mae_m": 0.24433469772338867,
+            "velocity_mae_mps": 0.48773229122161865,
+            "danger_velocity_mae_mps": 0.6721067428588867
+          },
+          "right_arm": {
+            "mae_m": 0.17012804746627808,
+            "danger_mae_m": 0.22313353419303894,
+            "velocity_mae_mps": 0.49700140953063965,
+            "danger_velocity_mae_mps": 0.6265641450881958
+          },
+          "left_leg": {
+            "mae_m": 0.15009456872940063,
+            "danger_mae_m": 0.22202329337596893,
+            "velocity_mae_mps": 0.45171064138412476,
+            "danger_velocity_mae_mps": 0.614425539970398
+          },
+          "right_leg": {
+            "mae_m": 0.15190857648849487,
+            "danger_mae_m": 0.24534037709236145,
+            "velocity_mae_mps": 0.4618314206600189,
+            "danger_velocity_mae_mps": 0.6446815133094788
+          }
+        },
+        "selection_score": 0.5629562079906464
+      }
+    },
+    {
+      "epoch": 29,
+      "train": {
+        "loss": 0.028981322253292256,
+        "position": 0.01902550928802653,
+        "velocity": 0.015427083390849557,
+        "configuration": 0.022781667680564253
+      },
+      "validation": {
+        "mae_m": 0.14943769574165344,
+        "danger_mae_m": 0.2219463586807251,
+        "velocity_mae_mps": 0.4443310499191284,
+        "danger_velocity_mae_mps": 0.6037095785140991,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14967624843120575,
+            "danger_mae_m": 0.2450588345527649,
+            "velocity_mae_mps": 0.4771187901496887,
+            "danger_velocity_mae_mps": 0.6667527556419373
+          },
+          "torso": {
+            "mae_m": 0.06138543412089348,
+            "danger_mae_m": 0.10090640187263489,
+            "velocity_mae_mps": 0.20109069347381592,
+            "danger_velocity_mae_mps": 0.2838391065597534
+          },
+          "left_arm": {
+            "mae_m": 0.17451705038547516,
+            "danger_mae_m": 0.24464824795722961,
+            "velocity_mae_mps": 0.48555490374565125,
+            "danger_velocity_mae_mps": 0.6699537038803101
+          },
+          "right_arm": {
+            "mae_m": 0.1698521375656128,
+            "danger_mae_m": 0.2227339893579483,
+            "velocity_mae_mps": 0.4898834228515625,
+            "danger_velocity_mae_mps": 0.6164859533309937
+          },
+          "left_leg": {
+            "mae_m": 0.15054012835025787,
+            "danger_mae_m": 0.22282372415065765,
+            "velocity_mae_mps": 0.44905492663383484,
+            "danger_velocity_mae_mps": 0.611344039440155
+          },
+          "right_leg": {
+            "mae_m": 0.151556134223938,
+            "danger_mae_m": 0.24513542652130127,
+            "velocity_mae_mps": 0.46003401279449463,
+            "danger_velocity_mae_mps": 0.641057014465332
+          }
+        },
+        "selection_score": 0.5618601858615875
+      }
+    },
+    {
+      "epoch": 30,
+      "train": {
+        "loss": 0.028275235175070437,
+        "position": 0.018572243692522698,
+        "velocity": 0.015202691482210701,
+        "configuration": 0.02191024616529996
+      },
+      "validation": {
+        "mae_m": 0.14941278100013733,
+        "danger_mae_m": 0.2211974561214447,
+        "velocity_mae_mps": 0.44324246048927307,
+        "danger_velocity_mae_mps": 0.6008018255233765,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15015652775764465,
+            "danger_mae_m": 0.24323652684688568,
+            "velocity_mae_mps": 0.47333675622940063,
+            "danger_velocity_mae_mps": 0.6588349342346191
+          },
+          "torso": {
+            "mae_m": 0.06134909391403198,
+            "danger_mae_m": 0.10005217790603638,
+            "velocity_mae_mps": 0.19921204447746277,
+            "danger_velocity_mae_mps": 0.28109562397003174
+          },
+          "left_arm": {
+            "mae_m": 0.17419269680976868,
+            "danger_mae_m": 0.24362987279891968,
+            "velocity_mae_mps": 0.4816818833351135,
+            "danger_velocity_mae_mps": 0.6633138656616211
+          },
+          "right_arm": {
+            "mae_m": 0.16985107958316803,
+            "danger_mae_m": 0.22336514294147491,
+            "velocity_mae_mps": 0.4928787648677826,
+            "danger_velocity_mae_mps": 0.6186924576759338
+          },
+          "left_leg": {
+            "mae_m": 0.15024949610233307,
+            "danger_mae_m": 0.2217492014169693,
+            "velocity_mae_mps": 0.4491879642009735,
+            "danger_velocity_mae_mps": 0.6106635332107544
+          },
+          "right_leg": {
+            "mae_m": 0.15164850652217865,
+            "danger_mae_m": 0.24457445740699768,
+            "velocity_mae_mps": 0.45915767550468445,
+            "danger_velocity_mae_mps": 0.6387161016464233
+          }
+        },
+        "selection_score": 0.560354121029377
+      }
+    },
+    {
+      "epoch": 31,
+      "train": {
+        "loss": 0.028272834183140236,
+        "position": 0.018558058379725975,
+        "velocity": 0.01511579478921538,
+        "configuration": 0.02212123784490607
+      },
+      "validation": {
+        "mae_m": 0.14897195994853973,
+        "danger_mae_m": 0.2208765596151352,
+        "velocity_mae_mps": 0.43989673256874084,
+        "danger_velocity_mae_mps": 0.5986027121543884,
+        "per_part": {
+          "head": {
+            "mae_m": 0.1491987705230713,
+            "danger_mae_m": 0.24352960288524628,
+            "velocity_mae_mps": 0.4696844518184662,
+            "danger_velocity_mae_mps": 0.657048761844635
+          },
+          "torso": {
+            "mae_m": 0.061112333089113235,
+            "danger_mae_m": 0.1002558022737503,
+            "velocity_mae_mps": 0.19818347692489624,
+            "danger_velocity_mae_mps": 0.27991870045661926
+          },
+          "left_arm": {
+            "mae_m": 0.173770472407341,
+            "danger_mae_m": 0.24324999749660492,
+            "velocity_mae_mps": 0.4783989489078522,
+            "danger_velocity_mae_mps": 0.6619158387184143
+          },
+          "right_arm": {
+            "mae_m": 0.16982586681842804,
+            "danger_mae_m": 0.2223813682794571,
+            "velocity_mae_mps": 0.4883739650249481,
+            "danger_velocity_mae_mps": 0.6179482936859131
+          },
+          "left_leg": {
+            "mae_m": 0.14985573291778564,
+            "danger_mae_m": 0.22198395431041718,
+            "velocity_mae_mps": 0.44595634937286377,
+            "danger_velocity_mae_mps": 0.6069136261940002
+          },
+          "right_leg": {
+            "mae_m": 0.15105341374874115,
+            "danger_mae_m": 0.24360531568527222,
+            "velocity_mae_mps": 0.4557681083679199,
+            "danger_velocity_mae_mps": 0.6348920464515686
+          }
+        },
+        "selection_score": 0.5588477395474911
+      }
+    },
+    {
+      "epoch": 32,
+      "train": {
+        "loss": 0.02786015799607743,
+        "position": 0.018270800398154693,
+        "velocity": 0.015007195549763062,
+        "configuration": 0.021684194660999558
+      },
+      "validation": {
+        "mae_m": 0.1492091417312622,
+        "danger_mae_m": 0.22168317437171936,
+        "velocity_mae_mps": 0.440146267414093,
+        "danger_velocity_mae_mps": 0.5957257747650146,
+        "per_part": {
+          "head": {
+            "mae_m": 0.150041401386261,
+            "danger_mae_m": 0.24509328603744507,
+            "velocity_mae_mps": 0.47141921520233154,
+            "danger_velocity_mae_mps": 0.6561405062675476
+          },
+          "torso": {
+            "mae_m": 0.061229318380355835,
+            "danger_mae_m": 0.10083583742380142,
+            "velocity_mae_mps": 0.19797945022583008,
+            "danger_velocity_mae_mps": 0.27801021933555603
+          },
+          "left_arm": {
+            "mae_m": 0.17406195402145386,
+            "danger_mae_m": 0.2440902143716812,
+            "velocity_mae_mps": 0.47899943590164185,
+            "danger_velocity_mae_mps": 0.6577833294868469
+          },
+          "right_arm": {
+            "mae_m": 0.17009826004505157,
+            "danger_mae_m": 0.2231045663356781,
+            "velocity_mae_mps": 0.4894864559173584,
+            "danger_velocity_mae_mps": 0.6149333715438843
+          },
+          "left_leg": {
+            "mae_m": 0.1494152545928955,
+            "danger_mae_m": 0.22198547422885895,
+            "velocity_mae_mps": 0.44565486907958984,
+            "danger_velocity_mae_mps": 0.6043115258216858
+          },
+          "right_leg": {
+            "mae_m": 0.15142978727817535,
+            "danger_mae_m": 0.2447478324174881,
+            "velocity_mae_mps": 0.45434117317199707,
+            "danger_velocity_mae_mps": 0.6309191584587097
+          }
+        },
+        "selection_score": 0.5596866026520729
+      }
+    },
+    {
+      "epoch": 33,
+      "train": {
+        "loss": 0.028177674775096504,
+        "position": 0.018541560296646574,
+        "velocity": 0.015022918581962585,
+        "configuration": 0.021890464704483747
+      },
+      "validation": {
+        "mae_m": 0.14959250390529633,
+        "danger_mae_m": 0.22299374639987946,
+        "velocity_mae_mps": 0.4398690462112427,
+        "danger_velocity_mae_mps": 0.5988550782203674,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15008379518985748,
+            "danger_mae_m": 0.24659568071365356,
+            "velocity_mae_mps": 0.4732871353626251,
+            "danger_velocity_mae_mps": 0.6621439456939697
+          },
+          "torso": {
+            "mae_m": 0.06146956980228424,
+            "danger_mae_m": 0.10127515345811844,
+            "velocity_mae_mps": 0.19791056215763092,
+            "danger_velocity_mae_mps": 0.2795863747596741
+          },
+          "left_arm": {
+            "mae_m": 0.17505186796188354,
+            "danger_mae_m": 0.24682742357254028,
+            "velocity_mae_mps": 0.4808950126171112,
+            "danger_velocity_mae_mps": 0.6633834838867188
+          },
+          "right_arm": {
+            "mae_m": 0.16949842870235443,
+            "danger_mae_m": 0.2228170484304428,
+            "velocity_mae_mps": 0.48683616518974304,
+            "danger_velocity_mae_mps": 0.6174939870834351
+          },
+          "left_leg": {
+            "mae_m": 0.14977151155471802,
+            "danger_mae_m": 0.22307173907756805,
+            "velocity_mae_mps": 0.44322749972343445,
+            "danger_velocity_mae_mps": 0.6044906973838806
+          },
+          "right_leg": {
+            "mae_m": 0.15258681774139404,
+            "danger_mae_m": 0.2467748373746872,
+            "velocity_mae_mps": 0.4544714391231537,
+            "danger_velocity_mae_mps": 0.6335107088088989
+          }
+        },
+        "selection_score": 0.562149853259325
+      }
+    },
+    {
+      "epoch": 34,
+      "train": {
+        "loss": 0.028082225514067846,
+        "position": 0.018493888815018265,
+        "velocity": 0.014919147043573585,
+        "configuration": 0.021833175158297472
+      },
+      "validation": {
+        "mae_m": 0.1492820680141449,
+        "danger_mae_m": 0.22278639674186707,
+        "velocity_mae_mps": 0.43666791915893555,
+        "danger_velocity_mae_mps": 0.5976680517196655,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15076443552970886,
+            "danger_mae_m": 0.2467537820339203,
+            "velocity_mae_mps": 0.4688383936882019,
+            "danger_velocity_mae_mps": 0.6595462560653687
+          },
+          "torso": {
+            "mae_m": 0.06137027591466904,
+            "danger_mae_m": 0.10142891108989716,
+            "velocity_mae_mps": 0.19614532589912415,
+            "danger_velocity_mae_mps": 0.27879658341407776
+          },
+          "left_arm": {
+            "mae_m": 0.17398954927921295,
+            "danger_mae_m": 0.24589133262634277,
+            "velocity_mae_mps": 0.47499895095825195,
+            "danger_velocity_mae_mps": 0.6597060561180115
+          },
+          "right_arm": {
+            "mae_m": 0.16911177337169647,
+            "danger_mae_m": 0.22253622114658356,
+            "velocity_mae_mps": 0.48355555534362793,
+            "danger_velocity_mae_mps": 0.6158943176269531
+          },
+          "left_leg": {
+            "mae_m": 0.1496717929840088,
+            "danger_mae_m": 0.22363899648189545,
+            "velocity_mae_mps": 0.44257962703704834,
+            "danger_velocity_mae_mps": 0.6061847805976868
+          },
+          "right_leg": {
+            "mae_m": 0.1519322693347931,
+            "danger_mae_m": 0.2460831105709076,
+            "velocity_mae_mps": 0.4517565667629242,
+            "danger_velocity_mae_mps": 0.6333266496658325
+          }
+        },
+        "selection_score": 0.5610820636153221
+      }
+    },
+    {
+      "epoch": 35,
+      "train": {
+        "loss": 0.027804588645019314,
+        "position": 0.018400175708600065,
+        "velocity": 0.014532662314278159,
+        "configuration": 0.02158990502357483
+      },
+      "validation": {
+        "mae_m": 0.1491440087556839,
+        "danger_mae_m": 0.22279168665409088,
+        "velocity_mae_mps": 0.43647804856300354,
+        "danger_velocity_mae_mps": 0.5950786471366882,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15009601414203644,
+            "danger_mae_m": 0.2462846040725708,
+            "velocity_mae_mps": 0.4682566523551941,
+            "danger_velocity_mae_mps": 0.6564928293228149
+          },
+          "torso": {
+            "mae_m": 0.06107955425977707,
+            "danger_mae_m": 0.10120430588722229,
+            "velocity_mae_mps": 0.19538797438144684,
+            "danger_velocity_mae_mps": 0.2765085995197296
+          },
+          "left_arm": {
+            "mae_m": 0.17403331398963928,
+            "danger_mae_m": 0.24584969878196716,
+            "velocity_mae_mps": 0.4776916205883026,
+            "danger_velocity_mae_mps": 0.660392701625824
+          },
+          "right_arm": {
+            "mae_m": 0.16987693309783936,
+            "danger_mae_m": 0.22317050397396088,
+            "velocity_mae_mps": 0.4847966730594635,
+            "danger_velocity_mae_mps": 0.6158884763717651
+          },
+          "left_leg": {
+            "mae_m": 0.14937229454517365,
+            "danger_mae_m": 0.22304052114486694,
+            "velocity_mae_mps": 0.4393955171108246,
+            "danger_velocity_mae_mps": 0.5994090437889099
+          },
+          "right_leg": {
+            "mae_m": 0.15140722692012787,
+            "danger_mae_m": 0.24664205312728882,
+            "velocity_mae_mps": 0.45089662075042725,
+            "danger_velocity_mae_mps": 0.6292918920516968
+          }
+        },
+        "selection_score": 0.5605432190001011
+      }
+    },
+    {
+      "epoch": 36,
+      "train": {
+        "loss": 0.026978294746103613,
+        "position": 0.017646813087842682,
+        "velocity": 0.01464583367024633,
+        "configuration": 0.021027198823338204
+      },
+      "validation": {
+        "mae_m": 0.14877349138259888,
+        "danger_mae_m": 0.22102542221546173,
+        "velocity_mae_mps": 0.4366684556007385,
+        "danger_velocity_mae_mps": 0.593655526638031,
+        "per_part": {
+          "head": {
+            "mae_m": 0.1493772566318512,
+            "danger_mae_m": 0.24387414753437042,
+            "velocity_mae_mps": 0.46776077151298523,
+            "danger_velocity_mae_mps": 0.6546576023101807
+          },
+          "torso": {
+            "mae_m": 0.060902148485183716,
+            "danger_mae_m": 0.10027754306793213,
+            "velocity_mae_mps": 0.19504712522029877,
+            "danger_velocity_mae_mps": 0.2755577862262726
+          },
+          "left_arm": {
+            "mae_m": 0.17331166565418243,
+            "danger_mae_m": 0.2435133010149002,
+            "velocity_mae_mps": 0.47743871808052063,
+            "danger_velocity_mae_mps": 0.6582728028297424
+          },
+          "right_arm": {
+            "mae_m": 0.1697198450565338,
+            "danger_mae_m": 0.22180472314357758,
+            "velocity_mae_mps": 0.48597660660743713,
+            "danger_velocity_mae_mps": 0.6157357096672058
+          },
+          "left_leg": {
+            "mae_m": 0.14922261238098145,
+            "danger_mae_m": 0.221923366189003,
+            "velocity_mae_mps": 0.4402238726615906,
+            "danger_velocity_mae_mps": 0.597945511341095
+          },
+          "right_leg": {
+            "mae_m": 0.1511429399251938,
+            "danger_mae_m": 0.24447861313819885,
+            "velocity_mae_mps": 0.4507826864719391,
+            "danger_velocity_mae_mps": 0.6274240612983704
+          }
+        },
+        "selection_score": 0.5577704437077046
+      }
+    },
+    {
+      "epoch": 37,
+      "train": {
+        "loss": 0.02738572758707133,
+        "position": 0.018027849474244496,
+        "velocity": 0.014613808831200004,
+        "configuration": 0.02121522497724403
+      },
+      "validation": {
+        "mae_m": 0.14902429282665253,
+        "danger_mae_m": 0.22218118607997894,
+        "velocity_mae_mps": 0.43608298897743225,
+        "danger_velocity_mae_mps": 0.591853678226471,
+        "per_part": {
+          "head": {
+            "mae_m": 0.1493166834115982,
+            "danger_mae_m": 0.24479158222675323,
+            "velocity_mae_mps": 0.4660417437553406,
+            "danger_velocity_mae_mps": 0.650795578956604
+          },
+          "torso": {
+            "mae_m": 0.06083221733570099,
+            "danger_mae_m": 0.10053849220275879,
+            "velocity_mae_mps": 0.19388554990291595,
+            "danger_velocity_mae_mps": 0.2738739252090454
+          },
+          "left_arm": {
+            "mae_m": 0.17409689724445343,
+            "danger_mae_m": 0.2451484352350235,
+            "velocity_mae_mps": 0.4767812490463257,
+            "danger_velocity_mae_mps": 0.6564838290214539
+          },
+          "right_arm": {
+            "mae_m": 0.17054930329322815,
+            "danger_mae_m": 0.22411905229091644,
+            "velocity_mae_mps": 0.4871057868003845,
+            "danger_velocity_mae_mps": 0.6153715252876282
+          },
+          "left_leg": {
+            "mae_m": 0.14903365075588226,
+            "danger_mae_m": 0.2224491387605667,
+            "velocity_mae_mps": 0.4397209882736206,
+            "danger_velocity_mae_mps": 0.5962916612625122
+          },
+          "right_leg": {
+            "mae_m": 0.1511637568473816,
+            "danger_mae_m": 0.24532660841941833,
+            "velocity_mae_mps": 0.44975754618644714,
+            "danger_velocity_mae_mps": 0.6257131099700928
+          }
+        },
+        "selection_score": 0.5591371260583401
+      }
+    },
+    {
+      "epoch": 38,
+      "train": {
+        "loss": 0.02676096677102826,
+        "position": 0.017556087918240915,
+        "velocity": 0.014442274473946203,
+        "configuration": 0.02075041284446012
+      },
+      "validation": {
+        "mae_m": 0.14856675267219543,
+        "danger_mae_m": 0.22085045278072357,
+        "velocity_mae_mps": 0.43306589126586914,
+        "danger_velocity_mae_mps": 0.589159369468689,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14908725023269653,
+            "danger_mae_m": 0.24335956573486328,
+            "velocity_mae_mps": 0.4636637568473816,
+            "danger_velocity_mae_mps": 0.6503718495368958
+          },
+          "torso": {
+            "mae_m": 0.060855764895677567,
+            "danger_mae_m": 0.10014649480581284,
+            "velocity_mae_mps": 0.19257605075836182,
+            "danger_velocity_mae_mps": 0.2724537253379822
+          },
+          "left_arm": {
+            "mae_m": 0.17350687086582184,
+            "danger_mae_m": 0.24371355772018433,
+            "velocity_mae_mps": 0.47392624616622925,
+            "danger_velocity_mae_mps": 0.6547012329101562
+          },
+          "right_arm": {
+            "mae_m": 0.1689315289258957,
+            "danger_mae_m": 0.2210988700389862,
+            "velocity_mae_mps": 0.4828619658946991,
+            "danger_velocity_mae_mps": 0.6120736002922058
+          },
+          "left_leg": {
+            "mae_m": 0.1490844339132309,
+            "danger_mae_m": 0.22174367308616638,
+            "velocity_mae_mps": 0.4356226921081543,
+            "danger_velocity_mae_mps": 0.5914431810379028
+          },
+          "right_leg": {
+            "mae_m": 0.1510290950536728,
+            "danger_mae_m": 0.24472898244857788,
+            "velocity_mae_mps": 0.4473932087421417,
+            "danger_velocity_mae_mps": 0.6222229599952698
+          }
+        },
+        "selection_score": 0.5563103131949901
+      }
+    },
+    {
+      "epoch": 39,
+      "train": {
+        "loss": 0.027119922324676405,
+        "position": 0.01781263756989078,
+        "velocity": 0.014471720036288554,
+        "configuration": 0.02121091314422136
+      },
+      "validation": {
+        "mae_m": 0.1491435468196869,
+        "danger_mae_m": 0.22234714031219482,
+        "velocity_mae_mps": 0.43476366996765137,
+        "danger_velocity_mae_mps": 0.5916460752487183,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14985886216163635,
+            "danger_mae_m": 0.24502134323120117,
+            "velocity_mae_mps": 0.46679240465164185,
+            "danger_velocity_mae_mps": 0.6535642743110657
+          },
+          "torso": {
+            "mae_m": 0.060898080468177795,
+            "danger_mae_m": 0.1006457656621933,
+            "velocity_mae_mps": 0.193533256649971,
+            "danger_velocity_mae_mps": 0.27356666326522827
+          },
+          "left_arm": {
+            "mae_m": 0.17366960644721985,
+            "danger_mae_m": 0.24479079246520996,
+            "velocity_mae_mps": 0.4754919409751892,
+            "danger_velocity_mae_mps": 0.656977653503418
+          },
+          "right_arm": {
+            "mae_m": 0.17020396888256073,
+            "danger_mae_m": 0.2239350974559784,
+            "velocity_mae_mps": 0.4843629002571106,
+            "danger_velocity_mae_mps": 0.6141265630722046
+          },
+          "left_leg": {
+            "mae_m": 0.14922668039798737,
+            "danger_mae_m": 0.22297140955924988,
+            "velocity_mae_mps": 0.4387355148792267,
+            "danger_velocity_mae_mps": 0.5961609482765198
+          },
+          "right_leg": {
+            "mae_m": 0.15188980102539062,
+            "danger_mae_m": 0.24598795175552368,
+            "velocity_mae_mps": 0.4471973478794098,
+            "danger_velocity_mae_mps": 0.6232848167419434
+          }
+        },
+        "selection_score": 0.5593007504940033
+      }
+    },
+    {
+      "epoch": 40,
+      "train": {
+        "loss": 0.026760867034847088,
+        "position": 0.01757178013212979,
+        "velocity": 0.01427381254986606,
+        "configuration": 0.020966261498291384
+      },
+      "validation": {
+        "mae_m": 0.1489281803369522,
+        "danger_mae_m": 0.22239971160888672,
+        "velocity_mae_mps": 0.43126168847084045,
+        "danger_velocity_mae_mps": 0.5869783163070679,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15032824873924255,
+            "danger_mae_m": 0.24599787592887878,
+            "velocity_mae_mps": 0.4633883535861969,
+            "danger_velocity_mae_mps": 0.6487738490104675
+          },
+          "torso": {
+            "mae_m": 0.06114523857831955,
+            "danger_mae_m": 0.10112357884645462,
+            "velocity_mae_mps": 0.19216106832027435,
+            "danger_velocity_mae_mps": 0.2717675566673279
+          },
+          "left_arm": {
+            "mae_m": 0.17348527908325195,
+            "danger_mae_m": 0.24532660841941833,
+            "velocity_mae_mps": 0.47079795598983765,
+            "danger_velocity_mae_mps": 0.6517623066902161
+          },
+          "right_arm": {
+            "mae_m": 0.16970883309841156,
+            "danger_mae_m": 0.2241770625114441,
+            "velocity_mae_mps": 0.48089510202407837,
+            "danger_velocity_mae_mps": 0.6092829704284668
+          },
+          "left_leg": {
+            "mae_m": 0.1490129977464676,
+            "danger_mae_m": 0.22255906462669373,
+            "velocity_mae_mps": 0.43401092290878296,
+            "danger_velocity_mae_mps": 0.5896713733673096
+          },
+          "right_leg": {
+            "mae_m": 0.15108121931552887,
+            "danger_mae_m": 0.2448095679283142,
+            "velocity_mae_mps": 0.444809228181839,
+            "danger_velocity_mae_mps": 0.619672954082489
+          }
+        },
+        "selection_score": 0.5581007361412048
+      }
+    },
+    {
+      "epoch": 41,
+      "train": {
+        "loss": 0.026712174400348555,
+        "position": 0.017495355166664176,
+        "velocity": 0.014467914440584454,
+        "configuration": 0.0207652450454506
+      },
+      "validation": {
+        "mae_m": 0.1488642692565918,
+        "danger_mae_m": 0.22232764959335327,
+        "velocity_mae_mps": 0.4344438910484314,
+        "danger_velocity_mae_mps": 0.5902951955795288,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14960943162441254,
+            "danger_mae_m": 0.24537315964698792,
+            "velocity_mae_mps": 0.46695834398269653,
+            "danger_velocity_mae_mps": 0.6532833576202393
+          },
+          "torso": {
+            "mae_m": 0.06106127053499222,
+            "danger_mae_m": 0.10084826499223709,
+            "velocity_mae_mps": 0.19328968226909637,
+            "danger_velocity_mae_mps": 0.2730393707752228
+          },
+          "left_arm": {
+            "mae_m": 0.174249067902565,
+            "danger_mae_m": 0.24700817465782166,
+            "velocity_mae_mps": 0.47368893027305603,
+            "danger_velocity_mae_mps": 0.6544114947319031
+          },
+          "right_arm": {
+            "mae_m": 0.16943977773189545,
+            "danger_mae_m": 0.22318150103092194,
+            "velocity_mae_mps": 0.4844869375228882,
+            "danger_velocity_mae_mps": 0.6135941743850708
+          },
+          "left_leg": {
+            "mae_m": 0.14903247356414795,
+            "danger_mae_m": 0.22239714860916138,
+            "velocity_mae_mps": 0.4375622570514679,
+            "danger_velocity_mae_mps": 0.5929099917411804
+          },
+          "right_leg": {
+            "mae_m": 0.1508803367614746,
+            "danger_mae_m": 0.24458087980747223,
+            "velocity_mae_mps": 0.44831424951553345,
+            "danger_velocity_mae_mps": 0.6228615641593933
+          }
+        },
+        "selection_score": 0.5587624996900559
+      }
+    },
+    {
+      "epoch": 42,
+      "train": {
+        "loss": 0.02699441894550215,
+        "position": 0.017792001747610895,
+        "velocity": 0.0142252099996602,
+        "configuration": 0.021117967722768135
+      },
+      "validation": {
+        "mae_m": 0.14886556565761566,
+        "danger_mae_m": 0.22197012603282928,
+        "velocity_mae_mps": 0.43418988585472107,
+        "danger_velocity_mae_mps": 0.590620756149292,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14912715554237366,
+            "danger_mae_m": 0.24476562440395355,
+            "velocity_mae_mps": 0.465769499540329,
+            "danger_velocity_mae_mps": 0.6517154574394226
+          },
+          "torso": {
+            "mae_m": 0.060858141630887985,
+            "danger_mae_m": 0.1007092222571373,
+            "velocity_mae_mps": 0.19248883426189423,
+            "danger_velocity_mae_mps": 0.27201932668685913
+          },
+          "left_arm": {
+            "mae_m": 0.1739031821489334,
+            "danger_mae_m": 0.24521887302398682,
+            "velocity_mae_mps": 0.47417858242988586,
+            "danger_velocity_mae_mps": 0.6560603380203247
+          },
+          "right_arm": {
+            "mae_m": 0.17033179104328156,
+            "danger_mae_m": 0.22344429790973663,
+            "velocity_mae_mps": 0.4841959774494171,
+            "danger_velocity_mae_mps": 0.6143010854721069
+          },
+          "left_leg": {
+            "mae_m": 0.14916729927062988,
+            "danger_mae_m": 0.22229520976543427,
+            "velocity_mae_mps": 0.43714433908462524,
+            "danger_velocity_mae_mps": 0.5931563377380371
+          },
+          "right_leg": {
+            "mae_m": 0.15073011815547943,
+            "danger_mae_m": 0.2448708564043045,
+            "velocity_mae_mps": 0.4486176669597626,
+            "danger_velocity_mae_mps": 0.6239221692085266
+          }
+        },
+        "selection_score": 0.5583403252065182
+      }
+    },
+    {
+      "epoch": 43,
+      "train": {
+        "loss": 0.026871027213267305,
+        "position": 0.017708352280103347,
+        "velocity": 0.01420466559515758,
+        "configuration": 0.0209552092816342
+      },
+      "validation": {
+        "mae_m": 0.1488124281167984,
+        "danger_mae_m": 0.22098737955093384,
+        "velocity_mae_mps": 0.43242374062538147,
+        "danger_velocity_mae_mps": 0.5871231555938721,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14939159154891968,
+            "danger_mae_m": 0.243690624833107,
+            "velocity_mae_mps": 0.4638618230819702,
+            "danger_velocity_mae_mps": 0.6483082175254822
+          },
+          "torso": {
+            "mae_m": 0.06095175817608833,
+            "danger_mae_m": 0.10028409212827682,
+            "velocity_mae_mps": 0.19184619188308716,
+            "danger_velocity_mae_mps": 0.2709428668022156
+          },
+          "left_arm": {
+            "mae_m": 0.1736401617527008,
+            "danger_mae_m": 0.24419467151165009,
+            "velocity_mae_mps": 0.4706188440322876,
+            "danger_velocity_mae_mps": 0.6496496200561523
+          },
+          "right_arm": {
+            "mae_m": 0.1696338802576065,
+            "danger_mae_m": 0.22301657497882843,
+            "velocity_mae_mps": 0.4829532504081726,
+            "danger_velocity_mae_mps": 0.6110845804214478
+          },
+          "left_leg": {
+            "mae_m": 0.14951041340827942,
+            "danger_mae_m": 0.2215060144662857,
+            "velocity_mae_mps": 0.4362899661064148,
+            "danger_velocity_mae_mps": 0.5908195972442627
+          },
+          "right_leg": {
+            "mae_m": 0.1507832556962967,
+            "danger_mae_m": 0.24294975399971008,
+            "velocity_mae_mps": 0.4467063546180725,
+            "danger_velocity_mae_mps": 0.6204738020896912
+          }
+        },
+        "selection_score": 0.5563574999570847
+      }
+    },
+    {
+      "epoch": 44,
+      "train": {
+        "loss": 0.026696582155471497,
+        "position": 0.017585732233287257,
+        "velocity": 0.014168625909157774,
+        "configuration": 0.020759153899482706
+      },
+      "validation": {
+        "mae_m": 0.1488863080739975,
+        "danger_mae_m": 0.22188149392604828,
+        "velocity_mae_mps": 0.4326131343841553,
+        "danger_velocity_mae_mps": 0.5882195234298706,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14914239943027496,
+            "danger_mae_m": 0.24469716846942902,
+            "velocity_mae_mps": 0.4639728367328644,
+            "danger_velocity_mae_mps": 0.6496032476425171
+          },
+          "torso": {
+            "mae_m": 0.0608568973839283,
+            "danger_mae_m": 0.10061316192150116,
+            "velocity_mae_mps": 0.19147497415542603,
+            "danger_velocity_mae_mps": 0.2708372473716736
+          },
+          "left_arm": {
+            "mae_m": 0.17391176521778107,
+            "danger_mae_m": 0.24555228650569916,
+            "velocity_mae_mps": 0.4724081754684448,
+            "danger_velocity_mae_mps": 0.6529067158699036
+          },
+          "right_arm": {
+            "mae_m": 0.16980157792568207,
+            "danger_mae_m": 0.2231401652097702,
+            "velocity_mae_mps": 0.4824860990047455,
+            "danger_velocity_mae_mps": 0.6124587059020996
+          },
+          "left_leg": {
+            "mae_m": 0.14914293587207794,
+            "danger_mae_m": 0.221823588013649,
+            "velocity_mae_mps": 0.43515345454216003,
+            "danger_velocity_mae_mps": 0.589836835861206
+          },
+          "right_leg": {
+            "mae_m": 0.15137599408626556,
+            "danger_mae_m": 0.24494564533233643,
+            "velocity_mae_mps": 0.44765669107437134,
+            "danger_velocity_mae_mps": 0.6217091679573059
+          }
+        },
+        "selection_score": 0.557732417434454
+      }
+    },
+    {
+      "epoch": 45,
+      "train": {
+        "loss": 0.02651500998234207,
+        "position": 0.017468353839252482,
+        "velocity": 0.014088356168940663,
+        "configuration": 0.020578656472604383
+      },
+      "validation": {
+        "mae_m": 0.14842268824577332,
+        "danger_mae_m": 0.22184163331985474,
+        "velocity_mae_mps": 0.42932838201522827,
+        "danger_velocity_mae_mps": 0.5834550857543945,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14871154725551605,
+            "danger_mae_m": 0.2442382574081421,
+            "velocity_mae_mps": 0.460750550031662,
+            "danger_velocity_mae_mps": 0.6449532508850098
+          },
+          "torso": {
+            "mae_m": 0.06063083931803703,
+            "danger_mae_m": 0.1003158912062645,
+            "velocity_mae_mps": 0.1897231787443161,
+            "danger_velocity_mae_mps": 0.2684050500392914
+          },
+          "left_arm": {
+            "mae_m": 0.17386119067668915,
+            "danger_mae_m": 0.24641145765781403,
+            "velocity_mae_mps": 0.46944746375083923,
+            "danger_velocity_mae_mps": 0.6479912400245667
+          },
+          "right_arm": {
+            "mae_m": 0.16890676319599152,
+            "danger_mae_m": 0.2225576490163803,
+            "velocity_mae_mps": 0.47897815704345703,
+            "danger_velocity_mae_mps": 0.6074660420417786
+          },
+          "left_leg": {
+            "mae_m": 0.1485058218240738,
+            "danger_mae_m": 0.22195175290107727,
+            "velocity_mae_mps": 0.4310604929924011,
+            "danger_velocity_mae_mps": 0.584361732006073
+          },
+          "right_leg": {
+            "mae_m": 0.15094412863254547,
+            "danger_mae_m": 0.24488134682178497,
+            "velocity_mae_mps": 0.44417425990104675,
+            "danger_velocity_mae_mps": 0.6166418194770813
+          }
+        },
+        "selection_score": 0.5561758309602738
+      }
+    },
+    {
+      "epoch": 46,
+      "train": {
+        "loss": 0.027418167287991804,
+        "position": 0.018134193537248808,
+        "velocity": 0.014253834876316514,
+        "configuration": 0.021475656889379025
+      },
+      "validation": {
+        "mae_m": 0.14860251545906067,
+        "danger_mae_m": 0.22172409296035767,
+        "velocity_mae_mps": 0.43023163080215454,
+        "danger_velocity_mae_mps": 0.5846314430236816,
+        "per_part": {
+          "head": {
+            "mae_m": 0.1490158587694168,
+            "danger_mae_m": 0.24432922899723053,
+            "velocity_mae_mps": 0.4621029496192932,
+            "danger_velocity_mae_mps": 0.646351158618927
+          },
+          "torso": {
+            "mae_m": 0.06074007600545883,
+            "danger_mae_m": 0.10035514086484909,
+            "velocity_mae_mps": 0.19008967280387878,
+            "danger_velocity_mae_mps": 0.2688433527946472
+          },
+          "left_arm": {
+            "mae_m": 0.17350608110427856,
+            "danger_mae_m": 0.24532970786094666,
+            "velocity_mae_mps": 0.4717356264591217,
+            "danger_velocity_mae_mps": 0.6510213017463684
+          },
+          "right_arm": {
+            "mae_m": 0.16902537643909454,
+            "danger_mae_m": 0.22286252677440643,
+            "velocity_mae_mps": 0.48060843348503113,
+            "danger_velocity_mae_mps": 0.6095198392868042
+          },
+          "left_leg": {
+            "mae_m": 0.14891502261161804,
+            "danger_mae_m": 0.22221031785011292,
+            "velocity_mae_mps": 0.43169400095939636,
+            "danger_velocity_mae_mps": 0.585303544998169
+          },
+          "right_leg": {
+            "mae_m": 0.15142391622066498,
+            "danger_mae_m": 0.24466478824615479,
+            "velocity_mae_mps": 0.44315093755722046,
+            "danger_velocity_mae_mps": 0.6155428886413574
+          }
+        },
+        "selection_score": 0.5564755111932754
+      }
+    },
+    {
+      "epoch": 47,
+      "train": {
+        "loss": 0.026967360130087895,
+        "position": 0.017771701137958604,
+        "velocity": 0.014155501330440695,
+        "configuration": 0.021206168161535806
+      },
+      "validation": {
+        "mae_m": 0.14894431829452515,
+        "danger_mae_m": 0.2218673974275589,
+        "velocity_mae_mps": 0.4304565489292145,
+        "danger_velocity_mae_mps": 0.5859562754631042,
+        "per_part": {
+          "head": {
+            "mae_m": 0.15028557181358337,
+            "danger_mae_m": 0.24472396075725555,
+            "velocity_mae_mps": 0.4623050093650818,
+            "danger_velocity_mae_mps": 0.6474868059158325
+          },
+          "torso": {
+            "mae_m": 0.06108836084604263,
+            "danger_mae_m": 0.1005515605211258,
+            "velocity_mae_mps": 0.19037587940692902,
+            "danger_velocity_mae_mps": 0.2694864273071289
+          },
+          "left_arm": {
+            "mae_m": 0.17352505028247833,
+            "danger_mae_m": 0.24508671462535858,
+            "velocity_mae_mps": 0.4704042375087738,
+            "danger_velocity_mae_mps": 0.6504464745521545
+          },
+          "right_arm": {
+            "mae_m": 0.16964823007583618,
+            "danger_mae_m": 0.22333982586860657,
+            "velocity_mae_mps": 0.47988569736480713,
+            "danger_velocity_mae_mps": 0.6097997426986694
+          },
+          "left_leg": {
+            "mae_m": 0.149027019739151,
+            "danger_mae_m": 0.22211456298828125,
+            "velocity_mae_mps": 0.4332541525363922,
+            "danger_velocity_mae_mps": 0.588580310344696
+          },
+          "right_leg": {
+            "mae_m": 0.15124326944351196,
+            "danger_mae_m": 0.24485564231872559,
+            "velocity_mae_mps": 0.44453006982803345,
+            "danger_velocity_mae_mps": 0.6184002161026001
+          }
+        },
+        "selection_score": 0.5572176612913609
+      }
+    },
+    {
+      "epoch": 48,
+      "train": {
+        "loss": 0.026917116801169785,
+        "position": 0.017779363065280697,
+        "velocity": 0.01406590803526342,
+        "configuration": 0.021073428405956787
+      },
+      "validation": {
+        "mae_m": 0.14868596196174622,
+        "danger_mae_m": 0.22198134660720825,
+        "velocity_mae_mps": 0.42886775732040405,
+        "danger_velocity_mae_mps": 0.5844818949699402,
+        "per_part": {
+          "head": {
+            "mae_m": 0.1491413116455078,
+            "danger_mae_m": 0.24446500837802887,
+            "velocity_mae_mps": 0.4590904414653778,
+            "danger_velocity_mae_mps": 0.6442754864692688
+          },
+          "torso": {
+            "mae_m": 0.060773566365242004,
+            "danger_mae_m": 0.10049715638160706,
+            "velocity_mae_mps": 0.18931393325328827,
+            "danger_velocity_mae_mps": 0.2683528959751129
+          },
+          "left_arm": {
+            "mae_m": 0.17344564199447632,
+            "danger_mae_m": 0.24538351595401764,
+            "velocity_mae_mps": 0.46910643577575684,
+            "danger_velocity_mae_mps": 0.6491041779518127
+          },
+          "right_arm": {
+            "mae_m": 0.16966812312602997,
+            "danger_mae_m": 0.22335195541381836,
+            "velocity_mae_mps": 0.4779115915298462,
+            "danger_velocity_mae_mps": 0.6077446341514587
+          },
+          "left_leg": {
+            "mae_m": 0.14912959933280945,
+            "danger_mae_m": 0.22259461879730225,
+            "velocity_mae_mps": 0.43217357993125916,
+            "danger_velocity_mae_mps": 0.5878738164901733
+          },
+          "right_leg": {
+            "mae_m": 0.1509527564048767,
+            "danger_mae_m": 0.24493373930454254,
+            "velocity_mae_mps": 0.4436195194721222,
+            "danger_velocity_mae_mps": 0.617896556854248
+          }
+        },
+        "selection_score": 0.556721705198288
+      }
+    },
+    {
+      "epoch": 49,
+      "train": {
+        "loss": 0.026801706799729305,
+        "position": 0.017615034033290365,
+        "velocity": 0.014126766875216907,
+        "configuration": 0.021211522208018738
+      },
+      "validation": {
+        "mae_m": 0.14862309396266937,
+        "danger_mae_m": 0.2220436930656433,
+        "velocity_mae_mps": 0.429948091506958,
+        "danger_velocity_mae_mps": 0.584557294845581,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14910796284675598,
+            "danger_mae_m": 0.24485784769058228,
+            "velocity_mae_mps": 0.46140268445014954,
+            "danger_velocity_mae_mps": 0.6462056040763855
+          },
+          "torso": {
+            "mae_m": 0.06076471507549286,
+            "danger_mae_m": 0.10057425498962402,
+            "velocity_mae_mps": 0.1897641122341156,
+            "danger_velocity_mae_mps": 0.2685792148113251
+          },
+          "left_arm": {
+            "mae_m": 0.17365355789661407,
+            "danger_mae_m": 0.24584992229938507,
+            "velocity_mae_mps": 0.4707716107368469,
+            "danger_velocity_mae_mps": 0.6496583223342896
+          },
+          "right_arm": {
+            "mae_m": 0.16928108036518097,
+            "danger_mae_m": 0.2232072502374649,
+            "velocity_mae_mps": 0.47863879799842834,
+            "danger_velocity_mae_mps": 0.6073057055473328
+          },
+          "left_leg": {
+            "mae_m": 0.14885284006595612,
+            "danger_mae_m": 0.22219228744506836,
+            "velocity_mae_mps": 0.4326680898666382,
+            "danger_velocity_mae_mps": 0.5867321491241455
+          },
+          "right_leg": {
+            "mae_m": 0.15110202133655548,
+            "danger_mae_m": 0.24497398734092712,
+            "velocity_mae_mps": 0.4443545341491699,
+            "danger_velocity_mae_mps": 0.6175611019134521
+          }
+        },
+        "selection_score": 0.5568561136722565
+      }
+    },
+    {
+      "epoch": 50,
+      "train": {
+        "loss": 0.02738024311309511,
+        "position": 0.01813065019351515,
+        "velocity": 0.014027613469145515,
+        "configuration": 0.021699640730565243
+      },
+      "validation": {
+        "mae_m": 0.14865490794181824,
+        "danger_mae_m": 0.22204701602458954,
+        "velocity_mae_mps": 0.4289703965187073,
+        "danger_velocity_mae_mps": 0.5840755105018616,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14929378032684326,
+            "danger_mae_m": 0.24496519565582275,
+            "velocity_mae_mps": 0.4602515399456024,
+            "danger_velocity_mae_mps": 0.6457140445709229
+          },
+          "torso": {
+            "mae_m": 0.06081682816147804,
+            "danger_mae_m": 0.10069938749074936,
+            "velocity_mae_mps": 0.1893036812543869,
+            "danger_velocity_mae_mps": 0.26834481954574585
+          },
+          "left_arm": {
+            "mae_m": 0.17369718849658966,
+            "danger_mae_m": 0.2455628365278244,
+            "velocity_mae_mps": 0.4698288142681122,
+            "danger_velocity_mae_mps": 0.6492795348167419
+          },
+          "right_arm": {
+            "mae_m": 0.16924336552619934,
+            "danger_mae_m": 0.22317999601364136,
+            "velocity_mae_mps": 0.47849348187446594,
+            "danger_velocity_mae_mps": 0.6081799864768982
+          },
+          "left_leg": {
+            "mae_m": 0.14882919192314148,
+            "danger_mae_m": 0.22226570546627045,
+            "velocity_mae_mps": 0.4314940273761749,
+            "danger_velocity_mae_mps": 0.5857935547828674
+          },
+          "right_leg": {
+            "mae_m": 0.15110459923744202,
+            "danger_mae_m": 0.2450718879699707,
+            "velocity_mae_mps": 0.4425663650035858,
+            "danger_velocity_mae_mps": 0.6159476637840271
+          }
+        },
+        "selection_score": 0.5567220441997052
+      }
+    },
+    {
+      "epoch": 51,
+      "train": {
+        "loss": 0.02701385865326632,
+        "position": 0.017875154058194974,
+        "velocity": 0.013994395013221285,
+        "configuration": 0.02120333118364215
+      },
+      "validation": {
+        "mae_m": 0.14849957823753357,
+        "danger_mae_m": 0.22165308892726898,
+        "velocity_mae_mps": 0.4289824366569519,
+        "danger_velocity_mae_mps": 0.5832653045654297,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14929282665252686,
+            "danger_mae_m": 0.24469956755638123,
+            "velocity_mae_mps": 0.4605734050273895,
+            "danger_velocity_mae_mps": 0.6448090672492981
+          },
+          "torso": {
+            "mae_m": 0.0607912540435791,
+            "danger_mae_m": 0.10058724135160446,
+            "velocity_mae_mps": 0.18939901888370514,
+            "danger_velocity_mae_mps": 0.2680301368236542
+          },
+          "left_arm": {
+            "mae_m": 0.1732761114835739,
+            "danger_mae_m": 0.24481841921806335,
+            "velocity_mae_mps": 0.46952787041664124,
+            "danger_velocity_mae_mps": 0.647793173789978
+          },
+          "right_arm": {
+            "mae_m": 0.1691482961177826,
+            "danger_mae_m": 0.2226836085319519,
+            "velocity_mae_mps": 0.4781428575515747,
+            "danger_velocity_mae_mps": 0.6070827841758728
+          },
+          "left_leg": {
+            "mae_m": 0.1486966609954834,
+            "danger_mae_m": 0.2221805602312088,
+            "velocity_mae_mps": 0.43171820044517517,
+            "danger_velocity_mae_mps": 0.5855941772460938
+          },
+          "right_leg": {
+            "mae_m": 0.15092836320400238,
+            "danger_mae_m": 0.2445562779903412,
+            "velocity_mae_mps": 0.4427317976951599,
+            "danger_velocity_mae_mps": 0.6152954697608948
+          }
+        },
+        "selection_score": 0.5559539787471294
+      }
+    },
+    {
+      "epoch": 52,
+      "train": {
+        "loss": 0.026254610412500122,
+        "position": 0.017273087985813618,
+        "velocity": 0.013956572373651645,
+        "configuration": 0.02048361064358191
+      },
+      "validation": {
+        "mae_m": 0.14860227704048157,
+        "danger_mae_m": 0.2219434380531311,
+        "velocity_mae_mps": 0.4294862747192383,
+        "danger_velocity_mae_mps": 0.5847629904747009,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14948461949825287,
+            "danger_mae_m": 0.24521896243095398,
+            "velocity_mae_mps": 0.4612119495868683,
+            "danger_velocity_mae_mps": 0.6466420888900757
+          },
+          "torso": {
+            "mae_m": 0.06089077889919281,
+            "danger_mae_m": 0.10076175630092621,
+            "velocity_mae_mps": 0.18960127234458923,
+            "danger_velocity_mae_mps": 0.2685598134994507
+          },
+          "left_arm": {
+            "mae_m": 0.17330442368984222,
+            "danger_mae_m": 0.24507112801074982,
+            "velocity_mae_mps": 0.47093629837036133,
+            "danger_velocity_mae_mps": 0.6505507230758667
+          },
+          "right_arm": {
+            "mae_m": 0.16955512762069702,
+            "danger_mae_m": 0.22331787645816803,
+            "velocity_mae_mps": 0.47834405303001404,
+            "danger_velocity_mae_mps": 0.6084519028663635
+          },
+          "left_leg": {
+            "mae_m": 0.14872398972511292,
+            "danger_mae_m": 0.22223956882953644,
+            "velocity_mae_mps": 0.4318544566631317,
+            "danger_velocity_mae_mps": 0.5866113901138306
+          },
+          "right_leg": {
+            "mae_m": 0.15080249309539795,
+            "danger_mae_m": 0.24464096128940582,
+            "velocity_mae_mps": 0.4430540204048157,
+            "danger_velocity_mae_mps": 0.6163943409919739
+          }
+        },
+        "selection_score": 0.5566946506500244
+      }
+    },
+    {
+      "epoch": 53,
+      "train": {
+        "loss": 0.026899639051407576,
+        "position": 0.017783696805550295,
+        "velocity": 0.013981754362413829,
+        "configuration": 0.02111164112152024
+      },
+      "validation": {
+        "mae_m": 0.14850404858589172,
+        "danger_mae_m": 0.22181864082813263,
+        "velocity_mae_mps": 0.42842626571655273,
+        "danger_velocity_mae_mps": 0.5833733081817627,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14933505654335022,
+            "danger_mae_m": 0.2446710467338562,
+            "velocity_mae_mps": 0.45949235558509827,
+            "danger_velocity_mae_mps": 0.6442644596099854
+          },
+          "torso": {
+            "mae_m": 0.06078345701098442,
+            "danger_mae_m": 0.10055931657552719,
+            "velocity_mae_mps": 0.1889931708574295,
+            "danger_velocity_mae_mps": 0.26768600940704346
+          },
+          "left_arm": {
+            "mae_m": 0.17320172488689423,
+            "danger_mae_m": 0.24495045840740204,
+            "velocity_mae_mps": 0.4698618948459625,
+            "danger_velocity_mae_mps": 0.6491233706474304
+          },
+          "right_arm": {
+            "mae_m": 0.16948874294757843,
+            "danger_mae_m": 0.22323265671730042,
+            "velocity_mae_mps": 0.47714248299598694,
+            "danger_velocity_mae_mps": 0.6072984933853149
+          },
+          "left_leg": {
+            "mae_m": 0.14869649708271027,
+            "danger_mae_m": 0.22216437757015228,
+            "velocity_mae_mps": 0.43103209137916565,
+            "danger_velocity_mae_mps": 0.5854912996292114
+          },
+          "right_leg": {
+            "mae_m": 0.15065494179725647,
+            "danger_mae_m": 0.24482636153697968,
+            "velocity_mae_mps": 0.44222307205200195,
+            "danger_velocity_mae_mps": 0.6150913238525391
+          }
+        },
+        "selection_score": 0.5561259724199772
+      }
+    },
+    {
+      "epoch": 54,
+      "train": {
+        "loss": 0.02652783323587342,
+        "position": 0.017524444159458984,
+        "velocity": 0.013986518331380053,
+        "configuration": 0.0205405383286151
+      },
+      "validation": {
+        "mae_m": 0.14847537875175476,
+        "danger_mae_m": 0.22167447209358215,
+        "velocity_mae_mps": 0.42872339487075806,
+        "danger_velocity_mae_mps": 0.5834845900535583,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14919230341911316,
+            "danger_mae_m": 0.24456149339675903,
+            "velocity_mae_mps": 0.4597800076007843,
+            "danger_velocity_mae_mps": 0.6447716951370239
+          },
+          "torso": {
+            "mae_m": 0.06076250225305557,
+            "danger_mae_m": 0.1005212813615799,
+            "velocity_mae_mps": 0.1891200840473175,
+            "danger_velocity_mae_mps": 0.26782336831092834
+          },
+          "left_arm": {
+            "mae_m": 0.17327651381492615,
+            "danger_mae_m": 0.24510875344276428,
+            "velocity_mae_mps": 0.47039148211479187,
+            "danger_velocity_mae_mps": 0.6496602892875671
+          },
+          "right_arm": {
+            "mae_m": 0.16927723586559296,
+            "danger_mae_m": 0.2229510396718979,
+            "velocity_mae_mps": 0.4775982201099396,
+            "danger_velocity_mae_mps": 0.6074515581130981
+          },
+          "left_leg": {
+            "mae_m": 0.14871573448181152,
+            "danger_mae_m": 0.22195492684841156,
+            "velocity_mae_mps": 0.4310063421726227,
+            "danger_velocity_mae_mps": 0.5848260521888733
+          },
+          "right_leg": {
+            "mae_m": 0.15075068175792694,
+            "danger_mae_m": 0.24449405074119568,
+            "velocity_mae_mps": 0.4425547122955322,
+            "danger_velocity_mae_mps": 0.6151602268218994
+          }
+        },
+        "selection_score": 0.555963496863842
+      }
+    },
+    {
+      "epoch": 55,
+      "train": {
+        "loss": 0.026911286721852692,
+        "position": 0.017774674237113108,
+        "velocity": 0.014104195044968616,
+        "configuration": 0.021000721322541886
+      },
+      "validation": {
+        "mae_m": 0.1485094130039215,
+        "danger_mae_m": 0.22185342013835907,
+        "velocity_mae_mps": 0.42883217334747314,
+        "danger_velocity_mae_mps": 0.5837056636810303,
+        "per_part": {
+          "head": {
+            "mae_m": 0.1491275131702423,
+            "danger_mae_m": 0.24472840130329132,
+            "velocity_mae_mps": 0.45990025997161865,
+            "danger_velocity_mae_mps": 0.6447784304618835
+          },
+          "torso": {
+            "mae_m": 0.06073238328099251,
+            "danger_mae_m": 0.1005643978714943,
+            "velocity_mae_mps": 0.18904244899749756,
+            "danger_velocity_mae_mps": 0.26773250102996826
+          },
+          "left_arm": {
+            "mae_m": 0.17330245673656464,
+            "danger_mae_m": 0.24522779881954193,
+            "velocity_mae_mps": 0.47058701515197754,
+            "danger_velocity_mae_mps": 0.649970531463623
+          },
+          "right_arm": {
+            "mae_m": 0.16950532793998718,
+            "danger_mae_m": 0.2231907993555069,
+            "velocity_mae_mps": 0.4778085947036743,
+            "danger_velocity_mae_mps": 0.6078689694404602
+          },
+          "left_leg": {
+            "mae_m": 0.14869633316993713,
+            "danger_mae_m": 0.22202828526496887,
+            "velocity_mae_mps": 0.4310705363750458,
+            "danger_velocity_mae_mps": 0.5849679112434387
+          },
+          "right_leg": {
+            "mae_m": 0.15077197551727295,
+            "danger_mae_m": 0.24486340582370758,
+            "velocity_mae_mps": 0.4426134526729584,
+            "danger_velocity_mae_mps": 0.6155307292938232
+          }
+        },
+        "selection_score": 0.5562652550637722
+      }
+    },
+    {
+      "epoch": 56,
+      "train": {
+        "loss": 0.02664478855546225,
+        "position": 0.017542068613693118,
+        "velocity": 0.014110368845815008,
+        "configuration": 0.02082045359367674
+      },
+      "validation": {
+        "mae_m": 0.14847709238529205,
+        "danger_mae_m": 0.22171318531036377,
+        "velocity_mae_mps": 0.4286641776561737,
+        "danger_velocity_mae_mps": 0.5835874080657959,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14893805980682373,
+            "danger_mae_m": 0.24445463716983795,
+            "velocity_mae_mps": 0.459590882062912,
+            "danger_velocity_mae_mps": 0.6444975137710571
+          },
+          "torso": {
+            "mae_m": 0.060714345425367355,
+            "danger_mae_m": 0.10049491375684738,
+            "velocity_mae_mps": 0.18897360563278198,
+            "danger_velocity_mae_mps": 0.2677408456802368
+          },
+          "left_arm": {
+            "mae_m": 0.17327354848384857,
+            "danger_mae_m": 0.2450520545244217,
+            "velocity_mae_mps": 0.47019511461257935,
+            "danger_velocity_mae_mps": 0.6494138836860657
+          },
+          "right_arm": {
+            "mae_m": 0.16936694085597992,
+            "danger_mae_m": 0.2230578511953354,
+            "velocity_mae_mps": 0.47769907116889954,
+            "danger_velocity_mae_mps": 0.6077545881271362
+          },
+          "left_leg": {
+            "mae_m": 0.14875592291355133,
+            "danger_mae_m": 0.22203470766544342,
+            "velocity_mae_mps": 0.4311833381652832,
+            "danger_velocity_mae_mps": 0.5853121876716614
+          },
+          "right_leg": {
+            "mae_m": 0.15087635815143585,
+            "danger_mae_m": 0.24467921257019043,
+            "velocity_mae_mps": 0.44239550828933716,
+            "danger_velocity_mae_mps": 0.6154525279998779
+          }
+        },
+        "selection_score": 0.5560231029987336
+      }
+    },
+    {
+      "epoch": 57,
+      "train": {
+        "loss": 0.026549277319149536,
+        "position": 0.017481900920922108,
+        "velocity": 0.01400319059294733,
+        "configuration": 0.02083129876039245
+      },
+      "validation": {
+        "mae_m": 0.14842942357063293,
+        "danger_mae_m": 0.22161638736724854,
+        "velocity_mae_mps": 0.42834508419036865,
+        "danger_velocity_mae_mps": 0.5830854177474976,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14906680583953857,
+            "danger_mae_m": 0.24436084926128387,
+            "velocity_mae_mps": 0.4592097997665405,
+            "danger_velocity_mae_mps": 0.643913745880127
+          },
+          "torso": {
+            "mae_m": 0.06073296442627907,
+            "danger_mae_m": 0.10046182572841644,
+            "velocity_mae_mps": 0.1887974888086319,
+            "danger_velocity_mae_mps": 0.267483115196228
+          },
+          "left_arm": {
+            "mae_m": 0.17322656512260437,
+            "danger_mae_m": 0.24507182836532593,
+            "velocity_mae_mps": 0.46987900137901306,
+            "danger_velocity_mae_mps": 0.6489631533622742
+          },
+          "right_arm": {
+            "mae_m": 0.16914483904838562,
+            "danger_mae_m": 0.22280071675777435,
+            "velocity_mae_mps": 0.47749820351600647,
+            "danger_velocity_mae_mps": 0.6074080467224121
+          },
+          "left_leg": {
+            "mae_m": 0.1487516164779663,
+            "danger_mae_m": 0.22202268242835999,
+            "velocity_mae_mps": 0.43079307675361633,
+            "danger_velocity_mae_mps": 0.5846236348152161
+          },
+          "right_leg": {
+            "mae_m": 0.15077191591262817,
+            "danger_mae_m": 0.24450339376926422,
+            "velocity_mae_mps": 0.4419999122619629,
+            "danger_velocity_mae_mps": 0.6148645281791687
+          }
+        },
+        "selection_score": 0.5557472288608551
+      }
+    },
+    {
+      "epoch": 58,
+      "train": {
+        "loss": 0.02651332945308902,
+        "position": 0.01750326954590326,
+        "velocity": 0.013995643874461,
+        "configuration": 0.02055792078714479
+      },
+      "validation": {
+        "mae_m": 0.14844970405101776,
+        "danger_mae_m": 0.22166332602500916,
+        "velocity_mae_mps": 0.4284283518791199,
+        "danger_velocity_mae_mps": 0.5832169055938721,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14912281930446625,
+            "danger_mae_m": 0.24447745084762573,
+            "velocity_mae_mps": 0.45940521359443665,
+            "danger_velocity_mae_mps": 0.6442022919654846
+          },
+          "torso": {
+            "mae_m": 0.06074303016066551,
+            "danger_mae_m": 0.10050547868013382,
+            "velocity_mae_mps": 0.18885314464569092,
+            "danger_velocity_mae_mps": 0.26756441593170166
+          },
+          "left_arm": {
+            "mae_m": 0.17322374880313873,
+            "danger_mae_m": 0.245056614279747,
+            "velocity_mae_mps": 0.47000542283058167,
+            "danger_velocity_mae_mps": 0.6492100358009338
+          },
+          "right_arm": {
+            "mae_m": 0.1692386120557785,
+            "danger_mae_m": 0.2229408621788025,
+            "velocity_mae_mps": 0.4776540696620941,
+            "danger_velocity_mae_mps": 0.6076220273971558
+          },
+          "left_leg": {
+            "mae_m": 0.1487153172492981,
+            "danger_mae_m": 0.22199809551239014,
+            "velocity_mae_mps": 0.43080416321754456,
+            "danger_velocity_mae_mps": 0.5846232771873474
+          },
+          "right_leg": {
+            "mae_m": 0.15077364444732666,
+            "danger_mae_m": 0.2445332407951355,
+            "velocity_mae_mps": 0.4419593811035156,
+            "danger_velocity_mae_mps": 0.6148239970207214
+          }
+        },
+        "selection_score": 0.555854232609272
+      }
+    },
+    {
+      "epoch": 59,
+      "train": {
+        "loss": 0.026707854926247488,
+        "position": 0.017651575744490732,
+        "velocity": 0.014000489291819658,
+        "configuration": 0.02078054036775773
+      },
+      "validation": {
+        "mae_m": 0.14843706786632538,
+        "danger_mae_m": 0.22165264189243317,
+        "velocity_mae_mps": 0.42844823002815247,
+        "danger_velocity_mae_mps": 0.583206057548523,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14911919832229614,
+            "danger_mae_m": 0.24447105824947357,
+            "velocity_mae_mps": 0.4594585597515106,
+            "danger_velocity_mae_mps": 0.6442368030548096
+          },
+          "torso": {
+            "mae_m": 0.0607403963804245,
+            "danger_mae_m": 0.10050255060195923,
+            "velocity_mae_mps": 0.18886412680149078,
+            "danger_velocity_mae_mps": 0.26756152510643005
+          },
+          "left_arm": {
+            "mae_m": 0.17321859300136566,
+            "danger_mae_m": 0.2450583428144455,
+            "velocity_mae_mps": 0.4700142443180084,
+            "danger_velocity_mae_mps": 0.6491730809211731
+          },
+          "right_arm": {
+            "mae_m": 0.16921359300613403,
+            "danger_mae_m": 0.22289730608463287,
+            "velocity_mae_mps": 0.4776995778083801,
+            "danger_velocity_mae_mps": 0.6076425313949585
+          },
+          "left_leg": {
+            "mae_m": 0.1487010419368744,
+            "danger_mae_m": 0.22199349105358124,
+            "velocity_mae_mps": 0.43081581592559814,
+            "danger_velocity_mae_mps": 0.584607720375061
+          },
+          "right_leg": {
+            "mae_m": 0.15075427293777466,
+            "danger_mae_m": 0.24452905356884003,
+            "velocity_mae_mps": 0.44194918870925903,
+            "danger_velocity_mae_mps": 0.6147695779800415
+          }
+        },
+        "selection_score": 0.5558286018669605
+      }
+    },
+    {
+      "epoch": 60,
+      "train": {
+        "loss": 0.02664675267243927,
+        "position": 0.017561196349561214,
+        "velocity": 0.01397902946072546,
+        "configuration": 0.02096448013220321
+      },
+      "validation": {
+        "mae_m": 0.14843419194221497,
+        "danger_mae_m": 0.2216460108757019,
+        "velocity_mae_mps": 0.4284425973892212,
+        "danger_velocity_mae_mps": 0.583190381526947,
+        "per_part": {
+          "head": {
+            "mae_m": 0.14911411702632904,
+            "danger_mae_m": 0.24446208775043488,
+            "velocity_mae_mps": 0.4594516158103943,
+            "danger_velocity_mae_mps": 0.6442221999168396
+          },
+          "torso": {
+            "mae_m": 0.06073824688792229,
+            "danger_mae_m": 0.10049914568662643,
+            "velocity_mae_mps": 0.18886010348796844,
+            "danger_velocity_mae_mps": 0.2675531804561615
+          },
+          "left_arm": {
+            "mae_m": 0.17321565747261047,
+            "danger_mae_m": 0.24504788219928741,
+            "velocity_mae_mps": 0.4700062572956085,
+            "danger_velocity_mae_mps": 0.6491541862487793
+          },
+          "right_arm": {
+            "mae_m": 0.16921426355838776,
+            "danger_mae_m": 0.22289130091667175,
+            "velocity_mae_mps": 0.47769486904144287,
+            "danger_velocity_mae_mps": 0.6076344847679138
+          },
+          "left_leg": {
+            "mae_m": 0.1486968994140625,
+            "danger_mae_m": 0.22198644280433655,
+            "velocity_mae_mps": 0.4308118224143982,
+            "danger_velocity_mae_mps": 0.5845901370048523
+          },
+          "right_leg": {
+            "mae_m": 0.15075063705444336,
+            "danger_mae_m": 0.24452632665634155,
+            "velocity_mae_mps": 0.44194352626800537,
+            "danger_velocity_mae_mps": 0.6147465705871582
+          }
+        },
+        "selection_score": 0.5558145225048066
+      }
+    }
+  ]
+}

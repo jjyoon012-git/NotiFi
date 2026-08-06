@@ -1,4 +1,4 @@
-"""Audit the validation-only V12 missing-link fallback without opening test."""
+"""Audit the locked V12/V13 missing-link model on validation or external test."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ from pathlib import Path
 import torch
 from torch.utils.data import DataLoader
 
+from ..dataio.dataset import build_datasets
 from ..hybrid_v10 import (
     ConditionalLinkFailureLogitBlend,
     ConditionalLinkFailurePoseBlend,
@@ -16,14 +17,26 @@ from ..hybrid_v10 import (
     SequenceBoneCalibration,
     SharedBackboneExecution,
 )
+from ..quality import QualityWeightedDataset
 from ..trainer import set_seed
 from .audit_v11_input_robustness import PerturbedDataset, _summary
 from .calibrate_v11_residual_temporal import ResidualTemporalCalibration
+from .diagnose_observability import pose_only
 from .evaluate_v12_final import _load_hybrid, _read_locked, build_locked_model
+from .evaluate_v11_final import evaluate_pa_mpjpe
 from .train_seen_v4_trajectory import (
     evaluate_classification,
     evaluate_trajectory,
     make_loaders,
+)
+
+
+AUDIT_MODES = (
+    "clean", "time_jitter_2", "drop_one_link",
+    "drop_link_0", "drop_link_1", "drop_link_2", "drop_link_burst",
+    "drop_link_burst_early", "drop_link_burst_late",
+    "drop_link_burst_shifted", "subcarrier_band",
+    "gain_phase", "gain_phase_trial",
 )
 
 
@@ -34,13 +47,36 @@ def main() -> int:
     parser.add_argument("--classification-calibration", type=Path, required=True)
     parser.add_argument("--pose-calibration", type=Path, required=True)
     parser.add_argument("--failure-root-calibration", type=Path, required=True)
+    parser.add_argument("--secondary-failure-root-calibration", type=Path)
+    parser.add_argument("--secondary-root-links", type=int, nargs="*", default=())
     parser.add_argument("--failure-class-calibration", type=Path, required=True)
     parser.add_argument("--exp", default="single_split_lmh_e01")
+    parser.add_argument(
+        "--data-exp",
+        help="dataset protocol to evaluate; defaults to the locked source protocol",
+    )
+    parser.add_argument(
+        "--data-split", choices=("val", "test"), default="val",
+    )
+    parser.add_argument(
+        "--sealed-fold",
+        help="evaluate one experiments.json sealed fold, including class-only trials",
+    )
+    parser.add_argument(
+        "--open-test", action="store_true",
+        help="required when --data-split test is requested",
+    )
+    parser.add_argument(
+        "--full-metrics", action="store_true",
+        help="retain the complete trajectory report instead of the compact audit",
+    )
     parser.add_argument("--batch-size", type=int, default=12)
     parser.add_argument("--danger-weight", type=float, default=2.0)
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--max-shift", type=int, default=15)
     parser.add_argument("--minimum-link-coverage", type=float, default=0.0)
+    parser.add_argument("--partial-pose-strength-scale", type=float, default=1.0)
+    parser.add_argument("--partial-root-strength-scale", type=float, default=1.0)
     parser.add_argument(
         "--classification-minimum-link-coverage", type=float, default=0.0,
         help=(
@@ -49,7 +85,15 @@ def main() -> int:
         ),
     )
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--modes", nargs="+", choices=AUDIT_MODES, default=AUDIT_MODES,
+    )
     args = parser.parse_args()
+
+    if args.data_split == "test" and not args.open_test:
+        raise RuntimeError("test evaluation requires explicit --open-test")
+    if args.sealed_fold is not None and args.data_split != "test":
+        raise RuntimeError("a sealed fold can only be evaluated as test")
 
     root_lock = _read_locked(args.root_calibration, args.exp)
     class_lock = _read_locked(args.classification_calibration, args.exp)
@@ -60,10 +104,20 @@ def main() -> int:
     failure_root_lock = json.loads(
         args.failure_root_calibration.read_text(encoding="utf-8")
     )
+    secondary_root_lock = (
+        json.loads(
+            args.secondary_failure_root_calibration.read_text(encoding="utf-8")
+        )
+        if args.secondary_failure_root_calibration is not None
+        else None
+    )
+    guarded_locks = [pose_lock, failure_root_lock, failure_class_lock]
+    if secondary_root_lock is not None:
+        guarded_locks.append(secondary_root_lock)
     if any(
         lock.get("protocol") != args.exp
         or lock.get("test_used_for_selection") is not False
-        for lock in (pose_lock, failure_root_lock, failure_class_lock)
+        for lock in guarded_locks
     ):
         raise RuntimeError("link-failure calibration protocol/sealing mismatch")
     if pose_lock.get("selection_split") != "validation_drop_one_link":
@@ -74,10 +128,38 @@ def main() -> int:
         raise RuntimeError("classifier was not selected on link-failure validation")
     if failure_root_lock.get("selection_split") != "validation_drop_one_link":
         raise RuntimeError("root expert was not selected on link-failure validation")
+    if (
+        secondary_root_lock is not None
+        and secondary_root_lock.get("selection_split")
+        != "validation_drop_one_link"
+    ):
+        raise RuntimeError(
+            "secondary root expert was not selected on link-failure validation"
+        )
 
     set_seed(args.seed)
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    _, loaders = make_loaders(args, device)
+    data_args = argparse.Namespace(**vars(args))
+    data_args.exp = args.data_exp or args.exp
+    if args.sealed_fold is None:
+        _, loaders = make_loaders(data_args, device)
+        evaluation_protocol = data_args.exp
+    else:
+        sealed = build_datasets(
+            exp="sealed", fold=args.sealed_fold, baseline="sub", seed=args.seed
+        )["test"]
+        sealed_pose = QualityWeightedDataset(pose_only(sealed))
+        loaders = {
+            "test": DataLoader(
+                sealed_pose, batch_size=args.batch_size * 2,
+                shuffle=False, num_workers=0,
+            ),
+            "test_class": DataLoader(
+                sealed, batch_size=args.batch_size * 2,
+                shuffle=False, num_workers=0,
+            ),
+        }
+        evaluation_protocol = f"sealed/{args.sealed_fold}"
     primary_execution, configuration = build_locked_model(
         args, device, root_lock, class_lock
     )
@@ -102,6 +184,7 @@ def main() -> int:
         primary, pose_expert,
         strength=float(pose_lock["selected"]["strength"]),
         minimum_link_coverage=args.minimum_link_coverage,
+        partial_strength_scale=args.partial_pose_strength_scale,
     ).to(device)
 
     root_path = Path(failure_root_lock["expert_checkpoint"])
@@ -110,11 +193,28 @@ def main() -> int:
     )
     if root_checkpoint.get("objective") != "root_only":
         raise RuntimeError("failure root checkpoint is not root-only")
+    secondary_root_expert = None
+    secondary_root_strength = 0.0
+    if secondary_root_lock is not None:
+        secondary_root_path = Path(secondary_root_lock["expert_checkpoint"])
+        secondary_root_expert, secondary_root_checkpoint = _load_hybrid(
+            p2, secondary_root_path, args.exp, device, 0.0, 1.0,
+            shared_backbone,
+        )
+        if secondary_root_checkpoint.get("objective") != "root_only":
+            raise RuntimeError("secondary failure root checkpoint is not root-only")
+        secondary_root_strength = float(
+            secondary_root_lock["selected"]["strength"]
+        )
     root_guard = ConditionalLinkFailureRootBlend(
         pose_guard,
         root_expert,
         strength=float(failure_root_lock["selected"]["strength"]),
         minimum_link_coverage=args.minimum_link_coverage,
+        secondary_expert=secondary_root_expert,
+        secondary_strength=secondary_root_strength,
+        secondary_links=tuple(args.secondary_root_links),
+        partial_strength_scale=args.partial_root_strength_scale,
     ).to(device)
 
     class_path = Path(failure_class_lock["expert_checkpoint"])
@@ -147,24 +247,20 @@ def main() -> int:
         guarded, shared_backbone
     ).to(device).eval()
 
-    modes = (
-        "clean", "time_jitter_2", "drop_one_link",
-        "drop_link_0", "drop_link_1", "drop_link_2", "drop_link_burst",
-        "drop_link_burst_early", "drop_link_burst_late",
-        "drop_link_burst_shifted",
-        "subcarrier_band",
-        "gain_phase", "gain_phase_trial",
-    )
     results = {}
-    for mode in modes:
+    pose_loader_key = "test" if args.data_split == "test" else "val"
+    class_loader_key = (
+        "test_class" if args.data_split == "test" else "val_class"
+    )
+    for mode in args.modes:
         pose_loader = DataLoader(
-            PerturbedDataset(loaders["val"].dataset, mode),
+            PerturbedDataset(loaders[pose_loader_key].dataset, mode),
             batch_size=args.batch_size * 2,
             shuffle=False,
             num_workers=0,
         )
         class_loader = DataLoader(
-            PerturbedDataset(loaders["val_class"].dataset, mode),
+            PerturbedDataset(loaders[class_loader_key].dataset, mode),
             batch_size=args.batch_size * 2,
             shuffle=False,
             num_workers=0,
@@ -175,8 +271,14 @@ def main() -> int:
         classification = evaluate_classification(
             model, class_loader, device, 0.0
         )
+        trajectory["pa_mpjpe_m"] = evaluate_pa_mpjpe(
+            model, pose_loader, device
+        )
         results[mode] = {
-            "trajectory": _summary(trajectory),
+            "trajectory": trajectory if args.full_metrics else {
+                **_summary(trajectory),
+                "pa_mpjpe_m": trajectory["pa_mpjpe_m"],
+            },
             "class_accuracy": classification["class"]["accuracy"],
             "class_macro_f1": classification["class"]["macro_f1"],
             "risk_accuracy": classification["risk"]["accuracy"],
@@ -188,16 +290,32 @@ def main() -> int:
     report = {
         "run": "p2_v12_link_failure_guard_audit",
         "protocol": args.exp,
+        "source_protocol": args.exp,
+        "evaluation_protocol": evaluation_protocol,
+        "evaluation_split": args.data_split,
         "selection_split": "validation",
-        "test_used": False,
+        "test_used_for_selection": False,
+        "test_opened_for_evaluation": args.data_split == "test",
+        "test_used": args.data_split == "test",
+        "pose_trials": len(loaders[pose_loader_key].dataset),
+        "classification_trials": len(loaders[class_loader_key].dataset),
+        "audit_modes": list(args.modes),
         "base_configuration": configuration,
         "shared_guard_backbone": True,
         "minimum_link_coverage": float(args.minimum_link_coverage),
+        "partial_pose_strength_scale": float(args.partial_pose_strength_scale),
+        "partial_root_strength_scale": float(args.partial_root_strength_scale),
         "classification_minimum_link_coverage": float(
             args.classification_minimum_link_coverage
         ),
         "pose_calibration": str(args.pose_calibration),
         "root_calibration": str(args.failure_root_calibration),
+        "secondary_root_calibration": (
+            str(args.secondary_failure_root_calibration)
+            if args.secondary_failure_root_calibration is not None
+            else None
+        ),
+        "secondary_root_links": list(args.secondary_root_links),
         "classification_calibration": str(args.failure_class_calibration),
         "results": results,
     }

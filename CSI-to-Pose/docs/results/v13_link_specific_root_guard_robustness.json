@@ -1,0 +1,304 @@
+{
+  "run": "p2_v12_link_failure_guard_audit",
+  "protocol": "single_split_lmh_e01",
+  "selection_split": "validation",
+  "test_used": false,
+  "base_configuration": {
+    "p2_checkpoint": "work_v2\\runs\\p2_sub_single_clean_finetune\\best_model.pt",
+    "pose_checkpoints": [
+      "work_v2\\runs\\p2_v12r_corrected_rf_pose_finetune\\best_model.pt",
+      "work_v2\\runs\\p2_v12k_shift_robust_pose_seed7\\best_model.pt",
+      "work_v2\\runs\\p2_v12x_shift_rf_pose_seed23\\best_model.pt"
+    ],
+    "pose_weights": [
+      0.45,
+      0.25,
+      0.3
+    ],
+    "root_checkpoints": [
+      "work_v2\\runs\\p2_v12ac_shift_robust_root\\best_model.pt",
+      "work_v2\\runs\\p2_v12p_direct_root_multiscale_seed7\\best_model.pt",
+      "work_v2\\runs\\p2_v13f_conditioned_root\\best_model.pt"
+    ],
+    "root_weights": [
+      0.0,
+      0.2,
+      0.8
+    ],
+    "residual_window": 31,
+    "residual_blend": 1.0,
+    "bone_blend": 0.25,
+    "bone_symmetric": true,
+    "classification_expert_checkpoints": [
+      "work_v2\\runs\\p2_v11v_classification_expert_seed17\\best_model.pt",
+      "work_v2\\runs\\p2_v12v_corrected_rf_classification\\best_model.pt"
+    ],
+    "classification_expert_weights": [
+      0.5,
+      0.5
+    ],
+    "classification_expert_strength": 1.0,
+    "hierarchical_class_weight": 0.6,
+    "final_danger_logit_bias": 0.35000000000000003,
+    "shared_backbone_execution": true
+  },
+  "shared_guard_backbone": true,
+  "minimum_link_coverage": 0.5,
+  "classification_minimum_link_coverage": 0.0,
+  "pose_calibration": "docs\\results\\v12_link_failure_pose_calibration.json",
+  "root_calibration": "docs\\results\\v13_conditioned_link_failure_root_calibration.json",
+  "secondary_root_calibration": "docs\\results\\v12_link_failure_root_calibration.json",
+  "secondary_root_links": [
+    2
+  ],
+  "classification_calibration": "docs\\results\\v12_link_specific_classification_calibration.json",
+  "results": {
+    "clean": {
+      "trajectory": {
+        "mpjpe_m": 0.13315806475187106,
+        "dynamic_mpjpe_m": 0.16546070627145357,
+        "root_error_m": 0.30919524777739765,
+        "pose_speed_ratio": 1.0034578462457042,
+        "danger_mpjpe_m": 0.44402375199965066,
+        "danger_distal_mpjpe_m": 0.4583045269761767,
+        "danger_endpoint_mpjpe_m": 0.5528963961771556,
+        "danger_speed_correlation": 0.35287130764086866
+      },
+      "class_accuracy": 0.9604862928390503,
+      "class_macro_f1": 0.9519333839416504,
+      "risk_accuracy": 0.9817629456520081,
+      "risk_macro_f1": 0.9796287417411804,
+      "danger_recall": 0.9571428298950195,
+      "danger_precision": 0.9852941036224365,
+      "safe_to_danger": 1
+    },
+    "time_jitter_2": {
+      "trajectory": {
+        "mpjpe_m": 0.13325603132446606,
+        "dynamic_mpjpe_m": 0.16596463634007014,
+        "root_error_m": 0.30947474406233855,
+        "pose_speed_ratio": 1.0136760893868466,
+        "danger_mpjpe_m": 0.44148307974849427,
+        "danger_distal_mpjpe_m": 0.45545854419469833,
+        "danger_endpoint_mpjpe_m": 0.5494832258139338,
+        "danger_speed_correlation": 0.31929744561369133
+      },
+      "class_accuracy": 0.9604862928390503,
+      "class_macro_f1": 0.9519333839416504,
+      "risk_accuracy": 0.9817629456520081,
+      "risk_macro_f1": 0.9796287417411804,
+      "danger_recall": 0.9571428298950195,
+      "danger_precision": 0.9852941036224365,
+      "safe_to_danger": 1
+    },
+    "drop_one_link": {
+      "trajectory": {
+        "mpjpe_m": 0.20445540281870062,
+        "dynamic_mpjpe_m": 0.21911375230150437,
+        "root_error_m": 0.42772002382174373,
+        "pose_speed_ratio": 1.408847622798513,
+        "danger_mpjpe_m": 0.5729495570063591,
+        "danger_distal_mpjpe_m": 0.5878553877983774,
+        "danger_endpoint_mpjpe_m": 0.7401487256799425,
+        "danger_speed_correlation": 0.12736114176389363
+      },
+      "class_accuracy": 0.6474164128303528,
+      "class_macro_f1": 0.6388251185417175,
+      "risk_accuracy": 0.826747715473175,
+      "risk_macro_f1": 0.8056480288505554,
+      "danger_recall": 0.8571428656578064,
+      "danger_precision": 0.6741573214530945,
+      "safe_to_danger": 15
+    },
+    "drop_link_0": {
+      "trajectory": {
+        "mpjpe_m": 0.1976339386450866,
+        "dynamic_mpjpe_m": 0.2138455316924782,
+        "root_error_m": 0.4208856884685774,
+        "pose_speed_ratio": 1.402343181900234,
+        "danger_mpjpe_m": 0.5315166447843824,
+        "danger_distal_mpjpe_m": 0.5546088706169809,
+        "danger_endpoint_mpjpe_m": 0.6938942619732448,
+        "danger_speed_correlation": 0.07152625322674534
+      },
+      "class_accuracy": 0.7264437675476074,
+      "class_macro_f1": 0.7073952555656433,
+      "risk_accuracy": 0.8632218837738037,
+      "risk_macro_f1": 0.8473947048187256,
+      "danger_recall": 0.8714285492897034,
+      "danger_precision": 0.6931818127632141,
+      "safe_to_danger": 17
+    },
+    "drop_link_1": {
+      "trajectory": {
+        "mpjpe_m": 0.20400564839087781,
+        "dynamic_mpjpe_m": 0.2258706380849454,
+        "root_error_m": 0.4203082449615948,
+        "pose_speed_ratio": 1.2114029907355603,
+        "danger_mpjpe_m": 0.5362672773855073,
+        "danger_distal_mpjpe_m": 0.5551294729113578,
+        "danger_endpoint_mpjpe_m": 0.6560814791492053,
+        "danger_speed_correlation": 0.22953835219543958
+      },
+      "class_accuracy": 0.5835866332054138,
+      "class_macro_f1": 0.5790388584136963,
+      "risk_accuracy": 0.7933130860328674,
+      "risk_macro_f1": 0.7579054832458496,
+      "danger_recall": 0.8714285492897034,
+      "danger_precision": 0.5700934529304504,
+      "safe_to_danger": 21
+    },
+    "drop_link_2": {
+      "trajectory": {
+        "mpjpe_m": 0.2034579601611883,
+        "dynamic_mpjpe_m": 0.2184836722687999,
+        "root_error_m": 0.4398349359631538,
+        "pose_speed_ratio": 1.3312585662851433,
+        "danger_mpjpe_m": 0.607648307297911,
+        "danger_distal_mpjpe_m": 0.6185498158846583,
+        "danger_endpoint_mpjpe_m": 0.7488068606172289,
+        "danger_speed_correlation": 0.0599988454952836
+      },
+      "class_accuracy": 0.6930091381072998,
+      "class_macro_f1": 0.6916927099227905,
+      "risk_accuracy": 0.8297872543334961,
+      "risk_macro_f1": 0.8135374188423157,
+      "danger_recall": 0.7857142686843872,
+      "danger_precision": 0.7142857313156128,
+      "safe_to_danger": 15
+    },
+    "drop_link_burst": {
+      "trajectory": {
+        "mpjpe_m": 0.16768106598229635,
+        "dynamic_mpjpe_m": 0.2050777517342523,
+        "root_error_m": 0.37284811774771365,
+        "pose_speed_ratio": 1.6058804889972087,
+        "danger_mpjpe_m": 0.517135654602732,
+        "danger_distal_mpjpe_m": 0.5289126643112727,
+        "danger_endpoint_mpjpe_m": 0.5748440751007625,
+        "danger_speed_correlation": 0.15101019283756614
+      },
+      "class_accuracy": 0.8966565132141113,
+      "class_macro_f1": 0.8858691453933716,
+      "risk_accuracy": 0.9422492384910583,
+      "risk_macro_f1": 0.932948887348175,
+      "danger_recall": 0.9285714030265808,
+      "danger_precision": 0.8666666746139526,
+      "safe_to_danger": 6
+    },
+    "drop_link_burst_early": {
+      "trajectory": {
+        "mpjpe_m": 0.16587911416140813,
+        "dynamic_mpjpe_m": 0.19059616342576138,
+        "root_error_m": 0.37022144899718346,
+        "pose_speed_ratio": 1.3933708899264245,
+        "danger_mpjpe_m": 0.4901895850896835,
+        "danger_distal_mpjpe_m": 0.5096266420824187,
+        "danger_endpoint_mpjpe_m": 0.5869090629475457,
+        "danger_speed_correlation": 0.2662443404352026
+      },
+      "class_accuracy": 0.9209726452827454,
+      "class_macro_f1": 0.9088066220283508,
+      "risk_accuracy": 0.9665653705596924,
+      "risk_macro_f1": 0.962644636631012,
+      "danger_recall": 0.9571428298950195,
+      "danger_precision": 0.9305555820465088,
+      "safe_to_danger": 4
+    },
+    "drop_link_burst_late": {
+      "trajectory": {
+        "mpjpe_m": 0.17298586877092484,
+        "dynamic_mpjpe_m": 0.19482983889252836,
+        "root_error_m": 0.3838282556997405,
+        "pose_speed_ratio": 1.4326575997826645,
+        "danger_mpjpe_m": 0.5439981839486531,
+        "danger_distal_mpjpe_m": 0.5550591338958059,
+        "danger_endpoint_mpjpe_m": 0.7328436708876065,
+        "danger_speed_correlation": 0.19769666020978807
+      },
+      "class_accuracy": 0.8844984769821167,
+      "class_macro_f1": 0.8718175292015076,
+      "risk_accuracy": 0.9452887773513794,
+      "risk_macro_f1": 0.9355766177177429,
+      "danger_recall": 0.9142857193946838,
+      "danger_precision": 0.8767123222351074,
+      "safe_to_danger": 5
+    },
+    "drop_link_burst_shifted": {
+      "trajectory": {
+        "mpjpe_m": 0.16895486399058313,
+        "dynamic_mpjpe_m": 0.2004803966230421,
+        "root_error_m": 0.3715156110387946,
+        "pose_speed_ratio": 1.536560642557706,
+        "danger_mpjpe_m": 0.5236980050802231,
+        "danger_distal_mpjpe_m": 0.5367190601570265,
+        "danger_endpoint_mpjpe_m": 0.5990052659596715,
+        "danger_speed_correlation": 0.14623181189277343
+      },
+      "class_accuracy": 0.8723404407501221,
+      "class_macro_f1": 0.8581065535545349,
+      "risk_accuracy": 0.936170220375061,
+      "risk_macro_f1": 0.9252874255180359,
+      "danger_recall": 0.9142857193946838,
+      "danger_precision": 0.8533333539962769,
+      "safe_to_danger": 6
+    },
+    "subcarrier_band": {
+      "trajectory": {
+        "mpjpe_m": 0.15224960655683561,
+        "dynamic_mpjpe_m": 0.1851016077032285,
+        "root_error_m": 0.36353435613333235,
+        "pose_speed_ratio": 1.0735036250774206,
+        "danger_mpjpe_m": 0.4980687929051263,
+        "danger_distal_mpjpe_m": 0.5103696380342756,
+        "danger_endpoint_mpjpe_m": 0.637724821482386,
+        "danger_speed_correlation": 0.26080785501315923
+      },
+      "class_accuracy": 0.9088146090507507,
+      "class_macro_f1": 0.8976871967315674,
+      "risk_accuracy": 0.9665653705596924,
+      "risk_macro_f1": 0.9560659527778625,
+      "danger_recall": 0.9285714030265808,
+      "danger_precision": 0.9154929518699646,
+      "safe_to_danger": 1
+    },
+    "gain_phase": {
+      "trajectory": {
+        "mpjpe_m": 0.14774000137926094,
+        "dynamic_mpjpe_m": 0.17613837559387754,
+        "root_error_m": 0.3394964325611317,
+        "pose_speed_ratio": 1.0586349657894023,
+        "danger_mpjpe_m": 0.4851559700710433,
+        "danger_distal_mpjpe_m": 0.4961089662143162,
+        "danger_endpoint_mpjpe_m": 0.5941666124122483,
+        "danger_speed_correlation": 0.31794010803901723
+      },
+      "class_accuracy": 0.914893627166748,
+      "class_macro_f1": 0.9067037105560303,
+      "risk_accuracy": 0.9696048498153687,
+      "risk_macro_f1": 0.9628376960754395,
+      "danger_recall": 0.9142857193946838,
+      "danger_precision": 0.9696969985961914,
+      "safe_to_danger": 1
+    },
+    "gain_phase_trial": {
+      "trajectory": {
+        "mpjpe_m": 0.14130601625120828,
+        "dynamic_mpjpe_m": 0.17337439481669398,
+        "root_error_m": 0.3292283454170776,
+        "pose_speed_ratio": 1.0227602856109732,
+        "danger_mpjpe_m": 0.4666111579963139,
+        "danger_distal_mpjpe_m": 0.4788822680711746,
+        "danger_endpoint_mpjpe_m": 0.5893238929765565,
+        "danger_speed_correlation": 0.31682440924591254
+      },
+      "class_accuracy": 0.936170220375061,
+      "class_macro_f1": 0.9243277311325073,
+      "risk_accuracy": 0.9696048498153687,
+      "risk_macro_f1": 0.9643474221229553,
+      "danger_recall": 0.9285714030265808,
+      "danger_precision": 0.9701492786407471,
+      "safe_to_danger": 1
+    }
+  }
+}

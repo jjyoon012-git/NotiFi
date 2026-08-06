@@ -12,6 +12,18 @@ from torch.utils.data import Dataset
 from . import contract as C
 
 
+def protocol_audit_path(protocol: str) -> Path:
+    """Prefer a protocol-scoped observability audit over the legacy report."""
+    safe = "".join(
+        character if character.isalnum() or character in "-_" else "_"
+        for character in protocol
+    )
+    scoped = C.WORK_ROOT / "reports" / f"motion_alignment_audit_{safe}.csv"
+    if scoped.exists():
+        return scoped
+    return C.WORK_ROOT / "reports" / "motion_alignment_audit.csv"
+
+
 def trial_quality_table(audit_path: Path | None = None) -> pd.DataFrame:
     """Return a trial-indexed reliability table without changing timestamps."""
     path = audit_path or C.WORK_ROOT / "reports" / "motion_alignment_audit.csv"

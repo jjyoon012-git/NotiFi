@@ -1,0 +1,427 @@
+{
+  "status": "validation_only_hypothesis_coverage_diagnostic",
+  "protocol": "single_split_lmh_e01",
+  "evaluation_split": "val",
+  "test_split_touched": false,
+  "selection_source": "not applicable",
+  "test_used_for_selection": false,
+  "inference_hypotheses_use_gt": false,
+  "coverage_metric_uses_gt": true,
+  "gt_selects_deployment_hypothesis": false,
+  "hypotheses": 5,
+  "motion_strength": 0.45,
+  "metrics": {
+    "deployed_point_estimate": {
+      "mpjpe_m": 0.1120567834684773,
+      "distal_mpjpe_m": 0.16146744894425547,
+      "dynamic_mpjpe_m": 0.14640030314200628,
+      "high_motion_mpjpe_m": 0.14680516582819214,
+      "pose_speed_ratio": 0.7067100871629219,
+      "speed_correlation": 0.5440545793060982,
+      "danger_pose_mpjpe_m": 0.15682165904768874,
+      "danger_distal_mpjpe_m": 0.22898052265601498,
+      "danger_endpoint_mpjpe_m": 0.1804154765393053,
+      "danger_high_motion_mpjpe_m": 0.192200543358922,
+      "danger_torso_angle_deg": 20.408993107931956,
+      "danger_speed_correlation": 0.6640598346080099,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "top1_action_hypothesis": {
+      "mpjpe_m": 0.11210517212157212,
+      "distal_mpjpe_m": 0.1615374096181421,
+      "dynamic_mpjpe_m": 0.1467540536020229,
+      "high_motion_mpjpe_m": 0.14707455313022155,
+      "pose_speed_ratio": 0.712714336739854,
+      "speed_correlation": 0.5430465760685149,
+      "danger_pose_mpjpe_m": 0.15798880069383553,
+      "danger_distal_mpjpe_m": 0.23080719586993967,
+      "danger_endpoint_mpjpe_m": 0.18246080199522632,
+      "danger_high_motion_mpjpe_m": 0.1931292662663119,
+      "danger_torso_angle_deg": 20.585094465528215,
+      "danger_speed_correlation": 0.6645118332334927,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "true_action_label_oracle_diagnostic": {
+      "mpjpe_m": 0.10927821662099589,
+      "distal_mpjpe_m": 0.15723202024837807,
+      "dynamic_mpjpe_m": 0.14422940154240202,
+      "high_motion_mpjpe_m": 0.1445974886174435,
+      "pose_speed_ratio": 0.7123780391965835,
+      "speed_correlation": 0.5483518256022344,
+      "danger_pose_mpjpe_m": 0.1534259423081364,
+      "danger_distal_mpjpe_m": 0.22382314881043774,
+      "danger_endpoint_mpjpe_m": 0.17668493065450872,
+      "danger_high_motion_mpjpe_m": 0.19001959839037486,
+      "danger_torso_angle_deg": 20.14540080342974,
+      "danger_speed_correlation": 0.6746178156563214,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "top5_probability_mixture": {
+      "mpjpe_m": 0.11216722486747635,
+      "distal_mpjpe_m": 0.16162397019151184,
+      "dynamic_mpjpe_m": 0.14638218693018182,
+      "high_motion_mpjpe_m": 0.14683416257005022,
+      "pose_speed_ratio": 0.7051949481988711,
+      "speed_correlation": 0.5435473362575212,
+      "danger_pose_mpjpe_m": 0.15678850300610064,
+      "danger_distal_mpjpe_m": 0.22891024393694742,
+      "danger_endpoint_mpjpe_m": 0.18032050292406762,
+      "danger_high_motion_mpjpe_m": 0.19217790540839944,
+      "danger_torso_angle_deg": 20.412919555391586,
+      "danger_speed_correlation": 0.6641021034547261,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "best_of_5_oracle_coverage": {
+      "mpjpe_m": 0.10570643081196716,
+      "distal_mpjpe_m": 0.15198919396729224,
+      "dynamic_mpjpe_m": 0.140621635423445,
+      "high_motion_mpjpe_m": 0.1410469801934517,
+      "pose_speed_ratio": 0.7087913890800113,
+      "speed_correlation": 0.5517428466621491,
+      "danger_pose_mpjpe_m": 0.1447354175682579,
+      "danger_distal_mpjpe_m": 0.21028656230441162,
+      "danger_endpoint_mpjpe_m": 0.16236187443137168,
+      "danger_high_motion_mpjpe_m": 0.18163273494158472,
+      "danger_torso_angle_deg": 19.058272320883614,
+      "danger_speed_correlation": 0.6810662229146276,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "scores": {
+    "deployed_point_estimate": 0.969946978528323,
+    "top1_action_hypothesis": 0.9746798739023166,
+    "true_action_label_oracle_diagnostic": 0.9504767470262316,
+    "top5_probability_mixture": 0.9700687804874755,
+    "best_of_5_oracle_coverage": 0.9066181696403925
+  },
+  "mean_pairwise_diversity_m": 0.10628358274698257,
+  "oracle_selected_rank_counts": [
+    235,
+    33,
+    13,
+    13,
+    21
+  ],
+  "action_set_audit": {
+    "top1_accuracy": 0.920634925365448,
+    "top_k_recall": 0.9936507940292358,
+    "danger_top1_accuracy": 0.8285714387893677,
+    "danger_top_k_recall": 0.9857142567634583,
+    "uses_gt_for_evaluation_only": true
+  },
+  "paired_coverage_audit": {
+    "overall_pose": {
+      "mean_gain_cm": 0.6354712247848511,
+      "ci95_cm": [
+        0.4827139973640442,
+        0.8000638484954834
+      ],
+      "trial_win_rate": 0.7523809671401978,
+      "trials": 315,
+      "bootstrap_samples": 10000,
+      "seed": 20260806
+    },
+    "overall_distal": {
+      "mean_gain_cm": 0.9486597180366516,
+      "ci95_cm": [
+        0.7082821726799011,
+        1.2036588191986084
+      ],
+      "trial_win_rate": 0.7111111283302307,
+      "trials": 315,
+      "bootstrap_samples": 10000,
+      "seed": 20260807
+    },
+    "danger_pose": {
+      "mean_gain_cm": 1.2090998888015747,
+      "ci95_cm": [
+        0.7986927032470703,
+        1.680645227432251
+      ],
+      "trial_win_rate": 0.7714285850524902,
+      "trials": 70,
+      "bootstrap_samples": 10000,
+      "seed": 20260808
+    },
+    "danger_distal": {
+      "mean_gain_cm": 1.8702105283737183,
+      "ci95_cm": [
+        1.2131203413009644,
+        2.6089653968811035
+      ],
+      "trial_win_rate": 0.7571428418159485,
+      "trials": 70,
+      "bootstrap_samples": 10000,
+      "seed": 20260809
+    },
+    "selection_note": "The oracle rank is chosen by whole-pose trial error; this audit is coverage evidence, not deployable selection."
+  },
+  "by_class": {
+    "00_walking": {
+      "trials": 28,
+      "risk_id": 0,
+      "point_pose_cm": 10.287317276000977,
+      "oracle_pose_cm": 10.130097389221191,
+      "oracle_pose_gain_cm": 0.15722036361694336,
+      "point_distal_cm": 14.37851619720459,
+      "oracle_distal_cm": 14.171524047851562,
+      "oracle_rank_counts": [
+        22,
+        1,
+        0,
+        3,
+        2
+      ]
+    },
+    "01_standing_still": {
+      "trials": 14,
+      "risk_id": 0,
+      "point_pose_cm": 2.9374818801879883,
+      "oracle_pose_cm": 2.761507987976074,
+      "oracle_pose_gain_cm": 0.17597413063049316,
+      "point_distal_cm": 4.581510066986084,
+      "oracle_distal_cm": 4.276888370513916,
+      "oracle_rank_counts": [
+        14,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "02_sitting_still": {
+      "trials": 14,
+      "risk_id": 0,
+      "point_pose_cm": 5.419071197509766,
+      "oracle_pose_cm": 5.371450424194336,
+      "oracle_pose_gain_cm": 0.04762059822678566,
+      "point_distal_cm": 8.214813232421875,
+      "oracle_distal_cm": 8.232723236083984,
+      "oracle_rank_counts": [
+        12,
+        1,
+        0,
+        1,
+        0
+      ]
+    },
+    "03_lying_still": {
+      "trials": 21,
+      "risk_id": 0,
+      "point_pose_cm": 7.43487024307251,
+      "oracle_pose_cm": 7.05486536026001,
+      "oracle_pose_gain_cm": 0.3800045847892761,
+      "point_distal_cm": 11.290888786315918,
+      "oracle_distal_cm": 10.695539474487305,
+      "oracle_rank_counts": [
+        20,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    "04_lie_to_stand": {
+      "trials": 21,
+      "risk_id": 0,
+      "point_pose_cm": 12.201677322387695,
+      "oracle_pose_cm": 11.604632377624512,
+      "oracle_pose_gain_cm": 0.5970444679260254,
+      "point_distal_cm": 17.708209991455078,
+      "oracle_distal_cm": 16.856884002685547,
+      "oracle_rank_counts": [
+        20,
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    "05_stand_to_lie_normal": {
+      "trials": 35,
+      "risk_id": 0,
+      "point_pose_cm": 12.345977783203125,
+      "oracle_pose_cm": 11.267580032348633,
+      "oracle_pose_gain_cm": 1.0783947706222534,
+      "point_distal_cm": 17.790058135986328,
+      "oracle_distal_cm": 16.11312484741211,
+      "oracle_rank_counts": [
+        27,
+        4,
+        2,
+        1,
+        1
+      ]
+    },
+    "07_sit_to_stand": {
+      "trials": 14,
+      "risk_id": 0,
+      "point_pose_cm": 4.099350929260254,
+      "oracle_pose_cm": 3.592665195465088,
+      "oracle_pose_gain_cm": 0.5066854357719421,
+      "point_distal_cm": 5.686847686767578,
+      "oracle_distal_cm": 4.889044761657715,
+      "oracle_rank_counts": [
+        13,
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    "08_stand_to_sit": {
+      "trials": 14,
+      "risk_id": 0,
+      "point_pose_cm": 6.072088241577148,
+      "oracle_pose_cm": 5.793875694274902,
+      "oracle_pose_gain_cm": 0.2782111167907715,
+      "point_distal_cm": 8.590471267700195,
+      "oracle_distal_cm": 8.14100170135498,
+      "oracle_rank_counts": [
+        13,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    "09_unstable_walking": {
+      "trials": 21,
+      "risk_id": 1,
+      "point_pose_cm": 12.49993896484375,
+      "oracle_pose_cm": 11.98150634765625,
+      "oracle_pose_gain_cm": 0.5184337496757507,
+      "point_distal_cm": 17.505292892456055,
+      "oracle_distal_cm": 16.826339721679688,
+      "oracle_rank_counts": [
+        8,
+        6,
+        1,
+        4,
+        2
+      ]
+    },
+    "10_stumble_recover": {
+      "trials": 35,
+      "risk_id": 1,
+      "point_pose_cm": 13.120929718017578,
+      "oracle_pose_cm": 12.439668655395508,
+      "oracle_pose_gain_cm": 0.6812605857849121,
+      "point_distal_cm": 18.00184440612793,
+      "oracle_distal_cm": 17.084335327148438,
+      "oracle_rank_counts": [
+        18,
+        0,
+        6,
+        1,
+        10
+      ]
+    },
+    "11_bed_exit_failed": {
+      "trials": 28,
+      "risk_id": 1,
+      "point_pose_cm": 11.401053428649902,
+      "oracle_pose_cm": 11.257399559020996,
+      "oracle_pose_gain_cm": 0.14365379512310028,
+      "point_distal_cm": 16.926433563232422,
+      "oracle_distal_cm": 16.740798950195312,
+      "oracle_rank_counts": [
+        27,
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    "12_fall_from_standing": {
+      "trials": 14,
+      "risk_id": 2,
+      "point_pose_cm": 11.655302047729492,
+      "oracle_pose_cm": 10.598453521728516,
+      "oracle_pose_gain_cm": 1.0568475723266602,
+      "point_distal_cm": 16.975605010986328,
+      "oracle_distal_cm": 15.305781364440918,
+      "oracle_rank_counts": [
+        9,
+        2,
+        0,
+        1,
+        2
+      ]
+    },
+    "13_fall_while_walking": {
+      "trials": 14,
+      "risk_id": 2,
+      "point_pose_cm": 13.45673656463623,
+      "oracle_pose_cm": 13.087465286254883,
+      "oracle_pose_gain_cm": 0.36927223205566406,
+      "point_distal_cm": 19.94890022277832,
+      "oracle_distal_cm": 19.055696487426758,
+      "oracle_rank_counts": [
+        10,
+        4,
+        0,
+        0,
+        0
+      ]
+    },
+    "14_bed_exit_fall": {
+      "trials": 14,
+      "risk_id": 2,
+      "point_pose_cm": 16.945980072021484,
+      "oracle_pose_cm": 15.665933609008789,
+      "oracle_pose_gain_cm": 1.2800476551055908,
+      "point_distal_cm": 25.096797943115234,
+      "oracle_distal_cm": 23.092510223388672,
+      "oracle_rank_counts": [
+        7,
+        5,
+        0,
+        0,
+        2
+      ]
+    },
+    "15_bed_fall": {
+      "trials": 14,
+      "risk_id": 2,
+      "point_pose_cm": 18.428062438964844,
+      "oracle_pose_cm": 16.731380462646484,
+      "oracle_pose_gain_cm": 1.6966816186904907,
+      "point_distal_cm": 26.56988525390625,
+      "oracle_distal_cm": 24.35575294494629,
+      "oracle_rank_counts": [
+        6,
+        6,
+        1,
+        0,
+        1
+      ]
+    },
+    "16_chair_exit_fall": {
+      "trials": 14,
+      "risk_id": 2,
+      "point_pose_cm": 17.957820892333984,
+      "oracle_pose_cm": 16.315170288085938,
+      "oracle_pose_gain_cm": 1.6426506042480469,
+      "point_distal_cm": 25.95010757446289,
+      "oracle_distal_cm": 23.380502700805664,
+      "oracle_rank_counts": [
+        9,
+        2,
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "csi_only_export": null,
+  "interpretation": "Best-of-5 uses val GT only after inference to measure coverage; it is not a deployable selector or point-estimate performance.",
+  "inference_inputs_for_hypotheses": "CSI and link mask only",
+  "classifier_checkpoint": "work_v2/runs/kp10_action_classifier_seed181/best_model.pt",
+  "ranker_checkpoint": "work_v2/runs/kp8_profile_candidate_ranker_seed127/best_model.pt"
+}

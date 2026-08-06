@@ -1,5 +1,42 @@
 # Seen-first experiment log
 
+## 최신 기록: V13S와 배포형 target calibration
+
+EXP-117까지는 `single_split_lmh_e01`의 **validation에서만** 선택했다. EXP-118부터는 이미
+개봉한 yja/E02 external domain을 사용한 target-adaptation 개발 실험이며 sealed 성능으로
+주장하지 않는다. 데이터·split·GT 원본은 변경하지 않았다.
+
+| 번호 | 완료 시각(KST) | 상세 내용 | 목적 | 결과 | 결정 |
+|---|---|---|---|---|---|
+| EXP-123 | 2026-08-05 15:36 | V16 basic-pose moment alignment smoke test and fixed-orientation audit | Determine whether unseen loss is caused by input moments or one installation rotation | Source selector chose alignment `0`; fixed rotation changed all-pose MPJPE `29.80 -> 30.07 cm`, danger `38.94 -> 37.98 cm` | Reject moment alignment and single fixed-rotation hypothesis; diagnose frame-dependent representation shift |
+| EXP-122 | 2026-08-05 15:31 | V15 support FiLM before the frozen P2 temporal encoder, source episodic meta-train/validation, yja basic-pose support 18 / held-out 245 | Make the encoder consume deployment calibration before temporal features collapse | yja MPJPE/root/danger `29.81/76.65/77.74 -> 29.70/68.35/76.22 cm`; danger pose `38.95 -> 38.99 cm`, class `8.98 -> 10.61%`, recall `2/50 -> 0/50` | Preserve as root-domain diagnostic; do not replace V13S |
+| EXP-121 | 2026-08-05 15:20 | V14 support encoder and bounded adapter after frozen V13S features | Test source-episodic calibration-aware output adaptation without target GT | yja MPJPE `29.81 -> 29.88 cm`, root `76.65 -> 75.66 cm`; pose detail and classification did not improve | Reject post-encoder adapter; move support injection before temporal encoder |
+| EXP-120 | 2026-08-05 14:38 | source 기본 자세 195개로 CSI·pose prototype을 만들고, yja/E02의 absence 12개와 standing/sitting/lying `12 calibration + 6 validation`만으로 label-only 보정. 나머지 245개와 낙상 50개는 lock 뒤 평가하고 root/class/risk는 raw frozen 경로 유지 | 영상·target GT 없이 실제 설치 기본 자세만 받는 calibration 절차 검증 | danger relative endpoint `45.77 -> 42.84 cm`, distal `58.20 -> 58.12 cm`; MPJPE/PA `29.81/10.15 -> 30.32/10.34 cm`, speed `1.416 -> 1.798`; root·분류·recall `2/50`은 동일 | **V13S-BC 절차와 코드는 보존하되 모델 교체 기각**; encoder를 episodic calibration-aware 방식으로 다시 학습해야 함 |
+| EXP-119 | 2026-08-05 15:10 | yja/E02를 class-stratified calibration/validation/held-out `80/52/131`로 분리하고 moment·3D affine·logit 보정 | 새 사람·환경에서 저차원 target adaptation 효과 확인 | held-out MPJPE/root `29.86/71.86 -> 27.47/59.12 cm`, danger relative endpoint `46.20 -> 36.25 cm`, recall `1/25 -> 9/25`; PA `10.20 -> 11.13 cm`, FP `4 -> 7` | **V13S-YC 탐색적 적응 후보**, universal model로 승격하지 않음 |
+| EXP-118 | 2026-08-05 14:37 | 잠긴 V13S를 yja/E02 263 pose·275 classification trial에 직접 적용 | calibration 전 실제 domain gap 확인 | MPJPE/root/danger `30.01/75.09/77.74 cm`, class/risk `12.36/51.27%`, danger recall `2/50` | severe domain shift 확인; 전체 aggregate 개봉 뒤이므로 후속 yja split은 sealed 주장 금지 |
+| EXP-117 | 2026-08-05 13:18 | pose 2개, root 2개, link별 root guard, danger-recall 분류 profile을 V13S로 고정 | 현재 최선 조합의 13개 clean/교란 모드 재평가 | clean MPJPE/root/danger `13.30/30.92/44.39 cm`; one-link `20.44/42.77/57.28 cm`; danger recall `67/70`, `62/70` | **V13S validation candidate 채택**, test 미개봉 |
+| EXP-116 | 2026-08-05 13:02 | pose ensemble simplex와 root zero-weight expert 제거 | 불필요한 추론 비용 제거와 낙상 상대 자세 개선 | pose `[0.60,0,0.40]`이 13모드 평균 danger pose/distal/endpoint를 `-0.046/-0.083/-0.096 cm`; root `[0,0.20,0.80]`과 동일한 2-expert 구성 확인 | pose seed7과 0-weight root expert 제거 |
+| EXP-115 | 2026-08-05 12:47 | danger distal 관절 loss `0.10` pose fine-tune | 낙상 말단 관절 복원 강화 | 학습 epoch의 danger pose/distal이 `20.60/30.07 -> 20.85/30.33 cm`로 악화 | 기각 |
+| EXP-114 | 2026-08-05 12:39 | danger root loss 가중치 `3 -> 5` | 낙상 절대 위치 오차 감소 | danger root 약 `-0.05 cm`에 전체 root `+0.16 cm`; 실질 이득 없음 | 기각 |
+| EXP-113 | 2026-08-05 12:24 | link별 danger-recall profile과 balanced profile 비교 | 링크 장애 시 낙상 누락 최소화 | one-link recall `60/70 -> 62/70`, safe-to-danger `15 -> 20`; constrained profile은 recall 증가 없음 | recall profile 기본, balanced 대안 보존 |
+| EXP-112 | 2026-08-05 12:10 | 네 burst 위치에서 pose/root partial guard 추가·제거 ablation | 부분 링크 손실에 필요한 구성만 유지 | root guard가 평균 root `38.74 -> 37.46 cm`; pose guard 추가 시 danger relative/endpoint 추가 개선 | pose+root full-strength 채택 |
+| EXP-111 | 2026-08-05 11:56 | missing link 0/1/2별 failure-root expert 라우팅 | 한 specialist의 link2 회귀 제거 | 순환 one-link root `43.09 -> 42.77 cm`; link0/1은 conditioned, link2는 direct expert가 우세 | input mask 기반 라우팅 채택 |
+| EXP-110 | 2026-08-05 11:34 | 분리된 motion branch pretraining 후 root 주입 | shared encoder 손상 없이 국소 motion 표현 강화 | root-velocity/pose-speed R2 `0.128/0.405`, 최종 root 개선 없이 epoch 0 선택 | 기각 |
+| EXP-109 | 2026-08-05 11:16 | shared temporal encoder motion pretraining | 국소 root velocity와 pose speed 관측성 강화 | R2 `0.053/0.313 -> 0.202/0.475`, 그러나 root `35.32 cm`로 붕괴 | 기각, 보조 지표만으로 모델을 선택하지 않음 |
+| EXP-108 | 2026-08-05 10:54 | V13F 기반 missing-link conditioned root specialist | 장애 root drift 감소 | 순환 one-link root `43.09 -> 42.81 cm`, link2 회귀 발견 | 단독 기각 후 EXP-111 라우팅으로 전환 |
+| EXP-107 | 2026-08-05 10:32 | CSI motion observation을 direct-root decoder 입력으로 주입 | 약한 국소 root motion 표현을 출력에 직접 사용 | clean root/danger/endpoint `31.03/44.35/55.25 -> 30.94/44.38/55.21 cm` | V13F core root 채택 |
+
+### V13S 판정
+
+- 현재 가장 강한 **seen validation 후보**이며 V12의 sealed test 수치와 직접 비교해 최종 성능으로
+  주장하지 않는다.
+- clean에서는 root `30.92 cm`, danger absolute `44.39 cm`, danger relative pose
+  `20.23 cm`, danger relative endpoint `23.31 cm`다.
+- one-link loss에서는 root `42.77 cm`, danger absolute `57.28 cm`, danger recall
+  `62/70=88.57%`다. 링크 2 손실과 safe-to-danger `20`건이 다음 핵심 병목이다.
+- 최종 원시 결과는 [`results/v13s_final_robustness.json`](results/v13s_final_robustness.json),
+  구성 잠금은 [`results/v13s_current_model_lock.json`](results/v13s_current_model_lock.json)에 있다.
+
 ## 최신 기록: V12 clean-protocol multi-expert
 
 아래 실험은 모두 `single_split_lmh_e01`의 validation만으로 선택했다. 최종 test는
@@ -7,6 +44,11 @@ EXP-075에서 한 번만 열었으며, 그 결과를 보고 추가로 모델이�
 
 | 번호 | 완료 시각(KST) | 상세 내용 | 목적 | 결과 | 결정 |
 |---|---|---|---|---|---|
+| EXP-106 | 2026-08-05 09:37 | V12 temporal feature의 frame/trial ridge motion probe | encoder와 decoder 중 root 병목 위치 확정 | validation R²: 5-frame root velocity 0.093, pose speed 0.336, trial displacement 0.388 | 국소 root motion 표현 부족 확인, motion-conditioned root 실험 진행 |
+| EXP-105 | 2026-08-05 09:34 | 5-frame root velocity와 pose speed 보조 head 가중치 0.10/0.50 | residual feature에 trial motion을 직접 감독 | 두 실행 모두 epoch 0 선택, root/danger/endpoint 개선 없음 | 독립 auxiliary head 기각, feature motion probe 후 masked pretraining 여부 결정 |
+| EXP-104 | 2026-08-05 09:29 | direct 위치와 속도 적분을 gate로 결합한 state-root decoder identity warm-start | 장기 drift와 frame별 root 불연속 동시 완화 | 4 epoch 모두 기준 미달, epoch 0 선택; 최선 root 31.20cm이나 danger/endpoint 동시 개선 없음 | state-root 기각, motion-grounded feature 감독으로 이동 |
+| EXP-103 | 2026-08-05 09:24 | uniform_30fps 전용 5-frame soft root alignment 0.25/0.50 독립 warm-start | 잘못된 단일 frame 감독을 완화하면서 exact timestamp 보존 | 두 가중치 모두 epoch 0 선택; 최선 root 31.20cm 동일, endpoint 최대 -0.12cm이나 danger root 악화 | branch 기본값 0으로 기각, motion representation 단계로 이동 |
+| EXP-102 | 2026-08-05 09:19 | V12 validation에 same-site/class shuffle, same-class/global shuffle, reverse, time-mean, 30-frame shift를 적용 | trial별 CSI와 시간순서 의존성 재검증 | same-site/class MPJPE/root 13.30/31.28→15.35/38.45cm, reverse 22.79/54.51cm; 30-frame shift는 danger endpoint 55.52→53.96cm | observability 통과, encoder 전면 교체보다 temporal/root alignment ablation 우선 |
 | EXP-101 | 2026-08-05 07:33 | raw final evaluation과 summary/config 28개 지표 자동 대조 | 수기 전사 오류 제거 | validation PA-MPJPE 6.7684→6.7926cm 1건 수정 후 28/28 일치 | 원시 JSON 기준값 채택, manifest 재고정 |
 | EXP-100 | 2026-08-05 07:30 | lmh/E01 uniform timestamp 262개를 scenario/risk/split별 재집계 | 부분 timestamp 보정의 분포 왜곡 여부 판단 | pose 16 scenario 전체, split 172/45/45, danger 30/10/10에 분산 | 262개 전체 복구 후 새 dataset/split version과 sealed 평가 |
 | EXP-099 | 2026-08-05 07:28 | V12RG danger 5-class validation 오차 분해 | 다음 shared loss의 과적합 없는 우선순위 결정 | D02 root 45.84cm, D03 shift 12.86f, D04 distal 50.22cm, D05 endpoint 58.25cm가 각 병목 | class 전용 head 대신 root/temporal/distal shared loss 순차 ablation |

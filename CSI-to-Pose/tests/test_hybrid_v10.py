@@ -254,6 +254,36 @@ class HybridV10Test(unittest.TestCase):
         self.assertTrue(torch.all(output["root"][0] == 1.0))
         self.assertTrue(torch.all(output["root"][1] == 1.5))
 
+    def test_link_failure_root_blend_routes_selected_links(self):
+        class ConstantRoot(DummyP2):
+            def __init__(self, value):
+                super().__init__()
+                self.value = value
+
+            def forward(self, csi, link_mask):
+                output = super().forward(csi, link_mask)
+                output["root"].fill_(self.value)
+                return output
+
+        model = ConditionalLinkFailureRootBlend(
+            ConstantRoot(1.0),
+            ConstantRoot(3.0),
+            strength=1.0,
+            secondary_expert=ConstantRoot(5.0),
+            secondary_strength=1.0,
+            secondary_links=(2,),
+        )
+        csi = torch.zeros(3, 4, C.N_LINKS, C.N_LIVE_SUBCARRIERS, 2)
+        mask = torch.ones(3, 4, C.N_LINKS, dtype=torch.bool)
+        mask[0, :, 0] = False
+        mask[1, :, 1] = False
+        mask[2, :, 2] = False
+        output = model(csi, mask)
+        self.assertTrue(torch.all(output["root"][0] == 3.0))
+        self.assertTrue(torch.all(output["root"][1] == 3.0))
+        self.assertTrue(torch.all(output["root"][2] == 5.0))
+        self.assertEqual(output["link_failure_missing_link"].tolist(), [0, 1, 2])
+
     def test_link_failure_gate_can_use_temporal_coverage(self):
         class ConstantPose(DummyP2):
             def __init__(self, value):
@@ -275,6 +305,34 @@ class HybridV10Test(unittest.TestCase):
         output = model(csi, mask)
         self.assertTrue(output["link_failure_gate"].item())
         self.assertTrue(torch.all(output["pose_rel"] == 3.0))
+
+    def test_partial_link_failure_can_use_reduced_expert_strength(self):
+        class ConstantPose(DummyP2):
+            def __init__(self, value):
+                super().__init__()
+                self.value = value
+
+            def forward(self, csi, link_mask):
+                output = super().forward(csi, link_mask)
+                output["pose_rel"].fill_(self.value)
+                output["root"].fill_(self.value)
+                return output
+
+        pose_model = ConditionalLinkFailurePoseBlend(
+            ConstantPose(1.0), ConstantPose(3.0), strength=1.0,
+            minimum_link_coverage=0.75, partial_strength_scale=0.25,
+        )
+        root_model = ConditionalLinkFailureRootBlend(
+            ConstantPose(1.0), ConstantPose(3.0), strength=1.0,
+            minimum_link_coverage=0.75, partial_strength_scale=0.25,
+        )
+        csi = torch.zeros(1, 8, C.N_LINKS, C.N_LIVE_SUBCARRIERS, 2)
+        mask = torch.ones(1, 8, C.N_LINKS, dtype=torch.bool)
+        mask[:, 2:6, 0] = False
+        pose_output = pose_model(csi, mask)
+        root_output = root_model(csi, mask)
+        self.assertTrue(torch.all(pose_output["pose_rel"] == 1.5))
+        self.assertTrue(torch.all(root_output["root"] == 1.5))
 
     def test_model_soup_averages_float_and_preserves_integer_state(self):
         states = [

@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "model": "KP10-ACTION-FUSED-45",
+  "performance_code_commit": "50ff4dc",
+  "protocol": "single_split_lmh_e01",
+  "split_counts": {
+    "train": 1210,
+    "validation": 315,
+    "test": 315
+  },
+  "inference_inputs": [
+    "4-board CSI",
+    "link mask"
+  ],
+  "forbidden_inference_inputs": [
+    "GT pose",
+    "action/risk label",
+    "video",
+    "subject ID",
+    "environment ID"
+  ],
+  "selection": {
+    "action_fusion": "1.50 * base + 0.75 * independent",
+    "motion_strength": 0.45,
+    "selection_split": "validation",
+    "test_used_for_selection": false
+  },
+  "fixed_test_metrics": {
+    "pose_cm": 12.885332910255306,
+    "distal_cm": 18.665696063211985,
+    "danger_pose_cm": 19.829331072313444,
+    "danger_distal_cm": 29.249977852616993
+  },
+  "simulation_extension": {
+    "model": "KP28-MULTI5",
+    "hypotheses": 5,
+    "selection_split": "validation",
+    "test_used_for_selection": false,
+    "inference_hypotheses_use_gt": false,
+    "coverage_metric_uses_gt": true,
+    "fixed_test_best_of_5_coverage": {
+      "pose_cm": 11.889958301825184,
+      "danger_pose_cm": 18.10176589127098,
+      "danger_distal_cm": 26.646802233798162
+    },
+    "warning": "coverage is not an automatically selected point estimate"
+  },
+  "artifacts": [
+    {
+      "path": "work_v2/runs/kp4_dcc_staged_seed17/deployment_model.pt",
+      "bytes": 8222112,
+      "sha256": "6f17555b62b4875794d2c516804028607c8d6d9867a881cc22d37b0e4eac758d"
+    },
+    {
+      "path": "work_v2/runs/kp1_v13s_coarse_single_split_lmh_e01.pt",
+      "bytes": 73852557,
+      "sha256": "f7e4d334dd3639c797349ab9c346af4127f585bce616e0a5f08058ea1f367ca0"
+    },
+    {
+      "path": "work_v2/runs/kp5_mpr_selector_seed17/best_model.pt",
+      "bytes": 54566261,
+      "sha256": "f6701f03c16bf3d23a4bf63cd762dd6d05cb6ca4469c64777c94e1b2b6cc7c09"
+    },
+    {
+      "path": "work_v2/runs/kp5_mpr_reranker_seed17/best_model.pt",
+      "bytes": 973301,
+      "sha256": "1678f5adda5a8e025397bb9193974a3f58070c3576d628771a2d8d4ab058e72a"
+    },
+    {
+      "path": "work_v2/runs/kp5_motion_profile_seed79/best_model.pt",
+      "bytes": 400053,
+      "sha256": "392d3b915d6549d7f496e4abe43eeecee48e03665f837c613d4edd24e73452b6"
+    },
+    {
+      "path": "work_v2/runs/kp5_part_motion_profile_seed101/best_model.pt",
+      "bytes": 757237,
+      "sha256": "3529910fe00321b455830c8dc9df77c33909f53bdc201849af3feb3f10e2bcd3"
+    },
+    {
+      "path": "work_v2/runs/kp8_profile_candidate_ranker_seed127/best_model.pt",
+      "bytes": 21110,
+      "sha256": "3c4c94c0f78e97800a2971a487cc06abd8602c1ea15eaaf533819db5c7554f7d"
+    },
+    {
+      "path": "work_v2/runs/kp10_action_classifier_seed181/best_model.pt",
+      "bytes": 3534069,
+      "sha256": "b8645497809d2355044fdb9b5933f297c76c698fd1f8baff5ca10229c68ef832"
+    },
+    {
+      "path": "work_v2/runs/kp5_part_motion_profile_seed83/reranking_calibration.json",
+      "bytes": 217798,
+      "sha256": "a006e2a00c2b0b92bc5857bd454433914f5cc6ade149e2f308cbbfc027e97b35"
+    },
+    {
+      "path": "work_v2/runs/kp5_motion_warp/warping_calibration.json",
+      "bytes": 107966,
+      "sha256": "3bb65108885026b29b0cad7992888cb6a7da5096c45beb9000e30cb571d88d23"
+    },
+    {
+      "path": "work_v2/runs/kp6_semantic_prior/calibration.json",
+      "bytes": 40836,
+      "sha256": "b0de658dff70d846f8df3eb7047237b826be9ae80a9fd88e7732f00df045a03c"
+    },
+    {
+      "path": "work_v2/runs/kp6_risk_adaptive_blend/calibration.json",
+      "bytes": 98989,
+      "sha256": "0c7a0bccc1e5fd76c5be004b7fa4a334867344bce79d47639e06050ad756cfa5"
+    },
+    {
+      "path": "work_v2/runs/kp10_action_classifier_pose/calibration.json",
+      "bytes": 6003,
+      "sha256": "a1a9536cc21fbe6ab47cedc98b003f215cb07ef1c68279ae96835439107e3c28"
+    },
+    {
+      "path": "work_v2/runs/kp10_action_strength/calibration.json",
+      "bytes": 4097,
+      "sha256": "a0fb4c77e3ac4ab7443265516c64427fa2930bbdfeb943567dfd8d549dc2d2eb"
+    },
+    {
+      "path": "work_v2/runs/kp10_action_strength/test_fixed.json",
+      "bytes": 1904,
+      "sha256": "df2984959c404fba4a6eec46e906b90c7990d2c7f643f5587133c7e762185c2d"
+    },
+    {
+      "path": "work_v2/runs/kp10_action_strength/paired_bootstrap_audit.json",
+      "bytes": 7404,
+      "sha256": "f9e3c9738528948f34c8b8611291cd6c356c20ea0e976cc775a39f59f2b9bacd"
+    },
+    {
+      "path": "work_v2/runs/kp10_action_strength/target_invariance_validation.json",
+      "bytes": 526,
+      "sha256": "7ac5c2bb4a53f7976a322e275e64d7675ae70685510f52b5310c2f6175f98c61"
+    },
+    {
+      "path": "work_v2/runs/kp10_action_strength/split_integrity.json",
+      "bytes": 556,
+      "sha256": "4cd34f64f678330152cd749af50e2aeea1c33d06ef98faae5f3bc5265efa9307"
+    },
+    {
+      "path": "work_v2/runs/kp28_hypothesis_coverage_top5/validation.json",
+      "bytes": 12880,
+      "sha256": "4c0d506ee0d9dd29071a52aea20eb2c1bd30ee117f4829664e7481afddf77e5d"
+    },
+    {
+      "path": "work_v2/runs/kp28_hypothesis_coverage_top5/test_fixed.json",
+      "bytes": 12885,
+      "sha256": "6f3adc38134c06630720de3cb2f380f5395f9aba6afd8960d7174a5fb6953cee"
+    }
+  ]
+}

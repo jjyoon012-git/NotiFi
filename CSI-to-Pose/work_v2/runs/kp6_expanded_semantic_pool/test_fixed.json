@@ -1,0 +1,49 @@
+{
+  "status": "fixed_test_complete_no_test_tuning",
+  "protocol": "single_split_lmh_e01",
+  "test_used_for_selection": false,
+  "selection_source": "validation",
+  "fixed_configuration": {
+    "name": "pool30_a0250_r0250_t065_top3",
+    "score": 0.9923034707740662
+  },
+  "metrics": {
+    "kp6_semantic_prior_pool30_reference": {
+      "mpjpe_m": 0.1304794554081228,
+      "distal_mpjpe_m": 0.18887825362266056,
+      "dynamic_mpjpe_m": 0.16432629531284548,
+      "high_motion_mpjpe_m": 0.16122279106804455,
+      "pose_speed_ratio": 0.7748769126217171,
+      "speed_correlation": 0.5112395118345462,
+      "danger_pose_mpjpe_m": 0.20552224096442973,
+      "danger_distal_mpjpe_m": 0.3036122382751533,
+      "danger_endpoint_mpjpe_m": 0.2570237025618553,
+      "danger_high_motion_mpjpe_m": 0.228586103447846,
+      "danger_torso_angle_deg": 29.23113982336862,
+      "danger_speed_correlation": 0.5790626388043165,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "kp6_expanded_semantic_pool": {
+      "mpjpe_m": 0.1315428442868685,
+      "distal_mpjpe_m": 0.19065235176729778,
+      "dynamic_mpjpe_m": 0.16581356139537298,
+      "high_motion_mpjpe_m": 0.1625762933845374,
+      "pose_speed_ratio": 0.8345590918451322,
+      "speed_correlation": 0.5112781085000033,
+      "danger_pose_mpjpe_m": 0.20700228070574148,
+      "danger_distal_mpjpe_m": 0.305781251085656,
+      "danger_endpoint_mpjpe_m": 0.25742856285401755,
+      "danger_high_motion_mpjpe_m": 0.230839083556618,
+      "danger_torso_angle_deg": 29.509132725851877,
+      "danger_speed_correlation": 0.562952712391104,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "scores": {
+    "kp6_semantic_prior_pool30_reference": 1.205464566246629,
+    "kp6_expanded_semantic_pool": 1.2121180700389937
+  },
+  "expanded_calibration": "work_v2/runs/kp6_expanded_semantic_pool/refined_calibration.json"
+}

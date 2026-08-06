@@ -1,0 +1,53 @@
+{
+  "status": "fixed_test_complete_no_test_tuning",
+  "protocol": "single_split_lmh_e01",
+  "test_used_for_selection": false,
+  "selection_source": "validation",
+  "fixed_configuration": {
+    "name": "p0200_limbs_t050_top5_s750",
+    "score": 1.0077559796583155
+  },
+  "metrics": {
+    "locked_kp2_dh": {
+      "mpjpe_m": 0.14807236732116769,
+      "distal_mpjpe_m": 0.21446684096895513,
+      "dynamic_mpjpe_m": 0.17812686146430248,
+      "high_motion_mpjpe_m": 0.17455321901761894,
+      "pose_speed_ratio": 1.1487432980846186,
+      "speed_correlation": 0.2590164513179352,
+      "danger_pose_mpjpe_m": 0.23299754086349692,
+      "danger_distal_mpjpe_m": 0.34395682268909045,
+      "danger_endpoint_mpjpe_m": 0.2873547312404428,
+      "danger_high_motion_mpjpe_m": 0.2441724649497441,
+      "danger_torso_angle_deg": 33.603925010136194,
+      "danger_speed_correlation": 0.36691390140913427,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "kp5_part_motion_profile": {
+      "mpjpe_m": 0.13216547455993435,
+      "distal_mpjpe_m": 0.19156155489266866,
+      "dynamic_mpjpe_m": 0.16715182962142072,
+      "high_motion_mpjpe_m": 0.16403727611223012,
+      "pose_speed_ratio": 0.7208328744299829,
+      "speed_correlation": 0.48999164052351957,
+      "danger_pose_mpjpe_m": 0.2121307180396148,
+      "danger_distal_mpjpe_m": 0.3139129053269114,
+      "danger_endpoint_mpjpe_m": 0.26568542814680507,
+      "danger_high_motion_mpjpe_m": 0.23511024521929877,
+      "danger_torso_angle_deg": 30.744789443697247,
+      "danger_speed_correlation": 0.5387012052615838,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "scores": {
+    "locked_kp2_dh": 1.34511877995851,
+    "kp5_part_motion_profile": 1.2398664510810309
+  },
+  "selector_checkpoint": "work_v2/runs/kp5_mpr_selector_seed17/best_model.pt",
+  "reranker_checkpoint": "work_v2/runs/kp5_mpr_reranker_seed17/best_model.pt",
+  "scalar_profile_checkpoint": "work_v2/runs/kp5_motion_profile_seed71/best_model.pt",
+  "part_profile_checkpoint": "work_v2/runs/kp5_part_motion_profile_seed83/best_model.pt",
+  "calibration": "work_v2/runs/kp5_part_motion_profile_seed83/reranking_calibration.json"
+}

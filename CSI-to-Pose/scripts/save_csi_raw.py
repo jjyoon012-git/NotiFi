@@ -52,7 +52,7 @@ LABEL_MAP = {
     "lying_convulsive_like_movement": ("danger", "abnormal_motion"),
 }
 
-DEFAULT_DATA_ROOT = Path(__file__).parent.parent / "data"
+DEFAULT_DATA_ROOT = Path(__file__).parent.parent / "csi_to_pose" / "csi"
 
 
 def next_trial(trial_str):

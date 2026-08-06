@@ -1,0 +1,84 @@
+{
+  "run": "p2_v12_link_failure_guard_audit",
+  "protocol": "single_split_lmh_e01",
+  "selection_split": "validation",
+  "test_used": false,
+  "audit_modes": [
+    "clean"
+  ],
+  "base_configuration": {
+    "p2_checkpoint": "work_v2\\runs\\p2_sub_single_clean_finetune\\best_model.pt",
+    "pose_checkpoints": [
+      "work_v2\\runs\\p2_v12r_corrected_rf_pose_finetune\\best_model.pt",
+      "work_v2\\runs\\p2_v12k_shift_robust_pose_seed7\\best_model.pt",
+      "work_v2\\runs\\p2_v12x_shift_rf_pose_seed23\\best_model.pt"
+    ],
+    "pose_weights": [
+      0.45,
+      0.25,
+      0.3
+    ],
+    "root_checkpoints": [
+      "work_v2\\runs\\p2_v12ac_shift_robust_root\\best_model.pt",
+      "work_v2\\runs\\p2_v12p_direct_root_multiscale_seed7\\best_model.pt",
+      "work_v2\\runs\\p2_v13f_conditioned_root\\best_model.pt"
+    ],
+    "root_weights": [
+      0.0,
+      0.2,
+      0.8
+    ],
+    "residual_window": 31,
+    "residual_blend": 1.0,
+    "bone_blend": 0.25,
+    "bone_symmetric": true,
+    "classification_expert_checkpoints": [
+      "work_v2\\runs\\p2_v11v_classification_expert_seed17\\best_model.pt",
+      "work_v2\\runs\\p2_v12v_corrected_rf_classification\\best_model.pt"
+    ],
+    "classification_expert_weights": [
+      0.5,
+      0.5
+    ],
+    "classification_expert_strength": 1.0,
+    "hierarchical_class_weight": 0.6,
+    "final_danger_logit_bias": 0.35000000000000003,
+    "shared_backbone_execution": true
+  },
+  "shared_guard_backbone": true,
+  "minimum_link_coverage": 0.5,
+  "partial_pose_strength_scale": 1.0,
+  "partial_root_strength_scale": 1.0,
+  "classification_minimum_link_coverage": 0.0,
+  "pose_calibration": "docs\\results\\v12_link_failure_pose_calibration.json",
+  "root_calibration": "docs\\results\\v13_conditioned_link_failure_root_calibration.json",
+  "secondary_root_calibration": "docs\\results\\v12_link_failure_root_calibration.json",
+  "secondary_root_links": [
+    2
+  ],
+  "classification_calibration": "docs\\results\\v13_link_specific_danger_recall_calibration.json",
+  "results": {
+    "clean": {
+      "trajectory": {
+        "mpjpe_m": 0.13315806475187106,
+        "dynamic_mpjpe_m": 0.16546070627145357,
+        "root_error_m": 0.30919524777739765,
+        "pose_speed_ratio": 1.0034578462457042,
+        "danger_mpjpe_m": 0.44402375199965066,
+        "danger_distal_mpjpe_m": 0.4583045269761767,
+        "danger_endpoint_mpjpe_m": 0.5528963961771556,
+        "danger_pose_mpjpe_m": 0.20270316920110157,
+        "danger_pose_distal_mpjpe_m": 0.2957175185637815,
+        "danger_pose_endpoint_mpjpe_m": 0.2337407781609467,
+        "danger_speed_correlation": 0.35287130764086866
+      },
+      "class_accuracy": 0.9604862928390503,
+      "class_macro_f1": 0.9519333839416504,
+      "risk_accuracy": 0.978723406791687,
+      "risk_macro_f1": 0.9763397574424744,
+      "danger_recall": 0.9571428298950195,
+      "danger_precision": 0.9710144996643066,
+      "safe_to_danger": 2
+    }
+  }
+}

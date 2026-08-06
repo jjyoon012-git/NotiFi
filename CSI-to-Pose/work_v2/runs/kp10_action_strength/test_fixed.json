@@ -1,0 +1,50 @@
+{
+  "status": "fixed_test_complete_no_test_tuning",
+  "protocol": "single_split_lmh_e01",
+  "test_used_for_selection": false,
+  "selection_source": "validation pose composite",
+  "inference_inputs": "CSI and link mask only",
+  "fixed_configuration": {
+    "name": "strength_045",
+    "score": 0.969946978528323
+  },
+  "metrics": {
+    "kp10_strength_035": {
+      "mpjpe_m": 0.12867794634094315,
+      "distal_mpjpe_m": 0.1863842763775398,
+      "dynamic_mpjpe_m": 0.16376749471814003,
+      "high_motion_mpjpe_m": 0.16053738900136652,
+      "pose_speed_ratio": 0.7191329767448531,
+      "speed_correlation": 0.5105218450716209,
+      "danger_pose_mpjpe_m": 0.1988479274724211,
+      "danger_distal_mpjpe_m": 0.29347394119415965,
+      "danger_endpoint_mpjpe_m": 0.25114784996424405,
+      "danger_high_motion_mpjpe_m": 0.22719476819038392,
+      "danger_torso_angle_deg": 28.426044321060182,
+      "danger_speed_correlation": 0.5771004446383033,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "kp10_strength_045": {
+      "mpjpe_m": 0.12885332910255307,
+      "distal_mpjpe_m": 0.18665696063211987,
+      "dynamic_mpjpe_m": 0.16423171986386462,
+      "high_motion_mpjpe_m": 0.16095170801412975,
+      "pose_speed_ratio": 0.7197247227044772,
+      "speed_correlation": 0.5141046191853959,
+      "danger_pose_mpjpe_m": 0.19829331072313444,
+      "danger_distal_mpjpe_m": 0.29249977852616993,
+      "danger_endpoint_mpjpe_m": 0.25051803892212254,
+      "danger_high_motion_mpjpe_m": 0.22763825431466103,
+      "danger_torso_angle_deg": 28.34960366657802,
+      "danger_speed_correlation": 0.5793103824768747,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "scores": {
+    "kp10_strength_035": 1.1828800879743582,
+    "kp10_strength_045": 1.1820452370882089
+  },
+  "calibration": "work_v2/runs/kp10_action_strength/calibration.json"
+}

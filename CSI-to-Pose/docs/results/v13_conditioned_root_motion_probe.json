@@ -1,0 +1,108 @@
+{
+  "run": "v13_v12_motion_feature_probe",
+  "protocol": "single_split_lmh_e01",
+  "selection_split": "validation",
+  "test_used": false,
+  "lag": 5,
+  "frames_per_trial": 48,
+  "ridge": 10.0,
+  "configuration": {
+    "p2_checkpoint": "work_v2\\runs\\p2_sub_single_clean_finetune\\best_model.pt",
+    "hybrid_checkpoint": "work_v2\\runs\\p2_v13f_conditioned_root\\best_model.pt",
+    "residual_decoder": "conditioned_root",
+    "checkpoint_epoch": 8
+  },
+  "results": {
+    "root_velocity": {
+      "r2": [
+        0.03220003843307495,
+        0.04730987548828125,
+        0.13811278343200684
+      ],
+      "r2_mean": 0.07254090160131454,
+      "correlation": [
+        0.25753888487815857,
+        0.23017708957195282,
+        0.38224145770072937
+      ],
+      "correlation_mean": 0.2899858057498932,
+      "mae": [
+        0.10671564191579819,
+        0.05282345041632652,
+        0.12315138429403305
+      ],
+      "train_samples": 58080,
+      "validation_samples": 15120
+    },
+    "pose_speed": {
+      "r2": [
+        0.32087403535842896
+      ],
+      "r2_mean": 0.32087403535842896,
+      "correlation": [
+        0.5677328705787659
+      ],
+      "correlation_mean": 0.5677328705787659,
+      "mae": [
+        0.10169807821512222
+      ],
+      "train_samples": 58080,
+      "validation_samples": 15120
+    },
+    "trial_root_displacement": {
+      "r2": [
+        -0.062496185302734375,
+        0.5129402279853821,
+        0.47901493310928345
+      ],
+      "r2_mean": 0.30981966853141785,
+      "correlation": [
+        0.34691956639289856,
+        0.7231653928756714,
+        0.720404863357544
+      ],
+      "correlation_mean": 0.5968299508094788,
+      "mae": [
+        0.3795621693134308,
+        0.08912818878889084,
+        0.3209875822067261
+      ],
+      "train_samples": 1210,
+      "validation_samples": 315
+    },
+    "direct_motion_head": {
+      "root_velocity": {
+        "r2": [
+          0.04185682535171509,
+          0.042721450328826904,
+          0.07465177774429321
+        ],
+        "r2_mean": 0.05307668447494507,
+        "correlation": [
+          0.2062653750181198,
+          0.2079637497663498,
+          0.28120675683021545
+        ],
+        "correlation_mean": 0.23181195557117462,
+        "mae": [
+          0.09416159987449646,
+          0.04615628719329834,
+          0.11340456455945969
+        ]
+      },
+      "pose_speed": {
+        "r2": [
+          0.3125151991844177
+        ],
+        "r2_mean": 0.3125151991844177,
+        "correlation": [
+          0.5625198483467102
+        ],
+        "correlation_mean": 0.5625198483467102,
+        "mae": [
+          0.09816001355648041
+        ]
+      }
+    }
+  }
+}

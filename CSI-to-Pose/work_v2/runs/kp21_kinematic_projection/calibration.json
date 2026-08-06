@@ -1,0 +1,102 @@
+{
+  "status": "validation_rejected",
+  "protocol": "single_split_lmh_e01",
+  "selection": {
+    "name": "projection_000",
+    "score": 0.9694755621234071
+  },
+  "scores": {
+    "projection_000": 0.9694755621234071,
+    "projection_025": 0.9706307420813873,
+    "projection_050": 0.973032304924231,
+    "projection_075": 0.9765826958783413,
+    "projection_100": 0.9812059910412776
+  },
+  "metrics": {
+    "projection_000": {
+      "mpjpe_m": 0.11199684490760167,
+      "distal_mpjpe_m": 0.16132318547202482,
+      "dynamic_mpjpe_m": 0.1463781238477955,
+      "high_motion_mpjpe_m": 0.14679384807232712,
+      "pose_speed_ratio": 0.7061083874665997,
+      "speed_correlation": 0.5432116659151183,
+      "danger_pose_mpjpe_m": 0.15677632024245602,
+      "danger_distal_mpjpe_m": 0.22890920021704264,
+      "danger_endpoint_mpjpe_m": 0.17986631941582476,
+      "danger_high_motion_mpjpe_m": 0.19230484712336746,
+      "danger_torso_angle_deg": 20.418438843318395,
+      "danger_speed_correlation": 0.6637216997998101,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "projection_025": {
+      "mpjpe_m": 0.11206540085434441,
+      "distal_mpjpe_m": 0.161461877267039,
+      "dynamic_mpjpe_m": 0.14636448679019265,
+      "high_motion_mpjpe_m": 0.1468169829349263,
+      "pose_speed_ratio": 0.6975312192363634,
+      "speed_correlation": 0.542371601964687,
+      "danger_pose_mpjpe_m": 0.1569247026528631,
+      "danger_distal_mpjpe_m": 0.22927465635750974,
+      "danger_endpoint_mpjpe_m": 0.18012337791068214,
+      "danger_high_motion_mpjpe_m": 0.19256785905786922,
+      "danger_torso_angle_deg": 20.413267884935653,
+      "danger_speed_correlation": 0.6615876868367195,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "projection_050": {
+      "mpjpe_m": 0.11229480165574286,
+      "distal_mpjpe_m": 0.16185312557906387,
+      "dynamic_mpjpe_m": 0.14653326027484528,
+      "high_motion_mpjpe_m": 0.14701665753660642,
+      "pose_speed_ratio": 0.6917826616743324,
+      "speed_correlation": 0.5412491864864788,
+      "danger_pose_mpjpe_m": 0.15733576401003768,
+      "danger_distal_mpjpe_m": 0.23005483709275723,
+      "danger_endpoint_mpjpe_m": 0.18056276770574706,
+      "danger_high_motion_mpjpe_m": 0.193137287614601,
+      "danger_torso_angle_deg": 20.40873008455549,
+      "danger_speed_correlation": 0.6593791996794087,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "projection_075": {
+      "mpjpe_m": 0.112675288219064,
+      "distal_mpjpe_m": 0.16248066039785505,
+      "dynamic_mpjpe_m": 0.14688097615378784,
+      "high_motion_mpjpe_m": 0.14738914886813448,
+      "pose_speed_ratio": 0.6893915945116126,
+      "speed_correlation": 0.5399522066094159,
+      "danger_pose_mpjpe_m": 0.15799337082675524,
+      "danger_distal_mpjpe_m": 0.23122261390089988,
+      "danger_endpoint_mpjpe_m": 0.1811744374888284,
+      "danger_high_motion_mpjpe_m": 0.19400261480893408,
+      "danger_torso_angle_deg": 20.404781382424492,
+      "danger_speed_correlation": 0.6572547542197363,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "projection_100": {
+      "mpjpe_m": 0.11319989916528501,
+      "distal_mpjpe_m": 0.16333296540828923,
+      "dynamic_mpjpe_m": 0.1474047764134941,
+      "high_motion_mpjpe_m": 0.14793162622853465,
+      "pose_speed_ratio": 0.6908968993407087,
+      "speed_correlation": 0.5385863199353307,
+      "danger_pose_mpjpe_m": 0.1588865707495383,
+      "danger_distal_mpjpe_m": 0.23275942845003947,
+      "danger_endpoint_mpjpe_m": 0.18194935736911638,
+      "danger_high_motion_mpjpe_m": 0.19515649484736577,
+      "danger_torso_angle_deg": 20.401389939444407,
+      "danger_speed_correlation": 0.6553321106093271,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "length_source": "per-trial median strict CSI-baseline bone length",
+  "test_used_for_selection": false,
+  "inference_inputs": "CSI and link mask only",
+  "classifier_checkpoint": "work_v2/runs/kp10_action_classifier_seed181/best_model.pt",
+  "ranker_checkpoint": "work_v2/runs/kp8_profile_candidate_ranker_seed127/best_model.pt"
+}

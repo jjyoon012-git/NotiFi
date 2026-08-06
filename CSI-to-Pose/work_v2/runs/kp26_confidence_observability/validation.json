@@ -1,0 +1,707 @@
+{
+  "status": "validation_only_confidence_observability",
+  "protocol": "single_split_lmh_e01",
+  "test_split_touched": false,
+  "purpose": "decide whether a CSI-only selective residual gate is learnable",
+  "trials": 315,
+  "action_accuracy": 0.920634925365448,
+  "overall": {
+    "pose_improvement_cm": 0.2200421392917633,
+    "distal_improvement_cm": 0.2869795858860016,
+    "trial_win_rate": 0.5904762148857117
+  },
+  "action_correctness": {
+    "correct": {
+      "trials": 290,
+      "pose_improvement_cm": 0.20167914032936096,
+      "distal_improvement_cm": 0.2591302692890167,
+      "win_rate": 0.6000000238418579
+    },
+    "incorrect": {
+      "trials": 25,
+      "pose_improvement_cm": 0.43305280804634094,
+      "distal_improvement_cm": 0.6100320219993591,
+      "win_rate": 0.47999998927116394
+    }
+  },
+  "by_class": {
+    "00_walking": {
+      "trials": 28,
+      "risk_id": 0,
+      "current_pose_cm": 10.233163833618164,
+      "kp10_pose_cm": 10.265336990356445,
+      "pose_improvement_cm": -0.032172124832868576,
+      "distal_improvement_cm": -0.12551191449165344,
+      "trial_win_rate": 0.5714285969734192,
+      "action_accuracy": 1.0
+    },
+    "01_standing_still": {
+      "trials": 14,
+      "risk_id": 0,
+      "current_pose_cm": 2.883986473083496,
+      "kp10_pose_cm": 2.906984567642212,
+      "pose_improvement_cm": -0.02299804612994194,
+      "distal_improvement_cm": -0.11526745557785034,
+      "trial_win_rate": 0.5714285969734192,
+      "action_accuracy": 1.0
+    },
+    "02_sitting_still": {
+      "trials": 14,
+      "risk_id": 0,
+      "current_pose_cm": 5.531233310699463,
+      "kp10_pose_cm": 5.421248912811279,
+      "pose_improvement_cm": 0.10998323559761047,
+      "distal_improvement_cm": 0.1309375911951065,
+      "trial_win_rate": 0.5,
+      "action_accuracy": 1.0
+    },
+    "03_lying_still": {
+      "trials": 21,
+      "risk_id": 0,
+      "current_pose_cm": 7.758761405944824,
+      "kp10_pose_cm": 7.401554107666016,
+      "pose_improvement_cm": 0.35720697045326233,
+      "distal_improvement_cm": 0.42531466484069824,
+      "trial_win_rate": 0.6666666865348816,
+      "action_accuracy": 0.9047619104385376
+    },
+    "04_lie_to_stand": {
+      "trials": 21,
+      "risk_id": 0,
+      "current_pose_cm": 12.457812309265137,
+      "kp10_pose_cm": 12.19826602935791,
+      "pose_improvement_cm": 0.25954556465148926,
+      "distal_improvement_cm": 0.3892943859100342,
+      "trial_win_rate": 0.4761904776096344,
+      "action_accuracy": 0.9523809552192688
+    },
+    "05_stand_to_lie_normal": {
+      "trials": 35,
+      "risk_id": 0,
+      "current_pose_cm": 12.705397605895996,
+      "kp10_pose_cm": 12.3668851852417,
+      "pose_improvement_cm": 0.33851271867752075,
+      "distal_improvement_cm": 0.48814570903778076,
+      "trial_win_rate": 0.7142857313156128,
+      "action_accuracy": 0.9142857193946838
+    },
+    "07_sit_to_stand": {
+      "trials": 14,
+      "risk_id": 0,
+      "current_pose_cm": 4.103529453277588,
+      "kp10_pose_cm": 4.111917018890381,
+      "pose_improvement_cm": -0.008387531153857708,
+      "distal_improvement_cm": -0.10956364125013351,
+      "trial_win_rate": 0.7142857313156128,
+      "action_accuracy": 0.9285714030265808
+    },
+    "08_stand_to_sit": {
+      "trials": 14,
+      "risk_id": 0,
+      "current_pose_cm": 6.540043830871582,
+      "kp10_pose_cm": 6.12094783782959,
+      "pose_improvement_cm": 0.41909483075141907,
+      "distal_improvement_cm": 0.6017533540725708,
+      "trial_win_rate": 0.7857142686843872,
+      "action_accuracy": 0.9285714030265808
+    },
+    "09_unstable_walking": {
+      "trials": 21,
+      "risk_id": 1,
+      "current_pose_cm": 12.615348815917969,
+      "kp10_pose_cm": 12.497791290283203,
+      "pose_improvement_cm": 0.11755689978599548,
+      "distal_improvement_cm": 0.10220231115818024,
+      "trial_win_rate": 0.4285714328289032,
+      "action_accuracy": 0.9047619104385376
+    },
+    "10_stumble_recover": {
+      "trials": 35,
+      "risk_id": 1,
+      "current_pose_cm": 13.20076847076416,
+      "kp10_pose_cm": 13.108402252197266,
+      "pose_improvement_cm": 0.09236735105514526,
+      "distal_improvement_cm": 0.061824534088373184,
+      "trial_win_rate": 0.5142857432365417,
+      "action_accuracy": 0.9142857193946838
+    },
+    "11_bed_exit_failed": {
+      "trials": 28,
+      "risk_id": 1,
+      "current_pose_cm": 11.471562385559082,
+      "kp10_pose_cm": 11.367835998535156,
+      "pose_improvement_cm": 0.10372642427682877,
+      "distal_improvement_cm": 0.11690157651901245,
+      "trial_win_rate": 0.6071428656578064,
+      "action_accuracy": 1.0
+    },
+    "12_fall_from_standing": {
+      "trials": 14,
+      "risk_id": 2,
+      "current_pose_cm": 11.880462646484375,
+      "kp10_pose_cm": 11.656596183776855,
+      "pose_improvement_cm": 0.2238650619983673,
+      "distal_improvement_cm": 0.35780084133148193,
+      "trial_win_rate": 0.5714285969734192,
+      "action_accuracy": 0.8571428656578064
+    },
+    "13_fall_while_walking": {
+      "trials": 14,
+      "risk_id": 2,
+      "current_pose_cm": 13.624699592590332,
+      "kp10_pose_cm": 13.451560020446777,
+      "pose_improvement_cm": 0.1731366664171219,
+      "distal_improvement_cm": 0.22145579755306244,
+      "trial_win_rate": 0.7857142686843872,
+      "action_accuracy": 1.0
+    },
+    "14_bed_exit_fall": {
+      "trials": 14,
+      "risk_id": 2,
+      "current_pose_cm": 17.66576385498047,
+      "kp10_pose_cm": 16.913423538208008,
+      "pose_improvement_cm": 0.7523360252380371,
+      "distal_improvement_cm": 1.0555890798568726,
+      "trial_win_rate": 0.5,
+      "action_accuracy": 0.5714285969734192
+    },
+    "15_bed_fall": {
+      "trials": 14,
+      "risk_id": 2,
+      "current_pose_cm": 18.53307342529297,
+      "kp10_pose_cm": 18.40799903869629,
+      "pose_improvement_cm": 0.1250743567943573,
+      "distal_improvement_cm": 0.28528082370758057,
+      "trial_win_rate": 0.4285714328289032,
+      "action_accuracy": 0.9285714030265808
+    },
+    "16_chair_exit_fall": {
+      "trials": 14,
+      "risk_id": 2,
+      "current_pose_cm": 18.848003387451172,
+      "kp10_pose_cm": 17.99093246459961,
+      "pose_improvement_cm": 0.8570706248283386,
+      "distal_improvement_cm": 1.2961328029632568,
+      "trial_win_rate": 0.6428571343421936,
+      "action_accuracy": 0.7857142686843872
+    }
+  },
+  "csi_feature_observability": {
+    "action_confidence": {
+      "pose": {
+        "pearson_improvement": -0.1095198392868042,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": 0.8248925805091858,
+            "improvement_mean_cm": 0.23130343854427338,
+            "win_rate": 0.5189873576164246,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.9683210253715515,
+            "improvement_mean_cm": 0.2284156084060669,
+            "win_rate": 0.6329113841056824,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.9850606918334961,
+            "improvement_mean_cm": 0.3090268075466156,
+            "win_rate": 0.6329113841056824,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.9954304099082947,
+            "improvement_mean_cm": 0.1100301519036293,
+            "win_rate": 0.5769230723381042,
+            "trials": 78
+          }
+        ]
+      },
+      "distal": {
+        "pearson_improvement": -0.12137043476104736,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": 0.8248925805091858,
+            "improvement_mean_cm": 0.331084281206131,
+            "win_rate": 0.5189873576164246,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.9683210253715515,
+            "improvement_mean_cm": 0.3318866491317749,
+            "win_rate": 0.5696202516555786,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.9850606918334961,
+            "improvement_mean_cm": 0.36038804054260254,
+            "win_rate": 0.5569620132446289,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.9954304099082947,
+            "improvement_mean_cm": 0.12247709184885025,
+            "win_rate": 0.6153846383094788,
+            "trials": 78
+          }
+        ]
+      }
+    },
+    "action_margin": {
+      "pose": {
+        "pearson_improvement": -0.0717516764998436,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": 0.7123000025749207,
+            "improvement_mean_cm": 0.23267944157123566,
+            "win_rate": 0.5189873576164246,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.9556360244750977,
+            "improvement_mean_cm": 0.3694886565208435,
+            "win_rate": 0.6455696225166321,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.9791096448898315,
+            "improvement_mean_cm": 0.2587142288684845,
+            "win_rate": 0.6455696225166321,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.9935144186019897,
+            "improvement_mean_cm": 0.01671246811747551,
+            "win_rate": 0.5512820482254028,
+            "trials": 78
+          }
+        ]
+      },
+      "distal": {
+        "pearson_improvement": -0.08283062279224396,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": 0.7123000025749207,
+            "improvement_mean_cm": 0.3346542716026306,
+            "win_rate": 0.5189873576164246,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.9556360244750977,
+            "improvement_mean_cm": 0.5210019946098328,
+            "win_rate": 0.5822784900665283,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.9791096448898315,
+            "improvement_mean_cm": 0.2890003025531769,
+            "win_rate": 0.5696202516555786,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.9935144186019897,
+            "improvement_mean_cm": -0.00037560955388471484,
+            "win_rate": 0.5897436141967773,
+            "trials": 78
+          }
+        ]
+      }
+    },
+    "negative_action_entropy": {
+      "pose": {
+        "pearson_improvement": -0.13582956790924072,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": -0.2127765268087387,
+            "improvement_mean_cm": 0.2292645126581192,
+            "win_rate": 0.5316455960273743,
+            "trials": 79
+          },
+          {
+            "feature_mean": -0.0686095729470253,
+            "improvement_mean_cm": 0.24739836156368256,
+            "win_rate": 0.6329113841056824,
+            "trials": 79
+          },
+          {
+            "feature_mean": -0.03623390570282936,
+            "improvement_mean_cm": 0.2926331162452698,
+            "win_rate": 0.6202531456947327,
+            "trials": 79
+          },
+          {
+            "feature_mean": -0.012659952975809574,
+            "improvement_mean_cm": 0.10947293788194656,
+            "win_rate": 0.5769230723381042,
+            "trials": 78
+          }
+        ]
+      },
+      "distal": {
+        "pearson_improvement": -0.1479477882385254,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": -0.2127765268087387,
+            "improvement_mean_cm": 0.3179064989089966,
+            "win_rate": 0.5189873576164246,
+            "trials": 79
+          },
+          {
+            "feature_mean": -0.0686095729470253,
+            "improvement_mean_cm": 0.3589554727077484,
+            "win_rate": 0.5569620132446289,
+            "trials": 79
+          },
+          {
+            "feature_mean": -0.03623390570282936,
+            "improvement_mean_cm": 0.35120290517807007,
+            "win_rate": 0.5696202516555786,
+            "trials": 79
+          },
+          {
+            "feature_mean": -0.012659952975809574,
+            "improvement_mean_cm": 0.1177108958363533,
+            "win_rate": 0.6153846383094788,
+            "trials": 78
+          }
+        ]
+      }
+    },
+    "predicted_danger_probability": {
+      "pose": {
+        "pearson_improvement": 0.031095579266548157,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": 0.0016539698699489236,
+            "improvement_mean_cm": 0.20919814705848694,
+            "win_rate": 0.594936728477478,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.007057616952806711,
+            "improvement_mean_cm": 0.12384074181318283,
+            "win_rate": 0.594936728477478,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.028835516422986984,
+            "improvement_mean_cm": 0.22056040167808533,
+            "win_rate": 0.607594907283783,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.8918946385383606,
+            "improvement_mean_cm": 0.32793498039245605,
+            "win_rate": 0.5641025900840759,
+            "trials": 78
+          }
+        ]
+      },
+      "distal": {
+        "pearson_improvement": 0.04232430085539818,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": 0.0016539698699489236,
+            "improvement_mean_cm": 0.24019961059093475,
+            "win_rate": 0.594936728477478,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.007057616952806711,
+            "improvement_mean_cm": 0.11571840941905975,
+            "win_rate": 0.5316455960273743,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.028835516422986984,
+            "improvement_mean_cm": 0.31144654750823975,
+            "win_rate": 0.5443037748336792,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.8918946385383606,
+            "improvement_mean_cm": 0.48303553462028503,
+            "win_rate": 0.5897436141967773,
+            "trials": 78
+          }
+        ]
+      }
+    },
+    "activity_mean": {
+      "pose": {
+        "pearson_improvement": -0.0021241018548607826,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": 0.03964618593454361,
+            "improvement_mean_cm": 0.33310115337371826,
+            "win_rate": 0.6455696225166321,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.1458003669977188,
+            "improvement_mean_cm": 0.28646034002304077,
+            "win_rate": 0.6962025165557861,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.18808625638484955,
+            "improvement_mean_cm": -0.08370845764875412,
+            "win_rate": 0.5063291192054749,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.28005337715148926,
+            "improvement_mean_cm": 0.3459087610244751,
+            "win_rate": 0.5128205418586731,
+            "trials": 78
+          }
+        ]
+      },
+      "distal": {
+        "pearson_improvement": 0.000697420327924192,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": 0.03964618593454361,
+            "improvement_mean_cm": 0.4498077630996704,
+            "win_rate": 0.6455696225166321,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.1458003669977188,
+            "improvement_mean_cm": 0.3582080006599426,
+            "win_rate": 0.6329113841056824,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.18808625638484955,
+            "improvement_mean_cm": -0.10827382653951645,
+            "win_rate": 0.4810126721858978,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.28005337715148926,
+            "improvement_mean_cm": 0.45024314522743225,
+            "win_rate": 0.5,
+            "trials": 78
+          }
+        ]
+      }
+    },
+    "activity_peak": {
+      "pose": {
+        "pearson_improvement": -0.017573552206158638,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": 0.13470390439033508,
+            "improvement_mean_cm": 0.3441903591156006,
+            "win_rate": 0.6202531456947327,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.37390536069869995,
+            "improvement_mean_cm": 0.247929647564888,
+            "win_rate": 0.607594907283783,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.48808732628822327,
+            "improvement_mean_cm": -0.04077943041920662,
+            "win_rate": 0.4683544337749481,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.9541440010070801,
+            "improvement_mean_cm": 0.3302226662635803,
+            "win_rate": 0.6666666865348816,
+            "trials": 78
+          }
+        ]
+      },
+      "distal": {
+        "pearson_improvement": -0.011745848692953587,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": 0.13470390439033508,
+            "improvement_mean_cm": 0.4569019675254822,
+            "win_rate": 0.594936728477478,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.37390536069869995,
+            "improvement_mean_cm": 0.3259845972061157,
+            "win_rate": 0.5822784900665283,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.48808732628822327,
+            "improvement_mean_cm": -0.08698900043964386,
+            "win_rate": 0.4430379867553711,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.9541440010070801,
+            "improvement_mean_cm": 0.4541367292404175,
+            "win_rate": 0.6410256624221802,
+            "trials": 78
+          }
+        ]
+      }
+    },
+    "residual_mean": {
+      "pose": {
+        "pearson_improvement": 0.18027234077453613,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": 0.019661065191030502,
+            "improvement_mean_cm": 0.1653703898191452,
+            "win_rate": 0.7721518874168396,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.03539753705263138,
+            "improvement_mean_cm": 0.04848760366439819,
+            "win_rate": 0.5316455960273743,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.05501086637377739,
+            "improvement_mean_cm": -0.0013634373899549246,
+            "win_rate": 0.4683544337749481,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.1176789328455925,
+            "improvement_mean_cm": 0.6734129190444946,
+            "win_rate": 0.5897436141967773,
+            "trials": 78
+          }
+        ]
+      },
+      "distal": {
+        "pearson_improvement": 0.17916429042816162,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": 0.019661065191030502,
+            "improvement_mean_cm": 0.21554100513458252,
+            "win_rate": 0.6835442781448364,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.03539753705263138,
+            "improvement_mean_cm": 0.03771315887570381,
+            "win_rate": 0.5063291192054749,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.05501086637377739,
+            "improvement_mean_cm": -0.02349657565355301,
+            "win_rate": 0.4810126721858978,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.1176789328455925,
+            "improvement_mean_cm": 0.9262528419494629,
+            "win_rate": 0.5897436141967773,
+            "trials": 78
+          }
+        ]
+      }
+    },
+    "residual_peak": {
+      "pose": {
+        "pearson_improvement": 0.21659128367900848,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": 0.037983231246471405,
+            "improvement_mean_cm": 0.13010047376155853,
+            "win_rate": 0.7341772317886353,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.06634823232889175,
+            "improvement_mean_cm": 0.036793071776628494,
+            "win_rate": 0.5696202516555786,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.1028100773692131,
+            "improvement_mean_cm": -0.07252789288759232,
+            "win_rate": 0.4430379867553711,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.20340192317962646,
+            "improvement_mean_cm": 0.7930561900138855,
+            "win_rate": 0.6153846383094788,
+            "trials": 78
+          }
+        ]
+      },
+      "distal": {
+        "pearson_improvement": 0.21792447566986084,
+        "quartiles_low_to_high": [
+          {
+            "feature_mean": 0.037983231246471405,
+            "improvement_mean_cm": 0.1577700525522232,
+            "win_rate": 0.6455696225166321,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.06634823232889175,
+            "improvement_mean_cm": 0.019686419516801834,
+            "win_rate": 0.5443037748336792,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.1028100773692131,
+            "improvement_mean_cm": -0.16050554811954498,
+            "win_rate": 0.4430379867553711,
+            "trials": 79
+          },
+          {
+            "feature_mean": 0.20340192317962646,
+            "improvement_mean_cm": 1.1417877674102783,
+            "win_rate": 0.6282051205635071,
+            "trials": 78
+          }
+        ]
+      }
+    }
+  },
+  "metrics": {
+    "current": {
+      "mpjpe_m": 0.11420020996519024,
+      "distal_mpjpe_m": 0.16419869944571502,
+      "dynamic_mpjpe_m": 0.14892669825522759,
+      "high_motion_mpjpe_m": 0.14936681697819976,
+      "pose_speed_ratio": 0.7373090176530781,
+      "speed_correlation": 0.5335351853705351,
+      "danger_pose_mpjpe_m": 0.16103814872247832,
+      "danger_distal_mpjpe_m": 0.23534096495381424,
+      "danger_endpoint_mpjpe_m": 0.17934077286294528,
+      "danger_high_motion_mpjpe_m": 0.19832871183753015,
+      "danger_torso_angle_deg": 21.297397218431744,
+      "danger_speed_correlation": 0.6522401524441582,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "kp10": {
+      "mpjpe_m": 0.11199684490760167,
+      "distal_mpjpe_m": 0.16132318547202482,
+      "dynamic_mpjpe_m": 0.1463781238477955,
+      "high_motion_mpjpe_m": 0.14679384807232712,
+      "pose_speed_ratio": 0.7061083874665997,
+      "speed_correlation": 0.5432116659151183,
+      "danger_pose_mpjpe_m": 0.15677632024245602,
+      "danger_distal_mpjpe_m": 0.22890920021704264,
+      "danger_endpoint_mpjpe_m": 0.17986631941582476,
+      "danger_high_motion_mpjpe_m": 0.19230484712336746,
+      "danger_torso_angle_deg": 20.418438843318395,
+      "danger_speed_correlation": 0.6637216997998101,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "inference_features_use_gt": false,
+  "gt_use": "validation diagnostic outcome and action-correctness audit only"
+}

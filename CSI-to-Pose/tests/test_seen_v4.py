@@ -9,6 +9,7 @@ from notifi_pose.seen_v4 import (
     bounded_piecewise_alignment_loss,
     trajectory_reconstruction_loss,
 )
+from notifi_pose.tools.train_seen_v4_trajectory import evaluate_trajectory
 
 
 def make_pose(batch: int, frames: int, device=None) -> torch.Tensor:
@@ -101,6 +102,39 @@ class SeenV4Tests(unittest.TestCase):
             if parameter.requires_grad and parameter.grad is not None
         ]
         self.assertTrue(gradients)
+
+    def test_danger_metrics_separate_relative_pose_from_absolute_root(self):
+        class ZeroPrediction(nn.Module):
+            def forward(self, csi, link_mask):
+                batch, frames = csi.shape[:2]
+                return {
+                    "pose_rel": csi.new_zeros(batch, frames, C.N_JOINTS, 3),
+                    "root": csi.new_zeros(batch, frames, 3),
+                }
+
+        frames = 4
+        target_pose = torch.zeros(1, frames, C.N_JOINTS, 3)
+        target_pose[:, :, C.JOINT_INDEX["head"], 0] = 0.1
+        target_root = torch.zeros(1, frames, 3)
+        target_root[..., C.UP_AXIS] = 1.0
+        batch = {
+            "csi": torch.zeros(
+                1, frames, C.N_LINKS, C.N_LIVE_SUBCARRIERS, 2
+            ),
+            "link_mask": torch.ones(
+                1, frames, C.N_LINKS, dtype=torch.bool
+            ),
+            "pose_rel": target_pose,
+            "root": target_root,
+            "valid": torch.ones(1, frames, dtype=torch.bool),
+            "class_id": torch.tensor([12]),
+            "risk_id": torch.tensor([2]),
+        }
+        metrics = evaluate_trajectory(ZeroPrediction(), [batch], "cpu", 2)
+        self.assertIn("danger_pose_mpjpe_m", metrics)
+        self.assertIn("danger_pose_distal_mpjpe_m", metrics)
+        self.assertIn("danger_pose_endpoint_mpjpe_m", metrics)
+        self.assertLess(metrics["danger_pose_mpjpe_m"], metrics["danger_mpjpe_m"])
 
 
 if __name__ == "__main__":

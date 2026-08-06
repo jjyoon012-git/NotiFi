@@ -1,0 +1,255 @@
+{
+  "status": "validation_selected_profile_candidate_ranker",
+  "protocol": "single_split_lmh_e01",
+  "selection": {
+    "score": 0.9749386139874792,
+    "epoch": 2,
+    "metrics": {
+      "mpjpe_m": 0.11239858550270872,
+      "distal_mpjpe_m": 0.1618828629424411,
+      "dynamic_mpjpe_m": 0.14651176376518474,
+      "high_motion_mpjpe_m": 0.14715120969745127,
+      "pose_speed_ratio": 0.7064009330449427,
+      "speed_correlation": 0.5432686726193107,
+      "danger_pose_mpjpe_m": 0.15804031805268356,
+      "danger_distal_mpjpe_m": 0.23059633975582464,
+      "danger_endpoint_mpjpe_m": 0.1813595057598182,
+      "danger_high_motion_mpjpe_m": 0.19303968681820802,
+      "danger_torso_angle_deg": 20.74343534197126,
+      "danger_speed_correlation": 0.66343554854393,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "loss": {
+        "total": 4.780520737171173,
+        "listwise": 3.9914394659655437,
+        "hard": 3.9454062240464345
+      },
+      "score": 0.9883660390362967,
+      "metrics": {
+        "mpjpe_m": 0.11372134850789158,
+        "distal_mpjpe_m": 0.16384968705002279,
+        "dynamic_mpjpe_m": 0.14719884098271158,
+        "high_motion_mpjpe_m": 0.14788438765116144,
+        "pose_speed_ratio": 0.7045556933020802,
+        "speed_correlation": 0.5437163581332517,
+        "danger_pose_mpjpe_m": 0.16071806832083635,
+        "danger_distal_mpjpe_m": 0.23423851776335922,
+        "danger_endpoint_mpjpe_m": 0.18700029770178453,
+        "danger_high_motion_mpjpe_m": 0.19426790326833726,
+        "danger_torso_angle_deg": 21.129095111574447,
+        "danger_speed_correlation": 0.6638636506029538,
+        "trials": 315,
+        "danger_trials": 70
+      }
+    },
+    {
+      "epoch": 2,
+      "loss": {
+        "total": 4.414817733424051,
+        "listwise": 3.7122636820588792,
+        "hard": 3.5127700992992947
+      },
+      "score": 0.9749386139874792,
+      "metrics": {
+        "mpjpe_m": 0.11239858550270872,
+        "distal_mpjpe_m": 0.1618828629424411,
+        "dynamic_mpjpe_m": 0.14651176376518474,
+        "high_motion_mpjpe_m": 0.14715120969745127,
+        "pose_speed_ratio": 0.7064009330449427,
+        "speed_correlation": 0.5432686726193107,
+        "danger_pose_mpjpe_m": 0.15804031805268356,
+        "danger_distal_mpjpe_m": 0.23059633975582464,
+        "danger_endpoint_mpjpe_m": 0.1813595057598182,
+        "danger_high_motion_mpjpe_m": 0.19303968681820802,
+        "danger_torso_angle_deg": 20.74343534197126,
+        "danger_speed_correlation": 0.66343554854393,
+        "trials": 315,
+        "danger_trials": 70
+      }
+    },
+    {
+      "epoch": 3,
+      "loss": {
+        "total": 3.906701075179236,
+        "listwise": 3.327533713408879,
+        "hard": 2.8958367109298706
+      },
+      "score": 0.9827203636668099,
+      "metrics": {
+        "mpjpe_m": 0.1123036532500197,
+        "distal_mpjpe_m": 0.16159933042076846,
+        "dynamic_mpjpe_m": 0.14733024331421327,
+        "high_motion_mpjpe_m": 0.14781087686213246,
+        "pose_speed_ratio": 0.6986539925552,
+        "speed_correlation": 0.536295826425628,
+        "danger_pose_mpjpe_m": 0.16045675671526363,
+        "danger_distal_mpjpe_m": 0.23462787568569182,
+        "danger_endpoint_mpjpe_m": 0.18039908302681787,
+        "danger_high_motion_mpjpe_m": 0.19522820987871714,
+        "danger_torso_angle_deg": 20.977384274346488,
+        "danger_speed_correlation": 0.6540865146688053,
+        "trials": 315,
+        "danger_trials": 70
+      }
+    },
+    {
+      "epoch": 4,
+      "loss": {
+        "total": 3.595900011914117,
+        "listwise": 3.1066994539328983,
+        "hard": 2.446002717529024
+      },
+      "score": 0.9833961756762281,
+      "metrics": {
+        "mpjpe_m": 0.1124671526903671,
+        "distal_mpjpe_m": 0.16181213244027087,
+        "dynamic_mpjpe_m": 0.14763423255575236,
+        "high_motion_mpjpe_m": 0.1480263095902468,
+        "pose_speed_ratio": 0.6888249969809285,
+        "speed_correlation": 0.5345562728535798,
+        "danger_pose_mpjpe_m": 0.16038449997348445,
+        "danger_distal_mpjpe_m": 0.23461582756468227,
+        "danger_endpoint_mpjpe_m": 0.17968446048242706,
+        "danger_high_motion_mpjpe_m": 0.19546515185918126,
+        "danger_torso_angle_deg": 20.971747616359167,
+        "danger_speed_correlation": 0.6573611659663064,
+        "trials": 315,
+        "danger_trials": 70
+      }
+    },
+    {
+      "epoch": 5,
+      "loss": {
+        "total": 3.5266117411000386,
+        "listwise": 3.0690075031348636,
+        "hard": 2.288021202598299
+      },
+      "score": 0.9854869882578627,
+      "metrics": {
+        "mpjpe_m": 0.1124754499644041,
+        "distal_mpjpe_m": 0.1618528585851429,
+        "dynamic_mpjpe_m": 0.14792880673072675,
+        "high_motion_mpjpe_m": 0.14833407418505437,
+        "pose_speed_ratio": 0.6855703484662418,
+        "speed_correlation": 0.5318108222713428,
+        "danger_pose_mpjpe_m": 0.16067228583352908,
+        "danger_distal_mpjpe_m": 0.23526378093021258,
+        "danger_endpoint_mpjpe_m": 0.1801504886043923,
+        "danger_high_motion_mpjpe_m": 0.1965118138917855,
+        "danger_torso_angle_deg": 21.035716349737985,
+        "danger_speed_correlation": 0.6437590762972831,
+        "trials": 315,
+        "danger_trials": 70
+      }
+    },
+    {
+      "epoch": 6,
+      "loss": {
+        "total": 3.5202083034174785,
+        "listwise": 3.0683362441403523,
+        "hard": 2.2593602580683574
+      },
+      "score": 0.9854075433072683,
+      "metrics": {
+        "mpjpe_m": 0.11230835816453373,
+        "distal_mpjpe_m": 0.1615825261447638,
+        "dynamic_mpjpe_m": 0.14765873224710796,
+        "high_motion_mpjpe_m": 0.14809067927948807,
+        "pose_speed_ratio": 0.6872770077744466,
+        "speed_correlation": 0.5323195969079814,
+        "danger_pose_mpjpe_m": 0.16078501865267752,
+        "danger_distal_mpjpe_m": 0.23539644655372416,
+        "danger_endpoint_mpjpe_m": 0.18080753103962965,
+        "danger_high_motion_mpjpe_m": 0.19670856589717525,
+        "danger_torso_angle_deg": 21.067906284332274,
+        "danger_speed_correlation": 0.6434021277087075,
+        "trials": 315,
+        "danger_trials": 70
+      }
+    },
+    {
+      "epoch": 7,
+      "loss": {
+        "total": 3.519488377230508,
+        "listwise": 3.070044594151633,
+        "hard": 2.2472189451966966
+      },
+      "score": 0.986178573371252,
+      "metrics": {
+        "mpjpe_m": 0.1124649851627293,
+        "distal_mpjpe_m": 0.1618338263046647,
+        "dynamic_mpjpe_m": 0.1476945022204474,
+        "high_motion_mpjpe_m": 0.14821039992587073,
+        "pose_speed_ratio": 0.686808417395298,
+        "speed_correlation": 0.5308310424243765,
+        "danger_pose_mpjpe_m": 0.16087598279118537,
+        "danger_distal_mpjpe_m": 0.23557902659688676,
+        "danger_endpoint_mpjpe_m": 0.18100991387452398,
+        "danger_high_motion_mpjpe_m": 0.19668479221207755,
+        "danger_torso_angle_deg": 21.07079909869603,
+        "danger_speed_correlation": 0.6435220971703529,
+        "trials": 315,
+        "danger_trials": 70
+      }
+    },
+    {
+      "epoch": 8,
+      "loss": {
+        "total": 3.5245129806654796,
+        "listwise": 3.0790199637413025,
+        "hard": 2.227465216602598
+      },
+      "score": 0.9860920466246006,
+      "metrics": {
+        "mpjpe_m": 0.11246756155280367,
+        "distal_mpjpe_m": 0.16185687544149538,
+        "dynamic_mpjpe_m": 0.1476475272341562,
+        "high_motion_mpjpe_m": 0.14817233135302862,
+        "pose_speed_ratio": 0.6884569061193314,
+        "speed_correlation": 0.5316721656832785,
+        "danger_pose_mpjpe_m": 0.16088246437055723,
+        "danger_distal_mpjpe_m": 0.23559012955852918,
+        "danger_endpoint_mpjpe_m": 0.18103017205638544,
+        "danger_high_motion_mpjpe_m": 0.19669158762054784,
+        "danger_torso_angle_deg": 21.074208116531373,
+        "danger_speed_correlation": 0.6436055187668119,
+        "trials": 315,
+        "danger_trials": 70
+      }
+    },
+    {
+      "epoch": 9,
+      "loss": {
+        "total": 3.504693648644856,
+        "listwise": 3.064222080366952,
+        "hard": 2.20235784138952
+      },
+      "score": 0.9876748276558122,
+      "metrics": {
+        "mpjpe_m": 0.11276221775878516,
+        "distal_mpjpe_m": 0.16233538752569565,
+        "dynamic_mpjpe_m": 0.1479760473663571,
+        "high_motion_mpjpe_m": 0.1484997721483418,
+        "pose_speed_ratio": 0.6891419926180158,
+        "speed_correlation": 0.532580868715036,
+        "danger_pose_mpjpe_m": 0.16112704857119492,
+        "danger_distal_mpjpe_m": 0.2359394215579544,
+        "danger_endpoint_mpjpe_m": 0.1808120365121535,
+        "danger_high_motion_mpjpe_m": 0.19696028653000083,
+        "danger_torso_angle_deg": 21.104673201697214,
+        "danger_speed_correlation": 0.6442190987723214,
+        "trials": 315,
+        "danger_trials": 70
+      }
+    }
+  ],
+  "train_leave_self_out": true,
+  "test_used_for_selection": false,
+  "inference_inputs": "CSI and link mask only",
+  "action_calibration": "work_v2/runs/kp7_action_logit_fusion/calibration.json"
+}

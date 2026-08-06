@@ -1,0 +1,206 @@
+{
+  "status": "posthoc_locked_test_audit",
+  "protocol": "single_split_lmh_e01",
+  "purpose": "uncertainty audit only; no model or hyperparameter selection",
+  "test_used_for_selection": false,
+  "future_tuning_from_this_audit": false,
+  "inference_inputs": "CSI and link mask only",
+  "bootstrap_samples": 10000,
+  "bootstrap_seed": 20260806,
+  "locked_profile_checkpoints": {
+    "kp6_scalar": "work_v2/runs/kp5_motion_profile_seed71/best_model.pt",
+    "kp6_part": "work_v2/runs/kp5_part_motion_profile_seed83/best_model.pt",
+    "kp10_scalar": "C:/Users/jjeong/Documents/Playground/NotiFi-CSI-to-Pose-robust/work_v2/runs/kp5_motion_profile_seed79/best_model.pt",
+    "kp10_part": "C:/Users/jjeong/Documents/Playground/NotiFi-CSI-to-Pose-robust/work_v2/runs/kp5_part_motion_profile_seed101/best_model.pt"
+  },
+  "bootstrap": {
+    "overall_pose": {
+      "kp10_minus_kp6_mean_cm": -0.21729813516139984,
+      "ci95_cm": [
+        -0.391520231962204,
+        -0.04724493250250816
+      ],
+      "probability_improvement": 0.9944999814033508,
+      "trial_win_rate": 0.5365079641342163,
+      "trials": 315
+    },
+    "danger_pose": {
+      "kp10_minus_kp6_mean_cm": -0.6258679032325745,
+      "ci95_cm": [
+        -1.1780914068222046,
+        -0.11684689670801163
+      ],
+      "probability_improvement": 0.9936000108718872,
+      "trial_win_rate": 0.48571428656578064,
+      "trials": 70
+    },
+    "overall_distal": {
+      "kp10_minus_kp6_mean_cm": -0.3234560787677765,
+      "ci95_cm": [
+        -0.5825226306915283,
+        -0.07537036389112473
+      ],
+      "probability_improvement": 0.9943000078201294,
+      "trial_win_rate": 0.5396825671195984,
+      "trials": 315
+    },
+    "danger_distal": {
+      "kp10_minus_kp6_mean_cm": -1.0131369829177856,
+      "ci95_cm": [
+        -1.842040777206421,
+        -0.2756403386592865
+      ],
+      "probability_improvement": 0.996999979019165,
+      "trial_win_rate": 0.5142857432365417,
+      "trials": 70
+    }
+  },
+  "aggregate_metrics": {
+    "kp6": {
+      "mpjpe_m": 0.1310269434123285,
+      "distal_mpjpe_m": 0.18989179357886316,
+      "dynamic_mpjpe_m": 0.1650520534447904,
+      "high_motion_mpjpe_m": 0.16196767975582826,
+      "pose_speed_ratio": 0.7666471282595038,
+      "speed_correlation": 0.4941890122280234,
+      "danger_pose_mpjpe_m": 0.20454781789864812,
+      "danger_distal_mpjpe_m": 0.30262360508952824,
+      "danger_endpoint_mpjpe_m": 0.2571695015898773,
+      "danger_high_motion_mpjpe_m": 0.2290318203823907,
+      "danger_torso_angle_deg": 29.057418652943202,
+      "danger_speed_correlation": 0.5658541294080871,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "kp10": {
+      "mpjpe_m": 0.12885332910255307,
+      "distal_mpjpe_m": 0.18665696063211987,
+      "dynamic_mpjpe_m": 0.16423171986386462,
+      "high_motion_mpjpe_m": 0.16095170801412975,
+      "pose_speed_ratio": 0.7197247227044772,
+      "speed_correlation": 0.5141046191853959,
+      "danger_pose_mpjpe_m": 0.19829331072313444,
+      "danger_distal_mpjpe_m": 0.29249977852616993,
+      "danger_endpoint_mpjpe_m": 0.25051803892212254,
+      "danger_high_motion_mpjpe_m": 0.22763825431466103,
+      "danger_torso_angle_deg": 28.34960366657802,
+      "danger_speed_correlation": 0.5793103824768747,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "by_class_posthoc": {
+    "00_walking": {
+      "trials": 28,
+      "pose_delta_cm": 0.0074842749163508415,
+      "distal_delta_cm": 0.06581417471170425,
+      "pose_trial_win_rate": 0.4642857015132904,
+      "distal_trial_win_rate": 0.4285714328289032
+    },
+    "01_standing_still": {
+      "trials": 14,
+      "pose_delta_cm": 0.17286542057991028,
+      "distal_delta_cm": 0.20369532704353333,
+      "pose_trial_win_rate": 0.5,
+      "distal_trial_win_rate": 0.5714285969734192
+    },
+    "02_sitting_still": {
+      "trials": 14,
+      "pose_delta_cm": -0.5212532877922058,
+      "distal_delta_cm": -0.760966956615448,
+      "pose_trial_win_rate": 0.7142857313156128,
+      "distal_trial_win_rate": 0.5714285969734192
+    },
+    "03_lying_still": {
+      "trials": 21,
+      "pose_delta_cm": 0.03348342329263687,
+      "distal_delta_cm": 0.13239407539367676,
+      "pose_trial_win_rate": 0.523809552192688,
+      "distal_trial_win_rate": 0.523809552192688
+    },
+    "04_lie_to_stand": {
+      "trials": 21,
+      "pose_delta_cm": -0.6703924536705017,
+      "distal_delta_cm": -0.9532657265663147,
+      "pose_trial_win_rate": 0.6666666865348816,
+      "distal_trial_win_rate": 0.761904776096344
+    },
+    "05_stand_to_lie_normal": {
+      "trials": 35,
+      "pose_delta_cm": 0.0019948184490203857,
+      "distal_delta_cm": -0.03921162709593773,
+      "pose_trial_win_rate": 0.5142857432365417,
+      "distal_trial_win_rate": 0.5142857432365417
+    },
+    "07_sit_to_stand": {
+      "trials": 14,
+      "pose_delta_cm": -0.40746554732322693,
+      "distal_delta_cm": -0.5100182294845581,
+      "pose_trial_win_rate": 0.7857142686843872,
+      "distal_trial_win_rate": 0.7142857313156128
+    },
+    "08_stand_to_sit": {
+      "trials": 14,
+      "pose_delta_cm": -0.19401662051677704,
+      "distal_delta_cm": -0.2440011203289032,
+      "pose_trial_win_rate": 0.7857142686843872,
+      "distal_trial_win_rate": 0.7857142686843872
+    },
+    "09_unstable_walking": {
+      "trials": 21,
+      "pose_delta_cm": 0.16262882947921753,
+      "distal_delta_cm": 0.1909450739622116,
+      "pose_trial_win_rate": 0.3333333432674408,
+      "distal_trial_win_rate": 0.2857142984867096
+    },
+    "10_stumble_recover": {
+      "trials": 35,
+      "pose_delta_cm": 0.22964362800121307,
+      "distal_delta_cm": 0.3772227466106415,
+      "pose_trial_win_rate": 0.37142857909202576,
+      "distal_trial_win_rate": 0.4000000059604645
+    },
+    "11_bed_exit_failed": {
+      "trials": 28,
+      "pose_delta_cm": -0.34632113575935364,
+      "distal_delta_cm": -0.4662763774394989,
+      "pose_trial_win_rate": 0.7142857313156128,
+      "distal_trial_win_rate": 0.7142857313156128
+    },
+    "12_fall_from_standing": {
+      "trials": 14,
+      "pose_delta_cm": -1.1715325117111206,
+      "distal_delta_cm": -1.9132146835327148,
+      "pose_trial_win_rate": 0.5714285969734192,
+      "distal_trial_win_rate": 0.6428571343421936
+    },
+    "13_fall_while_walking": {
+      "trials": 14,
+      "pose_delta_cm": -0.18206635117530823,
+      "distal_delta_cm": -0.47556400299072266,
+      "pose_trial_win_rate": 0.3571428656578064,
+      "distal_trial_win_rate": 0.3571428656578064
+    },
+    "14_bed_exit_fall": {
+      "trials": 14,
+      "pose_delta_cm": 0.11661520600318909,
+      "distal_delta_cm": 0.08465179055929184,
+      "pose_trial_win_rate": 0.3571428656578064,
+      "distal_trial_win_rate": 0.3571428656578064
+    },
+    "15_bed_fall": {
+      "trials": 14,
+      "pose_delta_cm": -0.11402097344398499,
+      "distal_delta_cm": -0.16523988544940948,
+      "pose_trial_win_rate": 0.5,
+      "distal_trial_win_rate": 0.5714285969734192
+    },
+    "16_chair_exit_fall": {
+      "trials": 14,
+      "pose_delta_cm": -1.7783353328704834,
+      "distal_delta_cm": -2.596317768096924,
+      "pose_trial_win_rate": 0.6428571343421936,
+      "distal_trial_win_rate": 0.6428571343421936
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import argparse
 import csv
 import os
+import platform
 import subprocess
 import sys
 import time
@@ -12,18 +13,35 @@ import mediapipe as mp
 
 from save_csi_raw import LABEL_MAP, next_trial
 
+if platform.system() == "Windows":
+    import winsound
 
 ROOT = Path(__file__).resolve().parent.parent
 EXPERIMENT_ROOT = ROOT / "csi_to_pose"
-DATA_ROOT = EXPERIMENT_ROOT / "data"
+DATA_ROOT = EXPERIMENT_ROOT / "csi"
 VIDEO_ROOT = EXPERIMENT_ROOT / "videos"
 METADATA_PATH = EXPERIMENT_ROOT / "collection_logs" / "csi_to_pose_trials.csv"
 
-SOUNDS = {
-    "start": "/System/Library/Sounds/Ping.aiff",
+_SOUNDS_MAC = {
+    "ready":      "/System/Library/Sounds/Tink.aiff",
+    "start":      "/System/Library/Sounds/Ping.aiff",
     "trial_done": "/System/Library/Sounds/Pop.aiff",
-    "set_done": "/System/Library/Sounds/Glass.aiff",
-    "error": "/System/Library/Sounds/Basso.aiff",
+    "set_done":   "/System/Library/Sounds/Glass.aiff",
+    "error":      "/System/Library/Sounds/Basso.aiff",
+}
+
+_SOUNDS_WIN = {
+    "ready":      (660,  150),
+    "start":      (880,  200),
+    "trial_done": (1047, 300),
+    "set_done":   (1319, 500),
+    "error":      (440,  600),
+}
+
+AMBIENT_SCHEDULE = {
+    25: [("quiet", 7), ("aircon", 6), ("tv", 6), ("music", 6)],
+    15: [("quiet", 4), ("aircon", 4), ("tv", 4), ("music", 3)],
+    10: [("quiet", 3), ("aircon", 3), ("tv", 2), ("music", 2)],
 }
 
 
@@ -31,17 +49,34 @@ def ensure_parent(path):
     path.parent.mkdir(parents=True, exist_ok=True)
 
 
+def get_ambient_for_trial(trial_str, total):
+    num = int(trial_str[1:])  # "t007" -> 7
+    schedule = AMBIENT_SCHEDULE.get(total)
+    if not schedule:
+        return None
+    cumulative = 0
+    for ambient, count in schedule:
+        cumulative += count
+        if num <= cumulative:
+            return ambient
+    return None
+
+
 def play_sound(name, enabled=True):
     if not enabled:
         return
-    sound_path = SOUNDS.get(name)
-    if not sound_path or not os.path.exists(sound_path):
-        return
-    subprocess.Popen(
-        ["afplay", sound_path],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
+    if platform.system() == "Windows":
+        params = _SOUNDS_WIN.get(name)
+        if params:
+            winsound.Beep(*params)
+    elif platform.system() == "Darwin":
+        sound_path = _SOUNDS_MAC.get(name)
+        if sound_path and os.path.exists(sound_path):
+            subprocess.Popen(
+                ["afplay", sound_path],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
 
 
 def write_metadata(row):
@@ -72,11 +107,14 @@ def write_metadata(row):
 
 
 def open_camera(camera_index, width, height, fps):
-    cap = cv2.VideoCapture(camera_index)
+    if platform.system() == "Windows":
+        cap = cv2.VideoCapture(camera_index, cv2.CAP_MSMF)
+    else:
+        cap = cv2.VideoCapture(camera_index)
     if not cap.isOpened():
         raise RuntimeError(
             f"Cannot open camera index {camera_index}. "
-            "macOS 카메라 권한 또는 camera index를 확인하세요."
+            "카메라 권한 또는 camera index를 확인하세요."
         )
 
     if width:
@@ -92,21 +130,21 @@ def open_camera(camera_index, width, height, fps):
     if not actual_fps or actual_fps <= 1:
         actual_fps = fps or 30
 
+    print(f"[CAM] 해상도: {actual_width}x{actual_height}, FPS: {actual_fps:.1f}")
     return cap, actual_width, actual_height, actual_fps
 
 
-def record_video(video_path, camera_index, duration, width, height, fps, preview_pose=False):
-    cap, actual_width, actual_height, actual_fps = open_camera(
-        camera_index, width, height, fps
-    )
+def record_video(video_path, cap, actual_width, actual_height, actual_fps, duration, preview_pose=False):
     ensure_parent(video_path)
 
-    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+    if platform.system() == "Windows":
+        fourcc = cv2.VideoWriter_fourcc(*"MJPG")
+    else:
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
     writer = cv2.VideoWriter(
         str(video_path), fourcc, float(actual_fps), (actual_width, actual_height)
     )
     if not writer.isOpened():
-        cap.release()
         raise RuntimeError(f"Cannot open video writer: {video_path}")
 
     frame_count = 0
@@ -155,7 +193,7 @@ def record_video(video_path, camera_index, duration, width, height, fps, preview
 
                 cv2.putText(
                     shown,
-                    f"{status} | {elapsed:04.1f}/{duration:.1f}s | camera={camera_index}",
+                    f"{status} | {elapsed:04.1f}/{duration:.1f}s",
                     (20, 38),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     0.9,
@@ -175,7 +213,6 @@ def record_video(video_path, camera_index, duration, width, height, fps, preview
             cv2.destroyWindow(window_name)
 
     writer.release()
-    cap.release()
     timestamp_path = video_path.with_name(f"{video_path.stem}_frame_timestamps.csv")
     ensure_parent(timestamp_path)
     with timestamp_path.open("w", newline="", encoding="utf-8") as f:
@@ -187,10 +224,11 @@ def record_video(video_path, camera_index, duration, width, height, fps, preview
     return frame_count, actual_fps, effective_fps, timestamp_path
 
 
-def run_trial(args, trial):
+def run_trial(args, trial, ambient, sound_enabled=True):
     risk, domain = LABEL_MAP[args.label]
     filename = f"{args.subject}_{args.label}_{trial}"
-    video_path = VIDEO_ROOT / risk / domain / args.label / args.subject / f"{filename}.mp4"
+    ext = "avi" if platform.system() == "Windows" else "mp4"
+    video_path = VIDEO_ROOT / risk / domain / args.label / args.subject / f"{filename}.{ext}"
     csi_path = DATA_ROOT / risk / domain / args.label / args.subject / f"{filename}.csv"
 
     if video_path.exists() and not args.overwrite:
@@ -198,10 +236,9 @@ def run_trial(args, trial):
     if csi_path.exists() and not args.overwrite:
         raise FileExistsError(f"CSI already exists: {csi_path}")
 
-    print(f"\n[CSI-to-Pose] {args.label}/{args.ambient} {trial}")
+    print(f"\n[CSI-to-Pose] {args.label}/{ambient} {trial}")
     print(f"video: {video_path}")
     print(f"csi:   {csi_path}")
-    print("[SYNC] 녹화가 시작되면 바로 손을 크게 들거나 박수 1회를 해주세요.")
 
     save_cmd = [
         sys.executable,
@@ -228,19 +265,35 @@ def run_trial(args, trial):
         str(DATA_ROOT),
     ]
 
-    csi_proc = subprocess.Popen(save_cmd)
+    # 1. 카메라 먼저 초기화 (CSI 시작 전)
+    print("[CAM] 카메라 초기화 중...")
+    cap, actual_width, actual_height, actual_fps = open_camera(
+        args.camera, args.width, args.height, args.fps
+    )
+
     try:
-        frames, actual_fps, effective_fps, timestamp_path = record_video(
-            video_path=video_path,
-            camera_index=args.camera,
-            duration=args.duration,
-            width=args.width,
-            height=args.height,
-            fps=args.fps,
-            preview_pose=args.preview_pose,
-        )
+        # 2. CSI 수집 시작
+        csi_proc = subprocess.Popen(save_cmd)
+
+        # 3. 삑 (카메라+CSI 모두 준비 완료)
+        play_sound("start", sound_enabled)
+        print("[REC] 녹화 시작!")
+
+        # 4. 녹화 (카메라 이미 열려있음)
+        try:
+            frames, actual_fps, effective_fps, timestamp_path = record_video(
+                video_path=video_path,
+                cap=cap,
+                actual_width=actual_width,
+                actual_height=actual_height,
+                actual_fps=actual_fps,
+                duration=args.duration,
+                preview_pose=args.preview_pose,
+            )
+        finally:
+            csi_return = csi_proc.wait()
     finally:
-        csi_return = csi_proc.wait()
+        cap.release()
 
     if csi_return != 0:
         raise RuntimeError(f"CSI collection failed with exit code {csi_return}")
@@ -253,7 +306,7 @@ def run_trial(args, trial):
             "domain": domain,
             "label": args.label,
             "trial": trial,
-            "ambient": args.ambient,
+            "ambient": ambient,
             "duration": args.duration,
             "camera_index": args.camera,
             "fps": round(float(actual_fps), 3),
@@ -270,9 +323,10 @@ def run_trial(args, trial):
     return video_path, csi_path
 
 
-def countdown(seconds):
+def countdown(seconds, sound_enabled=True):
     if seconds <= 0:
         return
+    play_sound("ready", sound_enabled)
     print(f"[READY] {seconds}s 후 수집 시작. 위치로 이동하세요.")
     for remain in range(seconds, 0, -1):
         print(f"  starting in {remain}s...", end="\r")
@@ -291,9 +345,11 @@ def main():
     parser.add_argument("--trial", default="t001")
     parser.add_argument("--duration", type=float, default=20)
     parser.add_argument("--repeat", type=int, default=1)
-    parser.add_argument("--break_sec", type=float, default=1.5)
+    parser.add_argument("--break_sec", type=float, default=3.0)
     parser.add_argument("--delay", type=int, default=5)
-    parser.add_argument("--ambient", required=True)
+    parser.add_argument("--ambient", default=None, help="ambient 환경 (quiet/aircon/tv/music). --total 사용 시 자동 결정.")
+    parser.add_argument("--total", type=int, choices=[25, 15, 10], default=None,
+                        help="총 수집 횟수 (25/15/10). trial 번호 기준으로 ambient를 자동 결정합니다.")
     parser.add_argument("--note", default="")
     parser.add_argument("--camera", type=int, default=0)
     parser.add_argument("--width", type=int, default=1280)
@@ -307,20 +363,33 @@ def main():
         help="수집 중 MediaPipe skeleton overlay 창을 실시간으로 띄웁니다. q를 누르면 preview만 닫힙니다.",
     )
     args = parser.parse_args()
+
+    if args.ambient is None and args.total is None:
+        parser.error("--ambient 또는 --total 중 하나는 필수입니다.")
+
     sound_enabled = not args.no_sound
 
-    print("start sound: Ping.aiff")
-    print("trial done sound: Pop.aiff")
-    print("set done sound: Glass.aiff")
-    print("error sound: Basso.aiff")
+    if platform.system() == "Windows":
+        print("start sound: 880Hz beep")
+        print("trial done sound: 1047Hz beep")
+        print("set done sound: 1319Hz beep")
+        print("error sound: 440Hz beep")
+    else:
+        print("start sound: Ping.aiff")
+        print("trial done sound: Pop.aiff")
+        print("set done sound: Glass.aiff")
+        print("error sound: Basso.aiff")
 
-    countdown(args.delay)
+    countdown(args.delay, sound_enabled)
     trial = args.trial
     try:
         for idx in range(args.repeat):
-            print(f"\n[TRIAL {idx + 1}/{args.repeat}]")
-            play_sound("start", sound_enabled)
-            run_trial(args, trial)
+            if args.total:
+                ambient = get_ambient_for_trial(trial, args.total)
+            else:
+                ambient = args.ambient
+            print(f"\n[TRIAL {idx + 1}/{args.repeat}] ambient={ambient}")
+            run_trial(args, trial, ambient, sound_enabled)
             play_sound("trial_done", sound_enabled)
             trial = next_trial(trial)
             if idx < args.repeat - 1 and args.break_sec > 0:

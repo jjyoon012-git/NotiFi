@@ -1,0 +1,52 @@
+{
+  "status": "fixed_test_complete_no_test_tuning",
+  "protocol": "single_split_lmh_e01",
+  "test_used_for_selection": false,
+  "selection_source": "validation",
+  "fixed_configuration": {
+    "name": "m0200_t050_top3_625",
+    "score": 1.0104387870501326
+  },
+  "metrics": {
+    "locked_kp2_dh": {
+      "mpjpe_m": 0.14807236732116769,
+      "distal_mpjpe_m": 0.21446684096895513,
+      "dynamic_mpjpe_m": 0.17812686146430248,
+      "high_motion_mpjpe_m": 0.17455321901761894,
+      "pose_speed_ratio": 1.1487432980846186,
+      "speed_correlation": 0.2590164513179352,
+      "danger_pose_mpjpe_m": 0.23299754086349692,
+      "danger_distal_mpjpe_m": 0.34395682268909045,
+      "danger_endpoint_mpjpe_m": 0.2873547312404428,
+      "danger_high_motion_mpjpe_m": 0.2441724649497441,
+      "danger_torso_angle_deg": 33.603925010136194,
+      "danger_speed_correlation": 0.36691390140913427,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "kp5_motion_profile": {
+      "mpjpe_m": 0.13287469211315353,
+      "distal_mpjpe_m": 0.19243875368246957,
+      "dynamic_mpjpe_m": 0.16725940213732,
+      "high_motion_mpjpe_m": 0.1641925716217845,
+      "pose_speed_ratio": 0.7701013542587398,
+      "speed_correlation": 0.46757662031385633,
+      "danger_pose_mpjpe_m": 0.21311943041426795,
+      "danger_distal_mpjpe_m": 0.3153418734669685,
+      "danger_endpoint_mpjpe_m": 0.265526227333716,
+      "danger_high_motion_mpjpe_m": 0.23460994022233145,
+      "danger_torso_angle_deg": 30.713593346732004,
+      "danger_speed_correlation": 0.522431097765054,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "scores": {
+    "locked_kp2_dh": 1.34511877995851,
+    "kp5_motion_profile": 1.2412685221243613
+  },
+  "selector_checkpoint": "work_v2/runs/kp5_mpr_selector_seed17/best_model.pt",
+  "reranker_checkpoint": "work_v2/runs/kp5_mpr_reranker_seed17/best_model.pt",
+  "profile_checkpoint": "work_v2/runs/kp5_motion_profile_seed71/best_model.pt",
+  "calibration": "work_v2/runs/kp5_motion_profile_seed71/reranking_calibration.json"
+}

@@ -1,0 +1,68 @@
+{
+  "status": "fixed_test_complete_no_test_tuning",
+  "protocol": "single_split_lmh_e01",
+  "test_used_for_selection": false,
+  "selection_source": "validation epoch and locked KP7 rendering",
+  "inference_inputs": "CSI and link mask only",
+  "train_bank_only": true,
+  "train_leave_self_out": true,
+  "fixed_configuration": {
+    "score": 0.9749386139874792,
+    "epoch": 2,
+    "metrics": {
+      "mpjpe_m": 0.11239858550270872,
+      "distal_mpjpe_m": 0.1618828629424411,
+      "dynamic_mpjpe_m": 0.14651176376518474,
+      "high_motion_mpjpe_m": 0.14715120969745127,
+      "pose_speed_ratio": 0.7064009330449427,
+      "speed_correlation": 0.5432686726193107,
+      "danger_pose_mpjpe_m": 0.15804031805268356,
+      "danger_distal_mpjpe_m": 0.23059633975582464,
+      "danger_endpoint_mpjpe_m": 0.1813595057598182,
+      "danger_high_motion_mpjpe_m": 0.19303968681820802,
+      "danger_torso_angle_deg": 20.74343534197126,
+      "danger_speed_correlation": 0.66343554854393,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "metrics": {
+    "kp7_action_calibrated": {
+      "mpjpe_m": 0.1289182317014488,
+      "distal_mpjpe_m": 0.1867979569626706,
+      "dynamic_mpjpe_m": 0.16375305128266227,
+      "high_motion_mpjpe_m": 0.16047137805941045,
+      "pose_speed_ratio": 0.7275296773517622,
+      "speed_correlation": 0.5077675205046814,
+      "danger_pose_mpjpe_m": 0.20069952410246644,
+      "danger_distal_mpjpe_m": 0.29620738050767353,
+      "danger_endpoint_mpjpe_m": 0.2510349447705916,
+      "danger_high_motion_mpjpe_m": 0.2287868027176176,
+      "danger_torso_angle_deg": 28.805333839144026,
+      "danger_speed_correlation": 0.5692357946719442,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "kp8_profile_candidate_ranker": {
+      "mpjpe_m": 0.1287921512322057,
+      "distal_mpjpe_m": 0.18651175931805655,
+      "dynamic_mpjpe_m": 0.163771185770912,
+      "high_motion_mpjpe_m": 0.16054527570513336,
+      "pose_speed_ratio": 0.7209145923352578,
+      "speed_correlation": 0.5095784896249247,
+      "danger_pose_mpjpe_m": 0.20040669281567847,
+      "danger_distal_mpjpe_m": 0.295705838820764,
+      "danger_endpoint_mpjpe_m": 0.25086343586444854,
+      "danger_high_motion_mpjpe_m": 0.22822982743382453,
+      "danger_torso_angle_deg": 28.776317725862775,
+      "danger_speed_correlation": 0.5739643276269947,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "scores": {
+    "kp7_action_calibrated": 1.1883833280559009,
+    "kp8_profile_candidate_ranker": 1.1874319705542384
+  },
+  "checkpoint": "work_v2/runs/kp8_profile_candidate_ranker_seed127/best_model.pt"
+}

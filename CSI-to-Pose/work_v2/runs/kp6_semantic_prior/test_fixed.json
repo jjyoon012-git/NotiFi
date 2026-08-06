@@ -1,0 +1,49 @@
+{
+  "status": "fixed_test_complete_no_test_tuning",
+  "protocol": "single_split_lmh_e01",
+  "test_used_for_selection": false,
+  "selection_source": "validation",
+  "fixed_configuration": {
+    "name": "a0350_r0500",
+    "score": 0.9960136324645883
+  },
+  "metrics": {
+    "kp6_motion_warp": {
+      "mpjpe_m": 0.13194180467417316,
+      "distal_mpjpe_m": 0.19127375269456515,
+      "dynamic_mpjpe_m": 0.1660279007031108,
+      "high_motion_mpjpe_m": 0.16295090921764785,
+      "pose_speed_ratio": 0.7183639401273387,
+      "speed_correlation": 0.5088424889489063,
+      "danger_pose_mpjpe_m": 0.21065246649086475,
+      "danger_distal_mpjpe_m": 0.3117658189364842,
+      "danger_endpoint_mpjpe_m": 0.26570519490965777,
+      "danger_high_motion_mpjpe_m": 0.23125843522804124,
+      "danger_torso_angle_deg": 30.52633603640965,
+      "danger_speed_correlation": 0.5797448213079146,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "kp6_semantic_prior": {
+      "mpjpe_m": 0.13095385578594038,
+      "distal_mpjpe_m": 0.18978405759802885,
+      "dynamic_mpjpe_m": 0.16545492372704002,
+      "high_motion_mpjpe_m": 0.1623348145917428,
+      "pose_speed_ratio": 0.7249114317285288,
+      "speed_correlation": 0.507062294644614,
+      "danger_pose_mpjpe_m": 0.2053431799369199,
+      "danger_distal_mpjpe_m": 0.3037155314215592,
+      "danger_endpoint_mpjpe_m": 0.2580659413976329,
+      "danger_high_motion_mpjpe_m": 0.2293353528848716,
+      "danger_torso_angle_deg": 29.19044166292463,
+      "danger_speed_correlation": 0.5691477109545043,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "scores": {
+    "kp6_motion_warp": 1.233095982851253,
+    "kp6_semantic_prior": 1.2105526778989364
+  },
+  "semantic_calibration": "work_v2/runs/kp6_semantic_prior/calibration.json"
+}

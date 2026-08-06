@@ -1,0 +1,101 @@
+{
+  "status": "validation_selected_kp10_action_strength",
+  "protocol": "single_split_lmh_e01",
+  "test_used_for_selection": false,
+  "inference_inputs": "CSI and link mask only",
+  "selection": {
+    "name": "strength_045",
+    "score": 0.969946978528323
+  },
+  "scores": {
+    "strength_025": 0.9732601634691641,
+    "strength_030": 0.9716380279742691,
+    "strength_035": 0.9705547241265324,
+    "strength_040": 0.9699934003192601,
+    "strength_045": 0.969946978528323
+  },
+  "metrics": {
+    "strength_025": {
+      "mpjpe_m": 0.11228038515481684,
+      "distal_mpjpe_m": 0.16158825834651316,
+      "dynamic_mpjpe_m": 0.1467726616981203,
+      "high_motion_mpjpe_m": 0.1471998286433518,
+      "pose_speed_ratio": 0.7105881505679805,
+      "speed_correlation": 0.5396007364896673,
+      "danger_pose_mpjpe_m": 0.1578159080020019,
+      "danger_distal_mpjpe_m": 0.2304561872035265,
+      "danger_endpoint_mpjpe_m": 0.17882803178259304,
+      "danger_high_motion_mpjpe_m": 0.19416213046227182,
+      "danger_torso_angle_deg": 20.69491967473711,
+      "danger_speed_correlation": 0.6597540602087975,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "strength_030": {
+      "mpjpe_m": 0.11211667236472879,
+      "distal_mpjpe_m": 0.16139809196548802,
+      "dynamic_mpjpe_m": 0.14656468182663196,
+      "high_motion_mpjpe_m": 0.14698766357521864,
+      "pose_speed_ratio": 0.7081912157625742,
+      "speed_correlation": 0.5408617560884782,
+      "danger_pose_mpjpe_m": 0.15742605152939046,
+      "danger_distal_mpjpe_m": 0.22987489045730658,
+      "danger_endpoint_mpjpe_m": 0.17906963181282792,
+      "danger_high_motion_mpjpe_m": 0.19352462408798082,
+      "danger_torso_angle_deg": 20.60105605125427,
+      "danger_speed_correlation": 0.6611037737556866,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "strength_035": {
+      "mpjpe_m": 0.11202585618529055,
+      "distal_mpjpe_m": 0.16131627757161382,
+      "dynamic_mpjpe_m": 0.14643279540894635,
+      "high_motion_mpjpe_m": 0.14685071383238488,
+      "pose_speed_ratio": 0.7067544768668927,
+      "speed_correlation": 0.5420593505577436,
+      "danger_pose_mpjpe_m": 0.15713178180158138,
+      "danger_distal_mpjpe_m": 0.22943830293204104,
+      "danger_endpoint_mpjpe_m": 0.17941677357469285,
+      "danger_high_motion_mpjpe_m": 0.1929843220859766,
+      "danger_torso_angle_deg": 20.52400851249695,
+      "danger_speed_correlation": 0.6622680896094867,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "strength_040": {
+      "mpjpe_m": 0.11200657059394178,
+      "distal_mpjpe_m": 0.16134067926969792,
+      "dynamic_mpjpe_m": 0.14637776452408574,
+      "high_motion_mpjpe_m": 0.14678968962254949,
+      "pose_speed_ratio": 0.7062654986302052,
+      "speed_correlation": 0.5431385612677014,
+      "danger_pose_mpjpe_m": 0.15693070414875235,
+      "danger_distal_mpjpe_m": 0.22914116701909473,
+      "danger_endpoint_mpjpe_m": 0.1798662476773773,
+      "danger_high_motion_mpjpe_m": 0.19254253299108573,
+      "danger_torso_angle_deg": 20.459982694898333,
+      "danger_speed_correlation": 0.6632466952715601,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "strength_045": {
+      "mpjpe_m": 0.1120567834684773,
+      "distal_mpjpe_m": 0.16146744894425547,
+      "dynamic_mpjpe_m": 0.14640030314200628,
+      "high_motion_mpjpe_m": 0.14680516582819214,
+      "pose_speed_ratio": 0.7067100871629219,
+      "speed_correlation": 0.5440545793060982,
+      "danger_pose_mpjpe_m": 0.15682165904768874,
+      "danger_distal_mpjpe_m": 0.22898052265601498,
+      "danger_endpoint_mpjpe_m": 0.1804154765393053,
+      "danger_high_motion_mpjpe_m": 0.192200543358922,
+      "danger_torso_angle_deg": 20.408993107931956,
+      "danger_speed_correlation": 0.6640598346080099,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "classifier_checkpoint": "work_v2/runs/kp10_action_classifier_seed181/best_model.pt",
+  "ranker_checkpoint": "work_v2/runs/kp8_profile_candidate_ranker_seed127/best_model.pt"
+}

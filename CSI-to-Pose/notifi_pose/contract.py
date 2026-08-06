@@ -107,6 +107,25 @@ LINKS = ("TX1", "TX2", "TX3")
 LINK_INDEX = {tx: i for i, tx in enumerate(LINKS)}
 N_LINKS = len(LINKS)
 
+# Installation bearings are fixed across environments. North is +y and east
+# is +x. Distances and heights are intentionally omitted because they are not
+# fixed deployment invariants.
+BOARD_BEARINGS = {
+    "RX": (0.0, 1.0),
+    "TX1": (0.0, -1.0),
+    "TX2": (-1.0, 0.0),
+    "TX3": (1.0, 0.0),
+}
+
+# Per-link geometry: transmitter bearing followed by the unit TX->RX vector.
+# The row order is contractually identical to LINKS.
+INV_SQRT_2 = 2.0 ** -0.5
+LINK_GEOMETRY = (
+    (0.0, -1.0, 0.0, 1.0),
+    (-1.0, 0.0, INV_SQRT_2, INV_SQRT_2),
+    (1.0, 0.0, -INV_SQRT_2, INV_SQRT_2),
+)
+
 #: csi_data 배열 길이. subcarrier 128개 × (I, Q).
 CSI_RAW_LEN = 256
 N_SUBCARRIERS = CSI_RAW_LEN // 2

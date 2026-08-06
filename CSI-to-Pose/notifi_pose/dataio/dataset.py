@@ -311,6 +311,9 @@ class PoseDataset(Dataset):
             "valid": torch.from_numpy(valid),
             "class_id": torch.tensor(int(meta.class_id), dtype=torch.long),
             "risk_id": torch.tensor(int(meta.risk_id), dtype=torch.long),
+            "timestamp_exact": torch.tensor(
+                str(meta.time_method) == "timestamps", dtype=torch.bool
+            ),
             "subject_id": torch.tensor(self._subject_id[row], dtype=torch.long),
             "domain_id": torch.tensor(self._domain_id[row], dtype=torch.long),
             "row": torch.tensor(row, dtype=torch.long),

@@ -1,6 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
@@ -9,7 +10,7 @@ import torch
 from notifi_pose import contract as C
 from notifi_pose.motion_first import MotionFirstEncoder
 from notifi_pose.nets import GraphPoseNet
-from notifi_pose.quality import quality_scores
+from notifi_pose.quality import protocol_audit_path, quality_scores
 from notifi_pose.seen_v2 import (
     N_INJURY_JOINTS,
     SeenReconstructionV2Net,
@@ -128,6 +129,19 @@ class SeenV2Tests(unittest.TestCase):
             scores = quality_scores(index, path)
         self.assertGreater(scores[0], scores[1])
         self.assertTrue(np.all((scores >= 0.35) & (scores <= 1.0)))
+
+    def test_protocol_quality_audit_precedes_legacy_report(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            reports = root / "reports"
+            reports.mkdir()
+            legacy = reports / "motion_alignment_audit.csv"
+            legacy.touch()
+            with patch.object(C, "WORK_ROOT", root):
+                self.assertEqual(protocol_audit_path("seen/v2"), legacy)
+                scoped = reports / "motion_alignment_audit_seen_v2.csv"
+                scoped.touch()
+                self.assertEqual(protocol_audit_path("seen/v2"), scoped)
 
 
 if __name__ == "__main__":

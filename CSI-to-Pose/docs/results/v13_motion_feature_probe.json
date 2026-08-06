@@ -1,0 +1,105 @@
+{
+  "run": "v13_v12_motion_feature_probe",
+  "protocol": "single_split_lmh_e01",
+  "selection_split": "validation",
+  "test_used": false,
+  "lag": 5,
+  "frames_per_trial": 48,
+  "ridge": 10.0,
+  "configuration": {
+    "p2_checkpoint": "work_v2\\runs\\p2_sub_single_clean_finetune\\best_model.pt",
+    "pose_checkpoints": [
+      "work_v2\\runs\\p2_v12r_corrected_rf_pose_finetune\\best_model.pt",
+      "work_v2\\runs\\p2_v12k_shift_robust_pose_seed7\\best_model.pt",
+      "work_v2\\runs\\p2_v12x_shift_rf_pose_seed23\\best_model.pt"
+    ],
+    "pose_weights": [
+      0.45,
+      0.25,
+      0.3
+    ],
+    "root_checkpoints": [
+      "work_v2\\runs\\p2_v12d_direct_root_multiscale\\best_model.pt",
+      "work_v2\\runs\\p2_v12p_direct_root_multiscale_seed7\\best_model.pt"
+    ],
+    "root_weights": [
+      0.8,
+      0.2
+    ],
+    "residual_window": 31,
+    "residual_blend": 1.0,
+    "bone_blend": 0.25,
+    "bone_symmetric": true,
+    "classification_expert_checkpoints": [
+      "work_v2\\runs\\p2_v11v_classification_expert_seed17\\best_model.pt",
+      "work_v2\\runs\\p2_v12v_corrected_rf_classification\\best_model.pt"
+    ],
+    "classification_expert_weights": [
+      0.5,
+      0.5
+    ],
+    "classification_expert_strength": 1.0,
+    "hierarchical_class_weight": 0.6,
+    "final_danger_logit_bias": 0.35000000000000003,
+    "shared_backbone_execution": true
+  },
+  "results": {
+    "root_velocity": {
+      "r2": [
+        0.08203995227813721,
+        0.060367703437805176,
+        0.1362411379814148
+      ],
+      "r2_mean": 0.09288293123245239,
+      "correlation": [
+        0.33625251054763794,
+        0.25612324476242065,
+        0.3831530511379242
+      ],
+      "correlation_mean": 0.32517626881599426,
+      "mae": [
+        0.10903551429510117,
+        0.053011100739240646,
+        0.12306378781795502
+      ],
+      "train_samples": 58080,
+      "validation_samples": 15120
+    },
+    "pose_speed": {
+      "r2": [
+        0.33634835481643677
+      ],
+      "r2_mean": 0.33634835481643677,
+      "correlation": [
+        0.5819619297981262
+      ],
+      "correlation_mean": 0.5819619297981262,
+      "mae": [
+        0.10095559060573578
+      ],
+      "train_samples": 58080,
+      "validation_samples": 15120
+    },
+    "trial_root_displacement": {
+      "r2": [
+        0.20915687084197998,
+        0.4932105541229248,
+        0.46100538969039917
+      ],
+      "r2_mean": 0.3877909183502197,
+      "correlation": [
+        0.5502611398696899,
+        0.708508312702179,
+        0.713312566280365
+      ],
+      "correlation_mean": 0.6573607325553894,
+      "mae": [
+        0.3286023437976837,
+        0.1006869375705719,
+        0.3207739293575287
+      ],
+      "train_samples": 1210,
+      "validation_samples": 315
+    }
+  }
+}

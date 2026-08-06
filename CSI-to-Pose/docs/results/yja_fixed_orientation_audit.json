@@ -1,0 +1,37 @@
+{
+  "run": "yja_fixed_orientation_audit",
+  "protocol": "sealed/yja_E02",
+  "purpose": "diagnostic only; target GT is not used for training or model selection",
+  "support_trials_excluded": 18,
+  "test_trials": 245,
+  "danger_test_trials": 50,
+  "rotation_matrix": [
+    [
+      0.9609805941581726,
+      -0.2744482755661011,
+      -0.03456299379467964
+    ],
+    [
+      0.2740008234977722,
+      0.9615761637687683,
+      -0.017168965190649033
+    ],
+    [
+      0.03794696182012558,
+      0.007028768304735422,
+      0.9992550015449524
+    ]
+  ],
+  "rotation_determinant": 0.9999999403953552,
+  "similarity_scale": 0.723821759223938,
+  "all": {
+    "raw_pose_mpjpe_m": 0.29803770780563354,
+    "fixed_rotation_mpjpe_m": 0.3007258176803589,
+    "fixed_rotation_scale_mpjpe_m": 0.2948255240917206
+  },
+  "danger": {
+    "raw_pose_mpjpe_m": 0.3894217908382416,
+    "fixed_rotation_mpjpe_m": 0.3797591030597687,
+    "fixed_rotation_scale_mpjpe_m": 0.3426496386528015
+  }
+}

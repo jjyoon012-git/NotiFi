@@ -1,0 +1,58 @@
+{
+  "status": "fixed_test_complete_no_test_tuning",
+  "protocol": "single_split_lmh_e01",
+  "test_used_for_selection": false,
+  "selection_source": "validation",
+  "fixed_configuration": {
+    "name": "b650_d350_u049",
+    "score": 0.9915767927410373,
+    "base": 0.65,
+    "danger_delta": 0.15,
+    "uncertainty_delta": -0.1,
+    "mean": 0.6772326231002808,
+    "danger_probability_weighted_mean": 0.7902792096138
+  },
+  "test_strength_summary": {
+    "mean": 0.6763133406639099,
+    "danger_probability_weighted_mean": 0.7831817269325256
+  },
+  "metrics": {
+    "kp6_semantic_warp": {
+      "mpjpe_m": 0.13098564892415962,
+      "distal_mpjpe_m": 0.1898355412577826,
+      "dynamic_mpjpe_m": 0.16548355732042835,
+      "high_motion_mpjpe_m": 0.1623567413994448,
+      "pose_speed_ratio": 0.7415638521412898,
+      "speed_correlation": 0.5037241810666663,
+      "danger_pose_mpjpe_m": 0.20537359310047967,
+      "danger_distal_mpjpe_m": 0.30376501477190426,
+      "danger_endpoint_mpjpe_m": 0.2580819354525634,
+      "danger_high_motion_mpjpe_m": 0.22936621616993633,
+      "danger_torso_angle_deg": 29.191984013148716,
+      "danger_speed_correlation": 0.5657236846696053,
+      "trials": 315,
+      "danger_trials": 70
+    },
+    "kp6_risk_adaptive": {
+      "mpjpe_m": 0.1310789331084206,
+      "distal_mpjpe_m": 0.18995471013680337,
+      "dynamic_mpjpe_m": 0.16514311576226973,
+      "high_motion_mpjpe_m": 0.16206888052971757,
+      "pose_speed_ratio": 0.766608120554496,
+      "speed_correlation": 0.4936770212437425,
+      "danger_pose_mpjpe_m": 0.20481780373624392,
+      "danger_distal_mpjpe_m": 0.3029761265431132,
+      "danger_endpoint_mpjpe_m": 0.2571704120508262,
+      "danger_high_motion_mpjpe_m": 0.2294812723994255,
+      "danger_torso_angle_deg": 29.112009286880493,
+      "danger_speed_correlation": 0.5643508730190141,
+      "trials": 315,
+      "danger_trials": 70
+    }
+  },
+  "scores": {
+    "kp6_semantic_warp": 1.2100607061121198,
+    "kp6_risk_adaptive": 1.2068725636667748
+  },
+  "adaptive_calibration": "work_v2/runs/kp6_risk_adaptive_blend/calibration.json"
+}

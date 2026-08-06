@@ -117,6 +117,9 @@ def evaluate_trajectory(model, loader: DataLoader, device: str,
             distance = torch.linalg.vector_norm(
                 predicted_absolute - target_absolute, dim=-1
             )
+            pose_distance = torch.linalg.vector_norm(
+                predicted_pose[item] - target_pose[item], dim=-1
+            )
             head = C.JOINT_INDEX["head"]
             predicted_torso = F.normalize(predicted_pose[item, :, head], dim=-1)
             target_torso = F.normalize(target_pose[item, :, head], dim=-1)
@@ -152,6 +155,10 @@ def evaluate_trajectory(model, loader: DataLoader, device: str,
             row = {
                 "mpjpe_m": float(distance[mask].mean()),
                 "distal_mpjpe_m": float(distance[mask][:, DISTAL_JOINTS].mean()),
+                "pose_mpjpe_m": float(pose_distance[mask].mean()),
+                "pose_distal_mpjpe_m": float(
+                    pose_distance[mask][:, DISTAL_JOINTS].mean()
+                ),
                 "root_error_m": float(torch.linalg.vector_norm(
                     predicted_root[item] - target_root[item], dim=-1
                 )[mask].mean()),
@@ -160,6 +167,9 @@ def evaluate_trajectory(model, loader: DataLoader, device: str,
                 ),
                 "torso_angle_deg": float(torch.rad2deg(torch.acos(cosine[mask])).mean()),
                 "endpoint_mpjpe_m": float(distance[endpoint_frames].mean()),
+                "pose_endpoint_mpjpe_m": float(
+                    pose_distance[endpoint_frames].mean()
+                ),
                 "speed_correlation": speed_correlation,
                 "aligned_mpjpe_m": aligned,
                 "alignment_gain_m": float(distance[mask].mean()) - aligned,
