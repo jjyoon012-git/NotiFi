@@ -219,7 +219,7 @@ python -m notifi_pose.tools.evaluate_csi_proximity_profile
 
 | 번호 / 날짜(KST) | 상세 내용과 목적 | Validation | Fixed test | 결론 |
 |---|---|---|---|---|
-| MHW-ALL-LABEL-VIS / 2026-08-06 18:01 | mhw 자세 라벨별 중앙 trial을 KP10으로 CSI-only 추론하고 stick/filled-SMPL 영상 생성 | 성능 선택 없음, GT 오차로 샘플 선택 안 함 | 16라벨 x 2모드, 32/32 영상 QA 통과 | 재현 도구 추가, 129.9MB 영상은 로컬 산출물로 보존, absence는 GT가 없어 제외 |
+| MHW-GVHMR-STAGE-VIS / 2026-08-06 19:01 | mhw 자세 라벨별 중앙 trial을 KP10으로 CSI-only 추론하고 원본 영상 없는 stick/공식 GVHMR-style SMPL 영상 생성 | 성능 선택 없음, GT 오차로 샘플 선택 안 함 | 16라벨 x 2모드, 32/32 영상 QA 통과 | `hmr4d` PyTorch3D renderer + parent-relative SMPL IK/LBS, 84.5MB 로컬 산출물, absence는 GT가 없어 제외 |
 | SPLIT-INTEGRITY / 2026-08-06 | 역할별 trial 및 CSI/GT/video 경로 중복 감사 | train/val/test 교집합 0 | 경로 중복 0 | pose `1210/315/315`, GT 없는 84개는 전부 absence |
 | TARGET-INVARIANCE / 2026-08-06 | pose·mask·class·risk·target cost 전부 poisoning | 315 trials, max pose diff **0.0**, exact equality | 미개봉 | 평가 target이 예측에 영향 없음을 실행 수준 확인 |
 | CLASS-AUDIT / 2026-08-06 | 고정 KP6/KP10 동일 trial 행동별 사후 차이 | 해당 없음 | chair fall -1.778/-2.596 cm, bed-exit fall +0.117/+0.085 cm | 평균 이득의 편중 공개, 후속 선택에 사용 금지 |

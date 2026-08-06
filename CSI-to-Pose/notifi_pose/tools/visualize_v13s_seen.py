@@ -119,17 +119,20 @@ class SmplSurfaceFitter:
         rotations[22] = rotations[20]
         rotations[23] = rotations[21]
 
-        target = np.empty((24, 3), dtype=np.float32)
-        target[:22] = target22
-        for joint in (22, 23):
+        fitted_joints = np.empty((24, 3), dtype=np.float32)
+        fitted_joints[0] = target22[0]
+        for joint in range(1, 24):
             parent = self.parents[joint]
-            target[joint] = (
-                target[parent]
+            fitted_joints[joint] = (
+                fitted_joints[parent]
                 + rotations[parent] @ (
                     scale * (self.joints[joint] - self.joints[parent])
                 )
             )
-        translation = target - scale * np.einsum(
+        for joint in (22, 23):
+            parent = self.parents[joint]
+            rotations[joint] = rotations[parent]
+        translation = fitted_joints - scale * np.einsum(
             "jab,jb->ja", rotations, self.joints
         )
         blended_rotation = np.einsum(
