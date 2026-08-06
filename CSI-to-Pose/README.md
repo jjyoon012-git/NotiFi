@@ -2,6 +2,59 @@
 
 Wi-Fi CSI만 입력받아 시간에 따른 사람의 **GVHMR SMPL-22 3D pose와 root trajectory**를 복원하는 연구 코드입니다. 영상과 GVHMR은 학습용 GT 생성에만 사용하며, 검증과 실제 추론에는 CSI만 사용합니다.
 
+## 현재 calibration 후보: CAL1-KP10
+
+버전명은 `CAL1-KP10`처럼 **calibration 버전-행동 복원 모델 버전**으로 기록한다.
+CAL1은 사용자가 새 환경에서 수집한 safe support CSI를 먼저 읽고, 그 환경의 보정 토큰을
+만든 다음 기존 KP10의 action/risk/motion-profile/retrieval 경로를 실행한다. 이번 1차
+구현은 frozen directional CSI encoder의 128D 출력에 bounded low-rank residual과 FiLM을
+적용한다. query의 정답 행동, 위험도, pose GT는 보정 입력으로 받지 않는다.
+
+```mermaid
+flowchart LR
+    A["새 환경 safe support CSI 16개"] --> B["순서 불변 support-set encoder"]
+    C["query CSI"] --> D["frozen directional CSI encoder"]
+    B --> E["96D calibration token"]
+    D --> F["temporal low-rank feature adapter"]
+    E --> F
+    F --> G["KP10 action/risk/motion-profile heads"]
+    G --> H["KP10 train-only retrieval + retiming"]
+    H --> I["SMPL-22 pelvis-relative pose"]
+```
+
+support는 `walking/standing/sitting/lying/lie-to-stand/stand-to-lie/sit-to-stand/
+stand-to-sit` 8종에서 각 2개, 총 16개다. source meta-train은
+`ajh E01/E02, lmh E01, mhw E01/E02`, strength 선택은 학습에 쓰지 않은
+`ajh E03, mhw E03` support/query에서 수행했다. E03에서 strength `1.0`이 선택된 뒤에만
+`yja/E02`를 열었다. yja는 support 16개와 query 259개로 완전히 분리됐고, pose GT가 있는
+query는 247개, danger는 50개다.
+
+| Metric | KP10 no calibration | CAL1-KP10 | 변화 |
+|---|---:|---:|---:|
+| Source E03 overall pose | 10.030 cm | **9.999 cm** | -0.031 cm |
+| Source E03 danger pose | 11.354 cm | **11.224 cm** | -0.130 cm |
+| Source E03 danger distal | 16.515 cm | **16.326 cm** | -0.189 cm |
+| yja/E02 overall pose | 30.472 cm | **30.463 cm** | -0.010 cm |
+| yja/E02 distal pose | 44.879 cm | **44.848 cm** | -0.031 cm |
+| yja/E02 danger pose | **39.252 cm** | 39.341 cm | +0.089 cm |
+| yja/E02 danger distal | **58.231 cm** | 58.373 cm | +0.142 cm |
+| yja/E02 danger recall | 0/50 | **2/50** | +4.0%p |
+| yja/E02 safe-to-danger 오경보 | **22/134** | 29/134 | +7건 |
+
+**판정: CAL1 동작은 확인했지만 승격하지 않는다.** source E03 pose는 개선됐으나 yja의
+danger pose/distal은 악화됐고, recall 2건 증가보다 safe 오경보 7건 증가가 컸다. 따라서
+배포 fallback과 현재 복원 기준은 계속 KP10이다. 이번 결과는 support-conditioned 보정이
+필요하다는 방향은 지지하지만, frozen encoder 뒤의 작은 adapter만으로는 환경 반사와 동작을
+충분히 분리하지 못한다는 것을 보여준다. 다음 CAL 버전은 보정을 link fusion 이전으로
+앞당기고, source 환경에서 동작 표현과 환경 표현을 직접 분리하는 사전학습이 필요하다.
+요약 원본은 [`CAL1-KP10 result`](docs/results/cal1_kp10_yja_e02.json)에 있다.
+
+```powershell
+python -m notifi_pose.tools.train_cal1_kp10 `
+  --work-root C:\path\to\work_v2 `
+  --yja-feature-cache C:\path\to\yja_e02_features.pt
+```
+
 ## 현재 모델: KP10-ACTION-FUSED-45
 
 2026-08-06 현재 seen-domain CSI-only pose 최선은 **KP10-ACTION-FUSED-45**이다.
@@ -249,6 +302,7 @@ python -m notifi_pose.tools.evaluate_csi_proximity_profile
 
 | 번호 / 날짜(KST) | 상세 내용과 목적 | Validation | Fixed test | 결론 |
 |---|---|---|---|---|
+| CAL1-KP10 / 2026-08-06 22:38 | safe 8행동 x 2 support-set token으로 frozen KP10 feature를 보정; source E03에서 strength 선택 후 yja/E02 1회 평가 | E03 overall 10.030→**9.999**, danger 11.354→**11.224**, distal 16.515→**16.326** cm | yja overall 30.472→**30.463**, danger 39.252→39.341, distal 58.231→58.373 cm; recall 0→2/50, safe 오경보 22→29 | source 개선이 yja danger로 일반화되지 않아 **승격 기각**, KP10 fallback 유지 |
 | KP11-DYNAMIC-MOTION / 2026-08-06 21:36 | 잠긴 KP10 CSI-only anchor에 multi-scale dynamic CSI, predicted-action FiLM, 직접 bone rotation/FK, phase/contact/profile 보조 감독 적용 | epoch 1, overall **11.198**, danger **15.677**, danger distal **22.892** cm, speed corr 0.5441 | **미개봉** | 0.01 cm 미만 변화와 motion gate 실패로 기각, KP10 유지 |
 | MHW-GVHMR-STAGE-VIS / 2026-08-06 19:01 | mhw 자세 라벨별 중앙 trial을 KP10으로 CSI-only 추론하고 원본 영상 없는 stick/공식 GVHMR-style SMPL 영상 생성 | 성능 선택 없음, GT 오차로 샘플 선택 안 함 | 16라벨 x 2모드, 32/32 영상 QA 통과 | `hmr4d` PyTorch3D renderer + parent-relative SMPL IK/LBS, 84.5MB 로컬 산출물, absence는 GT가 없어 제외 |
 | SPLIT-INTEGRITY / 2026-08-06 | 역할별 trial 및 CSI/GT/video 경로 중복 감사 | train/val/test 교집합 0 | 경로 중복 0 | pose `1210/315/315`, GT 없는 84개는 전부 absence |
