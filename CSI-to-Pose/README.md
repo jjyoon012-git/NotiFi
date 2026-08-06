@@ -61,6 +61,36 @@ KP10은 현재 비교 범위에서 danger pose와 danger distal을 함께 가장
 다만 danger distal `29.25 cm`는 부상 부위를 의학적으로 확정할 수준이 아니며, pose 출력만
 보고 실제 충돌 순서를 사실로 단정하면 안 된다.
 
+### KP11-DYNAMIC-MOTION 후보: validation 기각
+
+KP11은 현행 KP10의 CSI-only pose를 보존한 채 낙상 동작을 직접 교정하려는 후속 후보다.
+잠긴 KP10 anchor와 frozen P2 feature를 받고, CSI의 1/3/7-frame 차분 및 15-frame
+high-pass를 short/medium/global 시간축으로 융합한다. P2가 **CSI로 예측한** 17행동·3위험
+soft 확률을 FiLM 조건으로 사용하고, parent-relative 뼈 방향을 회전한 뒤 FK로 전신을 다시
+조립한다. phase, relative contact, 7-part motion profile은 보조 감독이며, pose branch와
+분류 branch의 gradient는 분리했다. 정답 행동·위험 라벨은 pose 입력으로 사용하지 않는다.
+
+train retrieval은 같은 trial을 제외하는 leave-self-out이며, 외부 anchor의 trial 순서,
+valid mask, pose row를 생성 직후 감사한다. zero-init KP11 출력은 KP10 anchor와 정확히 같다.
+13 epoch 중 validation score가 가장 좋았던 epoch 1을 선택했으나 개선 폭이 0.01 cm보다
+작고 motion correlation gate를 통과하지 못해 승격하지 않았다.
+
+| Validation metric | KP10 anchor | KP11 epoch 1 | 변화 |
+|---|---:|---:|---:|
+| Overall pose | 11.206 | **11.198** | -0.009 cm |
+| Distal pose | 16.147 | **16.131** | -0.016 cm |
+| Dynamic pose | **14.640** | 14.640 | 0.000 cm |
+| Danger pose | 15.682 | **15.677** | -0.006 cm |
+| Danger distal | 22.898 | **22.892** | -0.006 cm |
+| Danger endpoint | **18.042** | 18.053 | +0.011 cm |
+| Speed correlation | 0.5441 | 0.5441 | 변화 없음 |
+| Danger speed correlation | **0.6641** | 0.6640 | -0.0000 |
+
+분류는 frozen P2 출력을 유지해 validation 329개에서 action `95.74%`, risk `97.26%`,
+danger recall `65/70 = 92.86%`였다. 허용한 오경보 범위 내 scalar danger-bias 보정도
+recall을 높이지 못했다. 고정 test는 열지 않았으며, **현행 최고 모델은 계속 KP10**이다.
+요약 결과는 [`KP11 validation`](docs/results/kp11_dynamic_motion_validation.json)에 있다.
+
 ### 개선 안정성 감사
 
 고정 test 예측을 모델 선택에 다시 쓰지 않고, 동일 trial의 KP6/KP10 오차 차이를 10,000회
@@ -219,6 +249,7 @@ python -m notifi_pose.tools.evaluate_csi_proximity_profile
 
 | 번호 / 날짜(KST) | 상세 내용과 목적 | Validation | Fixed test | 결론 |
 |---|---|---|---|---|
+| KP11-DYNAMIC-MOTION / 2026-08-06 21:36 | 잠긴 KP10 CSI-only anchor에 multi-scale dynamic CSI, predicted-action FiLM, 직접 bone rotation/FK, phase/contact/profile 보조 감독 적용 | epoch 1, overall **11.198**, danger **15.677**, danger distal **22.892** cm, speed corr 0.5441 | **미개봉** | 0.01 cm 미만 변화와 motion gate 실패로 기각, KP10 유지 |
 | MHW-GVHMR-STAGE-VIS / 2026-08-06 19:01 | mhw 자세 라벨별 중앙 trial을 KP10으로 CSI-only 추론하고 원본 영상 없는 stick/공식 GVHMR-style SMPL 영상 생성 | 성능 선택 없음, GT 오차로 샘플 선택 안 함 | 16라벨 x 2모드, 32/32 영상 QA 통과 | `hmr4d` PyTorch3D renderer + parent-relative SMPL IK/LBS, 84.5MB 로컬 산출물, absence는 GT가 없어 제외 |
 | SPLIT-INTEGRITY / 2026-08-06 | 역할별 trial 및 CSI/GT/video 경로 중복 감사 | train/val/test 교집합 0 | 경로 중복 0 | pose `1210/315/315`, GT 없는 84개는 전부 absence |
 | TARGET-INVARIANCE / 2026-08-06 | pose·mask·class·risk·target cost 전부 poisoning | 315 trials, max pose diff **0.0**, exact equality | 미개봉 | 평가 target이 예측에 영향 없음을 실행 수준 확인 |

@@ -1,0 +1,53 @@
+{
+  "run": "KP11-DYNAMIC-MOTION-EXP01",
+  "timestamp_kst": "2026-08-06 21:36",
+  "status": "validation_rejected",
+  "protocol": "single_split_lmh_e01",
+  "seed": 311,
+  "selection_epoch": 1,
+  "test_used_for_selection": false,
+  "fixed_test_opened": false,
+  "inference_inputs": [
+    "CSI",
+    "link_mask",
+    "train_only_motion_bank"
+  ],
+  "ground_truth_action_used_as_pose_input": false,
+  "architecture": {
+    "anchor": "locked KP10-ACTION-FUSED-45 CSI-only pose",
+    "dynamic_inputs": ["delta_1", "delta_3", "delta_7", "high_pass_15"],
+    "temporal_scales": ["short_d1_d2", "medium_d4_d8", "global_transformer"],
+    "semantic_conditioning": "frozen P2 CSI-predicted action/risk probabilities",
+    "decoder": "parent-relative bone rotation plus direct forward kinematics",
+    "auxiliary_heads": ["phase", "relative_contact", "seven_part_motion"],
+    "classification_gradient_to_pose": false
+  },
+  "kp10_validation": {
+    "mpjpe_m": 0.1120567834684773,
+    "distal_mpjpe_m": 0.16146744894425547,
+    "dynamic_mpjpe_m": 0.14640030314200628,
+    "danger_pose_mpjpe_m": 0.15682165904768874,
+    "danger_distal_mpjpe_m": 0.22898052265601498,
+    "danger_endpoint_mpjpe_m": 0.1804154765393053,
+    "speed_correlation": 0.5440545793060982,
+    "danger_speed_correlation": 0.6640598346080099
+  },
+  "kp11_validation": {
+    "mpjpe_m": 0.111975106496423,
+    "distal_mpjpe_m": 0.16130857278134614,
+    "dynamic_mpjpe_m": 0.14639873133360673,
+    "danger_pose_mpjpe_m": 0.1567654409046684,
+    "danger_distal_mpjpe_m": 0.22892157014991557,
+    "danger_endpoint_mpjpe_m": 0.18052700119359152,
+    "speed_correlation": 0.5440580585276679,
+    "danger_speed_correlation": 0.6640346950718334,
+    "action_accuracy": 0.957446813583374,
+    "risk_accuracy": 0.9726443886756897,
+    "danger_recall": 0.9285714030265808
+  },
+  "promotion": {
+    "passed": false,
+    "failed_checks": ["speed_correlation", "danger_recall"],
+    "conclusion": "Effect is below a practical margin; keep KP10 as current model."
+  }
+}

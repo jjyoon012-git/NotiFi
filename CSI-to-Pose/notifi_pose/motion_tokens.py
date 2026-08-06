@@ -37,7 +37,12 @@ def trial_bone_lengths(pose: torch.Tensor, valid: torch.Tensor) -> torch.Tensor:
 def forward_kinematics(directions: torch.Tensor,
                        lengths: torch.Tensor) -> torch.Tensor:
     """Compose parent-relative unit directions into pelvis-relative joints."""
-    bones = directions * lengths[:, None, :, None]
+    if lengths.ndim == 2:
+        bones = directions * lengths[:, None, :, None]
+    elif lengths.ndim == 3:
+        bones = directions * lengths[..., None]
+    else:
+        raise ValueError("bone lengths must have shape [B,J] or [B,T,J]")
     pose = torch.zeros_like(bones)
     for child, parent in enumerate(C.JOINT_PARENTS):
         if parent >= 0:
