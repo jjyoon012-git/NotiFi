@@ -87,7 +87,8 @@ class SmplSurfaceFitter:
             self.vertices = payload["v_template"].astype(np.float32)
             self.joints = payload["J"].astype(np.float32)
             self.weights = payload["weights"].astype(np.float32)
-            self.faces = payload["f"].astype(np.int32)[::face_stride]
+            self.faces = payload["f"].astype(np.int32)
+        self.edge_stride = max(int(face_stride), 1)
         parents = np.asarray(C.JOINT_PARENTS, dtype=np.int64)
         self.parents = np.concatenate((parents, np.array((20, 21))))
         self.children = [
@@ -270,24 +271,6 @@ def _draw_skeleton(panel: np.ndarray, points: np.ndarray,
 def _draw_mesh(panel: np.ndarray, joints_xy: np.ndarray,
                vertices_xy: np.ndarray, faces: np.ndarray,
                color: tuple[int, int, int], alpha: float):
-    body = np.zeros_like(panel)
-    widths = {
-        0: 34, 1: 28, 2: 28, 3: 38, 4: 25, 5: 25, 6: 38,
-        7: 22, 8: 22, 9: 44, 10: 18, 11: 18, 12: 30,
-        13: 25, 14: 25, 15: 24, 16: 24, 17: 24, 18: 18,
-        19: 18, 20: 14, 21: 14,
-    }
-    joints_xy = np.rint(joints_xy).astype(np.int32)
-    for parent, child in C.SKELETON_EDGES:
-        cv2.line(
-            body, tuple(joints_xy[parent]), tuple(joints_xy[child]), color,
-            widths.get(child, 18), cv2.LINE_AA,
-        )
-    for joint, point in enumerate(joints_xy):
-        radius = 18 if joint == 15 else max(7, widths.get(joint, 18) // 2)
-        cv2.circle(body, tuple(point), radius, color, -1, cv2.LINE_AA)
-    panel[:] = cv2.addWeighted(panel, 1.0, body, alpha, 0.0)
-
     vertices_xy = np.rint(vertices_xy).astype(np.int32)
     face_xy = vertices_xy[faces]
     valid = (
@@ -297,11 +280,55 @@ def _draw_mesh(panel: np.ndarray, joints_xy: np.ndarray,
         & (face_xy[..., 1].min(1) >= 70)
         & (face_xy[..., 1].max(1) < HEIGHT)
     )
-    edge_color = tuple(max(channel - 55, 0) for channel in color)
-    cv2.polylines(
-        panel, [polygon for polygon in face_xy[valid]], True,
-        edge_color, 1, cv2.LINE_AA,
+    polygons = np.ascontiguousarray(face_xy[valid])
+    if not len(polygons):
+        return
+
+    mask = np.zeros(panel.shape[:2], np.uint8)
+    cv2.fillPoly(mask, polygons, 255, cv2.LINE_AA)
+    shadow = cv2.GaussianBlur(mask, (0, 0), 7)
+    shadow_layer = np.zeros_like(panel)
+    shadow_layer[:] = (32, 34, 38)
+    shifted = np.zeros_like(shadow)
+    shifted[5:, 5:] = shadow[:-5, :-5]
+    shadow_weight = (shifted.astype(np.float32) / 255.0 * 0.16)[..., None]
+    panel[:] = np.clip(
+        panel.astype(np.float32) * (1.0 - shadow_weight)
+        + shadow_layer.astype(np.float32) * shadow_weight,
+        0, 255,
+    ).astype(np.uint8)
+
+    horizontal_light = np.linspace(
+        1.08, 0.78, panel.shape[1], dtype=np.float32
+    )[None, :, None]
+    surface = np.clip(
+        np.asarray(color, dtype=np.float32)[None, None, :] * horizontal_light,
+        0, 255,
     )
+    surface = np.broadcast_to(surface, panel.shape)
+    surface_alpha = (
+        mask.astype(np.float32) / 255.0 * min(alpha * 1.55, 0.72)
+    )[..., None]
+    panel[:] = np.clip(
+        panel.astype(np.float32) * (1.0 - surface_alpha)
+        + surface.astype(np.float32) * surface_alpha,
+        0, 255,
+    ).astype(np.uint8)
+
+    highlight = cv2.erode(mask, np.ones((5, 5), np.uint8))
+    highlight = cv2.GaussianBlur(highlight, (0, 0), 3)
+    highlight_weight = (highlight.astype(np.float32) / 255.0 * 0.07)[..., None]
+    panel[:] = np.clip(
+        panel.astype(np.float32) * (1.0 - highlight_weight)
+        + 255.0 * highlight_weight,
+        0, 255,
+    ).astype(np.uint8)
+
+    contours, _ = cv2.findContours(
+        mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+    )
+    edge_color = tuple(max(channel - 85, 0) for channel in color)
+    cv2.drawContours(panel, contours, -1, edge_color, 2, cv2.LINE_AA)
 
 
 def _decorate(canvas: np.ndarray, row: pd.Series, frame_index: int,
@@ -388,7 +415,7 @@ def render_trial(row: pd.Series, item: dict, predicted_pose: np.ndarray,
     if not writer.isOpened():
         raise RuntimeError(f"cannot open video writer: {output}")
     preview = output.with_suffix(".png")
-    target_mesh = predicted_mesh = None
+    target_mesh = predicted_mesh = cached_mesh_panel = None
     for frame_index in range(frames):
         frame = None
         if capture is not None:
@@ -409,14 +436,17 @@ def render_trial(row: pd.Series, item: dict, predicted_pose: np.ndarray,
             if frame_index % 2 == 0 or target_mesh is None:
                 target_mesh = fitter.fit(target_abs[frame_index])
                 predicted_mesh = fitter.fit(predicted_abs[frame_index])
-            _draw_mesh(
-                canvas, gt_xy, projector(target_mesh), fitter.faces,
-                GT_MESH, 0.42,
-            )
-            _draw_mesh(
-                canvas, pred_xy, projector(predicted_mesh), fitter.faces,
-                PRED_MESH, 0.42,
-            )
+                _draw_mesh(
+                    canvas, gt_xy, projector(target_mesh), fitter.faces,
+                    GT_MESH, 0.42,
+                )
+                _draw_mesh(
+                    canvas, pred_xy, projector(predicted_mesh), fitter.faces,
+                    PRED_MESH, 0.42,
+                )
+                cached_mesh_panel = canvas[:, HALF:].copy()
+            else:
+                canvas[:, HALF:] = cached_mesh_panel
         _decorate(
             canvas, row, frame_index, fps, mode,
             float(pose_error[frame_index] * 100), trial_pose_cm,
