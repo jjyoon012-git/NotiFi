@@ -147,10 +147,29 @@ danger 방향을 검증할 수는 없다. 따라서 artifact는
 행동 가능성을 어느 정도 설명하면서도 danger 품질은 설명하지 못한다는 LOSO 결과와
 일치한다.
 
+### CAL44 동적 행동 calibration 후보
+
+CAL44는 실제 낙상 없이 safe 8행동과 통제된 warning 3행동을 각 2회, 총 22개 support로
+받는다. CAL42의 energy/physical-phase encoder는 고정하고 target-local safe/warning
+prototype만 교체한다. support 반복 교차검증으로 prototype 온도와 강도를 고르며 target
+query 라벨·pose·영상과 danger support는 사용하지 않는다. CAL42가 이미 danger 행동으로
+판단한 query는 CAL44가 덮어쓰지 못하게 하여 기존 낙상 판단을 보존한다.
+
+같은 query와 각 safe 행동 2회만 쓴 CAL42 control 대비 8-site x 16회 감사에서 17행동
+정확도는 `30.22 -> 34.88%`로 **+4.65%p**, macro-F1은 **+4.10%p**였고
+`105승 4무 19패`였다. site 평균 개선의 95% t-interval은 `+1.54~+7.77%p`다.
+danger 세부행동은 guard 적용 후 `10.94 -> 14.39%`로 비퇴행했지만 절대 성능은 여전히
+낮다. support-selected 계층 risk 결합은 공통 query에서 이득이 없어 기각했고 3위험 출력은
+CAL42 energy head를 그대로 쓴다. 또한 control이 공식 CAL42의 safe 8회가 아닌 2회 조건이며
+pose retrieval 결과도 아직 없으므로 **CAL44는 action-only 실험 후보이고 현재 모델은
+CAL42**다. 원본 요약은
+[`CAL44 dynamic action audit`](docs/results/cal44_dynamic_action_audit.json)에 있다.
+
 ### 최신 실험 로그
 
 | 번호 | 날짜/시간대 (KST) | 실험 | 목적 | 결과 |
 |---:|---|---|---|---|
+| 44 | 2026-08-07 07:05-07:18 | dynamic safe+warning prototype + danger guard | 약 5분 calibration으로 unseen 행동 정렬 | **action-only 후보**: 8-site 공통-query +4.65%p, macro-F1 +4.10%p; risk 결합은 기각 |
 | 43 | 2026-08-07 05:55-06:05 | fixed 25% guarded phase | 위상 기여 확대 탐색 | **승격 보류**: target audit 후 선택된 post-hoc 후보; 새 sealed 검증 필요 |
 | 42 | 2026-08-07 04:45-05:45 | guarded energy + physical-phase ensemble | 위상 방향 정보 추가, danger 정답 보존 | CAL43 이전 최선: yja pose 29.093 cm; 512 paired draw 평균 +4.69%p |
 | 41 | 2026-08-07 04:40-04:50 | physical-phase encoder | 정적 위상 상쇄 후 signed 동작 보존 | 단독 danger는 악화, 15% 보조 branch로 제한 |
@@ -173,6 +192,7 @@ danger 방향을 검증할 수는 없다. 따라서 artifact는
 재현 코드의 checkpoint는 용량 때문에 Git에 넣지 않는다. calibration 코드와 품질 게이트,
 고정 protocol audit만 저장한다. 핵심 수치의 기계 판독 원본은
 [`CAL23-CAL43 calibration audit`](docs/results/cal23_cal34_calibration_audit.json),
+[`CAL44 dynamic action audit`](docs/results/cal44_dynamic_action_audit.json),
 실제 품질 게이트와 거부 규약은
 [`Calibration Deployment Contract`](docs/CALIBRATION_DEPLOYMENT.md)에 있다.
 

@@ -1,0 +1,49 @@
+{
+  "generated_kst": "2026-08-07T07:18:00+09:00",
+  "run": "CAL44-DYNAMIC-ACTION-CAL-KP10",
+  "status": "EXPERIMENTAL_ACTION_ONLY",
+  "protocol": {
+    "sites": 8,
+    "support_draws_per_site": 16,
+    "paired_draws": 128,
+    "support_per_safe_action": 2,
+    "support_per_warning_action": 2,
+    "support_trials_total": 22,
+    "danger_support_trials": 0,
+    "target_query_used_for_calibration_or_selection": false,
+    "phase_weight": 0.15,
+    "risk_branch": "CAL42_ENERGY_UNCHANGED",
+    "danger_guard": "CAL42 danger action predictions are immutable"
+  },
+  "paired_common_query_summary": {
+    "cal42_two_repeat_action_accuracy_mean": 0.3022,
+    "cal44_action_accuracy_mean": 0.3488,
+    "action_improvement_percentage_points": 4.65,
+    "action_macro_f1_improvement_percentage_points": 4.10,
+    "site_level_action_improvement_95_percent_t_interval_percentage_points": [
+      1.54,
+      7.77
+    ],
+    "wins": 105,
+    "ties": 4,
+    "losses": 19,
+    "cal42_danger_action_accuracy_mean": 0.1094,
+    "cal44_danger_action_accuracy_mean": 0.1439,
+    "risk_metrics_changed": false
+  },
+  "sites": {
+    "yja_E02": {"control_action": 0.3004, "cal44_action": 0.3367, "delta_pp": 3.63},
+    "ajh_E01": {"control_action": 0.3014, "cal44_action": 0.3659, "delta_pp": 6.45},
+    "ajh_E02": {"control_action": 0.3550, "cal44_action": 0.4780, "delta_pp": 12.30},
+    "ajh_E03": {"control_action": 0.3641, "cal44_action": 0.4281, "delta_pp": 6.40},
+    "mhw_E01": {"control_action": 0.2591, "cal44_action": 0.2987, "delta_pp": 3.95},
+    "mhw_E02": {"control_action": 0.2715, "cal44_action": 0.2836, "delta_pp": 1.21},
+    "mhw_E03": {"control_action": 0.2250, "cal44_action": 0.2485, "delta_pp": 2.35},
+    "lmh_E01": {"control_action": 0.3413, "cal44_action": 0.3507, "delta_pp": 0.94}
+  },
+  "interpretation": {
+    "accepted": "dynamic safe+warning local action prototypes with CAL42 danger guard",
+    "rejected": "support-selected hierarchical risk fusion",
+    "reason_not_promoted": "risk and pose did not improve; control uses the same two-repeat safe support rather than the official eight-repeat CAL42 protocol"
+  }
+}
