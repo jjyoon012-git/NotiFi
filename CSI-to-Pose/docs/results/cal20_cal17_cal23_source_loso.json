@@ -75,6 +75,11 @@
     "danger_recall": 10.0,
     "non_danger_specificity": 55.2632
   },
+  "across_source_outer_site_std_percent_points": {
+    "action_accuracy": 5.6031,
+    "danger_recall": 22.8869,
+    "non_danger_specificity": 14.8833
+  },
   "support_seed_stress_percent": {
     "seeds": 5,
     "action_accuracy_mean": 34.0619,

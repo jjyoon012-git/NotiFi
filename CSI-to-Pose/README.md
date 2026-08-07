@@ -54,7 +54,7 @@ flowchart LR
 
 CAL17은 action과 danger recall을 크게 높이지만 danger 세부유형은 아직 구분하지 못합니다. 임의 unseen에서 seen 수준이라고 주장할 수 있는 상태가 아닙니다.
 
-site별 최악값은 Action 27.39%, Danger recall 10.00%, Non-danger specificity 55.26%입니다. pooled 평균보다 worst-site가 훨씬 낮으므로 현재 모델은 임의 환경 보장 모델이 아니라 source-LOSO 기준선입니다.
+site별 최악값은 Action 27.39%, Danger recall 10.00%, Non-danger specificity 55.26%입니다. 7개 site 간 표준편차도 각각 5.60%p, 22.89%p, 14.88%p로 특히 위험 탐지가 불안정합니다. pooled 평균보다 worst-site가 훨씬 낮으므로 현재 모델은 임의 환경 보장 모델이 아니라 source-LOSO 기준선입니다.
 
 ### 3D 동작 시뮬레이션
 
