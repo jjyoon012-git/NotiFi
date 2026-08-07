@@ -1,9 +1,7 @@
-"""Diagnose whether CSI and its frozen encoder preserve observable body motion."""
+"""Shared observability metrics and probe helpers for source-only experiments."""
 
 from __future__ import annotations
 
-import argparse
-import json
 import math
 from dataclasses import dataclass
 from pathlib import Path
@@ -16,10 +14,10 @@ from torch.utils.data import DataLoader, Dataset, TensorDataset
 
 from .. import contract as C
 from .. import losses as L
-from ..dataio.dataset import PoseDataset, build_datasets
+from ..dataio.dataset import PoseDataset
 from ..nets import GraphPoseNet
-from ..trainer import fit_norm, set_seed
-from .evaluate_sealed import make_model, smooth_valid
+from ..trainer import fit_norm
+from .evaluate_sealed import smooth_valid
 
 
 def pose_only(dataset: PoseDataset) -> PoseDataset:
@@ -450,106 +448,4 @@ def overfit_probe(source: PoseDataset, trials: int, steps: int,
     })
     return metrics
 
-
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--checkpoint", type=Path,
-        default=C.WORK_ROOT / "runs" / "robust_gf_yja_e02" / "best_model.pt",
-    )
-    parser.add_argument("--exp", default="yja_holdout", choices=("yja_holdout",))
-    parser.add_argument("--baseline", default="sub", choices=("none", "sub", "sub_z"))
-    parser.add_argument("--batch-size", type=int, default=16)
-    parser.add_argument("--probe-epochs", type=int, default=20)
-    parser.add_argument("--probe-frames-per-trial", type=int, default=64)
-    parser.add_argument("--overfit-trials", type=int, nargs="+", default=(1, 10))
-    parser.add_argument("--overfit-steps", type=int, default=200)
-    parser.add_argument("--smooth-window", type=int, default=5)
-    parser.add_argument("--seed", type=int, default=7)
-    parser.add_argument(
-        "--output", type=Path,
-        default=C.WORK_ROOT / "reports" / "observability_diagnostics.json",
-    )
-    args = parser.parse_args()
-    set_seed(args.seed)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-
-    datasets = build_datasets(exp=args.exp, baseline=args.baseline)
-    train = pose_only(datasets["train"])
-    validation = pose_only(datasets["val"])
-    test = pose_only(datasets["test"])
-    checkpoint = torch.load(args.checkpoint, map_location=device, weights_only=False)
-    model = make_model(checkpoint, device)
-
-    print("[diagnostic] static mean-pose baseline")
-    mean_baseline = mean_pose_baseline(
-        train, test, args.batch_size, args.smooth_window
-    )
-    print("[diagnostic] normal and shuffled CSI")
-    normal = evaluate_model(
-        model, test, device, args.batch_size, args.smooth_window
-    )
-    shuffled = evaluate_model(
-        model, ShuffledSignalDataset(test, args.seed), device,
-        args.batch_size, args.smooth_window,
-    )
-
-    print("[diagnostic] frozen-encoder motion observability probe")
-    train_frames = extract_probe_frames(
-        model, train, device, args.batch_size,
-        args.probe_frames_per_trial, args.seed,
-    )
-    validation_frames = extract_probe_frames(
-        model, validation, device, args.batch_size, None, args.seed,
-    )
-    test_frames = extract_probe_frames(
-        model, test, device, args.batch_size, None, args.seed,
-    )
-    probe = train_probe(
-        train_frames, train_frames.feature.shape[-1], device,
-        args.probe_epochs, batch_size=4096,
-    )
-    probe_results = {
-        "source_validation": evaluate_probe(
-            probe, validation_frames, device, batch_size=8192
-        ),
-        "sealed_yja_E02": evaluate_probe(
-            probe, test_frames, device, batch_size=8192
-        ),
-    }
-
-    print("[diagnostic] one/few-trial overfit")
-    overfit = {
-        str(trials): overfit_probe(
-            train, trials, args.overfit_steps, device,
-            args.smooth_window, args.seed,
-        )
-        for trials in args.overfit_trials
-    }
-    result = {
-        "checkpoint": report_path(args.checkpoint),
-        "protocol": args.exp,
-        "pose_trials": {
-            "train": len(train), "validation": len(validation), "test": len(test),
-        },
-        "smooth_window": args.smooth_window,
-        "mean_pose_baseline": mean_baseline,
-        "normal_csi": normal,
-        "shuffled_csi": shuffled,
-        "shuffle_delta": {
-            key: shuffled[key] - normal[key] for key in normal
-        },
-        "observability_probe": probe_results,
-        "overfit": overfit,
-    }
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(
-        json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
-    print(json.dumps(result, indent=2, ensure_ascii=False))
-    print(f"wrote {args.output}")
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
+# Sealed-test execution intentionally lives only in evaluate_sealed.py.
