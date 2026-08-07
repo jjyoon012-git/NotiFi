@@ -120,11 +120,7 @@ def main() -> None:
     model.load_state_dict(checkpoint["model"])
     model.eval()
     index = pd.read_csv(WORK / "cache/cache_index.csv")
-    feature_cache = torch.load(
-        WORK / "runs/kp5_mpr_selector_seed17/train_features.pt",
-        map_location="cpu", weights_only=False,
-    )
-    selected_rows = feature_cache["rows"].numpy().astype(np.int64)
+    selected_rows = base.select_source_rows(index)
     selected = index.iloc[selected_rows]
     if "yja" in set(selected.subject.astype(str)):
         raise RuntimeError("sealed yja cannot enter deployment library")

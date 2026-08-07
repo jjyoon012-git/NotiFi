@@ -16,6 +16,8 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 
+import source_calibration_data as base
+
 
 PROMPT_CLASSES = (0, 1, 2, 3, 4, 5, 7, 8)
 SOURCE_SITES = (
@@ -294,11 +296,7 @@ def main() -> None:
     index = pd.read_csv(work / "cache/cache_index.csv")
     csi = np.load(work / "cache/csi_iq.npy", mmap_mode="r")
     mask = np.load(work / "cache/link_mask.npy", mmap_mode="r")
-    feature_cache = torch.load(
-        work / "runs/kp5_mpr_selector_seed17/train_features.pt",
-        map_location="cpu", weights_only=False,
-    )
-    source_rows = feature_cache["rows"].numpy().astype(np.int64)
+    source_rows = base.select_source_rows(index)
     source_meta = index.iloc[source_rows]
     source_sites = (source_meta.subject + "_" + source_meta.environment).to_numpy()
     if set(source_sites.tolist()) != set(SOURCE_SITES):

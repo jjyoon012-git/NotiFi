@@ -33,7 +33,7 @@ from scripts.train_cal20_source_folds import (
 )
 from scripts.evaluate_cal20_rf_stress import TargetShiftStore
 from scripts.export_cal20_deployment import require_source_clean
-from scripts.source_calibration_data import select_absence
+from scripts.source_calibration_data import select_absence, select_source_rows
 
 
 class CalibrationModelTests(unittest.TestCase):
@@ -127,6 +127,17 @@ class CalibrationModelTests(unittest.TestCase):
             select_absence("ajh_E01", index, seed=17, trials=13)
         with self.assertRaisesRegex(ValueError, "must be positive"):
             select_absence("ajh_E01", index, seed=17, trials=0)
+
+    def test_source_rows_are_derived_without_legacy_checkpoint(self) -> None:
+        index = pd.DataFrame({
+            "subject": ["ajh", "lmh", "lmh", "yja", "mhw"],
+            "environment": ["E01", "E01", "E02", "E02", "E03"],
+            "task": [C.TASK_POSE] * 5,
+            "class_id": [0, 1, 2, 3, 6],
+            "cache_ok": [True] * 5,
+            "role": ["train", "train", "train", "train", "train"],
+        })
+        self.assertEqual(select_source_rows(index).tolist(), [0, 1])
 
     def test_export_rejects_target_contaminated_results(self) -> None:
         clean = {

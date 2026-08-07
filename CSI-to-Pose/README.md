@@ -249,6 +249,7 @@ python scripts/evaluate_calibration_geometry_gate.py `
 
 | 번호 | 날짜/시간 KST | 목적 | 결과 | 판정 |
 |---|---|---|---|---|
+| 54 | 2026-08-08 07시 | legacy KP5 row-cache 의존성 제거 | cache index 조건이 기존 1,210개 row와 순서까지 완전 일치 | **채택** |
 | 53 | 2026-08-08 07시 | subject별 motion energy와 위험 탐지 진단 | amplitude velocity와 평균 danger recall 상관 0.995, 단 n=3 | 후속 가설만 채택 |
 | 52 | 2026-08-08 07시 | deployment target 누수 fail-closed | yja·target subject·query label/GT 표식 하나라도 오염 시 runtime 로드 거부 | **채택** |
 | 51 | 2026-08-08 07시 | staged 코드 최종 재현 | CAL17·CAL23 fold별 설정과 전체 JSON이 공식 결과와 완전 일치 | **통과** |
@@ -317,4 +318,4 @@ python -m compileall -q notifi_pose scripts tests
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
-최종 승격 시 전체 224개 테스트를 통과했습니다. 새 테스트 20개는 calibration window 수, exporter·runtime target 누수 차단, 불완전 support 거부, CSI-only 분류·pose simulation, nested split, 시간 이동 허용 손실과 모델 복원을 검사합니다.
+최종 승격 시 전체 225개 테스트를 통과했습니다. 새 테스트 21개는 source protocol 자체 복원, calibration window 수, exporter·runtime target 누수 차단, 불완전 support 거부, CSI-only 분류·pose simulation, nested split, 시간 이동 허용 손실과 모델 복원을 검사합니다.

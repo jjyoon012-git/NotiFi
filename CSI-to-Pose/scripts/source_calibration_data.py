@@ -21,6 +21,23 @@ PROMPT_SHOTS = {class_id: 2 for class_id in MOTION_PROMPT_CLASSES}
 ACTIVE_PROMPT_CLASSES = MOTION_PROMPT_CLASSES
 
 
+def select_source_rows(index: pd.DataFrame) -> np.ndarray:
+    """cache index에서 고정 source train protocol 행을 과거 checkpoint 없이 복원한다."""
+    source_subject = index.subject.isin(("ajh", "mhw", "lmh"))
+    allowed_environment = ~(
+        (index.subject == "lmh") & (index.environment != "E01")
+    )
+    selected = (
+        source_subject
+        & allowed_environment
+        & (index.task == C.TASK_POSE)
+        & (index.class_id != 6)
+        & index.cache_ok
+        & (index.role == "train")
+    )
+    return np.flatnonzero(selected.to_numpy()).astype(np.int64)
+
+
 class RawStore:
     """필요한 cache 행만 RAM에 올리고 trial 링크 품질 마스크를 적용한다."""
 
