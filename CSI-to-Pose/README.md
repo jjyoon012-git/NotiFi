@@ -249,6 +249,7 @@ python scripts/evaluate_calibration_geometry_gate.py `
 
 | 번호 | 날짜/시간 KST | 목적 | 결과 | 판정 |
 |---|---|---|---|---|
+| 53 | 2026-08-08 07시 | subject별 motion energy와 위험 탐지 진단 | amplitude velocity와 평균 danger recall 상관 0.995, 단 n=3 | 후속 가설만 채택 |
 | 52 | 2026-08-08 07시 | deployment target 누수 fail-closed | yja·target subject·query label/GT 표식 하나라도 오염 시 runtime 로드 거부 | **채택** |
 | 51 | 2026-08-08 07시 | staged 코드 최종 재현 | CAL17·CAL23 fold별 설정과 전체 JSON이 공식 결과와 완전 일치 | **통과** |
 | 50 | 2026-08-08 07시 | v4 배포 계약·출처 최종 감사 | absence 개수 불일치 즉시 차단, source 7-site·yja 봉인·3개 결과 해시 검증 | **통과** |
