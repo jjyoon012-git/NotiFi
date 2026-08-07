@@ -1,0 +1,140 @@
+{
+  "model": "CAL20-RELATIVE-MOTION-DG + CAL17-SAFE-STYLE-TRANSPORT + CAL23-POSE-ENSEMBLE",
+  "protocol": "nested_source_subject_loso_fixed_24_epoch_swa_8_24",
+  "source_sites": [
+    "ajh_E01",
+    "ajh_E02",
+    "ajh_E03",
+    "mhw_E01",
+    "mhw_E02",
+    "mhw_E03",
+    "lmh_E01"
+  ],
+  "sealed_target": "yja_E02",
+  "sealed_target_used_for_selection": false,
+  "query_labels_or_pose_gt_used_at_inference": false,
+  "calibration": {
+    "absence_trials": 12,
+    "prompt_classes": [0, 1, 2, 3, 4, 5, 7, 8],
+    "shots_per_prompt": 2
+  },
+  "data_analysis": {
+    "source_rows": 1210,
+    "subject_fingerprint_accuracy_percent": 99.0728,
+    "site_fingerprint_accuracy_percent": 98.2781,
+    "subject_loso_action_accuracy_percent": 10.5785,
+    "subject_loso_dynamic_action_accuracy_percent": 11.7355,
+    "site_loso_action_accuracy_percent": 11.7355,
+    "site_loso_dynamic_action_accuracy_percent": 15.6198,
+    "site_signal_summary": {
+      "ajh_E01_E03": {
+        "dynamic_std": 1.9038,
+        "amplitude_velocity": 7.6659,
+        "coverage": 0.9356,
+        "link_motion_correlation": 0.4889
+      },
+      "mhw_E01_E03": {
+        "dynamic_std": 2.7701,
+        "amplitude_velocity": 8.4652,
+        "coverage": 0.9834,
+        "link_motion_correlation": 0.7103
+      },
+      "lmh_E01": {
+        "dynamic_std": 2.7105,
+        "amplitude_velocity": 11.9349,
+        "coverage": 0.9747,
+        "link_motion_correlation": 0.8211
+      },
+      "yja_E02_calibration_only": {
+        "rows": 28,
+        "dynamic_std": 1.4785,
+        "amplitude_velocity": 7.6765,
+        "coverage": 0.9864,
+        "link_motion_correlation": 0.9701
+      }
+    },
+    "target_support_shift": {
+      "absence": 1.0701,
+      "prompt": 0.6058,
+      "static": 0.8372,
+      "dynamic": 0.5363
+    },
+    "target_query_labels_or_gt_used": false
+  },
+  "classification_percent": {
+    "action_accuracy": 35.5191,
+    "action_macro_f1": 27.6007,
+    "risk_accuracy": 43.4426,
+    "risk_macro_f1": 31.7416,
+    "danger_recall": 40.4762,
+    "danger_subtype_accuracy": 5.7143,
+    "non_danger_specificity": 76.8362
+  },
+  "worst_source_outer_site_percent": {
+    "action_accuracy": 27.3885,
+    "danger_recall": 10.0,
+    "non_danger_specificity": 55.2632
+  },
+  "support_seed_stress_percent": {
+    "seeds": 5,
+    "action_accuracy_mean": 34.0619,
+    "action_accuracy_std": 0.9943,
+    "action_accuracy_min": 32.8780,
+    "danger_recall_mean": 33.6190,
+    "danger_recall_std": 4.0249,
+    "danger_recall_min": 28.5714
+  },
+  "pose_centimeters": {
+    "overall": 29.6806,
+    "distal": 44.2043,
+    "pa_aligned": 11.2735,
+    "danger": 37.8190,
+    "danger_distal": 56.1272
+  },
+  "synthetic_rf_stress_percent": {
+    "clean_action_accuracy": 35.5191,
+    "gain_phase_action_accuracy": 35.5191,
+    "clean_danger_recall": 40.4762,
+    "gain_phase_danger_recall": 37.1429,
+    "drop_tx1_action_accuracy": 32.4226,
+    "drop_tx1_danger_recall": 33.3333,
+    "drop_tx3_action_accuracy": 33.1512,
+    "drop_tx3_danger_recall": 39.5238
+  },
+  "deployment_bundle": {
+    "version": "cal20_cal17_cal23_v4",
+    "sha256": "51752ee6111e78cf3acbdf6b13a5f485506d1bec39528963655770be8dbe63b7",
+    "size_megabytes": 58.3,
+    "model_parameters": 337043,
+    "model_state_megabytes": 1.3482,
+    "pose_library_tensor_megabytes": 56.8225,
+    "source_prototype_sites": 7,
+    "source_pose_candidates": 1210,
+    "query_labels_or_pose_gt_used": false,
+    "sealed_yja_used": false,
+    "source_only_geometry_threshold": 0.1290095,
+    "absence_trials": 12
+  },
+  "uniform_30hz_deployment_grid_percent": {
+    "action_accuracy": 36.5209,
+    "action_macro_f1": 27.4288,
+    "risk_accuracy": 41.7122,
+    "risk_macro_f1": 32.1558,
+    "danger_recall": 40.9524,
+    "non_danger_specificity": 77.7778,
+    "grid_aware_action_and_risk_retune_promoted": false,
+    "grid_aware_risk_only_retune_promoted": true,
+    "reported_with_fixed_bundle_risk_config": true
+  },
+  "calibration_geometry_diagnostic": {
+    "nested_outer_sites_within_source_only_threshold": 3,
+    "nested_outer_sites_total": 7,
+    "hard_gate_promoted": false,
+    "deployment_behavior": "warning_only"
+  },
+  "limitations": [
+    "The result does not establish seen-level performance on arbitrary unseen users.",
+    "Danger subtype accuracy and distal pose reconstruction remain poor.",
+    "The sealed yja_E02 result was not rerun or used during model selection."
+  ]
+}
