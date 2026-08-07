@@ -264,12 +264,13 @@ def main() -> None:
     )
     result = {
         "run": "CAL44-DYNAMIC-ACTION-CAL-KP10",
-        "status": "EXPERIMENTAL_AUDIT_ONLY",
+        "status": "POST_HOC_EXPLORATORY_ACTION_ONLY",
         "contract": {
             "target_site": target_site,
             "safe_warning_support_per_action": args.support_per_class,
             "danger_support_trials": 0,
-            "target_query_used_for_calibration_or_selection": False,
+            "target_query_used_for_per_site_calibration_or_selection": False,
+            "candidate_structure_requires_new_sealed_subject": True,
             "phase_weight_fixed_before_target_audit": args.phase_weight,
             "risk_branch": "CAL42_ENERGY_UNCHANGED",
             "hierarchical_risk_candidate_accepted": False,

@@ -1,7 +1,7 @@
 {
   "generated_kst": "2026-08-07T07:18:00+09:00",
   "run": "CAL44-DYNAMIC-ACTION-CAL-KP10",
-  "status": "EXPERIMENTAL_ACTION_ONLY",
+  "status": "POST_HOC_EXPLORATORY_ACTION_ONLY",
   "protocol": {
     "sites": 8,
     "support_draws_per_site": 16,
@@ -10,7 +10,9 @@
     "support_per_warning_action": 2,
     "support_trials_total": 22,
     "danger_support_trials": 0,
-    "target_query_used_for_calibration_or_selection": false,
+    "target_query_used_for_per_site_calibration_or_hyperparameter_selection": false,
+    "target_audits_informed_candidate_architecture": true,
+    "requires_new_sealed_subject": true,
     "phase_weight": 0.15,
     "risk_branch": "CAL42_ENERGY_UNCHANGED",
     "danger_guard": "CAL42 danger action predictions are immutable"
@@ -44,6 +46,6 @@
   "interpretation": {
     "accepted": "dynamic safe+warning local action prototypes with CAL42 danger guard",
     "rejected": "support-selected hierarchical risk fusion",
-    "reason_not_promoted": "risk and pose did not improve; control uses the same two-repeat safe support rather than the official eight-repeat CAL42 protocol"
+    "reason_not_promoted": "the danger guard was added after target audit results were observed; risk and pose did not improve; control uses the same two-repeat safe support rather than the official eight-repeat CAL42 protocol"
   }
 }

@@ -161,7 +161,9 @@ query 라벨·pose·영상과 danger support는 사용하지 않는다. CAL42가
 danger 세부행동은 guard 적용 후 `10.94 -> 14.39%`로 비퇴행했지만 절대 성능은 여전히
 낮다. support-selected 계층 risk 결합은 공통 query에서 이득이 없어 기각했고 3위험 출력은
 CAL42 energy head를 그대로 쓴다. 또한 control이 공식 CAL42의 safe 8회가 아닌 2회 조건이며
-pose retrieval 결과도 아직 없으므로 **CAL44는 action-only 실험 후보이고 현재 모델은
+pose retrieval 결과도 아직 없다. 각 run의 calibration 설정에는 query 라벨을 쓰지 않았지만,
+danger guard는 초기 target 감사 결과를 본 뒤 추가했으므로 전체 구조 선택은 post-hoc이다.
+따라서 새 sealed subject 재검증 전까지 **CAL44는 탐색적 action-only 후보이고 현재 모델은
 CAL42**다. 원본 요약은
 [`CAL44 dynamic action audit`](docs/results/cal44_dynamic_action_audit.json)에 있다.
 
@@ -169,7 +171,7 @@ CAL42**다. 원본 요약은
 
 | 번호 | 날짜/시간대 (KST) | 실험 | 목적 | 결과 |
 |---:|---|---|---|---|
-| 44 | 2026-08-07 07:05-07:18 | dynamic safe+warning prototype + danger guard | 약 5분 calibration으로 unseen 행동 정렬 | **action-only 후보**: 8-site 공통-query +4.65%p, macro-F1 +4.10%p; risk 결합은 기각 |
+| 44 | 2026-08-07 07:05-07:18 | dynamic safe+warning prototype + danger guard | 약 5분 calibration으로 unseen 행동 정렬 | **post-hoc action 후보**: 8-site 공통-query +4.65%p, macro-F1 +4.10%p; 새 sealed 검증 필요 |
 | 43 | 2026-08-07 05:55-06:05 | fixed 25% guarded phase | 위상 기여 확대 탐색 | **승격 보류**: target audit 후 선택된 post-hoc 후보; 새 sealed 검증 필요 |
 | 42 | 2026-08-07 04:45-05:45 | guarded energy + physical-phase ensemble | 위상 방향 정보 추가, danger 정답 보존 | CAL43 이전 최선: yja pose 29.093 cm; 512 paired draw 평균 +4.69%p |
 | 41 | 2026-08-07 04:40-04:50 | physical-phase encoder | 정적 위상 상쇄 후 signed 동작 보존 | 단독 danger는 악화, 15% 보조 branch로 제한 |
