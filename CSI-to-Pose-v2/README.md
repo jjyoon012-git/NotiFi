@@ -212,6 +212,7 @@ pip install -r requirements.txt
 검증 환경은 Python `3.10.8`, PyTorch `2.10.0+cu128`, NumPy `2.2.6`, pandas `2.2.2`, SciPy `1.15.3`, scikit-learn `1.5.2`입니다. GPU가 다르면 PyTorch만 해당 CUDA 환경에 맞는 공식 wheel로 설치합니다.
 
 배포 bundle 하나만 있으면 KP3~KP9 또는 CAL32를 순서대로 다시 학습할 필요가 없습니다.
+로더는 tensor와 기본 자료형만 허용하는 PyTorch `weights_only=True` 모드로 `.pt`를 읽습니다.
 
 ```python
 import torch

@@ -139,7 +139,7 @@ class CAL20Deployment:
         cls, path: str, device: str | None = None,
     ) -> "CAL20Deployment":
         """torch bundle을 CPU에서 안전하게 읽은 뒤 지정 device에 모델만 올린다."""
-        bundle = torch.load(path, map_location="cpu", weights_only=False)
+        bundle = torch.load(path, map_location="cpu", weights_only=True)
         return cls(bundle, device=device)
 
     def _validate_support(
