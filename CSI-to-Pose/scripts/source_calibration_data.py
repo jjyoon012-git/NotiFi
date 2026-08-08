@@ -188,6 +188,56 @@ def augment_site(
     return augmented
 
 
+def _static_reference(
+    csi: torch.Tensor, mask: torch.Tensor,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """absence CSI에서 link/subcarrier별 진폭과 원형 위상 기준선을 계산한다."""
+    weight = mask.to(csi.dtype)[..., None]
+    denominator = weight.sum((0, 1)).clamp_min(1.0)
+    amplitude = (csi[..., 0] * weight).sum((0, 1)) / denominator
+    sine = (torch.sin(csi[..., 1]) * weight).sum((0, 1)) / denominator
+    cosine = (torch.cos(csi[..., 1]) * weight).sum((0, 1)) / denominator
+    phase = torch.atan2(sine, cosine)
+    available = mask.any((0, 1))
+    return amplitude.clamp_min(1e-4), phase, available
+
+
+def transfer_site_style(
+    tensors: list[tuple[torch.Tensor, torch.Tensor]],
+    donor_absence: tuple[torch.Tensor, torch.Tensor],
+    strength: float,
+) -> list[tuple[torch.Tensor, torch.Tensor]]:
+    """동작 잔차는 보존하고 한 episode의 정적 반사 기준선만 donor site로 옮긴다."""
+    if not tensors:
+        raise ValueError("site style transfer requires at least one tensor")
+    source_amplitude, source_phase, source_available = _static_reference(
+        tensors[0][0], tensors[0][1]
+    )
+    donor_amplitude, donor_phase, donor_available = _static_reference(
+        donor_absence[0], donor_absence[1]
+    )
+    usable = source_available & donor_available
+    amplitude_ratio = (donor_amplitude / source_amplitude).clamp(0.5, 2.0)
+    amplitude_ratio = torch.where(
+        usable[:, None], amplitude_ratio, torch.ones_like(amplitude_ratio)
+    ).pow(float(strength))
+    phase_delta = torch.atan2(
+        torch.sin(donor_phase - source_phase),
+        torch.cos(donor_phase - source_phase),
+    )
+    phase_delta = torch.where(
+        usable[:, None], phase_delta, torch.zeros_like(phase_delta)
+    ) * float(strength)
+    transferred = []
+    for csi, mask in tensors:
+        values = csi.clone()
+        values[..., 0] *= amplitude_ratio[None, None]
+        values[..., 1] += phase_delta[None, None]
+        values *= mask[..., None, None].to(values.dtype)
+        transferred.append((values, mask.clone()))
+    return transferred
+
+
 def site_rows(
     selected_rows: np.ndarray,
     sites: np.ndarray,

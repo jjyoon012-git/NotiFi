@@ -33,7 +33,11 @@ from scripts.train_cal20_source_folds import (
 )
 from scripts.evaluate_cal20_rf_stress import TargetShiftStore
 from scripts.export_cal20_deployment import require_source_clean
-from scripts.source_calibration_data import select_absence, select_source_rows
+from scripts.source_calibration_data import (
+    select_absence,
+    select_source_rows,
+    transfer_site_style,
+)
 
 
 class CalibrationModelTests(unittest.TestCase):
@@ -127,6 +131,33 @@ class CalibrationModelTests(unittest.TestCase):
             select_absence("ajh_E01", index, seed=17, trials=13)
         with self.assertRaisesRegex(ValueError, "must be positive"):
             select_absence("ajh_E01", index, seed=17, trials=0)
+
+    def test_site_style_transfer_preserves_motion_residual(self) -> None:
+        source = torch.zeros(1, 2, C.N_LINKS, 3, 2)
+        source[..., 0] = 2.0
+        source[:, 1:, ..., 0] = 4.0
+        source[..., 1] = 0.2
+        absence = torch.zeros_like(source)
+        absence[..., 0] = 2.0
+        absence[..., 1] = 0.2
+        donor = torch.zeros_like(source)
+        donor[..., 0] = 4.0
+        donor[..., 1] = 1.0
+        mask = torch.ones(1, 2, C.N_LINKS, dtype=torch.bool)
+        (_, _), (transferred, transferred_mask) = transfer_site_style(
+            [(absence, mask), (source, mask)], (donor, mask), strength=1.0
+        )
+        torch.testing.assert_close(
+            transferred[:, 1, ..., 0] / transferred[:, 0, ..., 0],
+            source[:, 1, ..., 0] / source[:, 0, ..., 0],
+        )
+        torch.testing.assert_close(
+            transferred[:, 0, ..., 0], torch.full_like(source[:, 0, ..., 0], 4.0)
+        )
+        torch.testing.assert_close(
+            transferred[..., 1], torch.full_like(source[..., 1], 1.0)
+        )
+        self.assertTrue(torch.equal(transferred_mask, mask))
 
     def test_source_rows_are_derived_without_legacy_checkpoint(self) -> None:
         index = pd.DataFrame({

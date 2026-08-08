@@ -12,6 +12,8 @@
 
 CAL20은 337,043개 학습 파라미터이며 model state는 약 1.35 MB입니다. 58.3 MB 배포 bundle 중 약 56.82 MB는 신경망이 아니라 1,210개 source pose 후보 라이브러리입니다.
 
+**CAL33-CROSS-SITE-STYLE**은 현재 균형 모델을 대체하지 않은 행동·낙상 재현 우선 후보입니다. 다른 source 사람끼리 episode를 묶고, absence CSI에서 얻은 정적 진폭·위상 배경을 서로 교환해 사람·환경 지문을 외우기 어렵게 만듭니다. 동작의 시간 변화량은 그대로 보존합니다. 5-seed 검증에서 행동과 Danger recall은 개선됐지만 safe 오경보가 늘어 운영 기본값은 아직 CAL20 + CAL17 + CAL23 v4입니다.
+
 ```mermaid
 flowchart LR
     A["3-link CSI"] --> B["empty-room 12-window baseline 제거"]
@@ -36,6 +38,7 @@ flowchart LR
 - **환경 기준 제거**: 빈 공간 CSI 12개 window를 평균해 정적 multipath 기준을 빼고, 링크별 움직임 감도는 안전한 전환 동작으로 정규화합니다.
 - **동작 우선 표현**: trial별 feature 평균과 분산을 제거하고, TX1/TX2/TX3의 고정 방향과 링크 간 차이만 보존합니다.
 - **source-only domain generalization**: 다른 site의 같은 행동만 positive로 묶는 supervised contrastive loss와 site adversarial head를 사용합니다.
+- **CAL33 행동 우선 학습**: 서로 다른 사람의 episode를 짝지으며 정적 site style만 무작위 교환해, 동작에 공통적인 시간 잔차를 우선 학습합니다.
 - **시간 오차 허용**: source GT motion descriptor 학습은 ±6프레임 shift 중 최소 손실을 사용합니다.
 - **좌표보다 자세 우선**: 복원은 pelvis-relative SMPL-22를 사용하며 정확한 방 안 절대 위치는 목표에서 분리합니다.
 - **누수 방지**: outer subject, yja label/GT, query pose는 모델·threshold·calibration 선택에 사용하지 않습니다.
@@ -53,6 +56,18 @@ flowchart LR
 | **CAL20 + CAL17 v4** | **35.52%** | **27.60%** | 43.44% | 31.74% | **40.48%** | 5.71% | 76.84% |
 
 CAL17은 action과 danger recall을 크게 높이지만 danger 세부유형은 아직 구분하지 못합니다. 임의 unseen에서 seen 수준이라고 주장할 수 있는 상태가 아닙니다.
+
+### CAL33 12-window·5-seed 검증
+
+고정된 source nested LOSO checkpoint에 absence 12개를 사용하고, support seed `17017/17027/17037/17047/17057`만 바꿨습니다. 각 outer subject의 label/GT는 설정 선택에 사용하지 않았고 `yja/E02`도 계속 봉인했습니다. Macro-F1은 site별 값을 trial 수로 가중한 평균입니다.
+
+| 모델 | Action Acc | Action F1 | Risk Acc | Risk F1 | Danger Recall | Danger 5종 Acc | Safe→Danger | 최악 site Action |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| CAL20 + CAL17 | 34.06±0.99% | 27.78±1.15% | 44.88±1.24% | 31.72±0.69% | 33.62±4.02% | 7.05±1.33% | **16.46±3.68%** | 24.97±1.30% |
+| **CAL33 + CAL17** | **36.43±1.16%** | **29.09±1.17%** | **45.68±0.82%** | **35.16±0.53%** | **44.57±1.07%** | **7.90±1.37%** | 20.94±1.07% | **28.15±1.47%** |
+| 변화 | **+2.37%p** | **+1.31%p** | **+0.80%p** | **+3.44%p** | **+10.95%p** | **+0.85%p** | +4.48%p | **+3.18%p** |
+
+CAL33은 단일 lucky seed가 아니라 다섯 seed에서 Action 최저 35.34%, Danger recall 최저 43.33%를 유지했습니다. 반면 safe 오경보 비용이 명확하므로 현재는 고재현 profile 후보이며, Danger 5종 구분은 여전히 해결되지 않았습니다.
 
 site별 최악값은 Action 27.39%, Danger recall 10.00%, Non-danger specificity 55.26%입니다. 7개 site 간 표준편차도 각각 5.60%p, 22.89%p, 14.88%p로 특히 위험 탐지가 불안정합니다. pooled 평균보다 worst-site가 훨씬 낮으므로 현재 모델은 임의 환경 보장 모델이 아니라 source-LOSO 기준선입니다.
 
@@ -189,6 +204,17 @@ python scripts/train_cal20_source_folds.py `
   --fixed-swa --swa-start 8
 ```
 
+CAL33 후보는 같은 학습기에 사람 교차 pairing과 정적 site-style 교환만 추가합니다.
+
+```powershell
+python scripts/train_cal20_source_folds.py `
+  --run-dir work_v2/runs/cal33_cross_site_style_v1_swa `
+  --epochs 24 --batch-size 8 --use-doppler --phase-strength 1.0 `
+  --motion-grounding --lambda-motion-grounding 0.30 `
+  --fixed-swa --swa-start 8 `
+  --cross-subject-pairing --cross-site-style-probability 0.75
+```
+
 ### 2. CAL17 basic-action calibration
 
 ```powershell
@@ -249,6 +275,9 @@ python scripts/evaluate_calibration_geometry_gate.py `
 
 | 번호 | 날짜/시간 KST | 목적 | 결과 | 판정 |
 |---|---|---|---|---|
+| 57 | 2026-08-08 14시 | CAL33 12-window·5-seed 안정성 | Action 34.06→36.43%, Risk F1 31.72→35.16%, Danger 33.62→44.57%; safe 오경보 +4.48%p | **고재현 후보 채택** |
+| 56 | 2026-08-08 14시 | 사람·환경 지문을 직접 교란하는 source 학습 | 다른 사람 episode pairing + absence 정적 style 교환으로 CAL20-only Action +1.28%p, Danger +3.81%p | **채택** |
+| 55 | 2026-08-08 13시 | temporal residual·hierarchy·KP action head 재설계 | CAL21/31/32는 F1·Danger 동시 개선 실패, KP hierarchy+soft는 기존 seed223보다 낮음 | 폐기 |
 | 54 | 2026-08-08 07시 | legacy KP5 row-cache 의존성 제거 | cache index 조건이 기존 1,210개 row와 순서까지 완전 일치 | **채택** |
 | 53 | 2026-08-08 07시 | subject별 motion energy와 위험 탐지 진단 | amplitude velocity와 평균 danger recall 상관 0.995, 단 n=3 | 후속 가설만 채택 |
 | 52 | 2026-08-08 07시 | deployment target 누수 fail-closed | yja·target subject·query label/GT 표식 하나라도 오염 시 runtime 로드 거부 | **채택** |
@@ -318,4 +347,4 @@ python -m compileall -q notifi_pose scripts tests
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
-최종 승격 시 전체 225개 테스트를 통과했습니다. 새 테스트 21개는 source protocol 자체 복원, calibration window 수, exporter·runtime target 누수 차단, 불완전 support 거부, CSI-only 분류·pose simulation, nested split, 시간 이동 허용 손실과 모델 복원을 검사합니다.
+최종 검증에서 전체 226개 테스트를 통과했습니다. 새 테스트 22개는 source protocol 자체 복원, calibration window 수, exporter·runtime target 누수 차단, 불완전 support 거부, CSI-only 분류·pose simulation, nested split, 시간 이동 허용 손실, 모델 복원과 정적 site-style 교환의 동작 잔차 보존을 검사합니다.

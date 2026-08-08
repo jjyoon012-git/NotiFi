@@ -1,0 +1,87 @@
+{
+  "run": "CAL33-CROSS-SITE-STYLE",
+  "date_kst": "2026-08-08 14:20",
+  "status": "high_recall_candidate",
+  "protocol": {
+    "source_subjects": ["ajh", "mhw", "lmh"],
+    "source_sites": [
+      "ajh_E01",
+      "ajh_E02",
+      "ajh_E03",
+      "mhw_E01",
+      "mhw_E02",
+      "mhw_E03",
+      "lmh_E01"
+    ],
+    "outer_split": "subject-level nested source LOSO",
+    "absence_trials": 12,
+    "support_seeds": [17017, 17027, 17037, 17047, 17057],
+    "shots_per_prompt": 2,
+    "query_exclusion_shots": 2,
+    "outer_used_for_selection": false,
+    "sealed_yja_used": false,
+    "query_labels_or_pose_gt_at_inference": false,
+    "mean_definition": "five-seed mean; site macro-F1 values are trial-count weighted"
+  },
+  "training_change": {
+    "cross_subject_pairing": true,
+    "cross_site_style_probability": 0.75,
+    "style_strength_range": [0.5, 1.0],
+    "description": "Replace each episode's static amplitude and circular-phase reference with another source subject/site absence reference while preserving temporal motion residuals."
+  },
+  "cal20_only": {
+    "baseline_percent": {
+      "action_accuracy": 27.41,
+      "action_macro_f1": 20.90,
+      "risk_accuracy": 47.09,
+      "risk_macro_f1": 34.60,
+      "danger_recall": 29.52,
+      "danger_subtype_accuracy": 8.57,
+      "safe_to_danger_rate": 10.92,
+      "worst_site_action_accuracy": 14.65
+    },
+    "cal33_percent": {
+      "action_accuracy": 28.69,
+      "action_macro_f1": 22.02,
+      "risk_accuracy": 48.91,
+      "risk_macro_f1": 38.27,
+      "danger_recall": 33.33,
+      "danger_subtype_accuracy": 10.48,
+      "safe_to_danger_rate": 12.62,
+      "worst_site_action_accuracy": 9.55
+    }
+  },
+  "cal17_five_seed": {
+    "baseline_percent": {
+      "action_accuracy": {"mean": 34.06, "std": 0.99, "min": 32.88},
+      "action_macro_f1": {"mean": 27.78, "std": 1.15, "min": 26.23},
+      "risk_accuracy": {"mean": 44.88, "std": 1.24, "min": 43.44},
+      "risk_macro_f1": {"mean": 31.72, "std": 0.69, "min": 31.01},
+      "danger_recall": {"mean": 33.62, "std": 4.02, "min": 28.57},
+      "danger_subtype_accuracy": {"mean": 7.05, "std": 1.33, "min": 5.71},
+      "safe_to_danger_rate": {"mean": 16.46, "std": 3.68, "min": 12.62},
+      "worst_site_action_accuracy": {"mean": 24.97, "std": 1.30, "min": 23.57}
+    },
+    "cal33_percent": {
+      "action_accuracy": {"mean": 36.43, "std": 1.16, "min": 35.34},
+      "action_macro_f1": {"mean": 29.09, "std": 1.17, "min": 27.87},
+      "risk_accuracy": {"mean": 45.68, "std": 0.82, "min": 44.63},
+      "risk_macro_f1": {"mean": 35.16, "std": 0.53, "min": 34.28},
+      "danger_recall": {"mean": 44.57, "std": 1.07, "min": 43.33},
+      "danger_subtype_accuracy": {"mean": 7.90, "std": 1.37, "min": 6.19},
+      "safe_to_danger_rate": {"mean": 20.94, "std": 1.07, "min": 19.21},
+      "worst_site_action_accuracy": {"mean": 28.15, "std": 1.47, "min": 25.48}
+    },
+    "delta_percentage_points": {
+      "action_accuracy": 2.37,
+      "action_macro_f1": 1.31,
+      "risk_accuracy": 0.80,
+      "risk_macro_f1": 3.44,
+      "danger_recall": 10.95,
+      "danger_subtype_accuracy": 0.85,
+      "safe_to_danger_rate": 4.48,
+      "worst_site_action_accuracy": 3.18
+    }
+  },
+  "decision": "Keep CAL20+CAL17+CAL23 v4 as the balanced deployment default. Retain CAL33 as an action/high-danger-recall candidate because its safe-to-danger false-alarm rate is higher."
+}

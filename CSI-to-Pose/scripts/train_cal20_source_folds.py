@@ -215,6 +215,8 @@ def train_model(
     lambda_motion_grounding: float = 0.0,
     fixed_swa: bool = False,
     swa_start: int = 8,
+    cross_site_style_probability: float = 0.0,
+    cross_subject_pairing: bool = False,
 ) -> tuple[CAL12PhysicsDG, list[dict], dict | None]:
     """두 site씩 묶은 episode로 행동 불변성과 calibration을 동시에 학습한다."""
     model_kwargs = {
@@ -255,9 +257,27 @@ def train_model(
         diagnostics = []
         for step in range(0, len(schedule), 2):
             chosen = schedule[step:step + 2]
-            if len(chosen) == 1 or chosen[0][0] == chosen[1][0]:
-                # 매 step에 서로 다른 site를 넣어 cross-site positive를 만들 수 있게 한다.
-                alternatives = [site for site in train_sites if site != chosen[0][0]]
+            same_pair_group = len(chosen) == 2 and (
+                chosen[0][0].split("_")[0] == chosen[1][0].split("_")[0]
+                if cross_subject_pairing
+                else chosen[0][0] == chosen[1][0]
+            )
+            if len(chosen) == 1 or same_pair_group:
+                if cross_subject_pairing:
+                    # 다른 사람끼리 묶어 사람 지문 대신 공통 행동을 대조한다.
+                    subject = chosen[0][0].split("_")[0]
+                    alternatives = [
+                        site for site in train_sites
+                        if site.split("_")[0] != subject
+                    ]
+                    if not alternatives:
+                        alternatives = [
+                            site for site in train_sites if site != chosen[0][0]
+                        ]
+                else:
+                    alternatives = [
+                        site for site in train_sites if site != chosen[0][0]
+                    ]
                 other = str(rng.choice(alternatives))
                 replacement = (
                     other, int(rng.integers(len(episodes[other]["batches"])))
@@ -271,20 +291,28 @@ def train_model(
             all_risks = []
             all_domains = []
             all_rows = []
-            for site, batch_number in chosen:
+            for chosen_index, (site, batch_number) in enumerate(chosen):
                 episode = episodes[site]
                 batch = episode["batches"][batch_number]
                 query_csi, query_mask = store.get(batch, device)
-                if rng.random() < 0.75:
-                    (absence_csi, absence_mask), (support_csi, support_mask), (
-                        query_csi, query_mask
-                    ) = base.augment_site(
+                if (
+                    len(chosen) == 2
+                    and cross_site_style_probability > 0.0
+                    and rng.random() < cross_site_style_probability
+                ):
+                    donor_site = chosen[1 - chosen_index][0]
+                    donor = episodes[donor_site]
+                    style_strength = float(rng.uniform(0.50, 1.0))
+                    (absence_csi, absence_mask), (
+                        support_csi, support_mask
+                    ), (query_csi, query_mask) = base.transfer_site_style(
                         [
                             (episode["absence_csi"], episode["absence_mask"]),
                             (episode["support_csi"], episode["support_mask"]),
                             (query_csi, query_mask),
                         ],
-                        seed=seed * 1_000_000 + epoch * 10_000 + step,
+                        (donor["absence_csi"], donor["absence_mask"]),
+                        style_strength,
                     )
                 else:
                     absence_csi, absence_mask = (
@@ -292,6 +320,17 @@ def train_model(
                     )
                     support_csi, support_mask = (
                         episode["support_csi"], episode["support_mask"]
+                    )
+                if rng.random() < 0.75:
+                    (absence_csi, absence_mask), (support_csi, support_mask), (
+                        query_csi, query_mask
+                    ) = base.augment_site(
+                        [
+                            (absence_csi, absence_mask),
+                            (support_csi, support_mask),
+                            (query_csi, query_mask),
+                        ],
+                        seed=seed * 1_000_000 + epoch * 10_000 + step,
                     )
                 output = model(
                     query_csi, query_mask,
@@ -574,6 +613,14 @@ def main() -> None:
     parser.add_argument("--lambda-motion-grounding", type=float, default=0.30)
     parser.add_argument("--fixed-swa", action="store_true")
     parser.add_argument("--swa-start", type=int, default=8)
+    parser.add_argument(
+        "--cross-site-style-probability", type=float, default=0.0,
+        help="다른 source absence의 정적 반사 기준선으로 episode를 옮길 확률",
+    )
+    parser.add_argument(
+        "--cross-subject-pairing", action="store_true",
+        help="paired episode를 서로 다른 source 사람으로 강제한다",
+    )
     options = parser.parse_args()
     run = options.run_dir
     run.mkdir(parents=True, exist_ok=True)
@@ -646,6 +693,8 @@ def main() -> None:
             options.lambda_motion_grounding,
             options.fixed_swa,
             options.swa_start,
+            options.cross_site_style_probability,
+            options.cross_subject_pairing,
         )
         if best is None:
             raise RuntimeError(f"{held_out} fold did not produce a checkpoint")
@@ -689,6 +738,8 @@ def main() -> None:
         options.lambda_motion_grounding,
         options.fixed_swa,
         options.swa_start,
+        options.cross_site_style_probability,
+        options.cross_subject_pairing,
     )
     source_metrics = {
         site: evaluate_site(
@@ -719,7 +770,13 @@ def main() -> None:
         "sealed_yja_used": False,
     }, run / "deployment_model.pt")
     result = {
-        "run": "CAL20-RELATIVE-MOTION-DG",
+        "run": (
+            "CAL33-CROSS-SITE-STYLE"
+            if options.cross_site_style_probability > 0.0
+            else "CAL20-RELATIVE-MOTION-DG"
+        ),
+        "cross_site_style_probability": options.cross_site_style_probability,
+        "cross_subject_pairing": options.cross_subject_pairing,
         "device": device,
         "fold_results": fold_results,
         "fold_best_epochs": best_epochs,

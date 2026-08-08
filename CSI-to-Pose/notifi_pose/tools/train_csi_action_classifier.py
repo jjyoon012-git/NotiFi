@@ -39,15 +39,50 @@ def evaluate(model, cache, action, risk, device):
     risk_logits = torch.cat(risk_logits)
     action_accuracy = float((action_logits.argmax(-1) == action).float().mean())
     risk_accuracy = float((risk_logits.argmax(-1) == risk).float().mean())
+    action_prediction = action_logits.argmax(-1)
+    risk_prediction = risk_logits.argmax(-1)
+
+    def macro_f1(prediction, target, classes):
+        values = []
+        for class_id in range(classes):
+            true_positive = ((prediction == class_id) & (target == class_id)).sum()
+            false_positive = ((prediction == class_id) & (target != class_id)).sum()
+            false_negative = ((prediction != class_id) & (target == class_id)).sum()
+            values.append(
+                2.0 * true_positive.float()
+                / (2.0 * true_positive + false_positive + false_negative).clamp_min(1)
+            )
+        return float(torch.stack(values).mean())
+
+    action_macro_f1 = macro_f1(action_prediction, action, C.N_CLASSES)
+    risk_macro_f1 = macro_f1(risk_prediction, risk, C.N_RISK)
+    danger = risk == 2
+    safe = risk == 0
+    danger_recall = float((risk_prediction[danger] == 2).float().mean())
+    danger_action_accuracy = float(
+        (action_prediction[danger] == action[danger]).float().mean()
+    )
+    safe_to_danger_rate = float(
+        (risk_prediction[safe] == 2).float().mean()
+    )
     action_nll = float(F.cross_entropy(action_logits, action))
     risk_nll = float(F.cross_entropy(risk_logits, risk))
     return {
         "action_accuracy": action_accuracy,
+        "action_macro_f1": action_macro_f1,
         "risk_accuracy": risk_accuracy,
+        "risk_macro_f1": risk_macro_f1,
+        "danger_recall": danger_recall,
+        "danger_action_accuracy": danger_action_accuracy,
+        "safe_to_danger_rate": safe_to_danger_rate,
         "action_nll": action_nll,
         "risk_nll": risk_nll,
         "selection_score": (
-            (1.0 - action_accuracy) + 0.20 * (1.0 - risk_accuracy)
+            (1.0 - action_accuracy)
+            + 0.25 * (1.0 - action_macro_f1)
+            + 0.10 * (1.0 - risk_macro_f1)
+            + 0.10 * (1.0 - danger_recall)
+            + 0.05 * safe_to_danger_rate
             + 0.03 * action_nll + 0.01 * risk_nll
         ),
     }
