@@ -83,7 +83,7 @@ CAL65의 2개 학습 seed × 5개 support seed를 site별로 다시 집계하면
 | mhw/E02 | **30.32%** | 25.01% | 50.32% | 48.67% | 66.00% | 9.00% | **38.42%** |
 | mhw/E03 | 43.38% | 36.93% | 46.31% | 40.15% | 63.33% | 10.67% | 31.97% |
 
-따라서 46.81% Danger 평균만으로 배포 가능하다고 판단하면 안 됩니다. cache의 all-link coverage는 `ajh/E03 83.97%`, `mhw/E02 99.56%`입니다. 전자의 낙상 누락은 packet/link 단절을 견디는 시간 encoder가 우선이고, 후자의 오경보는 정상 품질의 큰 motion·환경 반사를 danger로 과해석하는 경계를 줄여야 합니다. 두 문제를 같은 calibration scale 하나로 풀 수 없습니다.
+따라서 46.81% Danger 평균만으로 배포 가능하다고 판단하면 안 됩니다. cache의 all-link coverage는 `ajh/E03 83.97%`, `mhw/E02 99.56%`입니다. CAL71의 단순 link-burst dropout은 전자를 고치지 못했으므로 packet 누락만 원인이라고 단정할 수 없습니다. 다음 진단은 링크별 신호 분포와 mask 위치를 분리하고, 단순 가림 대신 gap-aware imputation·quality-conditioned temporal encoder를 검증해야 합니다. 후자의 오경보는 정상 품질의 큰 motion·환경 반사를 danger로 과해석하는 경계를 줄여야 합니다. 두 문제를 같은 calibration scale 하나로 풀 수 없습니다.
 
 두 학습 seed를 따로 봐도 support-seed 표준편차는 `ajh/E03` Danger가 `0.00/1.33%p`, `mhw/E02` Safe→Danger가 `2.71/1.53%p`라 support 재선택으로 해결되지 않는 구조적 실패입니다. 반면 `ajh/E02` Danger는 `10.33/9.52%p`, `mhw/E03`은 `8.94/11.93%p`여서 기본동작 support의 대표성 문제도 큽니다.
 
@@ -364,7 +364,7 @@ python scripts/evaluate_calibration_geometry_gate.py `
 3. **Danger recall-오경보 Pareto**: CAL65의 두 학습 seed 평균은 Danger 46.81%에서 Safe→Danger 18.42%, CAL46은 오경보 10.77%에서 Danger 28.57%입니다. 현장 비용에 따라 CAL65/CAL64 profile을 명시적으로 고르고, 이후 독립 calibration set에서 conformal threshold를 정해야 합니다.
 4. **개발 benchmark 재사용**: 각 run은 nested split을 지켰지만 구조 비교에는 source outer를 반복 관찰했습니다. 더 이상의 구조 선택 전에 봉인 `yja/E02`를 한 번만 평가하거나 새로운 사람을 완전 holdout으로 추가해야 합니다.
 5. **사람 일반화 표본 부족**: source는 3명이며 `lmh`는 E01만 있습니다. 어떤 unseen에서도 seen 성능을 보장한다는 주장은 데이터 지지가 없습니다. 다양한 체형·속도·설치 높이의 source domain이 가장 큰 다음 개선 수단입니다.
-6. **링크 고장과 calibration drift**: TX2 손실 시 specificity가 61.58%까지 낮아집니다. 현재 좌우 반사는 정상 설치의 방위 불변성이지 보드 고장 복구가 아닙니다. link-dropout 전용 학습, 빈방 baseline의 age·maturity 감시, 입력 품질 abstention을 별도 제품 요구사항으로 다뤄야 합니다.
+6. **링크 고장과 calibration drift**: TX2 손실 시 specificity가 61.58%까지 낮아집니다. query link-burst dropout은 Danger만 과민하게 만들고 저-coverage site를 고치지 못했습니다. masked reconstruction 기반 gap imputation, 링크 품질에 따른 expert routing, 빈방 baseline의 age·maturity 감시와 abstention을 별도 제품 요구사항으로 다뤄야 합니다.
 7. **정확한 절대 위치**: 설치 거리·높이가 고정되지 않아 별도 geometry 입력 없이는 신뢰하기 어렵습니다. 현재 pose 평가는 pelvis-relative이며 절대 방 좌표를 주장하지 않습니다.
 
 현재 현실적인 목표는 CSI-only 행동·위험 탐지와 가능한 3D 낙상 시뮬레이션입니다. 부상 부위나 최초 접촉 부위를 임상 수준으로 확정하는 모델은 아닙니다.
