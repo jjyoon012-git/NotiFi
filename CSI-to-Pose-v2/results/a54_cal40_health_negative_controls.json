@@ -1,0 +1,1387 @@
+{
+  "run": "A54-CAL40-HEALTH-NEGATIVE-CONTROLS",
+  "support_seeds": [
+    17017,
+    17027,
+    17037,
+    17047,
+    17057
+  ],
+  "summary": {
+    "clean": {
+      "accepted": 30,
+      "episodes": 35,
+      "accept_rate": 0.8571428571428571
+    },
+    "tx12_swapped": {
+      "accepted": 6,
+      "episodes": 35,
+      "accept_rate": 0.17142857142857143
+    },
+    "time_reversed": {
+      "accepted": 28,
+      "episodes": 35,
+      "accept_rate": 0.8
+    },
+    "prompt_labels_rolled": {
+      "accepted": 0,
+      "episodes": 35,
+      "accept_rate": 0.0
+    },
+    "one_link_only": {
+      "accepted": 0,
+      "episodes": 35,
+      "accept_rate": 0.0
+    }
+  },
+  "episodes": [
+    {
+      "support_seed": 17017,
+      "site": "ajh_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 6.768420052942828e-16,
+      "secondary_error": 1.2562182586886182e-15
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E01",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.062268175184726715,
+      "secondary_error": 0.10278182476758957
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E01",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.012423153035342693,
+      "secondary_error": 0.009587293490767479
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.0714614987373352,
+      "secondary_error": 0.08001914620399475
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E02",
+      "condition": "clean",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E02",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E02",
+      "condition": "time_reversed",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E02",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E02",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E03",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 1.2558541404004172e-15,
+      "secondary_error": 8.51192408420911e-16
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E03",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.08373966068029404,
+      "secondary_error": 0.062393732368946075
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E03",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.034601952880620956,
+      "secondary_error": 0.03226834163069725
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E03",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.0935196802020073,
+      "secondary_error": 0.11839310824871063
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E03",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17017,
+      "site": "lmh_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 7.624216614827658e-16,
+      "secondary_error": 2.0937470727582516e-15
+    },
+    {
+      "support_seed": 17017,
+      "site": "lmh_E01",
+      "condition": "tx12_swapped",
+      "accepted": true,
+      "primary_error": 0.05059497803449631,
+      "secondary_error": 0.049136269837617874
+    },
+    {
+      "support_seed": 17017,
+      "site": "lmh_E01",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.02070438489317894,
+      "secondary_error": 0.013355422765016556
+    },
+    {
+      "support_seed": 17017,
+      "site": "lmh_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.06396124511957169,
+      "secondary_error": 0.05382590740919113
+    },
+    {
+      "support_seed": 17017,
+      "site": "lmh_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 1.2390637239243505e-15,
+      "secondary_error": 1.560908503551962e-15
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E01",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.09718343615531921,
+      "secondary_error": 0.06710351258516312
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E01",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.030109446495771408,
+      "secondary_error": 0.0254354365170002
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.09347793459892273,
+      "secondary_error": 0.08987262845039368
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E02",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 1.3206171148771786e-15,
+      "secondary_error": 1.0115365923690973e-15
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E02",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.07087007164955139,
+      "secondary_error": 0.06222638860344887
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E02",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.030118834227323532,
+      "secondary_error": 0.02475566603243351
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E02",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.10296419262886047,
+      "secondary_error": 0.0922822505235672
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E02",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E03",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 1.3425474331563029e-15,
+      "secondary_error": 4.819747171797017e-16
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E03",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.08866779506206512,
+      "secondary_error": 0.05882757157087326
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E03",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.026425696909427643,
+      "secondary_error": 0.02043835259974003
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E03",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.11709326505661011,
+      "secondary_error": 0.12800221145153046
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E03",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.007660172879695892,
+      "secondary_error": 0.009578565135598183
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E01",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.085576131939888,
+      "secondary_error": 0.10755487531423569
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E01",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.024342117831110954,
+      "secondary_error": 0.026423143222928047
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.08984445035457611,
+      "secondary_error": 0.09677395224571228
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E02",
+      "condition": "clean",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E02",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E02",
+      "condition": "time_reversed",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E02",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E02",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E03",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.01350386068224907,
+      "secondary_error": 0.01201204489916563
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E03",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.11662109196186066,
+      "secondary_error": 0.0757790058851242
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E03",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.03939312323927879,
+      "secondary_error": 0.034665342420339584
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E03",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.10056775063276291,
+      "secondary_error": 0.10333935171365738
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E03",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17027,
+      "site": "lmh_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.022973958402872086,
+      "secondary_error": 0.023632312193512917
+    },
+    {
+      "support_seed": 17027,
+      "site": "lmh_E01",
+      "condition": "tx12_swapped",
+      "accepted": true,
+      "primary_error": 0.05667770653963089,
+      "secondary_error": 0.04006242752075195
+    },
+    {
+      "support_seed": 17027,
+      "site": "lmh_E01",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.026546405628323555,
+      "secondary_error": 0.027999592944979668
+    },
+    {
+      "support_seed": 17027,
+      "site": "lmh_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.07958691567182541,
+      "secondary_error": 0.06193093955516815
+    },
+    {
+      "support_seed": 17027,
+      "site": "lmh_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.03344966098666191,
+      "secondary_error": 0.03930538147687912
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E01",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.09184034168720245,
+      "secondary_error": 0.09708675742149353
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E01",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.04103705286979675,
+      "secondary_error": 0.05514681711792946
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.08776296675205231,
+      "secondary_error": 0.08500399440526962
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E02",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.01917121745646,
+      "secondary_error": 0.012955937534570694
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E02",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.08736881613731384,
+      "secondary_error": 0.07251118868589401
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E02",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.045167144387960434,
+      "secondary_error": 0.03862116113305092
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E02",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.14625225961208344,
+      "secondary_error": 0.13058093190193176
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E02",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E03",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.02169734798371792,
+      "secondary_error": 0.029352664947509766
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E03",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.08212826400995255,
+      "secondary_error": 0.0857696682214737
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E03",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.04685249179601669,
+      "secondary_error": 0.0579780712723732
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E03",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.086775042116642,
+      "secondary_error": 0.09977211058139801
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E03",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.015094312839210033,
+      "secondary_error": 0.020401902496814728
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E01",
+      "condition": "tx12_swapped",
+      "accepted": true,
+      "primary_error": 0.056171853095293045,
+      "secondary_error": 0.07299485802650452
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E01",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.02286830171942711,
+      "secondary_error": 0.024709589779376984
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.06581635028123856,
+      "secondary_error": 0.06662094593048096
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E02",
+      "condition": "clean",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E02",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E02",
+      "condition": "time_reversed",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E02",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E02",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E03",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.0025162934325635433,
+      "secondary_error": 0.00237850658595562
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E03",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.08578420430421829,
+      "secondary_error": 0.06363210827112198
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E03",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.0355595238506794,
+      "secondary_error": 0.027444159612059593
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E03",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.08531185239553452,
+      "secondary_error": 0.10146033018827438
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E03",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17037,
+      "site": "lmh_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.03400469943881035,
+      "secondary_error": 0.031247401610016823
+    },
+    {
+      "support_seed": 17037,
+      "site": "lmh_E01",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.050829917192459106,
+      "secondary_error": 0.07483577728271484
+    },
+    {
+      "support_seed": 17037,
+      "site": "lmh_E01",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.0342424251139164,
+      "secondary_error": 0.03180687502026558
+    },
+    {
+      "support_seed": 17037,
+      "site": "lmh_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.07165595889091492,
+      "secondary_error": 0.07614731788635254
+    },
+    {
+      "support_seed": 17037,
+      "site": "lmh_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.04345298558473587,
+      "secondary_error": 0.04607326164841652
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E01",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.08316805213689804,
+      "secondary_error": 0.1048598363995552
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E01",
+      "condition": "time_reversed",
+      "accepted": false,
+      "primary_error": 0.07153380662202835,
+      "secondary_error": 0.07721846550703049
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.09182341396808624,
+      "secondary_error": 0.09375578910112381
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E02",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.013316674157977104,
+      "secondary_error": 0.009531078860163689
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E02",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.06468471884727478,
+      "secondary_error": 0.086537666618824
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E02",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.060424722731113434,
+      "secondary_error": 0.04705037176609039
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E02",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.10363185405731201,
+      "secondary_error": 0.0915176272392273
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E02",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E03",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.006377626210451126,
+      "secondary_error": 0.008665107190608978
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E03",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.07335393875837326,
+      "secondary_error": 0.05887925252318382
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E03",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.026231735944747925,
+      "secondary_error": 0.023449700325727463
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E03",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.11869879066944122,
+      "secondary_error": 0.13716551661491394
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E03",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.010375121608376503,
+      "secondary_error": 0.0162816122174263
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E01",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.07145737111568451,
+      "secondary_error": 0.0769420713186264
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E01",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.017655985429883003,
+      "secondary_error": 0.019996443763375282
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.0713760107755661,
+      "secondary_error": 0.06754455715417862
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E02",
+      "condition": "clean",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E02",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E02",
+      "condition": "time_reversed",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E02",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E02",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E03",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.0044525922276079655,
+      "secondary_error": 0.008224920369684696
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E03",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.10821541398763657,
+      "secondary_error": 0.09229941666126251
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E03",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.0381326749920845,
+      "secondary_error": 0.02767522819340229
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E03",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.0823272094130516,
+      "secondary_error": 0.10500745475292206
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E03",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17047,
+      "site": "lmh_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.018612856045365334,
+      "secondary_error": 0.01347521785646677
+    },
+    {
+      "support_seed": 17047,
+      "site": "lmh_E01",
+      "condition": "tx12_swapped",
+      "accepted": true,
+      "primary_error": 0.052489303052425385,
+      "secondary_error": 0.03880080208182335
+    },
+    {
+      "support_seed": 17047,
+      "site": "lmh_E01",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.01933608576655388,
+      "secondary_error": 0.020528143271803856
+    },
+    {
+      "support_seed": 17047,
+      "site": "lmh_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.06767114251852036,
+      "secondary_error": 0.06369603425264359
+    },
+    {
+      "support_seed": 17047,
+      "site": "lmh_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.03718153014779091,
+      "secondary_error": 0.034140054136514664
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E01",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.10033950209617615,
+      "secondary_error": 0.12474305182695389
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E01",
+      "condition": "time_reversed",
+      "accepted": false,
+      "primary_error": 0.09260852634906769,
+      "secondary_error": 0.08272649347782135
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.07938812673091888,
+      "secondary_error": 0.08123166114091873
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E02",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.011008237488567829,
+      "secondary_error": 0.009999408386647701
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E02",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.07656581699848175,
+      "secondary_error": 0.08030155301094055
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E02",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.0403360091149807,
+      "secondary_error": 0.03732728213071823
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E02",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.1090162917971611,
+      "secondary_error": 0.10395370423793793
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E02",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E03",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.00816917885094881,
+      "secondary_error": 0.007866493426263332
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E03",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.08064429461956024,
+      "secondary_error": 0.05229155346751213
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E03",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.03411780670285225,
+      "secondary_error": 0.020591318607330322
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E03",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.10828253626823425,
+      "secondary_error": 0.12662538886070251
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E03",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.009609191678464413,
+      "secondary_error": 0.011799460276961327
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E01",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.08905306458473206,
+      "secondary_error": 0.09674390405416489
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E01",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.02457590028643608,
+      "secondary_error": 0.023368045687675476
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.06842910498380661,
+      "secondary_error": 0.08093369752168655
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E02",
+      "condition": "clean",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E02",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E02",
+      "condition": "time_reversed",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E02",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E02",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E03",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.017467007040977478,
+      "secondary_error": 0.012502872385084629
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E03",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.0886654183268547,
+      "secondary_error": 0.07422701269388199
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E03",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.04281385615468025,
+      "secondary_error": 0.0467061921954155
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E03",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.08113450556993484,
+      "secondary_error": 0.09585223346948624
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E03",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17057,
+      "site": "lmh_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.019303036853671074,
+      "secondary_error": 0.019397811964154243
+    },
+    {
+      "support_seed": 17057,
+      "site": "lmh_E01",
+      "condition": "tx12_swapped",
+      "accepted": true,
+      "primary_error": 0.052195873111486435,
+      "secondary_error": 0.039154134690761566
+    },
+    {
+      "support_seed": 17057,
+      "site": "lmh_E01",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.018930399790406227,
+      "secondary_error": 0.024188583716750145
+    },
+    {
+      "support_seed": 17057,
+      "site": "lmh_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.06564625352621078,
+      "secondary_error": 0.06385678797960281
+    },
+    {
+      "support_seed": 17057,
+      "site": "lmh_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E01",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.03512129560112953,
+      "secondary_error": 0.026625076308846474
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E01",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.08029044419527054,
+      "secondary_error": 0.08103504031896591
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E01",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.03869300335645676,
+      "secondary_error": 0.037219274789094925
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E01",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.07616988569498062,
+      "secondary_error": 0.09910067915916443
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E01",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E02",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.004977092146873474,
+      "secondary_error": 0.010189353488385677
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E02",
+      "condition": "tx12_swapped",
+      "accepted": false,
+      "primary_error": 0.06594225764274597,
+      "secondary_error": 0.0720968022942543
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E02",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.03627431020140648,
+      "secondary_error": 0.036976926028728485
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E02",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.09575118869543076,
+      "secondary_error": 0.09612000733613968
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E02",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E03",
+      "condition": "clean",
+      "accepted": true,
+      "primary_error": 0.01129234116524458,
+      "secondary_error": 0.014728369191288948
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E03",
+      "condition": "tx12_swapped",
+      "accepted": true,
+      "primary_error": 0.06293419748544693,
+      "secondary_error": 0.0542304664850235
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E03",
+      "condition": "time_reversed",
+      "accepted": true,
+      "primary_error": 0.04018821194767952,
+      "secondary_error": 0.035281650722026825
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E03",
+      "condition": "prompt_labels_rolled",
+      "accepted": false,
+      "primary_error": 0.10017180442810059,
+      "secondary_error": 0.11059119552373886
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E03",
+      "condition": "one_link_only",
+      "accepted": false,
+      "input_rejection": "support trial requires at least 2 usable links"
+    }
+  ],
+  "target_subject_used": false,
+  "sealed_yja_used": false,
+  "query_labels_or_pose_gt_used": false
+}

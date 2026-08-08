@@ -1,0 +1,56 @@
+{
+  "experiment": "A35 temporal-order CSI transfer probe",
+  "protocol": "source subject LOSO; fixed hyperparameters",
+  "bins": 64,
+  "feature_dimension": 3072,
+  "trials": 1210,
+  "subjects": [
+    "ajh",
+    "lmh",
+    "mhw"
+  ],
+  "target_subject_used": false,
+  "sealed_yja_used": false,
+  "folds": {
+    "ajh": {
+      "linear": {
+        "action_accuracy": 0.0905587668593449,
+        "action_macro_f1": 0.06992030849204293
+      },
+      "extra_trees": {
+        "action_accuracy": 0.14450867052023122,
+        "action_macro_f1": 0.06844135475975435
+      }
+    },
+    "lmh": {
+      "linear": {
+        "action_accuracy": 0.08139534883720931,
+        "action_macro_f1": 0.06618528484768472
+      },
+      "extra_trees": {
+        "action_accuracy": 0.16279069767441862,
+        "action_macro_f1": 0.07913003663003662
+      }
+    },
+    "mhw": {
+      "linear": {
+        "action_accuracy": 0.09633911368015415,
+        "action_macro_f1": 0.08632656484849661
+      },
+      "extra_trees": {
+        "action_accuracy": 0.14065510597302505,
+        "action_macro_f1": 0.10020050389204088
+      }
+    }
+  },
+  "macro": {
+    "linear": {
+      "action_accuracy": 0.08943107645890279,
+      "action_macro_f1": 0.07414405272940809
+    },
+    "extra_trees": {
+      "action_accuracy": 0.14931815805589163,
+      "action_macro_f1": 0.08259063176061061
+    }
+  }
+}

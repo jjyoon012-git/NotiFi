@@ -1,0 +1,112 @@
+{
+  "protocol": "source_nested_loso_repeated_support_v1",
+  "seed_count": 5,
+  "aggregate": {
+    "action_accuracy": {
+      "mean": 0.410382513693773,
+      "std": 0.007545471418248284
+    },
+    "action_macro_f1": {
+      "mean": 0.330011396123629,
+      "std": 0.008092529081007153
+    },
+    "risk_accuracy": {
+      "mean": 0.5111111140153446,
+      "std": 0.011424697775324063
+    },
+    "risk_macro_f1": {
+      "mean": 0.4161047733736602,
+      "std": 0.014330479767275774
+    },
+    "danger_recall": {
+      "mean": 0.4521250780936473,
+      "std": 0.019071043907808498
+    },
+    "danger_action_accuracy": {
+      "mean": 0.11312082899099925,
+      "std": 0.013858939686444794
+    },
+    "safe_to_danger_rate": {
+      "mean": 0.1657250470809793,
+      "std": 0.015206500367748663
+    },
+    "worst_site_action": {
+      "mean": 0.33757961392402647,
+      "std": 0.020141896224778317
+    }
+  },
+  "seeds": [
+    {
+      "support_seed": 17017,
+      "metrics": {
+        "action_accuracy": 0.4098360658180518,
+        "action_macro_f1": 0.3273810215145078,
+        "risk_accuracy": 0.5255009094982633,
+        "risk_macro_f1": 0.4394285670177967,
+        "danger_recall": 0.48075288358078305,
+        "danger_action_accuracy": 0.10458409614888153,
+        "safe_to_danger_rate": 0.160075329566855,
+        "worst_site_action": 0.337579607963562
+      },
+      "path": "results/a26_cal28_seed17017.json"
+    },
+    {
+      "support_seed": 17027,
+      "metrics": {
+        "action_accuracy": 0.40072859750419365,
+        "action_macro_f1": 0.32225940377877277,
+        "risk_accuracy": 0.5209471740520717,
+        "risk_macro_f1": 0.4227974030760902,
+        "danger_recall": 0.4521250797873312,
+        "danger_action_accuracy": 0.12823315310157932,
+        "safe_to_danger_rate": 0.1431261770244821,
+        "worst_site_action": 0.30573248863220215
+      },
+      "path": "results/a26_cal28_seed17027.json"
+    },
+    {
+      "support_seed": 17037,
+      "metrics": {
+        "action_accuracy": 0.406193074741433,
+        "action_macro_f1": 0.32124882480485845,
+        "risk_accuracy": 0.493624777307493,
+        "risk_macro_f1": 0.40081421972569653,
+        "danger_recall": 0.42352763531162985,
+        "danger_action_accuracy": 0.09037644513806359,
+        "safe_to_danger_rate": 0.18832391713747645,
+        "worst_site_action": 0.337579607963562
+      },
+      "path": "results/a26_cal28_seed17037.json"
+    },
+    {
+      "support_seed": 17047,
+      "metrics": {
+        "action_accuracy": 0.42349727066379644,
+        "action_macro_f1": 0.33914460913568245,
+        "risk_accuracy": 0.5045537397618285,
+        "risk_macro_f1": 0.40182100188916714,
+        "danger_recall": 0.4616271995299772,
+        "danger_action_accuracy": 0.11885246362381077,
+        "safe_to_danger_rate": 0.1751412429378531,
+        "worst_site_action": 0.337579607963562
+      },
+      "path": "results/a26_cal28_seed17047.json"
+    },
+    {
+      "support_seed": 17057,
+      "metrics": {
+        "action_accuracy": 0.41165755974139023,
+        "action_macro_f1": 0.3400231213843236,
+        "risk_accuracy": 0.510928969457067,
+        "risk_macro_f1": 0.41566267515955074,
+        "danger_recall": 0.44259259225851527,
+        "danger_action_accuracy": 0.12355798694266104,
+        "safe_to_danger_rate": 0.16195856873822975,
+        "worst_site_action": 0.36942675709724426
+      },
+      "path": "results/a26_cal28_seed17057.json"
+    }
+  ],
+  "target_subject_used": false,
+  "sealed_yja_used": false
+}

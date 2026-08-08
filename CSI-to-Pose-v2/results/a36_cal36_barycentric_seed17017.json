@@ -1,0 +1,253 @@
+{
+  "run": "CAL36-LOCAL-BARYCENTRIC-TRANSPORT",
+  "folds": {
+    "ajh": {
+      "train_sites": [
+        "lmh_E01",
+        "mhw_E01",
+        "mhw_E02"
+      ],
+      "inner_sites": [
+        "mhw_E03"
+      ],
+      "outer_sites": [
+        "ajh_E01",
+        "ajh_E02",
+        "ajh_E03"
+      ],
+      "action_config": {
+        "strength": 0.75,
+        "kernel_temperature": 0.05,
+        "regularization": 0.01,
+        "prototype_temperature": 0.1,
+        "site_temperature": 0.02,
+        "mixture": 0.25
+      },
+      "risk_config": {
+        "safe_weight": 0.0,
+        "fusion": 0.15,
+        "danger_bias": 0.5
+      },
+      "inner_metrics": [
+        {
+          "action_accuracy": 0.46496814489364624,
+          "action_macro_f1": 0.3628099858760834,
+          "risk_accuracy": 0.6242038011550903,
+          "risk_macro_f1": 0.5163055658340454,
+          "danger_recall": 0.5,
+          "danger_correct": 15,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.20000000298023224,
+          "safe_to_danger": 3,
+          "safe_total": 76,
+          "trials": 157
+        }
+      ],
+      "outer_metrics": [
+        {
+          "action_accuracy": 0.331210196018219,
+          "action_macro_f1": 0.23212461173534393,
+          "risk_accuracy": 0.4904458522796631,
+          "risk_macro_f1": 0.3599439859390259,
+          "danger_recall": 0.20000000298023224,
+          "danger_correct": 6,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.13333334028720856,
+          "safe_to_danger": 0,
+          "safe_total": 76,
+          "trials": 157
+        },
+        {
+          "action_accuracy": 0.3439490497112274,
+          "action_macro_f1": 0.2799084186553955,
+          "risk_accuracy": 0.4522292912006378,
+          "risk_macro_f1": 0.3342099189758301,
+          "danger_recall": 0.4000000059604645,
+          "danger_correct": 12,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.03333333507180214,
+          "safe_to_danger": 16,
+          "safe_total": 76,
+          "trials": 157
+        },
+        {
+          "action_accuracy": 0.3248407542705536,
+          "action_macro_f1": 0.23835748434066772,
+          "risk_accuracy": 0.41401273012161255,
+          "risk_macro_f1": 0.23628409206867218,
+          "danger_recall": 0.03333333507180214,
+          "danger_correct": 1,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.03333333507180214,
+          "safe_to_danger": 1,
+          "safe_total": 76,
+          "trials": 157
+        }
+      ],
+      "outer_used_for_selection": false
+    },
+    "mhw": {
+      "train_sites": [
+        "ajh_E01",
+        "ajh_E02",
+        "lmh_E01"
+      ],
+      "inner_sites": [
+        "ajh_E03"
+      ],
+      "outer_sites": [
+        "mhw_E01",
+        "mhw_E02",
+        "mhw_E03"
+      ],
+      "action_config": {
+        "strength": 0.75,
+        "kernel_temperature": 0.05,
+        "regularization": 0.01,
+        "prototype_temperature": 0.1,
+        "site_temperature": 0.02,
+        "mixture": 0.5
+      },
+      "risk_config": {
+        "safe_weight": 0.0,
+        "fusion": 0.15,
+        "danger_bias": 1.0
+      },
+      "inner_metrics": [
+        {
+          "action_accuracy": 0.5796178579330444,
+          "action_macro_f1": 0.49114495515823364,
+          "risk_accuracy": 0.5732483863830566,
+          "risk_macro_f1": 0.528538167476654,
+          "danger_recall": 0.5,
+          "danger_correct": 15,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.10000000149011612,
+          "safe_to_danger": 3,
+          "safe_total": 76,
+          "trials": 157
+        }
+      ],
+      "outer_metrics": [
+        {
+          "action_accuracy": 0.40764331817626953,
+          "action_macro_f1": 0.3360011875629425,
+          "risk_accuracy": 0.5987260937690735,
+          "risk_macro_f1": 0.5812801718711853,
+          "danger_recall": 0.5,
+          "danger_correct": 15,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.06666667014360428,
+          "safe_to_danger": 10,
+          "safe_total": 76,
+          "trials": 157
+        },
+        {
+          "action_accuracy": 0.3757961690425873,
+          "action_macro_f1": 0.2926490008831024,
+          "risk_accuracy": 0.5414012670516968,
+          "risk_macro_f1": 0.5331951975822449,
+          "danger_recall": 0.699999988079071,
+          "danger_correct": 21,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.10000000149011612,
+          "safe_to_danger": 27,
+          "safe_total": 76,
+          "trials": 157
+        },
+        {
+          "action_accuracy": 0.42675158381462097,
+          "action_macro_f1": 0.3771539330482483,
+          "risk_accuracy": 0.5095541477203369,
+          "risk_macro_f1": 0.4480226933956146,
+          "danger_recall": 0.8333333134651184,
+          "danger_correct": 25,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.10000000149011612,
+          "safe_to_danger": 22,
+          "safe_total": 76,
+          "trials": 157
+        }
+      ],
+      "outer_used_for_selection": false
+    },
+    "lmh": {
+      "train_sites": [
+        "ajh_E01",
+        "ajh_E02",
+        "mhw_E01",
+        "mhw_E02"
+      ],
+      "inner_sites": [
+        "ajh_E03",
+        "mhw_E03"
+      ],
+      "outer_sites": [
+        "lmh_E01"
+      ],
+      "action_config": {
+        "strength": 1.0,
+        "kernel_temperature": 0.05,
+        "regularization": 0.01,
+        "prototype_temperature": 0.05,
+        "site_temperature": 0.05,
+        "mixture": 1.0
+      },
+      "risk_config": {
+        "safe_weight": 0.0,
+        "fusion": 0.0,
+        "danger_bias": 1.0
+      },
+      "inner_metrics": [
+        {
+          "action_accuracy": 0.5350318551063538,
+          "action_macro_f1": 0.42677414417266846,
+          "risk_accuracy": 0.47133758664131165,
+          "risk_macro_f1": 0.3290153443813324,
+          "danger_recall": 0.06666667014360428,
+          "danger_correct": 2,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.0,
+          "safe_to_danger": 10,
+          "safe_total": 76,
+          "trials": 157
+        },
+        {
+          "action_accuracy": 0.4331210255622864,
+          "action_macro_f1": 0.3154938220977783,
+          "risk_accuracy": 0.4904458522796631,
+          "risk_macro_f1": 0.3375076353549957,
+          "danger_recall": 0.36666667461395264,
+          "danger_correct": 11,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.0,
+          "safe_to_danger": 10,
+          "safe_total": 76,
+          "trials": 157
+        }
+      ],
+      "outer_metrics": [
+        {
+          "action_accuracy": 0.5256410241127014,
+          "action_macro_f1": 0.46207094192504883,
+          "risk_accuracy": 0.6282051205635071,
+          "risk_macro_f1": 0.5617613196372986,
+          "danger_recall": 0.7666666507720947,
+          "danger_correct": 23,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.13333334028720856,
+          "safe_to_danger": 11,
+          "safe_total": 75,
+          "trials": 156
+        }
+      ],
+      "outer_used_for_selection": false
+    }
+  },
+  "support_seed": 17017,
+  "absence_trials": 12,
+  "target_subject_used": false,
+  "sealed_yja_used": false,
+  "query_labels_or_pose_gt_at_inference": false,
+  "regularization_parameter_ignored": true
+}

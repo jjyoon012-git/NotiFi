@@ -1,0 +1,112 @@
+{
+  "protocol": "source_nested_loso_repeated_support_v1",
+  "seed_count": 5,
+  "aggregate": {
+    "action_accuracy": {
+      "mean": 0.4214936222426444,
+      "std": 0.009933404024691016
+    },
+    "action_macro_f1": {
+      "mean": 0.3376920968728422,
+      "std": 0.010625340145689067
+    },
+    "risk_accuracy": {
+      "mean": 0.5123861575061506,
+      "std": 0.007231125588679208
+    },
+    "risk_macro_f1": {
+      "mean": 0.4182319704870709,
+      "std": 0.011254007644066701
+    },
+    "danger_recall": {
+      "mean": 0.4597389206717737,
+      "std": 0.033888591752708835
+    },
+    "danger_action_accuracy": {
+      "mean": 0.11217365235985954,
+      "std": 0.01257214702095647
+    },
+    "safe_to_danger_rate": {
+      "mean": 0.1638418079096045,
+      "std": 0.016417698469079745
+    },
+    "worst_site_action": {
+      "mean": 0.3681528627872467,
+      "std": 0.016803702559930404
+    }
+  },
+  "seeds": [
+    {
+      "support_seed": 17017,
+      "metrics": {
+        "action_accuracy": 0.41712204069713427,
+        "action_macro_f1": 0.33229109376180366,
+        "risk_accuracy": 0.5091074711095223,
+        "risk_macro_f1": 0.42790509721023356,
+        "danger_recall": 0.5187917440783619,
+        "danger_action_accuracy": 0.11408622065840632,
+        "safe_to_danger_rate": 0.18832391713747645,
+        "worst_site_action": 0.36942675709724426
+      },
+      "path": "results/a43_cal39_cal60_grl0_ensemble_seed17017.json"
+    },
+    {
+      "support_seed": 17027,
+      "metrics": {
+        "action_accuracy": 0.4171220404799953,
+        "action_macro_f1": 0.3265600786128765,
+        "risk_accuracy": 0.5200364336724272,
+        "risk_macro_f1": 0.4259102823304348,
+        "danger_recall": 0.4473588384199338,
+        "danger_action_accuracy": 0.1329993944689767,
+        "safe_to_danger_rate": 0.15630885122410546,
+        "worst_site_action": 0.337579607963562
+      },
+      "path": "results/a43_cal39_cal60_grl0_ensemble_seed17027.json"
+    },
+    {
+      "support_seed": 17037,
+      "metrics": {
+        "action_accuracy": 0.4225865176629499,
+        "action_macro_f1": 0.33456895572348805,
+        "risk_accuracy": 0.5145719521738358,
+        "risk_macro_f1": 0.4203133513448668,
+        "danger_recall": 0.41402549804519106,
+        "danger_action_accuracy": 0.09508197110668774,
+        "safe_to_danger_rate": 0.1393596986817326,
+        "worst_site_action": 0.3885350227355957
+      },
+      "path": "results/a43_cal39_cal60_grl0_ensemble_seed17037.json"
+    },
+    {
+      "support_seed": 17047,
+      "metrics": {
+        "action_accuracy": 0.4398907053611752,
+        "action_macro_f1": 0.3577294931874249,
+        "risk_accuracy": 0.4999999949243768,
+        "risk_macro_f1": 0.3965241429014284,
+        "danger_recall": 0.4616575641201331,
+        "danger_action_accuracy": 0.1046144549068206,
+        "safe_to_danger_rate": 0.17325800376647835,
+        "worst_site_action": 0.3757961690425873
+      },
+      "path": "results/a43_cal39_cal60_grl0_ensemble_seed17047.json"
+    },
+    {
+      "support_seed": 17057,
+      "metrics": {
+        "action_accuracy": 0.41074680701196736,
+        "action_macro_f1": 0.3373108630786177,
+        "risk_accuracy": 0.518214935650591,
+        "risk_macro_f1": 0.4205069786483907,
+        "danger_recall": 0.45686095869524884,
+        "danger_action_accuracy": 0.11408622065840632,
+        "safe_to_danger_rate": 0.16195856873822975,
+        "worst_site_action": 0.36942675709724426
+      },
+      "path": "results/a43_cal39_cal60_grl0_ensemble_seed17057.json"
+    }
+  ],
+  "target_subject_used": false,
+  "sealed_yja_used": false
+}

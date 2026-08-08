@@ -1,0 +1,423 @@
+{
+  "protocol": "source-only signal view diagnosis; yja sealed",
+  "trials": 1210,
+  "subjects": [
+    "ajh",
+    "lmh",
+    "mhw"
+  ],
+  "sites": [
+    "ajh_E01",
+    "ajh_E02",
+    "ajh_E03",
+    "lmh_E01",
+    "mhw_E01",
+    "mhw_E02",
+    "mhw_E03"
+  ],
+  "feature_dimensions": {
+    "static_rf": 1368,
+    "derivative_motion": 1368,
+    "ordered_progress": 288,
+    "scale_free_progress_frequency": 432,
+    "scale_free_amplitude_only": 288,
+    "scale_free_phase_only": 144,
+    "motion_combined": 1656
+  },
+  "views": {
+    "static_rf": {
+      "random_action": {
+        "accuracy": 96.52892561983471,
+        "macro_f1": 95.61740584733187
+      },
+      "subject_loso_action": {
+        "accuracy": 9.090909090909092,
+        "macro_f1": 7.245863243376088,
+        "folds": {
+          "ajh": {
+            "accuracy": 9.633911368015415,
+            "macro_f1": 6.5669440196356925,
+            "trials": 519
+          },
+          "lmh": {
+            "accuracy": 8.720930232558139,
+            "macro_f1": 6.91940961337513,
+            "trials": 172
+          },
+          "mhw": {
+            "accuracy": 8.670520231213873,
+            "macro_f1": 5.120053600661513,
+            "trials": 519
+          }
+        }
+      },
+      "subject_loso_risk": {
+        "accuracy": 51.2396694214876,
+        "macro_f1": 39.374555007478435,
+        "folds": {
+          "ajh": {
+            "accuracy": 55.49132947976878,
+            "macro_f1": 39.79048277906805,
+            "trials": 519
+          },
+          "lmh": {
+            "accuracy": 38.95348837209303,
+            "macro_f1": 34.1920744201295,
+            "trials": 172
+          },
+          "mhw": {
+            "accuracy": 51.05973025048169,
+            "macro_f1": 40.21405835600025,
+            "trials": 519
+          }
+        }
+      },
+      "random_subject_probe": {
+        "accuracy": 99.91735537190083,
+        "macro_f1": 99.93577386460352
+      },
+      "random_site_probe": {
+        "accuracy": 99.75206611570248,
+        "macro_f1": 99.7520259803653
+      }
+    },
+    "derivative_motion": {
+      "random_action": {
+        "accuracy": 87.35537190082646,
+        "macro_f1": 85.35691056633375
+      },
+      "subject_loso_action": {
+        "accuracy": 8.016528925619834,
+        "macro_f1": 5.071092028121923,
+        "folds": {
+          "ajh": {
+            "accuracy": 8.092485549132949,
+            "macro_f1": 6.086349531205196,
+            "trials": 519
+          },
+          "lmh": {
+            "accuracy": 9.883720930232558,
+            "macro_f1": 4.280753968253968,
+            "trials": 172
+          },
+          "mhw": {
+            "accuracy": 7.321772639691715,
+            "macro_f1": 3.7232213909631815,
+            "trials": 519
+          }
+        }
+      },
+      "subject_loso_risk": {
+        "accuracy": 49.256198347107436,
+        "macro_f1": 38.73936138021035,
+        "folds": {
+          "ajh": {
+            "accuracy": 48.747591522158,
+            "macro_f1": 30.220613425226205,
+            "trials": 519
+          },
+          "lmh": {
+            "accuracy": 63.372093023255815,
+            "macro_f1": 55.74453463900701,
+            "trials": 172
+          },
+          "mhw": {
+            "accuracy": 45.08670520231214,
+            "macro_f1": 38.9940579144772,
+            "trials": 519
+          }
+        }
+      },
+      "random_subject_probe": {
+        "accuracy": 99.6694214876033,
+        "macro_f1": 99.54792052866864
+      },
+      "random_site_probe": {
+        "accuracy": 98.59504132231405,
+        "macro_f1": 98.59451147810395
+      }
+    },
+    "ordered_progress": {
+      "random_action": {
+        "accuracy": 35.20661157024794,
+        "macro_f1": 25.66802831627427
+      },
+      "subject_loso_action": {
+        "accuracy": 8.59504132231405,
+        "macro_f1": 4.756061376113414,
+        "folds": {
+          "ajh": {
+            "accuracy": 7.89980732177264,
+            "macro_f1": 4.9513969515568546,
+            "trials": 519
+          },
+          "lmh": {
+            "accuracy": 4.069767441860465,
+            "macro_f1": 1.2238675958188152,
+            "trials": 172
+          },
+          "mhw": {
+            "accuracy": 10.789980732177264,
+            "macro_f1": 5.3716155904479574,
+            "trials": 519
+          }
+        }
+      },
+      "subject_loso_risk": {
+        "accuracy": 51.48760330578512,
+        "macro_f1": 27.34772191923978,
+        "folds": {
+          "ajh": {
+            "accuracy": 52.98651252408478,
+            "macro_f1": 28.653595486158583,
+            "trials": 519
+          },
+          "lmh": {
+            "accuracy": 43.604651162790695,
+            "macro_f1": 24.388446802239905,
+            "trials": 172
+          },
+          "mhw": {
+            "accuracy": 52.601156069364166,
+            "macro_f1": 26.95143876246238,
+            "trials": 519
+          }
+        }
+      },
+      "random_subject_probe": {
+        "accuracy": 96.69421487603306,
+        "macro_f1": 96.45896509374481
+      },
+      "random_site_probe": {
+        "accuracy": 81.07438016528926,
+        "macro_f1": 80.95895030994537
+      }
+    },
+    "scale_free_progress_frequency": {
+      "random_action": {
+        "accuracy": 37.85123966942149,
+        "macro_f1": 27.825716480663885
+      },
+      "subject_loso_action": {
+        "accuracy": 10.413223140495868,
+        "macro_f1": 5.92689240563131,
+        "folds": {
+          "ajh": {
+            "accuracy": 7.89980732177264,
+            "macro_f1": 4.86620864345733,
+            "trials": 519
+          },
+          "lmh": {
+            "accuracy": 13.372093023255813,
+            "macro_f1": 5.542316812902083,
+            "trials": 172
+          },
+          "mhw": {
+            "accuracy": 11.946050096339114,
+            "macro_f1": 6.598139618936104,
+            "trials": 519
+          }
+        }
+      },
+      "subject_loso_risk": {
+        "accuracy": 52.97520661157024,
+        "macro_f1": 26.673032925719436,
+        "folds": {
+          "ajh": {
+            "accuracy": 53.179190751445084,
+            "macro_f1": 25.937462893330693,
+            "trials": 519
+          },
+          "lmh": {
+            "accuracy": 52.32558139534884,
+            "macro_f1": 22.90076335877863,
+            "trials": 172
+          },
+          "mhw": {
+            "accuracy": 52.98651252408478,
+            "macro_f1": 28.192472117705762,
+            "trials": 519
+          }
+        }
+      },
+      "random_subject_probe": {
+        "accuracy": 89.50413223140495,
+        "macro_f1": 87.71180610948734
+      },
+      "random_site_probe": {
+        "accuracy": 70.24793388429752,
+        "macro_f1": 70.08673370989045
+      }
+    },
+    "scale_free_amplitude_only": {
+      "random_action": {
+        "accuracy": 34.710743801652896,
+        "macro_f1": 26.442054292111795
+      },
+      "subject_loso_action": {
+        "accuracy": 10.743801652892563,
+        "macro_f1": 6.7210804729987705,
+        "folds": {
+          "ajh": {
+            "accuracy": 9.633911368015415,
+            "macro_f1": 6.131682927689162,
+            "trials": 519
+          },
+          "lmh": {
+            "accuracy": 13.372093023255813,
+            "macro_f1": 6.5925712800712795,
+            "trials": 172
+          },
+          "mhw": {
+            "accuracy": 10.982658959537572,
+            "macro_f1": 6.024475142790618,
+            "trials": 519
+          }
+        }
+      },
+      "subject_loso_risk": {
+        "accuracy": 52.314049586776854,
+        "macro_f1": 28.183487708383755,
+        "folds": {
+          "ajh": {
+            "accuracy": 53.371868978805395,
+            "macro_f1": 28.0410699122784,
+            "trials": 519
+          },
+          "lmh": {
+            "accuracy": 51.162790697674424,
+            "macro_f1": 22.65122265122265,
+            "trials": 172
+          },
+          "mhw": {
+            "accuracy": 51.637764932562625,
+            "macro_f1": 29.46984595214684,
+            "trials": 519
+          }
+        }
+      },
+      "random_subject_probe": {
+        "accuracy": 85.9504132231405,
+        "macro_f1": 83.1025974070625
+      },
+      "random_site_probe": {
+        "accuracy": 66.61157024793388,
+        "macro_f1": 66.52774662650529
+      }
+    },
+    "scale_free_phase_only": {
+      "random_action": {
+        "accuracy": 26.52892561983471,
+        "macro_f1": 19.4093271915959
+      },
+      "subject_loso_action": {
+        "accuracy": 8.347107438016529,
+        "macro_f1": 5.760679190769942,
+        "folds": {
+          "ajh": {
+            "accuracy": 7.7071290944123305,
+            "macro_f1": 4.798723168927295,
+            "trials": 519
+          },
+          "lmh": {
+            "accuracy": 12.209302325581394,
+            "macro_f1": 4.892905295133017,
+            "trials": 172
+          },
+          "mhw": {
+            "accuracy": 7.7071290944123305,
+            "macro_f1": 5.616610603728231,
+            "trials": 519
+          }
+        }
+      },
+      "subject_loso_risk": {
+        "accuracy": 53.05785123966942,
+        "macro_f1": 30.976580683729505,
+        "folds": {
+          "ajh": {
+            "accuracy": 55.29865125240848,
+            "macro_f1": 30.557657315343423,
+            "trials": 519
+          },
+          "lmh": {
+            "accuracy": 52.32558139534884,
+            "macro_f1": 23.076923076923077,
+            "trials": 172
+          },
+          "mhw": {
+            "accuracy": 51.05973025048169,
+            "macro_f1": 33.09464590272974,
+            "trials": 519
+          }
+        }
+      },
+      "random_subject_probe": {
+        "accuracy": 82.89256198347107,
+        "macro_f1": 80.72660602066009
+      },
+      "random_site_probe": {
+        "accuracy": 54.049586776859506,
+        "macro_f1": 53.12603038373172
+      }
+    },
+    "motion_combined": {
+      "random_action": {
+        "accuracy": 86.77685950413223,
+        "macro_f1": 84.52069324124375
+      },
+      "subject_loso_action": {
+        "accuracy": 9.256198347107437,
+        "macro_f1": 6.080586341342686,
+        "folds": {
+          "ajh": {
+            "accuracy": 9.826589595375722,
+            "macro_f1": 8.108691417514947,
+            "trials": 519
+          },
+          "lmh": {
+            "accuracy": 14.534883720930234,
+            "macro_f1": 5.747767857142858,
+            "trials": 172
+          },
+          "mhw": {
+            "accuracy": 6.9364161849710975,
+            "macro_f1": 3.002431627658488,
+            "trials": 519
+          }
+        }
+      },
+      "subject_loso_risk": {
+        "accuracy": 48.4297520661157,
+        "macro_f1": 38.55853479664286,
+        "folds": {
+          "ajh": {
+            "accuracy": 51.05973025048169,
+            "macro_f1": 33.82300592857777,
+            "trials": 519
+          },
+          "lmh": {
+            "accuracy": 60.46511627906976,
+            "macro_f1": 51.292786421499294,
+            "trials": 172
+          },
+          "mhw": {
+            "accuracy": 41.811175337186896,
+            "macro_f1": 36.848926199970265,
+            "trials": 519
+          }
+        }
+      },
+      "random_subject_probe": {
+        "accuracy": 99.83471074380165,
+        "macro_f1": 99.80694944790856
+      },
+      "random_site_probe": {
+        "accuracy": 99.00826446280992,
+        "macro_f1": 99.00830315212382
+      }
+    }
+  },
+  "sealed_yja_used": false,
+  "target_subject_used": false
+}

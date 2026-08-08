@@ -1,0 +1,123 @@
+{
+  "run": "CAL23-INNER-SELECTED-POSE-ENSEMBLE",
+  "folds": {
+    "ajh": {
+      "selected": {
+        "neighbors": 5,
+        "temperature": 0.5,
+        "bone_blend": 0.0
+      },
+      "selected_inner_metrics": {
+        "pose_cm": 28.683263063430786,
+        "distal_cm": 42.14834272861481,
+        "pa_pose_cm": 11.808234426559762,
+        "danger_pose_cm": 39.20729458332062,
+        "danger_distal_cm": 58.94075632095337
+      },
+      "outer_pose": {
+        "pose_cm": 30.17337918281555,
+        "distal_cm": 44.79244947433472,
+        "pa_pose_cm": 10.601509797792746,
+        "danger_pose_cm": 37.46185898780823,
+        "danger_distal_cm": 55.604588985443115
+      },
+      "classification": {
+        "action_accuracy": 0.3736730217933655,
+        "action_macro_f1": 0.26659274101257324,
+        "risk_accuracy": 0.4522292912006378,
+        "risk_macro_f1": 0.33529749512672424,
+        "danger_recall": 0.2777777910232544,
+        "danger_correct": 25,
+        "danger_total": 90,
+        "danger_action_accuracy": 0.03333333507180214,
+        "safe_to_danger": 22,
+        "safe_total": 228,
+        "trials": 471
+      },
+      "retrieval_action_match": 0.21019108593463898,
+      "outer_used_for_selection": false,
+      "query_pose_gt_used_for_retrieval": false,
+      "query_gt_valid_mask_used_for_retrieval": false
+    },
+    "mhw": {
+      "selected": {
+        "neighbors": 5,
+        "temperature": 0.5,
+        "bone_blend": 0.0
+      },
+      "selected_inner_metrics": {
+        "pose_cm": 30.476483702659607,
+        "distal_cm": 44.3628191947937,
+        "pa_pose_cm": 8.708396059230845,
+        "danger_pose_cm": 42.02077090740204,
+        "danger_distal_cm": 61.2442672252655
+      },
+      "outer_pose": {
+        "pose_cm": 30.062443017959595,
+        "distal_cm": 44.20411288738251,
+        "pa_pose_cm": 10.548723848026933,
+        "danger_pose_cm": 38.916900753974915,
+        "danger_distal_cm": 57.927680015563965
+      },
+      "classification": {
+        "action_accuracy": 0.36942675709724426,
+        "action_macro_f1": 0.3191332519054413,
+        "risk_accuracy": 0.549893856048584,
+        "risk_macro_f1": 0.5281543135643005,
+        "danger_recall": 0.6000000238418579,
+        "danger_correct": 54,
+        "danger_total": 90,
+        "danger_action_accuracy": 0.06666667014360428,
+        "safe_to_danger": 54,
+        "safe_total": 228,
+        "trials": 471
+      },
+      "retrieval_action_match": 0.24628449976444244,
+      "outer_used_for_selection": false,
+      "query_pose_gt_used_for_retrieval": false,
+      "query_gt_valid_mask_used_for_retrieval": false
+    },
+    "lmh": {
+      "selected": {
+        "neighbors": 5,
+        "temperature": 0.5,
+        "bone_blend": 0.0
+      },
+      "selected_inner_metrics": {
+        "pose_cm": 28.63277494907379,
+        "distal_cm": 41.74970984458923,
+        "pa_pose_cm": 10.071122468341882,
+        "danger_pose_cm": 38.264039158821106,
+        "danger_distal_cm": 55.77191710472107
+      },
+      "outer_pose": {
+        "pose_cm": 29.803481698036194,
+        "distal_cm": 44.159045815467834,
+        "pa_pose_cm": 10.746698701806883,
+        "danger_pose_cm": 40.09700119495392,
+        "danger_distal_cm": 59.998542070388794
+      },
+      "classification": {
+        "action_accuracy": 0.5256410241127014,
+        "action_macro_f1": 0.46307966113090515,
+        "risk_accuracy": 0.7051281929016113,
+        "risk_macro_f1": 0.6270999908447266,
+        "danger_recall": 0.800000011920929,
+        "danger_correct": 24,
+        "danger_total": 30,
+        "danger_action_accuracy": 0.2666666805744171,
+        "safe_to_danger": 3,
+        "safe_total": 75,
+        "trials": 156
+      },
+      "retrieval_action_match": 0.31410256028175354,
+      "outer_used_for_selection": false,
+      "query_pose_gt_used_for_retrieval": false,
+      "query_gt_valid_mask_used_for_retrieval": false
+    }
+  },
+  "target_subject_used": false,
+  "sealed_yja_used": false,
+  "query_labels_or_pose_gt_at_inference": false,
+  "absence_trials": 12
+}

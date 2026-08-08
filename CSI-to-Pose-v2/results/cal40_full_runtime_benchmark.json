@@ -1,0 +1,33 @@
+{
+  "bundle": "artifacts/cal40_full_deployment.pt",
+  "bundle_mb": 58.060194969177246,
+  "device": "cuda",
+  "calibration": {
+    "median_ms": 214.00619999621995,
+    "p90_ms": 222.1710500161862,
+    "mean_ms": 214.93762500031153,
+    "repeats": 20
+  },
+  "classification_only": {
+    "median_ms": 94.63469999900553,
+    "p90_ms": 98.28783001576085,
+    "mean_ms": 94.73075500136474,
+    "repeats": 20
+  },
+  "classification_and_pose": {
+    "median_ms": 108.02650000550784,
+    "p90_ms": 116.94973001431208,
+    "mean_ms": 110.59915000514593,
+    "repeats": 20
+  },
+  "input": {
+    "frames": 304,
+    "links": 3,
+    "live_subcarriers": 114,
+    "support_trials": 16,
+    "absence_trials": 12,
+    "pose_candidates": 1210
+  },
+  "scope": "in-memory tensors; excludes raw CSV parsing and disk I/O",
+  "sealed_yja_used": false
+}

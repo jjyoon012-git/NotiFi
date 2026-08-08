@@ -1,0 +1,149 @@
+{
+  "run": "CAL23-INNER-SELECTED-POSE-ENSEMBLE",
+  "folds": {
+    "ajh": {
+      "selected": {
+        "neighbors": 5,
+        "temperature": 0.5,
+        "bone_blend": 0.0
+      },
+      "selected_inner_metrics": {
+        "pose_cm": 28.510010242462158,
+        "distal_cm": 41.8168306350708,
+        "pa_pose_cm": 11.795857451668935,
+        "danger_pose_cm": 38.28236162662506,
+        "danger_distal_cm": 57.51749873161316
+      },
+      "outer_pose": {
+        "pose_cm": 29.929262399673462,
+        "distal_cm": 44.49380040168762,
+        "pa_pose_cm": 10.625008200129242,
+        "danger_pose_cm": 36.919206380844116,
+        "danger_distal_cm": 54.7612190246582
+      },
+      "oracle_action_pose_diagnostic": {
+        "pose_cm": 31.171494722366333,
+        "distal_cm": 45.89375853538513,
+        "pa_pose_cm": 10.25415113382226,
+        "danger_pose_cm": 39.13237452507019,
+        "danger_distal_cm": 57.8951358795166
+      },
+      "classification": {
+        "action_accuracy": 0.36518046259880066,
+        "action_macro_f1": 0.26311084628105164,
+        "risk_accuracy": 0.4564755856990814,
+        "risk_macro_f1": 0.32182779908180237,
+        "danger_recall": 0.2222222238779068,
+        "danger_correct": 20,
+        "danger_total": 90,
+        "danger_action_accuracy": 0.0555555559694767,
+        "safe_to_danger": 20,
+        "safe_total": 228,
+        "trials": 471
+      },
+      "retrieval_action_match": 0.2165605127811432,
+      "outer_used_for_selection": false,
+      "query_pose_gt_used_for_retrieval": false,
+      "query_gt_valid_mask_used_for_retrieval": false,
+      "oracle_action_used_for_model_selection": false
+    },
+    "mhw": {
+      "selected": {
+        "neighbors": 5,
+        "temperature": 0.5,
+        "bone_blend": 0.0
+      },
+      "selected_inner_metrics": {
+        "pose_cm": 30.82909882068634,
+        "distal_cm": 44.95708346366882,
+        "pa_pose_cm": 8.728221205299697,
+        "danger_pose_cm": 39.95314538478851,
+        "danger_distal_cm": 58.508312702178955
+      },
+      "outer_pose": {
+        "pose_cm": 30.071711540222168,
+        "distal_cm": 44.18407678604126,
+        "pa_pose_cm": 10.469947231131632,
+        "danger_pose_cm": 39.110854268074036,
+        "danger_distal_cm": 58.1030011177063
+      },
+      "oracle_action_pose_diagnostic": {
+        "pose_cm": 32.60596692562103,
+        "distal_cm": 47.69083261489868,
+        "pa_pose_cm": 10.121608522943173,
+        "danger_pose_cm": 40.213075280189514,
+        "danger_distal_cm": 59.04262661933899
+      },
+      "classification": {
+        "action_accuracy": 0.40764331817626953,
+        "action_macro_f1": 0.3466687798500061,
+        "risk_accuracy": 0.5520169734954834,
+        "risk_macro_f1": 0.5372048020362854,
+        "danger_recall": 0.6666666865348816,
+        "danger_correct": 60,
+        "danger_total": 90,
+        "danger_action_accuracy": 0.08888889104127884,
+        "safe_to_danger": 58,
+        "safe_total": 228,
+        "trials": 471
+      },
+      "retrieval_action_match": 0.2271762192249298,
+      "outer_used_for_selection": false,
+      "query_pose_gt_used_for_retrieval": false,
+      "query_gt_valid_mask_used_for_retrieval": false,
+      "oracle_action_used_for_model_selection": false
+    },
+    "lmh": {
+      "selected": {
+        "neighbors": 5,
+        "temperature": 0.5,
+        "bone_blend": 0.0
+      },
+      "selected_inner_metrics": {
+        "pose_cm": 28.865185379981995,
+        "distal_cm": 41.95057153701782,
+        "pa_pose_cm": 10.132155566402098,
+        "danger_pose_cm": 39.347368478775024,
+        "danger_distal_cm": 57.22171068191528
+      },
+      "outer_pose": {
+        "pose_cm": 29.011836647987366,
+        "distal_cm": 42.867663502693176,
+        "pa_pose_cm": 10.819077669915291,
+        "danger_pose_cm": 39.50096070766449,
+        "danger_distal_cm": 59.005558490753174
+      },
+      "oracle_action_pose_diagnostic": {
+        "pose_cm": 32.33343958854675,
+        "distal_cm": 47.23379611968994,
+        "pa_pose_cm": 10.043933847006606,
+        "danger_pose_cm": 43.744271993637085,
+        "danger_distal_cm": 64.06410932540894
+      },
+      "classification": {
+        "action_accuracy": 0.5384615659713745,
+        "action_macro_f1": 0.48542189598083496,
+        "risk_accuracy": 0.6410256624221802,
+        "risk_macro_f1": 0.5666689872741699,
+        "danger_recall": 0.6666666865348816,
+        "danger_correct": 20,
+        "danger_total": 30,
+        "danger_action_accuracy": 0.30000001192092896,
+        "safe_to_danger": 8,
+        "safe_total": 75,
+        "trials": 156
+      },
+      "retrieval_action_match": 0.3461538553237915,
+      "outer_used_for_selection": false,
+      "query_pose_gt_used_for_retrieval": false,
+      "query_gt_valid_mask_used_for_retrieval": false,
+      "oracle_action_used_for_model_selection": false
+    }
+  },
+  "target_subject_used": false,
+  "sealed_yja_used": false,
+  "query_labels_or_pose_gt_at_inference": false,
+  "diagnostic_query_action_labels_used": true,
+  "diagnostic_is_deployment_performance": false,
+  "absence_trials": 12
+}

@@ -1,0 +1,33 @@
+{
+  "checkpoint": "checkpoints/cal60/deployment_model.pt",
+  "architecture": "cal20_relative_motion_dg",
+  "device": "cuda",
+  "torch_version": "2.10.0+cu128",
+  "input": {
+    "frames": 304,
+    "links": 3,
+    "live_subcarriers": 114,
+    "support_trials": 16,
+    "absence_trials": 12
+  },
+  "support_calibration_encoder": {
+    "median_ms": 53.47490000713151,
+    "p90_ms": 55.69152999960352,
+    "mean_ms": 53.97117000150805,
+    "repeats": 30
+  },
+  "query_batch_1_encoder_heads": {
+    "median_ms": 32.61514999758219,
+    "p90_ms": 34.28223000810249,
+    "mean_ms": 33.02528333491258,
+    "repeats": 30
+  },
+  "query_batch_8_encoder_heads": {
+    "median_ms": 41.79149999981746,
+    "p90_ms": 43.25168999203015,
+    "mean_ms": 42.201916666332785,
+    "repeats": 30
+  },
+  "scope": "CAL60 encoder and classification heads; excludes CSV parsing, CAL17 and CAL23 retrieval",
+  "sealed_yja_used": false
+}

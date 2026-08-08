@@ -1,0 +1,48 @@
+{
+  "run_dir": "<external-run>/cal68_hardpair_seed22012",
+  "protocol": "nested_source_subject_loso_v1",
+  "sites": 7,
+  "site_macro": {
+    "action_accuracy": 0.36352978008134024,
+    "action_macro_f1": 0.29538340866565704,
+    "risk_accuracy": 0.5483714767864772,
+    "risk_macro_f1": 0.47452270558902193,
+    "danger_recall": 0.4190476270658629,
+    "danger_action_accuracy": 0.12857143421258246
+  },
+  "safe_to_danger_rate": 0.09227871939736347,
+  "safe_to_danger": 49,
+  "safe_total": 531,
+  "danger_recall_pooled": 0.41904761904761906,
+  "danger_correct": 88,
+  "danger_total": 210,
+  "worst_site_action": 0.29936304688453674,
+  "fold_macro": {
+    "ajh": {
+      "action_accuracy": 0.3269639015197754,
+      "action_macro_f1": 0.24970259269078574,
+      "risk_accuracy": 0.47983014583587646,
+      "risk_macro_f1": 0.36065612236658734,
+      "danger_recall": 0.22222222636143366,
+      "danger_action_accuracy": 0.10000000521540642
+    },
+    "mhw": {
+      "action_accuracy": 0.3481953243414561,
+      "action_macro_f1": 0.2872796008984248,
+      "risk_accuracy": 0.5796178380648295,
+      "risk_macro_f1": 0.5518998006979624,
+      "danger_recall": 0.5333333412806193,
+      "danger_action_accuracy": 0.08888889352480571
+    },
+    "lmh": {
+      "action_accuracy": 0.5192307829856873,
+      "action_macro_f1": 0.4567372798919678,
+      "risk_accuracy": 0.6602563858032227,
+      "risk_macro_f1": 0.5839911699295044,
+      "danger_recall": 0.6666666865348816,
+      "danger_action_accuracy": 0.3333333432674408
+    }
+  },
+  "target_subject_used": false,
+  "sealed_yja_used": false
+}

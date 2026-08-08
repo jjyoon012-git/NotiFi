@@ -1,0 +1,1908 @@
+{
+  "run": "A57-CAL43-SAFE-ANCHOR-PARTIAL-SHRINKAGE",
+  "protocol": "source nested-LOSO; config selected on inner sites only",
+  "seeds": [
+    {
+      "support_seed": 17017,
+      "cal43": {
+        "risk_accuracy": 0.5400728630292176,
+        "risk_macro_f1": 0.45746799961465306,
+        "danger_recall": 0.4664541568152457,
+        "safe_to_danger_rate": 0.13559322033898305,
+        "trials": 1098
+      },
+      "baseline": {
+        "risk_accuracy": 0.5355191267687549,
+        "risk_macro_f1": 0.4593282033619768,
+        "danger_recall": 0.5569520263452564,
+        "safe_to_danger_rate": 0.18267419962335216,
+        "trials": 1098
+      },
+      "folds": {
+        "ajh": {
+          "inner_sites": [
+            "mhw_E03"
+          ],
+          "outer_sites": [
+            "ajh_E01",
+            "ajh_E02",
+            "ajh_E03"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.95,
+            "base_danger_bias": 2.0,
+            "shrinkage": 1.0,
+            "reference_margin": -3.1468615531921387
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.3949044644832611,
+              "action_macro_f1": 0.30209851264953613,
+              "risk_accuracy": 0.5796178579330444,
+              "risk_macro_f1": 0.42192283272743225,
+              "danger_recall": 0.6666666865348816,
+              "danger_correct": 20,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.20000000298023224,
+              "safe_to_danger": 5,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.06578947368421052,
+              "danger_adjustment": 2.0,
+              "observed_safe_margin": -3.1468615531921387,
+              "reference_safe_margin": -3.1468615531921387
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.331210196018219,
+              "action_macro_f1": 0.2247772216796875,
+              "risk_accuracy": 0.42038217186927795,
+              "risk_macro_f1": 0.332023024559021,
+              "danger_recall": 0.5,
+              "danger_correct": 15,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 16,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.21052631578947367,
+              "danger_adjustment": 4.873713970184326,
+              "observed_safe_margin": -6.020575523376465,
+              "reference_safe_margin": -3.1468615531921387
+            },
+            {
+              "action_accuracy": 0.30573248863220215,
+              "action_macro_f1": 0.2588576674461365,
+              "risk_accuracy": 0.4904458522796631,
+              "risk_macro_f1": 0.3301614224910736,
+              "danger_recall": 0.1666666716337204,
+              "danger_correct": 5,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 4,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.05263157894736842,
+              "danger_adjustment": -1.0909828506410122,
+              "observed_safe_margin": -0.05587870255112648,
+              "reference_safe_margin": -3.1468615531921387
+            },
+            {
+              "action_accuracy": 0.2738853394985199,
+              "action_macro_f1": 0.20211899280548096,
+              "risk_accuracy": 0.4331210255622864,
+              "risk_macro_f1": 0.30257725715637207,
+              "danger_recall": 0.20000000298023224,
+              "danger_correct": 6,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 5,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.06578947368421052,
+              "danger_adjustment": 2.284693956375122,
+              "observed_safe_margin": -3.4315555095672607,
+              "reference_safe_margin": -3.1468615531921387
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.331210196018219,
+              "action_macro_f1": 0.2247772216796875,
+              "risk_accuracy": 0.46496814489364624,
+              "risk_macro_f1": 0.34297093749046326,
+              "danger_recall": 0.20000000298023224,
+              "danger_correct": 6,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 4,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.05263157894736842
+            },
+            {
+              "action_accuracy": 0.30573248863220215,
+              "action_macro_f1": 0.2588576674461365,
+              "risk_accuracy": 0.4904458522796631,
+              "risk_macro_f1": 0.37225088477134705,
+              "danger_recall": 0.6333333253860474,
+              "danger_correct": 19,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 16,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.21052631578947367
+            },
+            {
+              "action_accuracy": 0.2738853394985199,
+              "action_macro_f1": 0.20211899280548096,
+              "risk_accuracy": 0.4331210255622864,
+              "risk_macro_f1": 0.2917387783527374,
+              "danger_recall": 0.13333334028720856,
+              "danger_correct": 4,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 4,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.05263157894736842
+            }
+          ],
+          "outer_used_for_selection": false
+        },
+        "mhw": {
+          "inner_sites": [
+            "ajh_E03"
+          ],
+          "outer_sites": [
+            "mhw_E01",
+            "mhw_E02",
+            "mhw_E03"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.95,
+            "base_danger_bias": 2.0,
+            "shrinkage": 1.0,
+            "reference_margin": -0.12434861063957214
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.522292971611023,
+              "action_macro_f1": 0.43105030059814453,
+              "risk_accuracy": 0.5541401505470276,
+              "risk_macro_f1": 0.49273958802223206,
+              "danger_recall": 0.46666666865348816,
+              "danger_correct": 14,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 6,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.07894736842105263,
+              "danger_adjustment": 2.0,
+              "observed_safe_margin": -0.12434861063957214,
+              "reference_safe_margin": -0.12434861063957214
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.3439490497112274,
+              "action_macro_f1": 0.24231958389282227,
+              "risk_accuracy": 0.6114649772644043,
+              "risk_macro_f1": 0.5900031924247742,
+              "danger_recall": 0.46666666865348816,
+              "danger_correct": 14,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.03333333507180214,
+              "safe_to_danger": 11,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.14473684210526316,
+              "danger_adjustment": 0.46894779801368713,
+              "observed_safe_margin": 1.4067035913467407,
+              "reference_safe_margin": -0.12434861063957214
+            },
+            {
+              "action_accuracy": 0.31847134232521057,
+              "action_macro_f1": 0.23706385493278503,
+              "risk_accuracy": 0.656050980091095,
+              "risk_macro_f1": 0.6166867017745972,
+              "danger_recall": 0.46666666865348816,
+              "danger_correct": 14,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 9,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.11842105263157894,
+              "danger_adjustment": -1.2926654517650604,
+              "observed_safe_margin": 3.1683168411254883,
+              "reference_safe_margin": -0.12434861063957214
+            },
+            {
+              "action_accuracy": 0.42675158381462097,
+              "action_macro_f1": 0.37754181027412415,
+              "risk_accuracy": 0.522292971611023,
+              "risk_macro_f1": 0.4698948562145233,
+              "danger_recall": 0.7666666507720947,
+              "danger_correct": 23,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 21,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.27631578947368424,
+              "danger_adjustment": 1.4338392913341522,
+              "observed_safe_margin": 0.44181209802627563,
+              "reference_safe_margin": -0.12434861063957214
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.3439490497112274,
+              "action_macro_f1": 0.24231958389282227,
+              "risk_accuracy": 0.6114649772644043,
+              "risk_macro_f1": 0.5976448655128479,
+              "danger_recall": 0.5666666626930237,
+              "danger_correct": 17,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.03333333507180214,
+              "safe_to_danger": 14,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.18421052631578946
+            },
+            {
+              "action_accuracy": 0.31847134232521057,
+              "action_macro_f1": 0.23706385493278503,
+              "risk_accuracy": 0.5923566818237305,
+              "risk_macro_f1": 0.5887883305549622,
+              "danger_recall": 0.8333333134651184,
+              "danger_correct": 25,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 29,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.3815789473684211
+            },
+            {
+              "action_accuracy": 0.42675158381462097,
+              "action_macro_f1": 0.37754181027412415,
+              "risk_accuracy": 0.5095541477203369,
+              "risk_macro_f1": 0.45455101132392883,
+              "danger_recall": 0.7666666507720947,
+              "danger_correct": 23,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 22,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.2894736842105263
+            }
+          ],
+          "outer_used_for_selection": false
+        },
+        "lmh": {
+          "inner_sites": [
+            "ajh_E03",
+            "mhw_E03"
+          ],
+          "outer_sites": [
+            "lmh_E01"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.5,
+            "base_danger_bias": 2.0,
+            "shrinkage": 1.0,
+            "reference_margin": -4.905003547668457
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.47133758664131165,
+              "action_macro_f1": 0.34390610456466675,
+              "risk_accuracy": 0.5414012670516968,
+              "risk_macro_f1": 0.40075114369392395,
+              "danger_recall": 0.10000000149011612,
+              "danger_correct": 3,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.0,
+              "safe_to_danger": 6,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.07894736842105263,
+              "danger_adjustment": 1.960648536682129,
+              "observed_safe_margin": -4.865652084350586,
+              "reference_safe_margin": -4.905003547668457
+            },
+            {
+              "action_accuracy": 0.3949044644832611,
+              "action_macro_f1": 0.3065897524356842,
+              "risk_accuracy": 0.5159235596656799,
+              "risk_macro_f1": 0.3771108388900757,
+              "danger_recall": 0.5333333611488342,
+              "danger_correct": 16,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 11,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.14473684210526316,
+              "danger_adjustment": 2.039351463317871,
+              "observed_safe_margin": -4.944355010986328,
+              "reference_safe_margin": -4.905003547668457
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.5641025900840759,
+              "action_macro_f1": 0.4937896728515625,
+              "risk_accuracy": 0.6474359035491943,
+              "risk_macro_f1": 0.5615927577018738,
+              "danger_recall": 0.699999988079071,
+              "danger_correct": 21,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.3333333432674408,
+              "safe_to_danger": 6,
+              "safe_total": 75,
+              "trials": 156,
+              "safe_to_danger_rate": 0.08,
+              "danger_adjustment": 0.5505506992340088,
+              "observed_safe_margin": -3.455554246902466,
+              "reference_safe_margin": -4.905003547668457
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.5641025900840759,
+              "action_macro_f1": 0.4937896728515625,
+              "risk_accuracy": 0.6474359035491943,
+              "risk_macro_f1": 0.5680450797080994,
+              "danger_recall": 0.7666666507720947,
+              "danger_correct": 23,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.3333333432674408,
+              "safe_to_danger": 8,
+              "safe_total": 75,
+              "trials": 156,
+              "safe_to_danger_rate": 0.10666666666666667
+            }
+          ],
+          "outer_used_for_selection": false
+        }
+      }
+    },
+    {
+      "support_seed": 17027,
+      "cal43": {
+        "risk_accuracy": 0.5355191318986628,
+        "risk_macro_f1": 0.44631727783514935,
+        "danger_recall": 0.4758955797618204,
+        "safe_to_danger_rate": 0.1431261770244821,
+        "trials": 1098
+      },
+      "baseline": {
+        "risk_accuracy": 0.5218579272700572,
+        "risk_macro_f1": 0.4374414570561741,
+        "danger_recall": 0.5473891938807535,
+        "safe_to_danger_rate": 0.1864406779661017,
+        "trials": 1098
+      },
+      "folds": {
+        "ajh": {
+          "inner_sites": [
+            "mhw_E03"
+          ],
+          "outer_sites": [
+            "ajh_E01",
+            "ajh_E02",
+            "ajh_E03"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.95,
+            "base_danger_bias": 1.5,
+            "shrinkage": 1.0,
+            "reference_margin": -2.0817911624908447
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.4331210255622864,
+              "action_macro_f1": 0.3492634892463684,
+              "risk_accuracy": 0.5605095624923706,
+              "risk_macro_f1": 0.4157928228378296,
+              "danger_recall": 0.3333333432674408,
+              "danger_correct": 10,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 3,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.039473684210526314,
+              "danger_adjustment": 1.5,
+              "observed_safe_margin": -2.0817911624908447,
+              "reference_safe_margin": -2.0817911624908447
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.31847134232521057,
+              "action_macro_f1": 0.20608355104923248,
+              "risk_accuracy": 0.4458598792552948,
+              "risk_macro_f1": 0.34213098883628845,
+              "danger_recall": 0.3333333432674408,
+              "danger_correct": 10,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 9,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.11842105263157894,
+              "danger_adjustment": 3.744150400161743,
+              "observed_safe_margin": -4.325941562652588,
+              "reference_safe_margin": -2.0817911624908447
+            },
+            {
+              "action_accuracy": 0.30573248863220215,
+              "action_macro_f1": 0.2685606777667999,
+              "risk_accuracy": 0.4522292912006378,
+              "risk_macro_f1": 0.30094990134239197,
+              "danger_recall": 0.2666666805744171,
+              "danger_correct": 8,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 11,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.14473684210526316,
+              "danger_adjustment": 0.3545299172401428,
+              "observed_safe_margin": -0.9363210797309875,
+              "reference_safe_margin": -2.0817911624908447
+            },
+            {
+              "action_accuracy": 0.2802547812461853,
+              "action_macro_f1": 0.1981947124004364,
+              "risk_accuracy": 0.4458598792552948,
+              "risk_macro_f1": 0.30725041031837463,
+              "danger_recall": 0.1666666716337204,
+              "danger_correct": 5,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 4,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.05263157894736842,
+              "danger_adjustment": 2.1880455017089844,
+              "observed_safe_margin": -2.769836664199829,
+              "reference_safe_margin": -2.0817911624908447
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.31847134232521057,
+              "action_macro_f1": 0.20608355104923248,
+              "risk_accuracy": 0.46496814489364624,
+              "risk_macro_f1": 0.3455626666545868,
+              "danger_recall": 0.20000000298023224,
+              "danger_correct": 6,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 2,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.02631578947368421
+            },
+            {
+              "action_accuracy": 0.30573248863220215,
+              "action_macro_f1": 0.2685606777667999,
+              "risk_accuracy": 0.4585987329483032,
+              "risk_macro_f1": 0.33593225479125977,
+              "danger_recall": 0.5,
+              "danger_correct": 15,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 18,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.23684210526315788
+            },
+            {
+              "action_accuracy": 0.2802547812461853,
+              "action_macro_f1": 0.1981947124004364,
+              "risk_accuracy": 0.4522292912006378,
+              "risk_macro_f1": 0.30818745493888855,
+              "danger_recall": 0.13333334028720856,
+              "danger_correct": 4,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 3,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.039473684210526314
+            }
+          ],
+          "outer_used_for_selection": false
+        },
+        "mhw": {
+          "inner_sites": [
+            "ajh_E03"
+          ],
+          "outer_sites": [
+            "mhw_E01",
+            "mhw_E02",
+            "mhw_E03"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.95,
+            "base_danger_bias": 2.0,
+            "shrinkage": 1.0,
+            "reference_margin": -0.9410144686698914
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.5095541477203369,
+              "action_macro_f1": 0.401694655418396,
+              "risk_accuracy": 0.5668789744377136,
+              "risk_macro_f1": 0.5044600367546082,
+              "danger_recall": 0.46666666865348816,
+              "danger_correct": 14,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 7,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.09210526315789473,
+              "danger_adjustment": 2.0,
+              "observed_safe_margin": -0.9410144686698914,
+              "reference_safe_margin": -0.9410144686698914
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.35031846165657043,
+              "action_macro_f1": 0.2536656856536865,
+              "risk_accuracy": 0.6433120965957642,
+              "risk_macro_f1": 0.6313297748565674,
+              "danger_recall": 0.5333333611488342,
+              "danger_correct": 16,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 7,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.09210526315789473,
+              "danger_adjustment": 0.8064737319946289,
+              "observed_safe_margin": 0.25251179933547974,
+              "reference_safe_margin": -0.9410144686698914
+            },
+            {
+              "action_accuracy": 0.2866241931915283,
+              "action_macro_f1": 0.22015337646007538,
+              "risk_accuracy": 0.6050955653190613,
+              "risk_macro_f1": 0.5693339705467224,
+              "danger_recall": 0.5,
+              "danger_correct": 15,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 18,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.23684210526315788,
+              "danger_adjustment": -1.571351945400238,
+              "observed_safe_margin": 2.6303374767303467,
+              "reference_safe_margin": -0.9410144686698914
+            },
+            {
+              "action_accuracy": 0.4394904375076294,
+              "action_macro_f1": 0.3773670494556427,
+              "risk_accuracy": 0.5923566818237305,
+              "risk_macro_f1": 0.5479797720909119,
+              "danger_recall": 0.7333333492279053,
+              "danger_correct": 22,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 16,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.21052631578947367,
+              "danger_adjustment": 0.8101629167795181,
+              "observed_safe_margin": 0.24882261455059052,
+              "reference_safe_margin": -0.9410144686698914
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.35031846165657043,
+              "action_macro_f1": 0.2536656856536865,
+              "risk_accuracy": 0.6433120965957642,
+              "risk_macro_f1": 0.6376343965530396,
+              "danger_recall": 0.6333333253860474,
+              "danger_correct": 19,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 10,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.13157894736842105
+            },
+            {
+              "action_accuracy": 0.2866241931915283,
+              "action_macro_f1": 0.22015337646007538,
+              "risk_accuracy": 0.5031847357749939,
+              "risk_macro_f1": 0.4958709478378296,
+              "danger_recall": 0.7666666507720947,
+              "danger_correct": 23,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 37,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.4868421052631579
+            },
+            {
+              "action_accuracy": 0.4394904375076294,
+              "action_macro_f1": 0.3773670494556427,
+              "risk_accuracy": 0.5541401505470276,
+              "risk_macro_f1": 0.5053959488868713,
+              "danger_recall": 0.800000011920929,
+              "danger_correct": 24,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 20,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.2631578947368421
+            }
+          ],
+          "outer_used_for_selection": false
+        },
+        "lmh": {
+          "inner_sites": [
+            "ajh_E03",
+            "mhw_E03"
+          ],
+          "outer_sites": [
+            "lmh_E01"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.95,
+            "base_danger_bias": 2.0,
+            "shrinkage": 0.5,
+            "reference_margin": -1.4567693024873734
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.4904458522796631,
+              "action_macro_f1": 0.36801841855049133,
+              "risk_accuracy": 0.5350318551063538,
+              "risk_macro_f1": 0.41019055247306824,
+              "danger_recall": 0.13333334028720856,
+              "danger_correct": 4,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.0,
+              "safe_to_danger": 9,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.11842105263157894,
+              "danger_adjustment": 2.4882887229323387,
+              "observed_safe_margin": -2.433346748352051,
+              "reference_safe_margin": -1.4567693024873734
+            },
+            {
+              "action_accuracy": 0.42675158381462097,
+              "action_macro_f1": 0.31950345635414124,
+              "risk_accuracy": 0.5859872698783875,
+              "risk_macro_f1": 0.492761492729187,
+              "danger_recall": 0.4333333373069763,
+              "danger_correct": 13,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.03333333507180214,
+              "safe_to_danger": 7,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.09210526315789473,
+              "danger_adjustment": 1.5117112770676613,
+              "observed_safe_margin": -0.4801918566226959,
+              "reference_safe_margin": -1.4567693024873734
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.5320512652397156,
+              "action_macro_f1": 0.4892440140247345,
+              "risk_accuracy": 0.5641025900840759,
+              "risk_macro_f1": 0.4251110553741455,
+              "danger_recall": 0.800000011920929,
+              "danger_correct": 24,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.5,
+              "safe_to_danger": 11,
+              "safe_total": 75,
+              "trials": 156,
+              "safe_to_danger_rate": 0.14666666666666667,
+              "danger_adjustment": 1.8286019191145897,
+              "observed_safe_margin": -1.1139731407165527,
+              "reference_safe_margin": -1.4567693024873734
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.5320512652397156,
+              "action_macro_f1": 0.4892440140247345,
+              "risk_accuracy": 0.5769230723381042,
+              "risk_macro_f1": 0.4334813058376312,
+              "danger_recall": 0.800000011920929,
+              "danger_correct": 24,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.5,
+              "safe_to_danger": 9,
+              "safe_total": 75,
+              "trials": 156,
+              "safe_to_danger_rate": 0.12
+            }
+          ],
+          "outer_used_for_selection": false
+        }
+      }
+    },
+    {
+      "support_seed": 17037,
+      "cal43": {
+        "risk_accuracy": 0.5327868930086195,
+        "risk_macro_f1": 0.4436567511497734,
+        "danger_recall": 0.43788707533169313,
+        "safe_to_danger_rate": 0.12429378531073447,
+        "trials": 1098
+      },
+      "baseline": {
+        "risk_accuracy": 0.510928960880078,
+        "risk_macro_f1": 0.42796814436252434,
+        "danger_recall": 0.49981785490973185,
+        "safe_to_danger_rate": 0.19962335216572505,
+        "trials": 1098
+      },
+      "folds": {
+        "ajh": {
+          "inner_sites": [
+            "mhw_E03"
+          ],
+          "outer_sites": [
+            "ajh_E01",
+            "ajh_E02",
+            "ajh_E03"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.95,
+            "base_danger_bias": 2.0,
+            "shrinkage": 1.0,
+            "reference_margin": -3.8649837970733643
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.41401273012161255,
+              "action_macro_f1": 0.32500436902046204,
+              "risk_accuracy": 0.5286624431610107,
+              "risk_macro_f1": 0.3641330897808075,
+              "danger_recall": 0.4333333373069763,
+              "danger_correct": 13,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 6,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.07894736842105263,
+              "danger_adjustment": 2.0,
+              "observed_safe_margin": -3.8649837970733643,
+              "reference_safe_margin": -3.8649837970733643
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.337579607963562,
+              "action_macro_f1": 0.2451566457748413,
+              "risk_accuracy": 0.4522292912006378,
+              "risk_macro_f1": 0.32109296321868896,
+              "danger_recall": 0.36666667461395264,
+              "danger_correct": 11,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.1666666716337204,
+              "safe_to_danger": 10,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.13157894736842105,
+              "danger_adjustment": 2.808812379837036,
+              "observed_safe_margin": -4.6737961769104,
+              "reference_safe_margin": -3.8649837970733643
+            },
+            {
+              "action_accuracy": 0.25477707386016846,
+              "action_macro_f1": 0.18326440453529358,
+              "risk_accuracy": 0.4585987329483032,
+              "risk_macro_f1": 0.2872220277786255,
+              "danger_recall": 0.1666666716337204,
+              "danger_correct": 5,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.0,
+              "safe_to_danger": 6,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.07894736842105263,
+              "danger_adjustment": -0.9103615283966064,
+              "observed_safe_margin": -0.9546222686767578,
+              "reference_safe_margin": -3.8649837970733643
+            },
+            {
+              "action_accuracy": 0.2802547812461853,
+              "action_macro_f1": 0.20396688580513,
+              "risk_accuracy": 0.42038217186927795,
+              "risk_macro_f1": 0.29720693826675415,
+              "danger_recall": 0.23333333432674408,
+              "danger_correct": 7,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 6,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.07894736842105263,
+              "danger_adjustment": 2.8058550357818604,
+              "observed_safe_margin": -4.670838832855225,
+              "reference_safe_margin": -3.8649837970733643
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.337579607963562,
+              "action_macro_f1": 0.2451566457748413,
+              "risk_accuracy": 0.47770699858665466,
+              "risk_macro_f1": 0.3347138464450836,
+              "danger_recall": 0.30000001192092896,
+              "danger_correct": 9,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.1666666716337204,
+              "safe_to_danger": 5,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.06578947368421052
+            },
+            {
+              "action_accuracy": 0.25477707386016846,
+              "action_macro_f1": 0.18326440453529358,
+              "risk_accuracy": 0.4331210255622864,
+              "risk_macro_f1": 0.2834511399269104,
+              "danger_recall": 0.23333333432674408,
+              "danger_correct": 7,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.0,
+              "safe_to_danger": 14,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.18421052631578946
+            },
+            {
+              "action_accuracy": 0.2802547812461853,
+              "action_macro_f1": 0.20396688580513,
+              "risk_accuracy": 0.42675158381462097,
+              "risk_macro_f1": 0.29378294944763184,
+              "danger_recall": 0.1666666716337204,
+              "danger_correct": 5,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 3,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.039473684210526314
+            }
+          ],
+          "outer_used_for_selection": false
+        },
+        "mhw": {
+          "inner_sites": [
+            "ajh_E03"
+          ],
+          "outer_sites": [
+            "mhw_E01",
+            "mhw_E02",
+            "mhw_E03"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.95,
+            "base_danger_bias": 1.5,
+            "shrinkage": 1.0,
+            "reference_margin": 0.25915685296058655
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.522292971611023,
+              "action_macro_f1": 0.42023563385009766,
+              "risk_accuracy": 0.5605095624923706,
+              "risk_macro_f1": 0.4990995228290558,
+              "danger_recall": 0.46666666865348816,
+              "danger_correct": 14,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 5,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.06578947368421052,
+              "danger_adjustment": 1.5,
+              "observed_safe_margin": 0.25915685296058655,
+              "reference_safe_margin": 0.25915685296058655
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.3439490497112274,
+              "action_macro_f1": 0.24133984744548798,
+              "risk_accuracy": 0.6242038011550903,
+              "risk_macro_f1": 0.6043744087219238,
+              "danger_recall": 0.46666666865348816,
+              "danger_correct": 14,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 8,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.10526315789473684,
+              "danger_adjustment": -0.20401880145072937,
+              "observed_safe_margin": 1.963175654411316,
+              "reference_safe_margin": 0.25915685296058655
+            },
+            {
+              "action_accuracy": 0.31210190057754517,
+              "action_macro_f1": 0.23390479385852814,
+              "risk_accuracy": 0.6050955653190613,
+              "risk_macro_f1": 0.5758171081542969,
+              "danger_recall": 0.5,
+              "danger_correct": 15,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 13,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.17105263157894737,
+              "danger_adjustment": -1.2701471745967865,
+              "observed_safe_margin": 3.029304027557373,
+              "reference_safe_margin": 0.25915685296058655
+            },
+            {
+              "action_accuracy": 0.4458598792552948,
+              "action_macro_f1": 0.3899742066860199,
+              "risk_accuracy": 0.5541401505470276,
+              "risk_macro_f1": 0.5189029574394226,
+              "danger_recall": 0.6666666865348816,
+              "danger_correct": 20,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 18,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.23684210526315788,
+              "danger_adjustment": 1.0253058969974518,
+              "observed_safe_margin": 0.7338509559631348,
+              "reference_safe_margin": 0.25915685296058655
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.3439490497112274,
+              "action_macro_f1": 0.24133984744548798,
+              "risk_accuracy": 0.5668789744377136,
+              "risk_macro_f1": 0.558264434337616,
+              "danger_recall": 0.6000000238418579,
+              "danger_correct": 18,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 21,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.27631578947368424
+            },
+            {
+              "action_accuracy": 0.31210190057754517,
+              "action_macro_f1": 0.23390479385852814,
+              "risk_accuracy": 0.5477706789970398,
+              "risk_macro_f1": 0.5458323955535889,
+              "danger_recall": 0.7666666507720947,
+              "danger_correct": 23,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 33,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.4342105263157895
+            },
+            {
+              "action_accuracy": 0.4458598792552948,
+              "action_macro_f1": 0.3899742066860199,
+              "risk_accuracy": 0.5286624431610107,
+              "risk_macro_f1": 0.48782411217689514,
+              "danger_recall": 0.7333333492279053,
+              "danger_correct": 22,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 21,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.27631578947368424
+            }
+          ],
+          "outer_used_for_selection": false
+        },
+        "lmh": {
+          "inner_sites": [
+            "ajh_E03",
+            "mhw_E03"
+          ],
+          "outer_sites": [
+            "lmh_E01"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.95,
+            "base_danger_bias": 2.0,
+            "shrinkage": 0.75,
+            "reference_margin": -0.489396870136261
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.47770699858665466,
+              "action_macro_f1": 0.3429054915904999,
+              "risk_accuracy": 0.5350318551063538,
+              "risk_macro_f1": 0.3721955716609955,
+              "danger_recall": 0.10000000149011612,
+              "danger_correct": 3,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.0,
+              "safe_to_danger": 3,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.039473684210526314,
+              "danger_adjustment": 0.9748079031705856,
+              "observed_safe_margin": 0.8775259256362915,
+              "reference_safe_margin": -0.489396870136261
+            },
+            {
+              "action_accuracy": 0.40764331817626953,
+              "action_macro_f1": 0.31215977668762207,
+              "risk_accuracy": 0.5350318551063538,
+              "risk_macro_f1": 0.43182411789894104,
+              "danger_recall": 0.6000000238418579,
+              "danger_correct": 18,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 14,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.18421052631578946,
+              "danger_adjustment": 3.0251920968294144,
+              "observed_safe_margin": -1.8563196659088135,
+              "reference_safe_margin": -0.489396870136261
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.5,
+              "action_macro_f1": 0.431673526763916,
+              "risk_accuracy": 0.6153846383094788,
+              "risk_macro_f1": 0.5013483166694641,
+              "danger_recall": 0.6666666865348816,
+              "danger_correct": 20,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.23333333432674408,
+              "safe_to_danger": 5,
+              "safe_total": 75,
+              "trials": 156,
+              "safe_to_danger_rate": 0.06666666666666667,
+              "danger_adjustment": 0.6780960410833359,
+              "observed_safe_margin": 1.2731417417526245,
+              "reference_safe_margin": -0.489396870136261
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.5,
+              "action_macro_f1": 0.431673526763916,
+              "risk_accuracy": 0.5961538553237915,
+              "risk_macro_f1": 0.4923180043697357,
+              "danger_recall": 0.699999988079071,
+              "danger_correct": 21,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.23333333432674408,
+              "safe_to_danger": 9,
+              "safe_total": 75,
+              "trials": 156,
+              "safe_to_danger_rate": 0.12
+            }
+          ],
+          "outer_used_for_selection": false
+        }
+      }
+    },
+    {
+      "support_seed": 17047,
+      "cal43": {
+        "risk_accuracy": 0.5418943531254818,
+        "risk_macro_f1": 0.4320985106768287,
+        "danger_recall": 0.3615361345433147,
+        "safe_to_danger_rate": 0.0847457627118644,
+        "trials": 1098
+      },
+      "baseline": {
+        "risk_accuracy": 0.5264116592691679,
+        "risk_macro_f1": 0.43512481559604027,
+        "danger_recall": 0.528324236933868,
+        "safe_to_danger_rate": 0.1864406779661017,
+        "trials": 1098
+      },
+      "folds": {
+        "ajh": {
+          "inner_sites": [
+            "mhw_E03"
+          ],
+          "outer_sites": [
+            "ajh_E01",
+            "ajh_E02",
+            "ajh_E03"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.95,
+            "base_danger_bias": 2.0,
+            "shrinkage": 1.0,
+            "reference_margin": -3.6070148944854736
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.36305731534957886,
+              "action_macro_f1": 0.27097028493881226,
+              "risk_accuracy": 0.5350318551063538,
+              "risk_macro_f1": 0.36855626106262207,
+              "danger_recall": 0.4333333373069763,
+              "danger_correct": 13,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 5,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.06578947368421052,
+              "danger_adjustment": 2.0,
+              "observed_safe_margin": -3.6070148944854736,
+              "reference_safe_margin": -3.6070148944854736
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.30573248863220215,
+              "action_macro_f1": 0.22080150246620178,
+              "risk_accuracy": 0.47133758664131165,
+              "risk_macro_f1": 0.32372191548347473,
+              "danger_recall": 0.2666666805744171,
+              "danger_correct": 8,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.1666666716337204,
+              "safe_to_danger": 6,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.07894736842105263,
+              "danger_adjustment": 2.1899938583374023,
+              "observed_safe_margin": -3.797008752822876,
+              "reference_safe_margin": -3.6070148944854736
+            },
+            {
+              "action_accuracy": 0.19108280539512634,
+              "action_macro_f1": 0.14884313941001892,
+              "risk_accuracy": 0.46496814489364624,
+              "risk_macro_f1": 0.2942864000797272,
+              "danger_recall": 0.13333334028720856,
+              "danger_correct": 4,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.0,
+              "safe_to_danger": 8,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.10526315789473684,
+              "danger_adjustment": -1.0644452571868896,
+              "observed_safe_margin": -0.542569637298584,
+              "reference_safe_margin": -3.6070148944854736
+            },
+            {
+              "action_accuracy": 0.2675159275531769,
+              "action_macro_f1": 0.1901903748512268,
+              "risk_accuracy": 0.4331210255622864,
+              "risk_macro_f1": 0.30072465538978577,
+              "danger_recall": 0.2666666805744171,
+              "danger_correct": 8,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 6,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.07894736842105263,
+              "danger_adjustment": 3.2634589672088623,
+              "observed_safe_margin": -4.870473861694336,
+              "reference_safe_margin": -3.6070148944854736
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.30573248863220215,
+              "action_macro_f1": 0.22080150246620178,
+              "risk_accuracy": 0.4904458522796631,
+              "risk_macro_f1": 0.34671351313591003,
+              "danger_recall": 0.23333333432674408,
+              "danger_correct": 7,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.1666666716337204,
+              "safe_to_danger": 3,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.039473684210526314
+            },
+            {
+              "action_accuracy": 0.19108280539512634,
+              "action_macro_f1": 0.14884313941001892,
+              "risk_accuracy": 0.42675158381462097,
+              "risk_macro_f1": 0.2860836982727051,
+              "danger_recall": 0.2666666805744171,
+              "danger_correct": 8,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.0,
+              "safe_to_danger": 16,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.21052631578947367
+            },
+            {
+              "action_accuracy": 0.2675159275531769,
+              "action_macro_f1": 0.1901903748512268,
+              "risk_accuracy": 0.4331210255622864,
+              "risk_macro_f1": 0.28382551670074463,
+              "danger_recall": 0.13333334028720856,
+              "danger_correct": 4,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.06666667014360428,
+              "safe_to_danger": 4,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.05263157894736842
+            }
+          ],
+          "outer_used_for_selection": false
+        },
+        "mhw": {
+          "inner_sites": [
+            "ajh_E03"
+          ],
+          "outer_sites": [
+            "mhw_E01",
+            "mhw_E02",
+            "mhw_E03"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.95,
+            "base_danger_bias": 1.5,
+            "shrinkage": 1.0,
+            "reference_margin": -0.9097880721092224
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.5095541477203369,
+              "action_macro_f1": 0.4296114146709442,
+              "risk_accuracy": 0.5541401505470276,
+              "risk_macro_f1": 0.4894888699054718,
+              "danger_recall": 0.4333333373069763,
+              "danger_correct": 13,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 5,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.06578947368421052,
+              "danger_adjustment": 1.5,
+              "observed_safe_margin": -0.9097880721092224,
+              "reference_safe_margin": -0.9097880721092224
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.42038217186927795,
+              "action_macro_f1": 0.2859667241573334,
+              "risk_accuracy": 0.6305732727050781,
+              "risk_macro_f1": 0.562237560749054,
+              "danger_recall": 0.23333333432674408,
+              "danger_correct": 7,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 3,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.039473684210526314,
+              "danger_adjustment": -2.2761935591697693,
+              "observed_safe_margin": 2.866405487060547,
+              "reference_safe_margin": -0.9097880721092224
+            },
+            {
+              "action_accuracy": 0.2929936349391937,
+              "action_macro_f1": 0.20184862613677979,
+              "risk_accuracy": 0.668789803981781,
+              "risk_macro_f1": 0.6081699132919312,
+              "danger_recall": 0.3333333432674408,
+              "danger_correct": 10,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 7,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.09210526315789473,
+              "danger_adjustment": -3.3652588725090027,
+              "observed_safe_margin": 3.9554708003997803,
+              "reference_safe_margin": -0.9097880721092224
+            },
+            {
+              "action_accuracy": 0.40764331817626953,
+              "action_macro_f1": 0.35456934571266174,
+              "risk_accuracy": 0.5414012670516968,
+              "risk_macro_f1": 0.5004038214683533,
+              "danger_recall": 0.5333333611488342,
+              "danger_correct": 16,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 8,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.10526315789473684,
+              "danger_adjustment": -0.7150445580482483,
+              "observed_safe_margin": 1.3052564859390259,
+              "reference_safe_margin": -0.9097880721092224
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.42038217186927795,
+              "action_macro_f1": 0.2859667241573334,
+              "risk_accuracy": 0.656050980091095,
+              "risk_macro_f1": 0.6495726704597473,
+              "danger_recall": 0.6666666865348816,
+              "danger_correct": 20,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 13,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.17105263157894737
+            },
+            {
+              "action_accuracy": 0.2929936349391937,
+              "action_macro_f1": 0.20184862613677979,
+              "risk_accuracy": 0.5923566818237305,
+              "risk_macro_f1": 0.5896722674369812,
+              "danger_recall": 0.800000011920929,
+              "danger_correct": 24,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 31,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.40789473684210525
+            },
+            {
+              "action_accuracy": 0.40764331817626953,
+              "action_macro_f1": 0.35456934571266174,
+              "risk_accuracy": 0.5095541477203369,
+              "risk_macro_f1": 0.45651426911354065,
+              "danger_recall": 0.800000011920929,
+              "danger_correct": 24,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 23,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.3026315789473684
+            }
+          ],
+          "outer_used_for_selection": false
+        },
+        "lmh": {
+          "inner_sites": [
+            "ajh_E03",
+            "mhw_E03"
+          ],
+          "outer_sites": [
+            "lmh_E01"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.95,
+            "base_danger_bias": 1.0,
+            "shrinkage": 0.0,
+            "reference_margin": -1.6735296249389648
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.47770699858665466,
+              "action_macro_f1": 0.32725095748901367,
+              "risk_accuracy": 0.5541401505470276,
+              "risk_macro_f1": 0.4087190628051758,
+              "danger_recall": 0.10000000149011612,
+              "danger_correct": 3,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.0,
+              "safe_to_danger": 5,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.06578947368421052,
+              "danger_adjustment": 1.0,
+              "observed_safe_margin": -2.0469064712524414,
+              "reference_safe_margin": -1.6735296249389648
+            },
+            {
+              "action_accuracy": 0.4012738764286041,
+              "action_macro_f1": 0.32051682472229004,
+              "risk_accuracy": 0.5286624431610107,
+              "risk_macro_f1": 0.3978101909160614,
+              "danger_recall": 0.5,
+              "danger_correct": 15,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 9,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.11842105263157894,
+              "danger_adjustment": 1.0,
+              "observed_safe_margin": -1.3001527786254883,
+              "reference_safe_margin": -1.6735296249389648
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.5512820482254028,
+              "action_macro_f1": 0.5090731382369995,
+              "risk_accuracy": 0.5833333134651184,
+              "risk_macro_f1": 0.43516483902931213,
+              "danger_recall": 0.7666666507720947,
+              "danger_correct": 23,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.5,
+              "safe_to_danger": 7,
+              "safe_total": 75,
+              "trials": 156,
+              "safe_to_danger_rate": 0.09333333333333334,
+              "danger_adjustment": 1.0,
+              "observed_safe_margin": -0.8140697479248047,
+              "reference_safe_margin": -1.6735296249389648
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.5512820482254028,
+              "action_macro_f1": 0.5090731382369995,
+              "risk_accuracy": 0.5769230723381042,
+              "risk_macro_f1": 0.4334813058376312,
+              "danger_recall": 0.800000011920929,
+              "danger_correct": 24,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.5,
+              "safe_to_danger": 9,
+              "safe_total": 75,
+              "trials": 156,
+              "safe_to_danger_rate": 0.12
+            }
+          ],
+          "outer_used_for_selection": false
+        }
+      }
+    },
+    {
+      "support_seed": 17057,
+      "cal43": {
+        "risk_accuracy": 0.5355191273116023,
+        "risk_macro_f1": 0.43559410508538854,
+        "danger_recall": 0.42826351475221647,
+        "safe_to_danger_rate": 0.10734463276836158,
+        "trials": 1098
+      },
+      "baseline": {
+        "risk_accuracy": 0.5145719567608964,
+        "risk_macro_f1": 0.4236632021235638,
+        "danger_recall": 0.4901943006679986,
+        "safe_to_danger_rate": 0.17890772128060264,
+        "trials": 1098
+      },
+      "folds": {
+        "ajh": {
+          "inner_sites": [
+            "mhw_E03"
+          ],
+          "outer_sites": [
+            "ajh_E01",
+            "ajh_E02",
+            "ajh_E03"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.95,
+            "base_danger_bias": 1.0,
+            "shrinkage": 1.0,
+            "reference_margin": -3.5101680755615234
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.40764331817626953,
+              "action_macro_f1": 0.3057667911052704,
+              "risk_accuracy": 0.5796178579330444,
+              "risk_macro_f1": 0.4321010112762451,
+              "danger_recall": 0.4333333373069763,
+              "danger_correct": 13,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.20000000298023224,
+              "safe_to_danger": 2,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.02631578947368421,
+              "danger_adjustment": 1.0,
+              "observed_safe_margin": -3.5101680755615234,
+              "reference_safe_margin": -3.5101680755615234
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.3248407542705536,
+              "action_macro_f1": 0.21774889528751373,
+              "risk_accuracy": 0.4585987329483032,
+              "risk_macro_f1": 0.34469282627105713,
+              "danger_recall": 0.23333333432674408,
+              "danger_correct": 7,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 6,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.07894736842105263,
+              "danger_adjustment": 2.785214424133301,
+              "observed_safe_margin": -5.295382499694824,
+              "reference_safe_margin": -3.5101680755615234
+            },
+            {
+              "action_accuracy": 0.2802547812461853,
+              "action_macro_f1": 0.2166077047586441,
+              "risk_accuracy": 0.48407644033432007,
+              "risk_macro_f1": 0.30442583560943604,
+              "danger_recall": 0.1666666716337204,
+              "danger_correct": 5,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.0,
+              "safe_to_danger": 5,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.06578947368421052,
+              "danger_adjustment": -1.075537085533142,
+              "observed_safe_margin": -1.4346309900283813,
+              "reference_safe_margin": -3.5101680755615234
+            },
+            {
+              "action_accuracy": 0.2738853394985199,
+              "action_macro_f1": 0.18514609336853027,
+              "risk_accuracy": 0.40764331817626953,
+              "risk_macro_f1": 0.25138673186302185,
+              "danger_recall": 0.06666667014360428,
+              "danger_correct": 2,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.03333333507180214,
+              "safe_to_danger": 4,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.05263157894736842,
+              "danger_adjustment": 1.6373705863952637,
+              "observed_safe_margin": -4.147538661956787,
+              "reference_safe_margin": -3.5101680755615234
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.3248407542705536,
+              "action_macro_f1": 0.21774889528751373,
+              "risk_accuracy": 0.47133758664131165,
+              "risk_macro_f1": 0.3471980392932892,
+              "danger_recall": 0.20000000298023224,
+              "danger_correct": 6,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 3,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.039473684210526314
+            },
+            {
+              "action_accuracy": 0.2802547812461853,
+              "action_macro_f1": 0.2166077047586441,
+              "risk_accuracy": 0.4012738764286041,
+              "risk_macro_f1": 0.2703864574432373,
+              "danger_recall": 0.2666666805744171,
+              "danger_correct": 8,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.0,
+              "safe_to_danger": 21,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.27631578947368424
+            },
+            {
+              "action_accuracy": 0.2738853394985199,
+              "action_macro_f1": 0.18514609336853027,
+              "risk_accuracy": 0.40764331817626953,
+              "risk_macro_f1": 0.2509070336818695,
+              "danger_recall": 0.06666667014360428,
+              "danger_correct": 2,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.03333333507180214,
+              "safe_to_danger": 4,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.05263157894736842
+            }
+          ],
+          "outer_used_for_selection": false
+        },
+        "mhw": {
+          "inner_sites": [
+            "ajh_E03"
+          ],
+          "outer_sites": [
+            "mhw_E01",
+            "mhw_E02",
+            "mhw_E03"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.95,
+            "base_danger_bias": 2.0,
+            "shrinkage": 1.0,
+            "reference_margin": 0.2700332999229431
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.4968152940273285,
+              "action_macro_f1": 0.3837299644947052,
+              "risk_accuracy": 0.5859872698783875,
+              "risk_macro_f1": 0.5299816131591797,
+              "danger_recall": 0.46666666865348816,
+              "danger_correct": 14,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.03333333507180214,
+              "safe_to_danger": 7,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.09210526315789473,
+              "danger_adjustment": 2.0,
+              "observed_safe_margin": 0.2700332999229431,
+              "reference_safe_margin": 0.2700332999229431
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.30573248863220215,
+              "action_macro_f1": 0.2226366251707077,
+              "risk_accuracy": 0.5987260937690735,
+              "risk_macro_f1": 0.5811103582382202,
+              "danger_recall": 0.5,
+              "danger_correct": 15,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 10,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.13157894736842105,
+              "danger_adjustment": 1.2537822127342224,
+              "observed_safe_margin": 1.0162510871887207,
+              "reference_safe_margin": 0.2700332999229431
+            },
+            {
+              "action_accuracy": 0.30573248863220215,
+              "action_macro_f1": 0.2240886688232422,
+              "risk_accuracy": 0.656050980091095,
+              "risk_macro_f1": 0.6218419075012207,
+              "danger_recall": 0.5333333611488342,
+              "danger_correct": 16,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 8,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.10526315789473684,
+              "danger_adjustment": -1.4015491604804993,
+              "observed_safe_margin": 3.6715824604034424,
+              "reference_safe_margin": 0.2700332999229431
+            },
+            {
+              "action_accuracy": 0.42038217186927795,
+              "action_macro_f1": 0.3511655926704407,
+              "risk_accuracy": 0.5477706789970398,
+              "risk_macro_f1": 0.5024751424789429,
+              "danger_recall": 0.7333333492279053,
+              "danger_correct": 22,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 19,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.25,
+              "danger_adjustment": 1.3078150749206543,
+              "observed_safe_margin": 0.9622182250022888,
+              "reference_safe_margin": 0.2700332999229431
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.30573248863220215,
+              "action_macro_f1": 0.2226366251707077,
+              "risk_accuracy": 0.5923566818237305,
+              "risk_macro_f1": 0.5759682059288025,
+              "danger_recall": 0.5333333611488342,
+              "danger_correct": 16,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 12,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.15789473684210525
+            },
+            {
+              "action_accuracy": 0.30573248863220215,
+              "action_macro_f1": 0.2240886688232422,
+              "risk_accuracy": 0.6050955653190613,
+              "risk_macro_f1": 0.5971660614013672,
+              "danger_recall": 0.8333333134651184,
+              "danger_correct": 25,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.10000000149011612,
+              "safe_to_danger": 28,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.3684210526315789
+            },
+            {
+              "action_accuracy": 0.42038217186927795,
+              "action_macro_f1": 0.3511655926704407,
+              "risk_accuracy": 0.5350318551063538,
+              "risk_macro_f1": 0.4822483956813812,
+              "danger_recall": 0.7333333492279053,
+              "danger_correct": 22,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.13333334028720856,
+              "safe_to_danger": 20,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.2631578947368421
+            }
+          ],
+          "outer_used_for_selection": false
+        },
+        "lmh": {
+          "inner_sites": [
+            "ajh_E03",
+            "mhw_E03"
+          ],
+          "outer_sites": [
+            "lmh_E01"
+          ],
+          "selected_config": {
+            "safe_margin_quantile": 0.95,
+            "base_danger_bias": 1.0,
+            "shrinkage": 0.25,
+            "reference_margin": -1.151982605457306
+          },
+          "inner_metrics": [
+            {
+              "action_accuracy": 0.47770699858665466,
+              "action_macro_f1": 0.3316527009010315,
+              "risk_accuracy": 0.5732483863830566,
+              "risk_macro_f1": 0.43254372477531433,
+              "danger_recall": 0.13333334028720856,
+              "danger_correct": 4,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.0,
+              "safe_to_danger": 4,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.05263157894736842,
+              "danger_adjustment": 1.0576439946889877,
+              "observed_safe_margin": -1.3825585842132568,
+              "reference_safe_margin": -1.151982605457306
+            },
+            {
+              "action_accuracy": 0.3885350227355957,
+              "action_macro_f1": 0.2901343107223511,
+              "risk_accuracy": 0.5477706789970398,
+              "risk_macro_f1": 0.42566749453544617,
+              "danger_recall": 0.4333333373069763,
+              "danger_correct": 13,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.0,
+              "safe_to_danger": 7,
+              "safe_total": 76,
+              "trials": 157,
+              "safe_to_danger_rate": 0.09210526315789473,
+              "danger_adjustment": 0.9423560053110123,
+              "observed_safe_margin": -0.921406626701355,
+              "reference_safe_margin": -1.151982605457306
+            }
+          ],
+          "outer_metrics": [
+            {
+              "action_accuracy": 0.5448718070983887,
+              "action_macro_f1": 0.5032095909118652,
+              "risk_accuracy": 0.5961538553237915,
+              "risk_macro_f1": 0.4432748556137085,
+              "danger_recall": 0.7666666507720947,
+              "danger_correct": 23,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.5,
+              "safe_to_danger": 5,
+              "safe_total": 75,
+              "trials": 156,
+              "safe_to_danger_rate": 0.06666666666666667,
+              "danger_adjustment": 0.7270161118358374,
+              "observed_safe_margin": -0.060047052800655365,
+              "reference_safe_margin": -1.151982605457306
+            }
+          ],
+          "baseline_outer_metrics": [
+            {
+              "action_accuracy": 0.5448718070983887,
+              "action_macro_f1": 0.5032095909118652,
+              "risk_accuracy": 0.5897436141967773,
+              "risk_macro_f1": 0.44188427925109863,
+              "danger_recall": 0.800000011920929,
+              "danger_correct": 24,
+              "danger_total": 30,
+              "danger_action_accuracy": 0.5,
+              "safe_to_danger": 7,
+              "safe_total": 75,
+              "trials": 156,
+              "safe_to_danger_rate": 0.09333333333333334
+            }
+          ],
+          "outer_used_for_selection": false
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "cal43": {
+      "risk_accuracy": {
+        "mean": 0.5371584736747168,
+        "std": 0.003328898765627296
+      },
+      "risk_macro_f1": {
+        "mean": 0.4430269288723586,
+        "std": 0.008881945623415585
+      },
+      "danger_recall": {
+        "mean": 0.4340072922408581,
+        "std": 0.04026795263442287
+      },
+      "safe_to_danger_rate": {
+        "mean": 0.11902071563088512,
+        "std": 0.020950559676344075
+      }
+    },
+    "baseline": {
+      "risk_accuracy": {
+        "mean": 0.5218579261897909,
+        "std": 0.008716564913732853
+      },
+      "risk_macro_f1": {
+        "mean": 0.43670516450005586,
+        "std": 0.012339123309604036
+      },
+      "danger_recall": {
+        "mean": 0.5245355225475217,
+        "std": 0.025991371576768004
+      },
+      "safe_to_danger_rate": {
+        "mean": 0.18681732580037663,
+        "std": 0.006985776644441208
+      }
+    }
+  },
+  "outer_holdout_used_for_selection": false,
+  "target_subject_used": false,
+  "sealed_yja_used": false,
+  "query_labels_or_pose_gt_at_inference": false
+}

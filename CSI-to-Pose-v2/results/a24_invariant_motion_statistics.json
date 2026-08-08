@@ -1,0 +1,96 @@
+{
+  "protocol": "source-only scale-free motion-statistics diagnosis; subject LOSO; yja sealed",
+  "trials": 1210,
+  "feature_dimension": 1422,
+  "action": {
+    "accuracy": 13.223140495867769,
+    "macro_f1": 8.456546716185047,
+    "folds": {
+      "ajh": {
+        "accuracy": 10.789980732177264,
+        "macro_f1": 6.003268490652145
+      },
+      "lmh": {
+        "accuracy": 18.6046511627907,
+        "macro_f1": 8.280429365535749
+      },
+      "mhw": {
+        "accuracy": 13.872832369942195,
+        "macro_f1": 9.52106854415409
+      }
+    }
+  },
+  "risk": {
+    "accuracy": 52.066115702479344,
+    "macro_f1": 27.527061363547524,
+    "folds": {
+      "ajh": {
+        "accuracy": 53.371868978805395,
+        "macro_f1": 26.127307156085482
+      },
+      "lmh": {
+        "accuracy": 51.74418604651163,
+        "macro_f1": 22.82051282051282
+      },
+      "mhw": {
+        "accuracy": 50.86705202312138,
+        "macro_f1": 29.596602009776845
+      }
+    },
+    "danger_recall": 0.4761904761904762
+  },
+  "subject_probe_site_loso": {
+    "accuracy": 82.97520661157026,
+    "macro_f1": 59.961765767090945,
+    "folds": {
+      "ajh_E01": {
+        "accuracy": 100.0,
+        "macro_f1": 100.0
+      },
+      "ajh_E02": {
+        "accuracy": 98.84393063583815,
+        "macro_f1": 33.13953488372093
+      },
+      "ajh_E03": {
+        "accuracy": 97.10982658959537,
+        "macro_f1": 49.266862170087975
+      },
+      "lmh_E01": {
+        "accuracy": 0.0,
+        "macro_f1": 0.0
+      },
+      "mhw_E01": {
+        "accuracy": 94.21965317919076,
+        "macro_f1": 32.34126984126984
+      },
+      "mhw_E02": {
+        "accuracy": 97.10982658959537,
+        "macro_f1": 49.266862170087975
+      },
+      "mhw_E03": {
+        "accuracy": 93.0635838150289,
+        "macro_f1": 32.13572854291417
+      }
+    }
+  },
+  "site_probe_subject_loso": {
+    "accuracy": 0.0,
+    "macro_f1": 0.0,
+    "folds": {
+      "ajh": {
+        "accuracy": 0.0,
+        "macro_f1": 0.0
+      },
+      "lmh": {
+        "accuracy": 0.0,
+        "macro_f1": 0.0
+      },
+      "mhw": {
+        "accuracy": 0.0,
+        "macro_f1": 0.0
+      }
+    }
+  },
+  "target_subject_used": false,
+  "sealed_yja_used": false
+}

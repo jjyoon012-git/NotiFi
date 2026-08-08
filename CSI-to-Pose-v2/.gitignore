@@ -1,0 +1,55 @@
+# Generated CSI/video/pose/model artifacts
+csi_to_pose_*/
+data/
+videos/
+pose_gt/
+pose_overlays/
+pose_plots/
+models/
+collection_logs/
+body_templates/
+
+# Training outputs (모델, 예측, 영상 포함)
+experiments/
+
+# work_v2 산출물 전체 차단, splits(스플릿 정의)만 추적
+work_v2/*
+!work_v2/splits/
+
+# Large media/model outputs
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.gif
+*.pt
+*.pth
+*.npz
+*.npy
+*.pkl
+
+# 검증이 끝난 v2 배포 bundle과 재현 checkpoint만 명시적으로 추적
+!artifacts/
+!artifacts/cal40_full_deployment.pt
+!checkpoints/
+!checkpoints/cal46_source_clean/
+!checkpoints/cal46_source_clean/*.pt
+!checkpoints/cal60/
+!checkpoints/cal60/*.pt
+!checkpoints/cal66_grl0/
+!checkpoints/cal66_grl0/*.pt
+
+# Keep README demo assets
+!assets/*.gif
+!assets/*.png
+
+# Local/private docs (untracked)
+_local/
+
+# Python/runtime
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+venv/
+scripts/_archive/

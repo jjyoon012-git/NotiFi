@@ -1,0 +1,48 @@
+{
+  "run_dir": "checkpoints/cal60",
+  "protocol": "nested_source_subject_loso_v1",
+  "sites": 7,
+  "site_macro": {
+    "action_accuracy": 0.36811436074120657,
+    "action_macro_f1": 0.29505278382982525,
+    "risk_accuracy": 0.5547525712421962,
+    "risk_macro_f1": 0.4729643038340977,
+    "danger_recall": 0.43333334050008226,
+    "danger_action_accuracy": 0.1333333392228399
+  },
+  "safe_to_danger_rate": 0.096045197740113,
+  "safe_to_danger": 51,
+  "safe_total": 531,
+  "danger_recall_pooled": 0.43333333333333335,
+  "danger_correct": 91,
+  "danger_total": 210,
+  "worst_site_action": 0.2738853394985199,
+  "fold_macro": {
+    "ajh": {
+      "action_accuracy": 0.30573247869809467,
+      "action_macro_f1": 0.22964267432689667,
+      "risk_accuracy": 0.47133757670720416,
+      "risk_macro_f1": 0.33494895696640015,
+      "danger_recall": 0.22222222636143366,
+      "danger_action_accuracy": 0.11111111690600713
+    },
+    "mhw": {
+      "action_accuracy": 0.367303599913915,
+      "action_macro_f1": 0.29510219395160675,
+      "risk_accuracy": 0.5987261136372884,
+      "risk_macro_f1": 0.5718570550282797,
+      "danger_recall": 0.5555555721124014,
+      "danger_action_accuracy": 0.08888889352480571
+    },
+    "lmh": {
+      "action_accuracy": 0.557692289352417,
+      "action_macro_f1": 0.4911348819732666,
+      "risk_accuracy": 0.6730769276618958,
+      "risk_macro_f1": 0.5903320908546448,
+      "danger_recall": 0.699999988079071,
+      "danger_action_accuracy": 0.3333333432674408
+    }
+  },
+  "target_subject_used": false,
+  "sealed_yja_used": false
+}

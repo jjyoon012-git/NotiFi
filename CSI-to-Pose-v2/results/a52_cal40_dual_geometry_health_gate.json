@@ -1,0 +1,333 @@
+{
+  "run": "A52-CAL40-DUAL-GEOMETRY-HEALTH-GATE",
+  "primary_threshold": 0.06368442066013813,
+  "secondary_threshold": 0.07390309497714043,
+  "primary": {
+    "mean": 0.01402627636368098,
+    "median": 0.011150289326906204,
+    "p90": 0.03411635905504227,
+    "maximum": 0.04345298558473587,
+    "pass_rate": 1.0,
+    "false_rejections": 0,
+    "episodes": 30
+  },
+  "secondary": {
+    "mean": 0.014345493819564823,
+    "median": 0.011905752588063478,
+    "p90": 0.03153666686266661,
+    "maximum": 0.04607326164841652,
+    "pass_rate": 1.0,
+    "false_rejections": 0,
+    "episodes": 30
+  },
+  "input_quality": {
+    "pass_rate": 0.8571428571428571,
+    "rejections": 5,
+    "episodes": 35
+  },
+  "episodes": [
+    {
+      "support_seed": 17017,
+      "site": "ajh_E01",
+      "input_quality_pass": true,
+      "primary_error": 6.768420052942828e-16,
+      "primary_pass": true,
+      "secondary_error": 1.2562182586886182e-15,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E02",
+      "input_quality_pass": false,
+      "input_quality_error": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17017,
+      "site": "ajh_E03",
+      "input_quality_pass": true,
+      "primary_error": 1.2558541404004172e-15,
+      "primary_pass": true,
+      "secondary_error": 8.51192408420911e-16,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17017,
+      "site": "lmh_E01",
+      "input_quality_pass": true,
+      "primary_error": 7.624216614827658e-16,
+      "primary_pass": true,
+      "secondary_error": 2.0937470727582516e-15,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E01",
+      "input_quality_pass": true,
+      "primary_error": 1.2390637239243505e-15,
+      "primary_pass": true,
+      "secondary_error": 1.560908503551962e-15,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E02",
+      "input_quality_pass": true,
+      "primary_error": 1.3206171148771786e-15,
+      "primary_pass": true,
+      "secondary_error": 1.0115365923690973e-15,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17017,
+      "site": "mhw_E03",
+      "input_quality_pass": true,
+      "primary_error": 1.3425474331563029e-15,
+      "primary_pass": true,
+      "secondary_error": 4.819747171797017e-16,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E01",
+      "input_quality_pass": true,
+      "primary_error": 0.007660172879695892,
+      "primary_pass": true,
+      "secondary_error": 0.009578565135598183,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E02",
+      "input_quality_pass": false,
+      "input_quality_error": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17027,
+      "site": "ajh_E03",
+      "input_quality_pass": true,
+      "primary_error": 0.01350386068224907,
+      "primary_pass": true,
+      "secondary_error": 0.01201204489916563,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17027,
+      "site": "lmh_E01",
+      "input_quality_pass": true,
+      "primary_error": 0.022973958402872086,
+      "primary_pass": true,
+      "secondary_error": 0.023632312193512917,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E01",
+      "input_quality_pass": true,
+      "primary_error": 0.03344966098666191,
+      "primary_pass": true,
+      "secondary_error": 0.03930538147687912,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E02",
+      "input_quality_pass": true,
+      "primary_error": 0.01917121745646,
+      "primary_pass": true,
+      "secondary_error": 0.012955937534570694,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17027,
+      "site": "mhw_E03",
+      "input_quality_pass": true,
+      "primary_error": 0.02169734798371792,
+      "primary_pass": true,
+      "secondary_error": 0.029352664947509766,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E01",
+      "input_quality_pass": true,
+      "primary_error": 0.015094312839210033,
+      "primary_pass": true,
+      "secondary_error": 0.020401902496814728,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E02",
+      "input_quality_pass": false,
+      "input_quality_error": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17037,
+      "site": "ajh_E03",
+      "input_quality_pass": true,
+      "primary_error": 0.0025162934325635433,
+      "primary_pass": true,
+      "secondary_error": 0.00237850658595562,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17037,
+      "site": "lmh_E01",
+      "input_quality_pass": true,
+      "primary_error": 0.03400469943881035,
+      "primary_pass": true,
+      "secondary_error": 0.031247401610016823,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E01",
+      "input_quality_pass": true,
+      "primary_error": 0.04345298558473587,
+      "primary_pass": true,
+      "secondary_error": 0.04607326164841652,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E02",
+      "input_quality_pass": true,
+      "primary_error": 0.013316674157977104,
+      "primary_pass": true,
+      "secondary_error": 0.009531078860163689,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17037,
+      "site": "mhw_E03",
+      "input_quality_pass": true,
+      "primary_error": 0.006377626210451126,
+      "primary_pass": true,
+      "secondary_error": 0.008665107190608978,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E01",
+      "input_quality_pass": true,
+      "primary_error": 0.010375121608376503,
+      "primary_pass": true,
+      "secondary_error": 0.0162816122174263,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E02",
+      "input_quality_pass": false,
+      "input_quality_error": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17047,
+      "site": "ajh_E03",
+      "input_quality_pass": true,
+      "primary_error": 0.0044525922276079655,
+      "primary_pass": true,
+      "secondary_error": 0.008224920369684696,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17047,
+      "site": "lmh_E01",
+      "input_quality_pass": true,
+      "primary_error": 0.018612856045365334,
+      "primary_pass": true,
+      "secondary_error": 0.01347521785646677,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E01",
+      "input_quality_pass": true,
+      "primary_error": 0.03718153014779091,
+      "primary_pass": true,
+      "secondary_error": 0.034140054136514664,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E02",
+      "input_quality_pass": true,
+      "primary_error": 0.011008237488567829,
+      "primary_pass": true,
+      "secondary_error": 0.009999408386647701,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17047,
+      "site": "mhw_E03",
+      "input_quality_pass": true,
+      "primary_error": 0.00816917885094881,
+      "primary_pass": true,
+      "secondary_error": 0.007866493426263332,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E01",
+      "input_quality_pass": true,
+      "primary_error": 0.009609191678464413,
+      "primary_pass": true,
+      "secondary_error": 0.011799460276961327,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E02",
+      "input_quality_pass": false,
+      "input_quality_error": "support trial requires at least 2 usable links"
+    },
+    {
+      "support_seed": 17057,
+      "site": "ajh_E03",
+      "input_quality_pass": true,
+      "primary_error": 0.017467007040977478,
+      "primary_pass": true,
+      "secondary_error": 0.012502872385084629,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17057,
+      "site": "lmh_E01",
+      "input_quality_pass": true,
+      "primary_error": 0.019303036853671074,
+      "primary_pass": true,
+      "secondary_error": 0.019397811964154243,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E01",
+      "input_quality_pass": true,
+      "primary_error": 0.03512129560112953,
+      "primary_pass": true,
+      "secondary_error": 0.026625076308846474,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E02",
+      "input_quality_pass": true,
+      "primary_error": 0.004977092146873474,
+      "primary_pass": true,
+      "secondary_error": 0.010189353488385677,
+      "secondary_pass": true
+    },
+    {
+      "support_seed": 17057,
+      "site": "mhw_E03",
+      "input_quality_pass": true,
+      "primary_error": 0.01129234116524458,
+      "primary_pass": true,
+      "secondary_error": 0.014728369191288948,
+      "secondary_pass": true
+    }
+  ],
+  "target_subject_used": false,
+  "sealed_yja_used": false,
+  "query_labels_or_pose_gt_used": false
+}

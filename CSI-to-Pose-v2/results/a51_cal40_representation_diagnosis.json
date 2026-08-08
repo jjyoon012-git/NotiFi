@@ -1,0 +1,85 @@
+{
+  "run": "A51-CAL40-REPRESENTATION-DIAGNOSIS",
+  "protocol": "all-source encoder diagnostic; encoder has seen all source subjects; posthoc probes are not unseen evaluation; no model selection",
+  "models": {
+    "cal60_grl1": {
+      "embedding_dimensions": 64,
+      "trials": 1098,
+      "random_action_probe": {
+        "accuracy": 0.9954462659380692,
+        "macro_f1": 0.9966034365109419
+      },
+      "random_subject_probe": {
+        "accuracy": 0.8561020036429873,
+        "macro_f1": 0.83316346983564
+      },
+      "random_site_probe": {
+        "accuracy": 0.7695810564663024,
+        "macro_f1": 0.76844130591251
+      },
+      "posthoc_subject_holdout_action_probe_encoder_seen_all_sources": {
+        "accuracy": 0.9936247723132969,
+        "macro_f1": 0.9953580616174746,
+        "folds": {
+          "ajh": {
+            "accuracy": 0.9957537154989384,
+            "macro_f1": 0.9964257925620796,
+            "trials": 471
+          },
+          "lmh": {
+            "accuracy": 1.0,
+            "macro_f1": 1.0,
+            "trials": 156
+          },
+          "mhw": {
+            "accuracy": 0.9893842887473461,
+            "macro_f1": 0.9927619457858365,
+            "trials": 471
+          }
+        }
+      }
+    },
+    "cal66_grl0": {
+      "embedding_dimensions": 64,
+      "trials": 1098,
+      "random_action_probe": {
+        "accuracy": 0.9908925318761385,
+        "macro_f1": 0.9924408936448167
+      },
+      "random_subject_probe": {
+        "accuracy": 0.8178506375227687,
+        "macro_f1": 0.7906118185998189
+      },
+      "random_site_probe": {
+        "accuracy": 0.7194899817850637,
+        "macro_f1": 0.7174630211558691
+      },
+      "posthoc_subject_holdout_action_probe_encoder_seen_all_sources": {
+        "accuracy": 0.9899817850637522,
+        "macro_f1": 0.9916002665724286,
+        "folds": {
+          "ajh": {
+            "accuracy": 0.9957537154989384,
+            "macro_f1": 0.995165288360399,
+            "trials": 471
+          },
+          "lmh": {
+            "accuracy": 1.0,
+            "macro_f1": 1.0,
+            "trials": 156
+          },
+          "mhw": {
+            "accuracy": 0.9808917197452229,
+            "macro_f1": 0.9852233975389306,
+            "trials": 471
+          }
+        }
+      }
+    }
+  },
+  "support_seed": 17017,
+  "target_subject_used": false,
+  "sealed_yja_used": false,
+  "query_labels_used_for_probe_only": true,
+  "probe_used_for_model_selection": false
+}

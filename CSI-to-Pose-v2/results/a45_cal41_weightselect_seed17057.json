@@ -1,0 +1,326 @@
+{
+  "run": "CAL41-SOURCE-INNER-WEIGHTED-DEEP-ACTION",
+  "folds": {
+    "ajh": {
+      "train_sites": [
+        "lmh_E01",
+        "mhw_E01",
+        "mhw_E02"
+      ],
+      "inner_sites": [
+        "mhw_E03"
+      ],
+      "outer_sites": [
+        "ajh_E01",
+        "ajh_E02",
+        "ajh_E03"
+      ],
+      "linear_configs": [
+        [
+          0.5,
+          0.4,
+          0.05,
+          0.02,
+          1.0
+        ],
+        [
+          0.0,
+          0.05,
+          0.05,
+          0.02,
+          0.75
+        ]
+      ],
+      "kernel_configs": [
+        null,
+        null
+      ],
+      "kernel_weights": [
+        0.0,
+        0.0
+      ],
+      "action_left_weight": 0.75,
+      "risk_config": [
+        0.0,
+        0.15,
+        1.0
+      ],
+      "inner_metrics": [
+        {
+          "action_accuracy": 0.47133758664131165,
+          "action_macro_f1": 0.37229594588279724,
+          "risk_accuracy": 0.6114649772644043,
+          "risk_macro_f1": 0.49989914894104004,
+          "danger_recall": 0.4000000059604645,
+          "danger_correct": 12,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.13333334028720856,
+          "safe_to_danger": 3,
+          "safe_total": 76,
+          "trials": 157
+        }
+      ],
+      "outer_metrics": [
+        {
+          "action_accuracy": 0.4012738764286041,
+          "action_macro_f1": 0.3310192823410034,
+          "risk_accuracy": 0.4904458522796631,
+          "risk_macro_f1": 0.3635653257369995,
+          "danger_recall": 0.23333333432674408,
+          "danger_correct": 7,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.1666666716337204,
+          "safe_to_danger": 1,
+          "safe_total": 76,
+          "trials": 157
+        },
+        {
+          "action_accuracy": 0.3757961690425873,
+          "action_macro_f1": 0.2882237732410431,
+          "risk_accuracy": 0.3949044644832611,
+          "risk_macro_f1": 0.25619271397590637,
+          "danger_recall": 0.20000000298023224,
+          "danger_correct": 6,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.0,
+          "safe_to_danger": 18,
+          "safe_total": 76,
+          "trials": 157
+        },
+        {
+          "action_accuracy": 0.3821656107902527,
+          "action_macro_f1": 0.26956963539123535,
+          "risk_accuracy": 0.4394904375076294,
+          "risk_macro_f1": 0.2523172199726105,
+          "danger_recall": 0.06666667014360428,
+          "danger_correct": 2,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.03333333507180214,
+          "safe_to_danger": 1,
+          "safe_total": 76,
+          "trials": 157
+        }
+      ],
+      "outer_used_for_selection": false
+    },
+    "mhw": {
+      "train_sites": [
+        "ajh_E01",
+        "ajh_E02",
+        "lmh_E01"
+      ],
+      "inner_sites": [
+        "ajh_E03"
+      ],
+      "outer_sites": [
+        "mhw_E01",
+        "mhw_E02",
+        "mhw_E03"
+      ],
+      "linear_configs": [
+        [
+          1.5,
+          0.05,
+          0.1,
+          0.05,
+          0.75
+        ],
+        [
+          1.5,
+          0.05,
+          0.1,
+          0.25,
+          0.75
+        ]
+      ],
+      "kernel_configs": [
+        null,
+        null
+      ],
+      "kernel_weights": [
+        0.0,
+        0.0
+      ],
+      "action_left_weight": 0.5,
+      "risk_config": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "inner_metrics": [
+        {
+          "action_accuracy": 0.5668789744377136,
+          "action_macro_f1": 0.4698936939239502,
+          "risk_accuracy": 0.5668789744377136,
+          "risk_macro_f1": 0.5145554542541504,
+          "danger_recall": 0.4333333373069763,
+          "danger_correct": 13,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.03333333507180214,
+          "safe_to_danger": 3,
+          "safe_total": 76,
+          "trials": 157
+        }
+      ],
+      "outer_metrics": [
+        {
+          "action_accuracy": 0.41401273012161255,
+          "action_macro_f1": 0.36836138367652893,
+          "risk_accuracy": 0.668789803981781,
+          "risk_macro_f1": 0.6393799185752869,
+          "danger_recall": 0.46666666865348816,
+          "danger_correct": 14,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.06666667014360428,
+          "safe_to_danger": 9,
+          "safe_total": 76,
+          "trials": 157
+        },
+        {
+          "action_accuracy": 0.3821656107902527,
+          "action_macro_f1": 0.31434616446495056,
+          "risk_accuracy": 0.5796178579330444,
+          "risk_macro_f1": 0.5685556530952454,
+          "danger_recall": 0.800000011920929,
+          "danger_correct": 24,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.10000000149011612,
+          "safe_to_danger": 25,
+          "safe_total": 76,
+          "trials": 157
+        },
+        {
+          "action_accuracy": 0.4394904375076294,
+          "action_macro_f1": 0.36357760429382324,
+          "risk_accuracy": 0.48407644033432007,
+          "risk_macro_f1": 0.4394265115261078,
+          "danger_recall": 0.699999988079071,
+          "danger_correct": 21,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.10000000149011612,
+          "safe_to_danger": 25,
+          "safe_total": 76,
+          "trials": 157
+        }
+      ],
+      "outer_used_for_selection": false
+    },
+    "lmh": {
+      "train_sites": [
+        "ajh_E01",
+        "ajh_E02",
+        "mhw_E01",
+        "mhw_E02"
+      ],
+      "inner_sites": [
+        "ajh_E03",
+        "mhw_E03"
+      ],
+      "outer_sites": [
+        "lmh_E01"
+      ],
+      "linear_configs": [
+        [
+          0.0,
+          0.05,
+          0.05,
+          0.02,
+          1.0
+        ],
+        [
+          0.5,
+          0.05,
+          0.2,
+          0.05,
+          0.25
+        ]
+      ],
+      "kernel_configs": [
+        null,
+        null
+      ],
+      "kernel_weights": [
+        0.0,
+        0.0
+      ],
+      "action_left_weight": 0.25,
+      "risk_config": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "inner_metrics": [
+        {
+          "action_accuracy": 0.4331210255622864,
+          "action_macro_f1": 0.34331050515174866,
+          "risk_accuracy": 0.5605095624923706,
+          "risk_macro_f1": 0.4448328912258148,
+          "danger_recall": 0.1666666716337204,
+          "danger_correct": 5,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.0,
+          "safe_to_danger": 9,
+          "safe_total": 76,
+          "trials": 157
+        },
+        {
+          "action_accuracy": 0.4394904375076294,
+          "action_macro_f1": 0.32559460401535034,
+          "risk_accuracy": 0.5541401505470276,
+          "risk_macro_f1": 0.44399523735046387,
+          "danger_recall": 0.36666667461395264,
+          "danger_correct": 11,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.06666667014360428,
+          "safe_to_danger": 8,
+          "safe_total": 76,
+          "trials": 157
+        }
+      ],
+      "outer_metrics": [
+        {
+          "action_accuracy": 0.5128205418586731,
+          "action_macro_f1": 0.4715280532836914,
+          "risk_accuracy": 0.5833333134651184,
+          "risk_macro_f1": 0.4367816150188446,
+          "danger_recall": 0.7666666507720947,
+          "danger_correct": 23,
+          "danger_total": 30,
+          "danger_action_accuracy": 0.4333333373069763,
+          "safe_to_danger": 7,
+          "safe_total": 75,
+          "trials": 156
+        }
+      ],
+      "outer_used_for_selection": false
+    }
+  },
+  "members": [
+    "runs/cal60",
+    "runs/cal66_grl0"
+  ],
+  "anchor_classes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    7,
+    8,
+    6
+  ],
+  "support_seed": 17057,
+  "absence_seed": 17058,
+  "absence_trials": 12,
+  "ensemble_probability_weights": [
+    0.5,
+    0.5
+  ],
+  "select_action_weight": true,
+  "dual_transport": false,
+  "outer_holdout_used_for_selection": false,
+  "target_subject_used": false,
+  "sealed_yja_used": false,
+  "query_labels_or_pose_gt_at_inference": false
+}
