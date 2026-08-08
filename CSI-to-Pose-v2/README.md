@@ -143,23 +143,24 @@ A54 음성대조군에서 prompt label 순환과 1-link 입력은 각각 0/35가
 
 | ID | 날짜/시간 KST | 변경과 목적 | 결과 | 판단 |
 |---|---|---|---|---|
-| A60 / CAL68 | 2026-08-09 10시 | A58의 실제 혼동 쌍만 prototype margin으로 분리하고 CAL60에서 6 epoch source-only 미세조정 | raw Action 36.81→36.35%, F1 29.51→29.54%, Danger 41.90%, 오경보 9.23%, 최악 site 29.94% | source train에서 margin loss가 거의 항상 0이고 Action이 하락. target 붕괴를 source margin으로 고칠 수 없어 **기각**, 옵션 코드도 제거 |
-| A59 | 2026-08-09 10시 | 7-site×5-seed 실제 training sampler의 16-action 균형 감사 | 원본 max/min 3.33배→sampler 1.42배, absence draw 0 | danger 붕괴는 단순 class 수보다 표현·시간 hard-negative 병목 |
-| A58 | 2026-08-09 09시 | 잠긴 CAL40의 5-seed 17-action confusion 재평가 | CAL32 대비 lie→stand +8.00%p, stand→sit +6.19%p; fall while walking 0.48%, bed-exit failed 0.67% | 평균 개선은 safe 전환 중심, danger encoder 병목 확정 |
-| A57 / CAL43 | 2026-08-09 09시 | global danger bias를 safe-support margin 차이만큼 부분 수축, inner-only로 수축률 선택 | Risk Acc 52.19→53.72%, F1 43.67→44.30%, 오경보 18.68→11.90%, Danger 52.45→43.40% | 보수적 operating point이나 recall 손실 큼, 기본 미채택 |
-| A56 / CAL42 | 2026-08-09 09시 | safe support/absence의 danger-margin quantile로 site별 risk operating point를 source-inner 선택 | Danger 52.45→67.22%, Risk F1 43.67→41.26%, Safe→Danger 18.68→32.69% | recall만 오르고 오경보 폭증, **기각** |
-| A55 | 2026-08-09 09시 | CAL40 5-seed 위험도를 source site별 재집계 | ajh_E03 Danger 12.67%/오경보 4.74%, mhw_E02 80.00%/41.58% | global danger bias의 site 의존성 확인, 진단 전용 |
-| A54 | 2026-08-09 08시 | 7-site×5-seed에 TX 교환·시간 반전·label 순환·1-link 음성대조군 적용 | clean 30/35, TX 교환 6/35, 시간 반전 28/35, label 순환 0/35, 1-link 0/35 통과 | label/link gate 유효. chronology와 물리 설치는 별도 계약 필요 |
-| A53 | 2026-08-09 08시 | link temporal-coherence 임계의 target 의존 흔적을 제거하고 source 7-site 원지표로 재감사 | 기본 품질 통과 5,772개, q03 0.64755, 임계 0.65 아래 184개(3.19%) | 동작은 유지, source-only 품질 경계로 provenance 교정 |
-| A52 | 2026-08-09 07시 | CAL60/66 별도 geometry threshold를 7-site×5-seed calibration에서 검증 | 입력 품질 통과 30/35, 유효 episode geometry 통과 30/30·30/30. 5회 거절은 모두 ajh_E02 S08/S09의 1-link support | 별도 threshold 채택, 1-link 입력은 완화하지 않고 재수집/abstain |
-| A51 | 2026-08-09 07시 | CAL60/66 all-source embedding의 action·subject·site 선형 probe | Action 99.54/99.09%, subject 85.61/81.79%, site 76.96/71.95% | source action은 잘 분리되나 지문도 강함. GRL=1의 불변성 주장을 기각하고 ensemble diversity로 해석 |
-| A50 | 2026-08-09 07시 | A49에 CAL17 calibration을 적용한 1-seed 확인 | Action 38.71%, F1 30.42%, Danger 5종 9.02%, 최악 site 33.76% | CAL60+CAL17보다 열세, 기각 확정 |
-| A49 / CAL67 | 2026-08-09 07시 | A47 병목에 맞춰 5-way 행동군·시작 자세 계층 loss를 0.15→0.50으로 강화해 8 epoch fine-tuning | raw Action 35.63%, F1 28.40%, Danger 5종 10.00%, 최악 site 26.11% | train은 96~100%인데 outer는 하락하여 과적합, 기각 |
-| A48 | 2026-08-09 06시 | 정답 action으로 source pose 후보를 제한하는 진단 전용 oracle | Pose 29.86→31.95 cm, PA 10.59→10.17 cm, Danger Pose 38.23→40.25 cm | action 정답만으로 pose가 개선되지 않음. CSI motion/phase 선택이 주 병목 |
-| A47 | 2026-08-09 06시 | true-risk oracle과 실제 predicted-risk hard routing으로 계층 병목 분리 | true-risk Action 57.78%, 실제 routing 36.81%, danger 내부 top-1 29.14%, top-2 49.52% | danger 정보는 일부 있으나 coarse-risk 오류 때문에 후처리 routing은 불가 |
-| A46 / CAL41 | 2026-08-09 06시 | A45의 fold별 비율 중앙값 `ajh 0.75/mhw 0.75/lmh 0.50`을 고정해 5-seed 재평가 | Action 42.02±0.56%, F1 33.91±0.46%, Danger 5종 11.22±0.88%, 최악 site 36.56±1.54% | CAL40보다 Action/F1 하락하여 기각 |
-| A45 | 2026-08-09 06시 | 두 encoder 비율 `0.25/0.50/0.75`를 outer 없이 source-inner에서만 선택 | ajh는 5회 중 4회 0.75, mhw는 4회 0.75, lmh는 0.25~0.75로 불안정 | 고정 비율 검증용, 단독 채택하지 않음 |
-| **A44 / CAL40** | 2026-08-09 05시 | CAL60(GRL=1)+CAL66(GRL=0)의 고정 CAL17 action 확률 ensemble, risk는 CAL32 유지 | Action 42.31±0.73%, F1 34.11±0.50%, Risk F1 43.67±1.23%, Danger 52.45±2.60%, 최악 site 36.56±1.74% | **현재 채택** |
+| A61 / CAL68+CAL17 | 2026-08-09 07:10 | A60에 동일한 CAL17 source-inner transport를 적용해 calibration 후 회복 여부 확인 | Action 40.81→38.44%, F1 32.66→30.71%, Danger 47.62→43.81%, 오경보 16.20→11.86%, 최악 site 33.76→28.66% | 오경보와 함께 danger recall·action도 하락, **기각 확정** |
+| A60 / CAL68 | 2026-08-09 06:56 | A58의 실제 혼동 쌍만 prototype margin으로 분리하고 CAL60에서 6 epoch source-only 미세조정 | raw Action 36.81→36.35%, F1 29.51→29.54%, Danger 41.90%, 오경보 9.23%, 최악 site 29.94% | source train에서 margin loss가 거의 항상 0이고 Action이 하락. target 붕괴를 source margin으로 고칠 수 없어 **기각**, 옵션 코드도 제거 |
+| A59 | 2026-08-09 06:44 | 7-site×5-seed 실제 training sampler의 16-action 균형 감사 | 원본 max/min 3.33배→sampler 1.42배, absence draw 0 | danger 붕괴는 단순 class 수보다 표현·시간 hard-negative 병목 |
+| A58 | 2026-08-09 06:38 | 잠긴 CAL40의 5-seed 17-action confusion 재평가 | CAL32 대비 lie→stand +8.00%p, stand→sit +6.19%p; fall while walking 0.48%, bed-exit failed 0.67% | 평균 개선은 safe 전환 중심, danger encoder 병목 확정 |
+| A57 / CAL43 | 2026-08-09 06:33 | global danger bias를 safe-support margin 차이만큼 부분 수축, inner-only로 수축률 선택 | Risk Acc 52.19→53.72%, F1 43.67→44.30%, 오경보 18.68→11.90%, Danger 52.45→43.40% | 보수적 operating point이나 recall 손실 큼, 기본 미채택 |
+| A56 / CAL42 | 2026-08-09 06:29 | safe support/absence의 danger-margin quantile로 site별 risk operating point를 source-inner 선택 | Danger 52.45→67.22%, Risk F1 43.67→41.26%, Safe→Danger 18.68→32.69% | recall만 오르고 오경보 폭증, **기각** |
+| A55 | 2026-08-09 06:26 | CAL40 5-seed 위험도를 source site별 재집계 | ajh_E03 Danger 12.67%/오경보 4.74%, mhw_E02 80.00%/41.58% | global danger bias의 site 의존성 확인, 진단 전용 |
+| A54 | 2026-08-09 06:20 | 7-site×5-seed에 TX 교환·시간 반전·label 순환·1-link 음성대조군 적용 | clean 30/35, TX 교환 6/35, 시간 반전 28/35, label 순환 0/35, 1-link 0/35 통과 | label/link gate 유효. chronology와 물리 설치는 별도 계약 필요 |
+| A53 | 2026-08-09 06:16 | link temporal-coherence 임계의 target 의존 흔적을 제거하고 source 7-site 원지표로 재감사 | 기본 품질 통과 5,772개, q03 0.64755, 임계 0.65 아래 184개(3.19%) | 동작은 유지, source-only 품질 경계로 provenance 교정 |
+| A52 | 2026-08-09 06:08 | CAL60/66 별도 geometry threshold를 7-site×5-seed calibration에서 검증 | 입력 품질 통과 30/35, 유효 episode geometry 통과 30/30·30/30. 5회 거절은 모두 ajh_E02 S08/S09의 1-link support | 별도 threshold 채택, 1-link 입력은 완화하지 않고 재수집/abstain |
+| A51 | 2026-08-09 06:03 | CAL60/66 all-source embedding의 action·subject·site 선형 probe | Action 99.54/99.09%, subject 85.61/81.79%, site 76.96/71.95% | source action은 잘 분리되나 지문도 강함. GRL=1의 불변성 주장을 기각하고 ensemble diversity로 해석 |
+| A50 | 2026-08-09 05:53 | A49에 CAL17 calibration을 적용한 1-seed 확인 | Action 38.71%, F1 30.42%, Danger 5종 9.02%, 최악 site 33.76% | CAL60+CAL17보다 열세, 기각 확정 |
+| A49 / CAL67 | 2026-08-09 05:53 | A47 병목에 맞춰 5-way 행동군·시작 자세 계층 loss를 0.15→0.50으로 강화해 8 epoch fine-tuning | raw Action 35.63%, F1 28.40%, Danger 5종 10.00%, 최악 site 26.11% | train은 96~100%인데 outer는 하락하여 과적합, 기각 |
+| A48 | 2026-08-09 05:44 | 정답 action으로 source pose 후보를 제한하는 진단 전용 oracle | Pose 29.86→31.95 cm, PA 10.59→10.17 cm, Danger Pose 38.23→40.25 cm | action 정답만으로 pose가 개선되지 않음. CSI motion/phase 선택이 주 병목 |
+| A47 | 2026-08-09 05:44 | true-risk oracle과 실제 predicted-risk hard routing으로 계층 병목 분리 | true-risk Action 57.78%, 실제 routing 36.81%, danger 내부 top-1 29.14%, top-2 49.52% | danger 정보는 일부 있으나 coarse-risk 오류 때문에 후처리 routing은 불가 |
+| A46 / CAL41 | 2026-08-09 05:38 | A45의 fold별 비율 중앙값 `ajh 0.75/mhw 0.75/lmh 0.50`을 고정해 5-seed 재평가 | Action 42.02±0.56%, F1 33.91±0.46%, Danger 5종 11.22±0.88%, 최악 site 36.56±1.54% | CAL40보다 Action/F1 하락하여 기각 |
+| A45 | 2026-08-09 05:38 | 두 encoder 비율 `0.25/0.50/0.75`를 outer 없이 source-inner에서만 선택 | ajh는 5회 중 4회 0.75, mhw는 4회 0.75, lmh는 0.25~0.75로 불안정 | 고정 비율 검증용, 단독 채택하지 않음 |
+| **A44 / CAL40** | 2026-08-09 05:38 | CAL60(GRL=1)+CAL66(GRL=0)의 고정 CAL17 action 확률 ensemble, risk는 CAL32 유지 | Action 42.31±0.73%, F1 34.11±0.50%, Risk F1 43.67±1.23%, Danger 52.45±2.60%, 최악 site 36.56±1.74% | **현재 채택** |
 | A43 / CAL39 | 2026-08-09 05시 | 두 encoder 조합의 source-inner 설정을 support seed마다 탐색 | Action 42.15±0.99%, F1 33.77±1.06%, 최악 site 36.82±1.89% | A44 고정 설정을 만드는 selection 자료로만 사용 |
 | A42 / CAL66 | 2026-08-09 05시 | domain GRL을 0으로 두어 행동 단서 삭제 여부 확인 | raw Action 36.99%, F1 28.94%, Risk F1 47.31%, false alarm 6.78% | 단독 미채택, CAL40 보조 encoder로 채택 |
 | A41 | 2026-08-09 05시 | 기본 행동 3개 후보 중 embedding 내부 거리가 가까운 2개 선택 | Action 약 37.1% | support 다양성을 잃어 기각 |

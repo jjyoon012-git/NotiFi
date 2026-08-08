@@ -203,6 +203,26 @@ class CAL40ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("A60 / CAL68", readme)
         self.assertIn("옵션 코드도 제거", readme)
 
+        calibrated = json.loads((
+            ROOT / "results/a61_cal68_hard_pair_cal17_seed17017.json"
+        ).read_text(encoding="utf-8"))
+        self.assertIs(calibrated["sealed_yja_used"], False)
+        self.assertIs(calibrated["target_subject_used"], False)
+        self.assertIs(
+            calibrated["query_labels_or_pose_gt_at_inference"], False
+        )
+        outer = [
+            row
+            for fold in calibrated["folds"].values()
+            for row in fold["outer_metrics"]
+        ]
+        self.assertAlmostEqual(
+            sum(row["action_accuracy"] for row in outer) / len(outer),
+            0.3844345590,
+        )
+        self.assertIn("A61 / CAL68+CAL17", readme)
+        self.assertIn("40.81→38.44%", readme)
+
 
 if __name__ == "__main__":
     unittest.main()
