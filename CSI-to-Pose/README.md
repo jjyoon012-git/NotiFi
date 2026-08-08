@@ -392,6 +392,8 @@ Checkpoint와 원본 데이터는 용량 및 개인정보 때문에 Git에 포�
 
 ## 검증
 
+이번 결과를 검증한 환경은 Windows, Python `3.10.8`, PyTorch `2.10.0+cu128`, NumPy `2.2.6`, pandas `2.2.2`, NVIDIA RTX 5060 Ti입니다. CUDA·PyTorch 버전이 달라지면 학습 seed가 같아도 마지막 소수점과 선택 epoch가 달라질 수 있습니다.
+
 ```powershell
 python -m compileall -q notifi_pose scripts tests
 python -m unittest discover -s tests -p "test_*.py"
