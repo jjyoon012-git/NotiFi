@@ -26,6 +26,7 @@ from calibrate_cal17_style_transport import (  # noqa: E402
 )
 from notifi_pose.pose_simulation import (  # noqa: E402
     best_motion_shift,
+    fill_pose_gaps,
     retrieval_metrics,
     shift_pose,
 )
@@ -212,6 +213,8 @@ def main() -> None:
         candidate_valid = torch.from_numpy(
             np.asarray(valid_array[candidate_rows]).copy()
         ).bool()
+        candidate_valid &= torch.isfinite(candidate_pose).all(-1).all(-1)
+        candidate_pose = fill_pose_gaps(candidate_pose, candidate_valid)
         candidate_descriptor = pose_motion_descriptor(
             candidate_pose, candidate_valid
         )

@@ -107,6 +107,66 @@ class MotionShapeEncoder(nn.Module):
         return output, frame_mask, link_weight, energy
 
 
+class MotionProgressEncoder(nn.Module):
+    """동작 속도와 무관한 진행률 bin과 실제 시간 bin을 함께 인코딩한다."""
+
+    def __init__(self, hidden: int, bins: int, dropout: float):
+        super().__init__()
+        if bins < 2:
+            raise ValueError("motion progress requires at least two bins")
+        self.hidden = int(hidden)
+        self.bins = int(bins)
+        self.register_buffer("centers", torch.linspace(0.0, 1.0, bins))
+        dimension = hidden * bins * 2
+        self.projection = nn.Sequential(
+            nn.LayerNorm(dimension),
+            nn.Linear(dimension, hidden * 2),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(hidden * 2, hidden),
+            nn.LayerNorm(hidden),
+        )
+
+    def _soft_pool(
+        self,
+        features: torch.Tensor,
+        frame_mask: torch.Tensor,
+        coordinate: torch.Tensor,
+    ) -> torch.Tensor:
+        """연속 좌표 주변의 프레임을 Gaussian 가중 평균해 고정 개수 token으로 만든다."""
+        bandwidth = 0.75 / max(self.bins - 1, 1)
+        distance = coordinate[..., None] - self.centers.to(coordinate)[None, None]
+        weight = torch.exp(-0.5 * (distance / bandwidth).square())
+        weight = weight * frame_mask.to(weight.dtype)[..., None]
+        weight = weight / weight.sum(1, keepdim=True).clamp_min(1e-6)
+        return torch.einsum("btp,bth->bph", weight, features)
+
+    def forward(
+        self,
+        features: torch.Tensor,
+        frame_mask: torch.Tensor,
+    ) -> torch.Tensor:
+        """시간 위치와 누적 움직임 진행률을 결합해 순서 보존 trial 표현을 만든다."""
+        if features.ndim != 3 or frame_mask.shape != features.shape[:2]:
+            raise ValueError("expected features [B,T,H] and frame mask [B,T]")
+        valid_pair = frame_mask[:, 1:] & frame_mask[:, :-1]
+        speed = torch.linalg.vector_norm(
+            features[:, 1:] - features[:, :-1], dim=-1
+        ) * valid_pair.to(features.dtype)
+        speed = F.pad(speed, (1, 0))
+        activity = speed + 1e-4 * frame_mask.to(features.dtype)
+        progress = activity.cumsum(1)
+        progress = progress / progress[:, -1:].clamp_min(1e-6)
+
+        ordinal = frame_mask.to(features.dtype).cumsum(1) - 1.0
+        timeline = ordinal / (frame_mask.sum(1, keepdim=True) - 1).clamp_min(1)
+        clock_tokens = self._soft_pool(features, frame_mask, timeline)
+        progress_tokens = self._soft_pool(features, frame_mask, progress)
+        return self.projection(
+            torch.cat((clock_tokens, progress_tokens), dim=-1).flatten(1)
+        )
+
+
 class RelativeStateEncoder(nn.Module):
     """절대 state는 head에 주지 않고 support와 비교할 trial embedding만 만든다."""
 
@@ -143,6 +203,7 @@ class CAL20RelativeMotionDG(nn.Module):
         use_doppler: bool = True,
         phase_strength: float = 0.25,
         cosine_scale: float = 10.0,
+        motion_phase_bins: int = 0,
     ):
         super().__init__()
         if not relative_support:
@@ -157,10 +218,19 @@ class CAL20RelativeMotionDG(nn.Module):
         self.use_doppler = bool(use_doppler)
         self.phase_strength = float(phase_strength)
         self.cosine_scale = float(cosine_scale)
+        self.motion_phase_bins = int(motion_phase_bins)
         self.canonicalizer = PhysicsSupportCanonicalizer(
             phase_strength=phase_strength
         )
         self.motion_encoder = MotionShapeEncoder(hidden, dropout, use_doppler)
+        self.motion_progress = (
+            MotionProgressEncoder(hidden, motion_phase_bins, dropout)
+            if motion_phase_bins >= 2 else None
+        )
+        self.motion_phase_gate = (
+            nn.Parameter(torch.tensor(-2.0))
+            if self.motion_progress is not None else None
+        )
         self.state_encoder = RelativeStateEncoder(hidden, dropout)
         self.motion_projection = nn.Sequential(
             nn.LayerNorm(hidden * 5), nn.Linear(hidden * 5, width), nn.GELU(),
@@ -198,6 +268,7 @@ class CAL20RelativeMotionDG(nn.Module):
             "use_doppler": self.use_doppler,
             "phase_strength": self.phase_strength,
             "cosine_scale": self.cosine_scale,
+            "motion_phase_bins": self.motion_phase_bins,
             "architecture": "cal20_relative_motion_dg",
         }
 
@@ -248,6 +319,16 @@ class CAL20RelativeMotionDG(nn.Module):
         )
         summaries = masked_ordered_summary(features, frame_mask)
         motion_embedding = self.motion_projection(torch.cat(summaries, dim=-1))
+        phase_embedding = (
+            self.motion_progress(features, frame_mask)
+            if self.motion_progress is not None else None
+        )
+        if phase_embedding is not None:
+            motion_embedding = F.layer_norm(
+                motion_embedding
+                + torch.sigmoid(self.motion_phase_gate) * phase_embedding,
+                (self.hidden,),
+            )
         support_motion = motion_embedding[:support_count]
         query_motion = motion_embedding[support_count:]
         support_state = state_embedding[:support_count]
@@ -314,6 +395,12 @@ class CAL20RelativeMotionDG(nn.Module):
             "domain_logits": self.domain_head(invariant),
             "query_features": query_features,
             "query_frame_mask": query_frame_mask,
+            "motion_phase_embedding": (
+                phase_embedding[support_count:]
+                if phase_embedding is not None else query_motion.new_zeros(
+                    len(query_motion), 0
+                )
+            ),
             "query_link_weight": link_weight[support_count:],
             "pose_motion": self.pose_motion_head(query_features),
             "prompt_similarity": torch.cat((

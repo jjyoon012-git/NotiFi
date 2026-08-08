@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import argparse
+from pathlib import Path
+import tempfile
 import unittest
 
 import pandas as pd
@@ -24,19 +27,24 @@ from notifi_pose.cal17 import (
     anchor_geometry_error,
     transport_class_prototypes,
 )
-from notifi_pose.cal20 import CAL20RelativeMotionDG
+from notifi_pose.cal20 import CAL20RelativeMotionDG, MotionProgressEncoder
 from notifi_pose.deployment import CAL20Deployment
 from notifi_pose.model_factory import build_calibration_model
 from scripts.train_cal20_source_folds import (
     cal12_site_selection_score,
+    experiment_name,
+    load_clean_source_state,
     nested_site_split,
+    validate_training_options,
 )
 from scripts.evaluate_cal20_rf_stress import TargetShiftStore
 from scripts.export_cal20_deployment import require_source_clean
 from scripts.source_calibration_data import (
+    reflect_east_west,
     select_absence,
     select_source_rows,
     transfer_site_style,
+    temporal_warp_trials,
 )
 
 
@@ -438,6 +446,98 @@ class CalibrationModelTests(unittest.TestCase):
                 hidden=16, width=32, domains=3, relative_support=False
             )
 
+    def test_east_west_reflection_swaps_tx2_tx3(self) -> None:
+        csi = torch.arange(2 * 3 * 4 * 2, dtype=torch.float32).reshape(
+            1, 2, 3, 4, 2,
+        )
+        mask = torch.tensor([[[True, False, True], [False, True, True]]])
+        (reflected, reflected_mask), = reflect_east_west([(csi, mask)])
+        torch.testing.assert_close(reflected[:, :, 0], csi[:, :, 0])
+        torch.testing.assert_close(reflected[:, :, 1], csi[:, :, 2])
+        torch.testing.assert_close(reflected[:, :, 2], csi[:, :, 1])
+        torch.testing.assert_close(reflected_mask[:, :, 1], mask[:, :, 2])
+
+        (restored, restored_mask), = reflect_east_west([
+            (reflected, reflected_mask)
+        ])
+        torch.testing.assert_close(restored, csi)
+        self.assertTrue(torch.equal(restored_mask, mask))
+
+    def test_temporal_warp_preserves_shape_and_endpoints(self) -> None:
+        csi = torch.randn(3, 20, 3, 4, 2)
+        mask = torch.ones(3, 20, 3, dtype=torch.bool)
+        warped, warped_mask = temporal_warp_trials(
+            csi, mask, seed=57, strength=0.25,
+        )
+        self.assertEqual(warped.shape, csi.shape)
+        self.assertEqual(warped_mask.shape, mask.shape)
+        torch.testing.assert_close(warped[:, 0], csi[:, 0])
+        torch.testing.assert_close(warped[:, -1], csi[:, -1])
+
+        ramp = torch.arange(20, dtype=torch.float32).reshape(1, 20, 1, 1, 1)
+        ramp = ramp.expand(1, 20, 3, 4, 2)
+        warped_ramp, _ = temporal_warp_trials(
+            ramp, mask[:1], seed=57, strength=0.25,
+        )
+        self.assertTrue(bool((warped_ramp[:, 1:] >= warped_ramp[:, :-1]).all()))
+
+    def test_zero_strength_temporal_warp_is_identity(self) -> None:
+        csi = torch.randn(2, 17, 3, 4, 2)
+        mask = torch.rand(2, 17, 3) > 0.25
+
+        warped, warped_mask = temporal_warp_trials(
+            csi, mask, seed=91, strength=0.0,
+        )
+
+        torch.testing.assert_close(warped, csi)
+        self.assertTrue(torch.equal(warped_mask, mask))
+
+    def test_combined_physical_invariance_has_cal60_name(self) -> None:
+        options = argparse.Namespace(
+            reflection_probability=0.25,
+            temporal_warp_probability=0.25,
+            motion_phase_bins=4,
+            cross_site_style_probability=0.75,
+        )
+        self.assertEqual(
+            experiment_name(options), "CAL60-PHYSICAL-INVARIANCE-DG"
+        )
+
+    def test_invalid_physical_invariance_options_fail_before_training(self) -> None:
+        options = argparse.Namespace(
+            cross_site_style_probability=0.75,
+            reflection_probability=1.1,
+            temporal_warp_probability=0.25,
+            temporal_warp_strength=0.25,
+            motion_phase_bins=8,
+        )
+        with self.assertRaisesRegex(ValueError, "reflection_probability"):
+            validate_training_options(options)
+
+        options.reflection_probability = 0.25
+        options.motion_phase_bins = 1
+        with self.assertRaisesRegex(ValueError, "motion_phase_bins"):
+            validate_training_options(options)
+
+    def test_source_initialization_rejects_target_contamination(self) -> None:
+        clean = {
+            "model": {"weight": torch.ones(1)},
+            "outer_holdout_used_for_selection": False,
+            "target_subject_used": False,
+            "sealed_yja_used": False,
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "checkpoint.pt"
+            torch.save(clean, path)
+            loaded = load_clean_source_state(path)
+            torch.testing.assert_close(loaded["weight"], torch.ones(1))
+
+            contaminated = dict(clean)
+            contaminated["target_subject_used"] = True
+            torch.save(contaminated, path)
+            with self.assertRaisesRegex(RuntimeError, "not clean"):
+                load_clean_source_state(path)
+
     def test_cal20_outputs_compatible_heads(self) -> None:
         model = CAL20RelativeMotionDG(
             hidden=16, width=32, domains=4, dropout=0.0,
@@ -455,13 +555,46 @@ class CalibrationModelTests(unittest.TestCase):
             (3, self.frames, MOTION_DESCRIPTOR_DIM),
         )
 
+    def test_cal34_motion_phase_preserves_output_contract(self) -> None:
+        model = CAL20RelativeMotionDG(
+            hidden=16, width=32, domains=4, dropout=0.0,
+            use_doppler=False, motion_phase_bins=4,
+        )
+        output = model(
+            self.query, self.query_mask,
+            self.support, self.support_mask, self.support_labels,
+            self.absence, self.absence_mask,
+        )
+        self.assertEqual(output["motion_phase_embedding"].shape, (3, 16))
+        self.assertEqual(output["action_logits"].shape, (3, C.N_CLASSES))
+        self.assertTrue(torch.isfinite(output["motion_phase_embedding"]).all())
+
+    def test_motion_progress_ignores_masked_tail_padding(self) -> None:
+        encoder = MotionProgressEncoder(hidden=8, bins=4, dropout=0.0).eval()
+        valid = torch.randn(2, 7, 8)
+        short_mask = torch.ones(2, 7, dtype=torch.bool)
+        padded = torch.cat((valid, torch.randn(2, 5, 8)), dim=1)
+        padded_mask = torch.cat((
+            short_mask, torch.zeros(2, 5, dtype=torch.bool)
+        ), dim=1)
+
+        with torch.no_grad():
+            short_output = encoder(valid, short_mask)
+            padded_output = encoder(padded, padded_mask)
+
+        torch.testing.assert_close(short_output, padded_output)
+
     def test_model_factory_restores_cal20(self) -> None:
-        model = build_calibration_model({
-            "architecture": "cal20_relative_motion_dg",
-            "hidden": 16, "width": 32, "domains": 3,
-            "use_doppler": False,
-        })
-        self.assertIsInstance(model, CAL20RelativeMotionDG)
+        source = CAL20RelativeMotionDG(
+            hidden=16, width=32, domains=3,
+            use_doppler=False, motion_phase_bins=4,
+        )
+        restored = build_calibration_model(source.model_config())
+        restored.load_state_dict(source.state_dict(), strict=True)
+
+        self.assertIsInstance(restored, CAL20RelativeMotionDG)
+        self.assertEqual(restored.motion_phase_bins, 4)
+        self.assertIsNotNone(restored.motion_progress)
 
     def test_selection_rejects_action_collapse(self) -> None:
         collapsed = {

@@ -7,6 +7,40 @@ import torch
 from .losses import distal_mpjpe, mpjpe, pa_mpjpe
 
 
+def fill_pose_gaps(pose: torch.Tensor, valid: torch.Tensor) -> torch.Tensor:
+    """source pose의 결측 구간을 양끝 고정 선형 보간해 retrieval 후보를 유한하게 만든다."""
+    if pose.ndim != 4:
+        raise ValueError("pose must be [B,T,J,3]")
+    if valid.shape != pose.shape[:2]:
+        raise ValueError("valid must match pose batch and time axes")
+    output = pose.clone()
+    finite = torch.isfinite(output).all(-1).all(-1)
+    usable = valid.bool() & finite
+    for batch in range(output.shape[0]):
+        known = torch.nonzero(usable[batch], as_tuple=False).flatten()
+        if known.numel() == 0:
+            output[batch].zero_()
+            continue
+        first = int(known[0])
+        last = int(known[-1])
+        output[batch, :first] = output[batch, first]
+        output[batch, last + 1:] = output[batch, last]
+        for left_tensor, right_tensor in zip(known[:-1], known[1:]):
+            left = int(left_tensor)
+            right = int(right_tensor)
+            if right - left <= 1:
+                continue
+            alpha = torch.linspace(
+                0.0, 1.0, right - left + 1,
+                dtype=output.dtype, device=output.device,
+            )[1:-1]
+            output[batch, left + 1:right] = (
+                output[batch, left][None] * (1.0 - alpha[:, None, None])
+                + output[batch, right][None] * alpha[:, None, None]
+            )
+    return output
+
+
 def best_motion_shift(
     predicted: torch.Tensor,
     candidate: torch.Tensor,

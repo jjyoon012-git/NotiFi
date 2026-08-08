@@ -22,10 +22,7 @@ sys.path.insert(0, str(PROJECT / "scripts"))
 
 import source_calibration_data as base  # noqa: E402
 from notifi_pose import contract as C  # noqa: E402
-from notifi_pose.cal12 import (  # noqa: E402
-    CAL12PhysicsDG,
-    cross_site_supervised_contrastive,
-)
+from notifi_pose.cal12 import cross_site_supervised_contrastive  # noqa: E402
 from notifi_pose.cal13 import (  # noqa: E402
     pose_motion_descriptor,
     shift_robust_motion_loss,
@@ -117,7 +114,7 @@ def risk_consistency_loss(
 
 @torch.no_grad()
 def evaluate_site(
-    model: CAL12PhysicsDG,
+    model: CAL20RelativeMotionDG,
     store: base.RawStore,
     index: pd.DataFrame,
     selected_rows: np.ndarray,
@@ -217,7 +214,12 @@ def train_model(
     swa_start: int = 8,
     cross_site_style_probability: float = 0.0,
     cross_subject_pairing: bool = False,
-) -> tuple[CAL12PhysicsDG, list[dict], dict | None]:
+    motion_phase_bins: int = 0,
+    reflection_probability: float = 0.0,
+    temporal_warp_probability: float = 0.0,
+    temporal_warp_strength: float = 0.25,
+    initial_state: dict[str, torch.Tensor] | None = None,
+) -> tuple[CAL20RelativeMotionDG, list[dict], dict | None]:
     """두 site씩 묶은 episode로 행동 불변성과 calibration을 동시에 학습한다."""
     model_kwargs = {
         "hidden": 64, "width": 192, "domains": len(train_sites),
@@ -225,8 +227,22 @@ def train_model(
         "relative_support": relative_support,
         "use_doppler": use_doppler,
         "phase_strength": phase_strength,
+        "motion_phase_bins": motion_phase_bins,
     }
     model = CAL20RelativeMotionDG(**model_kwargs).to(device)
+    if initial_state is not None:
+        incompatible = model.load_state_dict(initial_state, strict=False)
+        unexpected = list(incompatible.unexpected_keys)
+        invalid_missing = [
+            key for key in incompatible.missing_keys
+            if not key.startswith("motion_progress.")
+            and key != "motion_phase_gate"
+        ]
+        if unexpected or invalid_missing:
+            raise RuntimeError(
+                f"invalid source initialization: missing={invalid_missing}, "
+                f"unexpected={unexpected}"
+            )
     optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4, weight_decay=2e-3)
     risk_weight = torch.tensor((0.8, 1.0, 1.25), device=device)
     risk_weight /= risk_weight.mean()
@@ -331,6 +347,20 @@ def train_model(
                             (query_csi, query_mask),
                         ],
                         seed=seed * 1_000_000 + epoch * 10_000 + step,
+                    )
+                if rng.random() < reflection_probability:
+                    (absence_csi, absence_mask), (support_csi, support_mask), (
+                        query_csi, query_mask
+                    ) = base.reflect_east_west([
+                        (absence_csi, absence_mask),
+                        (support_csi, support_mask),
+                        (query_csi, query_mask),
+                    ])
+                if rng.random() < temporal_warp_probability:
+                    query_csi, query_mask = base.temporal_warp_trials(
+                        query_csi, query_mask,
+                        seed=seed * 1_000_000 + epoch * 10_000 + step + 37,
+                        strength=temporal_warp_strength,
                     )
                 output = model(
                     query_csi, query_mask,
@@ -476,6 +506,10 @@ def train_model(
             record["hierarchy_strength"] = float(
                 torch.sigmoid(model.hierarchy_logit).detach()
             )
+        if model.motion_phase_gate is not None:
+            record["motion_phase_strength"] = float(
+                torch.sigmoid(model.motion_phase_gate).detach()
+            )
         if fixed_swa and epoch >= swa_start:
             current_state = model.state_dict()
             if swa_state is None:
@@ -599,12 +633,67 @@ def cal12_site_selection_score(metrics: dict) -> dict[str, float]:
     }
 
 
+def load_clean_source_state(path: Path) -> dict[str, torch.Tensor]:
+    """봉인 target이나 outer 선택에 오염되지 않은 source checkpoint만 읽는다."""
+    checkpoint = torch.load(path, map_location="cpu", weights_only=False)
+    required_false = (
+        "outer_holdout_used_for_selection",
+        "target_subject_used",
+        "sealed_yja_used",
+    )
+    contaminated = [
+        key for key in required_false if checkpoint.get(key) is not False
+    ]
+    if contaminated:
+        raise RuntimeError(f"source initialization is not clean: {contaminated}")
+    if "model" not in checkpoint:
+        raise RuntimeError(f"source initialization has no model: {path}")
+    return checkpoint["model"]
+
+
+def experiment_name(options: argparse.Namespace) -> str:
+    """활성화된 행동 불변성 조합을 재현 가능한 실험 이름으로 변환한다."""
+    reflected = options.reflection_probability > 0.0
+    warped = options.temporal_warp_probability > 0.0
+    if reflected and warped:
+        return "CAL60-PHYSICAL-INVARIANCE-DG"
+    if warped:
+        return "CAL58-MONOTONIC-TIME-WARP-DG"
+    if reflected:
+        return "CAL53-EAST-WEST-REFLECTION-DG"
+    if options.motion_phase_bins >= 2:
+        return "CAL34-MOTION-PHASE-DG"
+    if options.cross_site_style_probability > 0.0:
+        return "CAL33-CROSS-SITE-STYLE"
+    return "CAL20-RELATIVE-MOTION-DG"
+
+
+def validate_training_options(options: argparse.Namespace) -> None:
+    """증강 확률과 진행률 설정의 잘못된 조합을 학습 시작 전에 차단한다."""
+    for name in (
+        "cross_site_style_probability",
+        "reflection_probability",
+        "temporal_warp_probability",
+    ):
+        value = float(getattr(options, name))
+        if not 0.0 <= value <= 1.0:
+            raise ValueError(f"{name} must be between 0 and 1")
+    if options.motion_phase_bins < 0 or options.motion_phase_bins == 1:
+        raise ValueError("motion_phase_bins must be 0 or at least 2")
+    if options.temporal_warp_strength < 0.0:
+        raise ValueError("temporal_warp_strength cannot be negative")
+
+
 def main() -> None:
     """source subject-LOSO와 전체 source deployment 학습을 실행한다."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--epochs", type=int, default=32)
     parser.add_argument("--batch-size", type=int, default=8)
+    parser.add_argument(
+        "--training-seed", type=int, default=12012,
+        help="fold 학습·augmentation·deployment 재현에 사용할 기준 seed",
+    )
     parser.add_argument("--skip-existing", action="store_true")
     parser.add_argument("--disable-relative-support", action="store_true")
     parser.add_argument("--use-doppler", action="store_true")
@@ -621,14 +710,35 @@ def main() -> None:
         "--cross-subject-pairing", action="store_true",
         help="paired episode를 서로 다른 source 사람으로 강제한다",
     )
+    parser.add_argument(
+        "--motion-phase-bins", type=int, default=0,
+        help="실제 시간과 누적 움직임 진행률을 요약할 bin 개수",
+    )
+    parser.add_argument(
+        "--reflection-probability", type=float, default=0.0,
+        help="동·서 TX를 episode 전체에서 반사할 학습 확률",
+    )
+    parser.add_argument(
+        "--temporal-warp-probability", type=float, default=0.0,
+        help="query 수행 속도를 단조 재표집할 학습 확률",
+    )
+    parser.add_argument(
+        "--temporal-warp-strength", type=float, default=0.25,
+        help="시간 warp 지수의 log 범위",
+    )
+    parser.add_argument(
+        "--initialize-from-run", type=Path,
+        help="target-clean source checkpoint에서 새 adapter를 이어 학습한다",
+    )
     options = parser.parse_args()
+    validate_training_options(options)
     run = options.run_dir
     run.mkdir(parents=True, exist_ok=True)
 
     base.ACTIVE_PROMPT_CLASSES = MOTION_PROMPT_CLASSES
     base.PROMPT_SHOTS = {class_id: 2 for class_id in MOTION_PROMPT_CLASSES}
-    torch.manual_seed(12012)
-    np.random.seed(12012)
+    torch.manual_seed(options.training_seed)
+    np.random.seed(options.training_seed)
     torch.set_float32_matmul_precision("high")
     device = "cuda" if torch.cuda.is_available() else "cpu"
     index = pd.read_csv(WORK / "cache/cache_index.csv")
@@ -684,7 +794,7 @@ def main() -> None:
         model, history, best = train_model(
             store, index, selected_rows, sites,
             train_sites, validation_sites,
-            options.epochs, device, 12012 + fold_number * 101,
+            options.epochs, device, options.training_seed + fold_number * 101,
             options.batch_size,
             not options.disable_relative_support,
             options.use_doppler,
@@ -695,6 +805,16 @@ def main() -> None:
             options.swa_start,
             options.cross_site_style_probability,
             options.cross_subject_pairing,
+            options.motion_phase_bins,
+            options.reflection_probability,
+            options.temporal_warp_probability,
+            options.temporal_warp_strength,
+            (
+                load_clean_source_state(
+                    options.initialize_from_run / f"selection_{held_out}.pt"
+                )
+                if options.initialize_from_run is not None else None
+            ),
         )
         if best is None:
             raise RuntimeError(f"{held_out} fold did not produce a checkpoint")
@@ -730,7 +850,8 @@ def main() -> None:
     locked_epochs = max(1, int(round(float(np.median(best_epochs)))))
     deployment, deployment_history, _ = train_model(
         store, index, selected_rows, sites,
-        all_sites, None, locked_epochs, device, 13012, options.batch_size,
+        all_sites, None, locked_epochs, device,
+        options.training_seed + 1000, options.batch_size,
         not options.disable_relative_support,
         options.use_doppler,
         options.phase_strength,
@@ -740,6 +861,16 @@ def main() -> None:
         options.swa_start,
         options.cross_site_style_probability,
         options.cross_subject_pairing,
+        options.motion_phase_bins,
+        options.reflection_probability,
+        options.temporal_warp_probability,
+        options.temporal_warp_strength,
+        (
+            load_clean_source_state(
+                options.initialize_from_run / "deployment_model.pt"
+            )
+            if options.initialize_from_run is not None else None
+        ),
     )
     source_metrics = {
         site: evaluate_site(
@@ -770,14 +901,19 @@ def main() -> None:
         "sealed_yja_used": False,
     }, run / "deployment_model.pt")
     result = {
-        "run": (
-            "CAL33-CROSS-SITE-STYLE"
-            if options.cross_site_style_probability > 0.0
-            else "CAL20-RELATIVE-MOTION-DG"
-        ),
+        "run": experiment_name(options),
         "cross_site_style_probability": options.cross_site_style_probability,
         "cross_subject_pairing": options.cross_subject_pairing,
+        "motion_phase_bins": options.motion_phase_bins,
+        "reflection_probability": options.reflection_probability,
+        "temporal_warp_probability": options.temporal_warp_probability,
+        "temporal_warp_strength": options.temporal_warp_strength,
+        "initialized_from_run": (
+            str(options.initialize_from_run.resolve())
+            if options.initialize_from_run is not None else None
+        ),
         "device": device,
+        "training_seed": options.training_seed,
         "fold_results": fold_results,
         "fold_best_epochs": best_epochs,
         "locked_epochs": locked_epochs,

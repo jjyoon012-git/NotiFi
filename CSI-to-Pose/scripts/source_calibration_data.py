@@ -188,6 +188,47 @@ def augment_site(
     return augmented
 
 
+def reflect_east_west(
+    tensors: list[tuple[torch.Tensor, torch.Tensor]],
+) -> list[tuple[torch.Tensor, torch.Tensor]]:
+    """TX2(West)와 TX3(East)를 함께 바꿔 좌우 반사 episode를 만든다."""
+    reflected = []
+    for csi, mask in tensors:
+        if csi.ndim != 5 or mask.ndim != 3 or csi.shape[2] != C.N_LINKS:
+            raise ValueError("expected CSI [B,T,3,S,2] and mask [B,T,3]")
+        order = torch.tensor((0, 2, 1), device=csi.device)
+        reflected.append((
+            csi.index_select(2, order), mask.index_select(2, order),
+        ))
+    return reflected
+
+
+def temporal_warp_trials(
+    csi: torch.Tensor,
+    mask: torch.Tensor,
+    seed: int,
+    strength: float = 0.25,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """동작 순서를 보존한 채 trial별 수행 속도만 단조롭게 재표집한다."""
+    if csi.ndim != 5 or mask.shape != csi.shape[:3]:
+        raise ValueError("expected CSI [B,T,L,S,2] and mask [B,T,L]")
+    if strength < 0.0:
+        raise ValueError("temporal warp strength cannot be negative")
+    batch, frames = csi.shape[:2]
+    generator = torch.Generator(device=csi.device).manual_seed(seed)
+    exponent = torch.exp(
+        (torch.rand(batch, generator=generator, device=csi.device) * 2.0 - 1.0)
+        * float(strength)
+    )
+    timeline = torch.linspace(0.0, 1.0, frames, device=csi.device)
+    source = (timeline[None].pow(exponent[:, None]) * (frames - 1)).round().long()
+    csi_index = source[:, :, None, None, None].expand(
+        -1, -1, csi.shape[2], csi.shape[3], csi.shape[4],
+    )
+    mask_index = source[:, :, None].expand(-1, -1, mask.shape[2])
+    return torch.gather(csi, 1, csi_index), torch.gather(mask, 1, mask_index)
+
+
 def _static_reference(
     csi: torch.Tensor, mask: torch.Tensor,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:

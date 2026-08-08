@@ -1,0 +1,191 @@
+{
+  "date": "2026-08-08",
+  "protocol": {
+    "name": "nested_source_subject_loso_v1",
+    "source_sites": [
+      "ajh_E01", "ajh_E02", "ajh_E03",
+      "mhw_E01", "mhw_E02", "mhw_E03", "lmh_E01"
+    ],
+    "outer_subjects": ["ajh", "mhw", "lmh"],
+    "support_seeds": [17017, 17027, 17037, 17047, 17057],
+    "absence_windows": 12,
+    "basic_action_support": "8 classes x 2 trials",
+    "danger_subtype_balance": "D01-D05 each have 6 outer trials per site; uniform chance is 20%",
+    "within_run_outer_holdout_used_for_operating_point_selection": false,
+    "source_outer_benchmark_observed_for_model_family_promotion": true,
+    "independent_final_test_status": "sealed yja/E02 query",
+    "target_subject_used": false,
+    "sealed_yja_used": false,
+    "query_label_or_pose_gt_used_at_inference": false
+  },
+  "metrics_unit": "percent except pose metrics in cm",
+  "classification": {
+    "CAL33_previous_high_recall": {
+      "action_accuracy": [36.43, 1.16],
+      "action_macro_f1": [29.09, 1.17],
+      "risk_accuracy": [45.68, 0.82],
+      "risk_macro_f1": [35.16, 0.53],
+      "danger_recall": [44.57, 1.07],
+      "danger_subtype_accuracy": [7.90, 1.37],
+      "safe_to_danger": [20.94, 1.07],
+      "worst_site_action": [28.15, 1.47]
+    },
+    "CAL46_single_balanced": {
+      "action_accuracy": [38.27, 0.34],
+      "action_macro_f1": [30.80, 0.73],
+      "risk_accuracy": [50.98, 0.81],
+      "risk_macro_f1": [38.94, 1.14],
+      "danger_recall": [28.57, 0.85],
+      "danger_subtype_accuracy": [8.38, 1.40],
+      "safe_to_danger": [10.77, 0.95],
+      "worst_site_action": [29.94, 0.99]
+    },
+    "CAL60_single_seed_22012": {
+      "action_accuracy": [40.60, 0.47],
+      "action_macro_f1": [32.59, 0.55],
+      "risk_accuracy": [51.09, 1.07],
+      "risk_macro_f1": [41.56, 1.40],
+      "danger_recall": [44.86, 2.24],
+      "danger_subtype_accuracy": [10.10, 1.26],
+      "safe_to_danger": [16.46, 1.30],
+      "worst_site_action": [33.76, 2.01]
+    },
+    "CAL64_balanced_ensemble": {
+      "scope": "best measured training-seed combination; not the headline estimate",
+      "members": ["CAL60_seed22012", "CAL46_seed12012"],
+      "action_accuracy": [41.20, 1.12],
+      "action_macro_f1": [33.51, 1.58],
+      "risk_accuracy": [50.75, 0.85],
+      "risk_macro_f1": [40.85, 1.14],
+      "danger_recall": [45.52, 1.55],
+      "danger_subtype_accuracy": [10.00, 1.09],
+      "safe_to_danger": [16.72, 1.05],
+      "worst_site_action": [34.90, 1.82]
+    },
+    "CAL65_high_recall_ensemble": {
+      "scope": "best measured training-seed combination; not the headline estimate",
+      "members": ["CAL60_seed22012", "CAL58_seed12012"],
+      "action_accuracy": [41.11, 1.34],
+      "action_macro_f1": [33.39, 1.61],
+      "risk_accuracy": [50.66, 0.34],
+      "risk_macro_f1": [41.08, 0.71],
+      "danger_recall": [49.33, 2.83],
+      "danger_subtype_accuracy": [10.76, 1.07],
+      "safe_to_danger": [18.76, 0.92],
+      "worst_site_action": [32.99, 3.47]
+    },
+    "CAL64_two_training_seed_summary": {
+      "scope": "headline estimate across both CAL60 training seeds and five support seeds",
+      "training_seeds": [12012, 22012],
+      "action_accuracy": [40.35, 1.32],
+      "action_macro_f1": [32.69, 1.64],
+      "risk_accuracy": [50.05, 1.11],
+      "risk_macro_f1": [39.85, 1.48],
+      "danger_recall": [43.76, 3.41],
+      "danger_subtype_accuracy": [10.52, 1.21],
+      "safe_to_danger": [17.46, 1.79],
+      "worst_site_action": [31.53, 3.97]
+    },
+    "CAL65_two_training_seed_summary": {
+      "scope": "headline estimate across both CAL60 training seeds and five support seeds",
+      "training_seeds": [12012, 22012],
+      "action_accuracy": [40.42, 1.42],
+      "action_macro_f1": [32.62, 1.62],
+      "risk_accuracy": [50.61, 0.52],
+      "risk_macro_f1": [40.51, 1.04],
+      "danger_recall": [46.81, 4.12],
+      "danger_subtype_accuracy": [11.05, 0.97],
+      "safe_to_danger": [18.42, 1.29],
+      "worst_site_action": [30.13, 4.35]
+    }
+  },
+  "pose": {
+    "CAL23_v4_current_best": {
+      "pose_cm": 29.68,
+      "distal_cm": 44.20,
+      "pa_pose_cm": 11.27,
+      "danger_pose_cm": 37.82,
+      "danger_distal_cm": 56.13
+    },
+    "CAL63_rejected_deep_ensemble_pose": {
+      "pose_cm": 30.03,
+      "distal_cm": 44.49,
+      "pa_pose_cm": 10.60,
+      "danger_pose_cm": 38.29,
+      "danger_distal_cm": 57.03,
+      "rejected": true
+    }
+  },
+  "site_breakdown_CAL65_two_training_seed": {
+    "ajh_E01": {"action_accuracy": 39.24, "danger_recall": 21.00, "safe_to_danger": 0.39},
+    "ajh_E02": {"action_accuracy": 36.62, "danger_recall": 33.67, "safe_to_danger": 26.58},
+    "ajh_E03": {"action_accuracy": 38.22, "danger_recall": 2.00, "safe_to_danger": 3.03},
+    "lmh_E01": {"action_accuracy": 53.01, "danger_recall": 86.67, "safe_to_danger": 12.40},
+    "mhw_E01": {"action_accuracy": 42.23, "danger_recall": 55.00, "safe_to_danger": 16.05},
+    "mhw_E02": {"action_accuracy": 30.32, "danger_recall": 66.00, "safe_to_danger": 38.42},
+    "mhw_E03": {"action_accuracy": 43.38, "danger_recall": 63.33, "safe_to_danger": 31.97}
+  },
+  "headline_change_CAL33_to_CAL65_percentage_points": {
+    "action_accuracy": 3.99,
+    "action_macro_f1": 3.53,
+    "risk_accuracy": 4.93,
+    "risk_macro_f1": 5.35,
+    "danger_recall": 2.24,
+    "danger_subtype_accuracy": 3.15,
+    "safe_to_danger": -2.52,
+    "worst_site_action": 1.98
+  },
+  "rejected_follow_up": {
+    "CAL71_query_link_burst_dropout": {
+      "action_accuracy": [39.89, 0.69],
+      "action_macro_f1": [32.32, 1.03],
+      "risk_accuracy": [47.65, 1.35],
+      "risk_macro_f1": [38.51, 1.11],
+      "danger_recall": [49.24, 3.78],
+      "danger_subtype_accuracy": [9.71, 0.88],
+      "safe_to_danger": [19.51, 2.66],
+      "worst_site_action": [30.45, 3.54],
+      "ajh_E03_danger_recall": 1.33,
+      "reason": "raised aggregate danger by becoming over-sensitive but did not repair the low-coverage failure site"
+    },
+    "CAL70_motion_progress_classical_probe": {
+      "classifier": "ExtraTrees over 32-bin scale-normalized energy, velocity and acceleration sequences",
+      "protocol": "16 non-absence classes, source subject-LOSO; no yja",
+      "weighted_action_accuracy": 13.72,
+      "weighted_action_macro_f1": 6.99,
+      "reason": "temporal order helps over ACF but aggregate energy still loses subcarrier, phase and link interactions"
+    },
+    "CAL69_scale_normalized_ACF_probe": {
+      "classifier": "ExtraTrees over 108 per-link ACF, spectrum and robust-stat features",
+      "protocol": "16 non-absence classes, source subject-LOSO; no yja",
+      "action_accuracy_by_subject": {
+        "ajh": 6.74,
+        "mhw": 14.26,
+        "lmh": 18.02
+      },
+      "weighted_action_accuracy": 11.57,
+      "weighted_action_macro_f1": 7.52,
+      "reason": "occupancy-oriented ACF discards temporal and body-part order required by fine-grained actions"
+    },
+    "CAL68_long_24_epoch_control": {
+      "action_accuracy": [38.23, 1.77],
+      "action_macro_f1": [30.87, 2.00],
+      "risk_accuracy": [51.22, 1.01],
+      "risk_macro_f1": [42.20, 1.47],
+      "danger_recall": [41.33, 0.92],
+      "danger_subtype_accuracy": [9.43, 0.70],
+      "safe_to_danger": [13.48, 1.51],
+      "worst_site_action": [29.30, 2.17],
+      "reason": "longer SWA reduced false alarms but over-smoothed action, danger and worst-site boundaries"
+    },
+    "CAL66_CAL60_plus_CAL33": {
+      "action_accuracy": [40.80, 1.27],
+      "risk_accuracy": [47.05, 0.99],
+      "danger_recall": [50.86, 1.82],
+      "danger_subtype_accuracy": [9.24, 1.61],
+      "safe_to_danger": [22.49, 2.52],
+      "reason": "danger-only gain with materially worse risk, subtype and false alarms"
+    }
+  },
+  "conclusion": "CAL65 is the high-recall classification profile, CAL64 is the balanced profile, CAL60 is the single-model profile, and CAL23 v4 remains the pose profile. No yja/E02 result was used."
+}
