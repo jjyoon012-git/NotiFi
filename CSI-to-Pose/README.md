@@ -57,6 +57,8 @@ flowchart LR
 
 ### 분류와 calibration
 
+모델 출력은 absence를 포함한 17-way이지만, 아래 source nested-LOSO Action 지표는 calibration 입력으로 사용한 absence를 query에 재사용하지 않고 **16개 실제 행동만** 평가한 값입니다. 따라서 `40.42%`를 absence까지 포함한 독립 17-class 정확도로 해석하면 안 됩니다. 3-risk와 Danger 지표도 같은 16-action query에서 계산했습니다.
+
 | 모델 | Action Acc | Action F1 | Risk Acc | Risk F1 | Danger Recall | Danger 5종 | Safe→Danger | 최악 site Action |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | CAL33 이전 고재현 | 36.43±1.16% | 29.09±1.17% | 45.68±0.82% | 35.16±0.53% | 44.57±1.07% | 7.90±1.37% | 20.94±1.07% | 28.15±1.47% |
@@ -359,7 +361,7 @@ python scripts/evaluate_calibration_geometry_gate.py `
 
 ## 남은 핵심 문제
 
-1. **17-action 40.42%, Danger 5종 11.05%**: 균형 5종의 chance 20%보다도 낮아 세부 낙상 head는 현재 사용할 수 없습니다. 다음 단계는 class 전체를 한 벡터로 압축하는 loss가 아니라, torso/좌우 사지별 시간 token과 coarse-to-fine danger subtype head를 source-inner에서 검증하는 것입니다.
+1. **17-way 출력의 16-action 독립 query 40.42%, Danger 5종 11.05%**: absence는 calibration 입력이라 독립 action 지표에서 제외했습니다. 균형 5종의 chance 20%보다도 낮아 세부 낙상 head는 현재 사용할 수 없습니다. 다음 단계는 class 전체를 한 벡터로 압축하는 loss가 아니라, torso/좌우 사지별 시간 token과 coarse-to-fine danger subtype head를 source-inner에서 검증하는 것입니다.
 2. **Danger distal 56.13 cm**: 분류 ensemble을 pose descriptor에 그대로 적용해도 57.03 cm로 악화됐습니다. 현재 병목은 분류 정확도만이 아니라 CSI descriptor와 올바른 source 궤적의 대응입니다. 낙상 source pose 전용 생성 prior와 접촉 가능성 head가 필요합니다.
 3. **Danger recall-오경보 Pareto**: CAL65의 두 학습 seed 평균은 Danger 46.81%에서 Safe→Danger 18.42%, CAL46은 오경보 10.77%에서 Danger 28.57%입니다. 현장 비용에 따라 CAL65/CAL64 profile을 명시적으로 고르고, 이후 독립 calibration set에서 conformal threshold를 정해야 합니다.
 4. **개발 benchmark 재사용**: 각 run은 nested split을 지켰지만 구조 비교에는 source outer를 반복 관찰했습니다. 더 이상의 구조 선택 전에 봉인 `yja/E02`를 한 번만 평가하거나 새로운 사람을 완전 holdout으로 추가해야 합니다.
