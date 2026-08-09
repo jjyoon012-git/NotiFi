@@ -18,6 +18,11 @@ from .cal17 import (
     cal17_risk,
 )
 from .cal27 import cal27_action
+from .danger_support import (
+    apply_danger_support,
+    class_prototypes as danger_class_prototypes,
+    support_evidence,
+)
 from .hybrid_v10 import sequence_bone_projection
 from .model_factory import build_calibration_model
 from .pose_simulation import best_motion_shift, shift_pose
@@ -70,6 +75,8 @@ class TargetCalibration:
     secondary_anchors: torch.Tensor | None = None
     secondary_geometry_error: torch.Tensor | None = None
     secondary_domain_pass: torch.Tensor | None = None
+    danger_prototypes: torch.Tensor | None = None
+    secondary_danger_prototypes: torch.Tensor | None = None
 
 
 class CAL20Deployment:
@@ -97,6 +104,12 @@ class CAL20Deployment:
             "safety": {"danger_bias": 0.0},
         }))
         self.pose_config = dict(bundle.get("pose_config", {}))
+        self.danger_support_contract = dict(
+            bundle.get("danger_support_contract", {})
+        )
+        self.danger_support_config = dict(
+            bundle.get("danger_support_config", {})
+        )
         self.geometry_threshold = float(
             bundle.get("calibration_geometry_threshold", float("inf"))
         )
@@ -149,6 +162,9 @@ class CAL20Deployment:
         support_mask: torch.Tensor,
         absence_csi: torch.Tensor,
         absence_mask: torch.Tensor,
+        danger_support_csi: torch.Tensor | None = None,
+        danger_support_mask: torch.Tensor | None = None,
+        danger_support_labels: torch.Tensor | None = None,
     ) -> None:
         """배포 계약의 class별 support 수와 absence 수를 강제한다."""
         self._validate_trial_batch("support", support_csi, support_mask)
@@ -183,6 +199,42 @@ class CAL20Deployment:
                 raise ValueError(
                     f"{name} trial requires at least {MIN_USABLE_LINKS} usable links"
                 )
+        if self.danger_support_contract:
+            if any(value is None for value in (
+                danger_support_csi, danger_support_mask, danger_support_labels,
+            )):
+                raise ValueError("deployment requires danger calibration support")
+            self._validate_trial_batch(
+                "danger support", danger_support_csi, danger_support_mask
+            )
+            if danger_support_labels.ndim != 1:
+                raise ValueError("danger support labels must be one-dimensional")
+            if len(danger_support_labels) != len(danger_support_csi):
+                raise ValueError("danger support CSI, mask, and labels must match")
+            danger_labels = danger_support_labels.detach().cpu()
+            danger_classes = tuple(int(value) for value in self.danger_support_contract[
+                "classes"
+            ])
+            danger_shots = int(self.danger_support_contract["shots_per_class"])
+            for class_id in danger_classes:
+                if int((danger_labels == class_id).sum()) != danger_shots:
+                    raise ValueError(
+                        f"danger class {class_id} requires exactly "
+                        f"{danger_shots} support trials"
+                    )
+            if len(danger_labels) != len(danger_classes) * danger_shots:
+                raise ValueError("danger support contains undeclared classes")
+            danger_coverage = danger_support_mask.detach().float().mean(1)
+            danger_usable = (danger_coverage >= MIN_LINK_COVERAGE).sum(-1)
+            if bool((danger_usable < MIN_USABLE_LINKS).any()):
+                raise ValueError(
+                    "danger support trial requires at least "
+                    f"{MIN_USABLE_LINKS} usable links"
+                )
+        elif any(value is not None for value in (
+            danger_support_csi, danger_support_mask, danger_support_labels,
+        )):
+            raise ValueError("bundle does not declare danger calibration support")
 
     @staticmethod
     def _validate_trial_batch(
@@ -224,16 +276,24 @@ class CAL20Deployment:
         support_labels: torch.Tensor,
         absence_csi: torch.Tensor,
         absence_mask: torch.Tensor,
+        danger_support_csi: torch.Tensor | None = None,
+        danger_support_mask: torch.Tensor | None = None,
+        danger_support_labels: torch.Tensor | None = None,
     ) -> TargetCalibration:
-        """새 사용자의 기본동작과 빈 공간 CSI를 target latent anchor로 변환한다."""
+        """기본동작·빈 공간·통제된 낙상 CSI를 target anchor로 변환한다."""
         self._validate_support(
-            support_csi, support_labels, support_mask, absence_csi, absence_mask
+            support_csi, support_labels, support_mask, absence_csi, absence_mask,
+            danger_support_csi, danger_support_mask, danger_support_labels,
         )
         support_csi = support_csi.to(self.device).float()
         support_mask = support_mask.to(self.device).bool()
         support_labels = support_labels.to(self.device).long()
         absence_csi = absence_csi.to(self.device).float()
         absence_mask = absence_mask.to(self.device).bool()
+        if danger_support_csi is not None:
+            danger_support_csi = danger_support_csi.to(self.device).float()
+            danger_support_mask = danger_support_mask.to(self.device).bool()
+            danger_support_labels = danger_support_labels.to(self.device).long()
         support_output = self.model(
             support_csi, support_mask,
             support_csi, support_mask, support_labels,
@@ -261,6 +321,18 @@ class CAL20Deployment:
         secondary_anchors = None
         secondary_geometry_error = None
         secondary_domain_pass = None
+        danger_prototypes = None
+        secondary_danger_prototypes = None
+        if danger_support_csi is not None:
+            danger_output = self.model(
+                danger_support_csi, danger_support_mask,
+                support_csi, support_mask, support_labels,
+                absence_csi, absence_mask,
+            )
+            danger_prototypes = danger_class_prototypes(
+                danger_output["embedding"], danger_support_labels,
+                tuple(int(value) for value in self.danger_support_contract["classes"]),
+            )
         if self.secondary_model is not None:
             secondary_support = self.secondary_model(
                 support_csi, support_mask,
@@ -286,12 +358,26 @@ class CAL20Deployment:
             secondary_domain_pass = (
                 secondary_geometry_error <= self.secondary_geometry_threshold
             )
+            if danger_support_csi is not None:
+                secondary_danger_output = self.secondary_model(
+                    danger_support_csi, danger_support_mask,
+                    support_csi, support_mask, support_labels,
+                    absence_csi, absence_mask,
+                )
+                secondary_danger_prototypes = danger_class_prototypes(
+                    secondary_danger_output["embedding"], danger_support_labels,
+                    tuple(
+                        int(value)
+                        for value in self.danger_support_contract["classes"]
+                    ),
+                )
         return TargetCalibration(
             support_csi, support_mask, support_labels,
             absence_csi, absence_mask, anchors,
             geometry_error, domain_pass,
             secondary_anchors, secondary_geometry_error,
             secondary_domain_pass,
+            danger_prototypes, secondary_danger_prototypes,
         )
 
     def _simulate_pose(
@@ -482,6 +568,26 @@ class CAL20Deployment:
             conservative_risk = cal17_risk(
                 self.model, target, action, self.risk_config
             )
+        danger_diagnostics = {}
+        if self.danger_support_config:
+            if calibration.danger_prototypes is None:
+                raise RuntimeError("CAL44 requires danger calibration prototypes")
+            temperature = float(self.danger_support_config["temperature"])
+            evidence = [support_evidence(
+                target["embedding"], calibration.anchors[:-1],
+                calibration.danger_prototypes, temperature,
+            )]
+            if self.secondary_model is not None:
+                if calibration.secondary_danger_prototypes is None:
+                    raise RuntimeError("CAL44 requires secondary danger prototypes")
+                evidence.append(support_evidence(
+                    secondary_target["embedding"],
+                    calibration.secondary_anchors[:-1],
+                    calibration.secondary_danger_prototypes, temperature,
+                ))
+            action, conservative_risk, danger_diagnostics = apply_danger_support(
+                action, conservative_risk, evidence, self.danger_support_config
+            )
         safety_risk = conservative_risk.clone()
         safety_risk[:, 2] += float(
             self.risk_profiles.get("safety", {}).get("danger_bias", 0.0)
@@ -497,6 +603,7 @@ class CAL20Deployment:
             "risk_profile": risk_profile,
             "conservative_risk_probability": conservative_risk.softmax(-1),
             "safety_risk_probability": safety_risk.softmax(-1),
+            **danger_diagnostics,
             **quality,
         }
         if simulate_pose:
@@ -504,3 +611,13 @@ class CAL20Deployment:
                 output["pose_motion"], output["query_frame_mask"], action
             ))
         return result
+
+
+# 과거 bundle API와의 호환성은 유지하되 현재 공개 이름은 채택 모델에 맞춘다.
+CAL44Deployment = CAL20Deployment
+
+
+__all__ = (
+    "CAL20Deployment", "CAL44Deployment", "TargetCalibration",
+    "load_csi_csv", "load_csi_csv_batch",
+)

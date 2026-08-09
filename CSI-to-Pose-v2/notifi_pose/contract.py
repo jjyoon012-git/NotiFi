@@ -94,6 +94,7 @@ RISK_NAMES = ("safe", "warning", "danger")
 ACTION_TO_ID = {name: index for index, name in enumerate(ACTION_NAMES)}
 RISK_TO_ID = {name: index for index, name in enumerate(RISK_NAMES)}
 CALIBRATION_PROMPT_CLASSES = (0, 1, 2, 3, 4, 5, 7, 8)
+DANGER_CALIBRATION_CLASSES = (12, 13, 14, 15, 16)
 
 assert len(ACTION_NAMES) == N_CLASSES
 assert len(RISK_NAMES) == N_RISK

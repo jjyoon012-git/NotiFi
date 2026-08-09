@@ -1,4 +1,4 @@
-"""CAL40 배포 파일, 결과, README의 상호 무결성 테스트."""
+"""CAL44 단일 배포 파일, 결과, README의 상호 무결성 테스트."""
 
 import hashlib
 import json
@@ -16,58 +16,53 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-class CAL40ReleaseIntegrityTests(unittest.TestCase):
+class CAL44ReleaseIntegrityTests(unittest.TestCase):
     def test_sha256_manifest_matches_every_release_binary(self) -> None:
         """SHA256SUMS의 모든 파일이 존재하고 실제 hash와 일치하는지 확인한다."""
         entries = [line.split("  ", 1) for line in (
             ROOT / "SHA256SUMS"
         ).read_text(encoding="utf-8").splitlines() if line]
-        self.assertEqual(len(entries), 13)
+        self.assertEqual(len(entries), 1)
         for expected, relative in entries:
             path = ROOT / relative
             self.assertTrue(path.is_file(), relative)
             self.assertEqual(sha256(path), expected, relative)
 
-    def test_bundle_provenance_resolves_inside_release(self) -> None:
-        """bundle 생성 입력과 두 encoder checkpoint hash가 저장소 파일과 맞는지 검사한다."""
+    def test_bundle_contains_every_inference_component(self) -> None:
+        """외부 checkpoint 없이 두 encoder와 pose library를 모두 포함하는지 검사한다."""
         bundle = torch.load(
-            ROOT / "artifacts/cal40_full_deployment.pt",
-            map_location="cpu", weights_only=False,
+            ROOT / "artifacts/cal44_full_deployment.pt",
+            map_location="cpu", weights_only=True,
         )
         self.assertEqual(
             bundle["bundle_version"],
-            "cal40_fixed_deep_action_safety_risk_v1",
+            "cal44_fall_support_single_bundle_v1",
         )
         self.assertIs(bundle["target_subject_used"], False)
         self.assertIs(bundle["sealed_yja_used"], False)
         self.assertIs(bundle["query_labels_or_pose_gt_used"], False)
-        provenance = bundle["provenance"]
-        expected = {
-            "deployment_model_sha256": "checkpoints/cal60/deployment_model.pt",
-            "calibration_result_sha256": "results/cal60_cal17_seed17017.json",
-            "pose_result_sha256": "results/cal60_cal23_seed17017.json",
-            "fixed_dual_result_sha256": "results/a30_cal32_safety_risk_5seed_summary.json",
-            "deep_action_model_sha256": "checkpoints/cal66_grl0/deployment_model.pt",
-            "fixed_deep_action_result_sha256": "results/a44_cal40_fixed_deep_action_safety_5seed.json",
-        }
-        for key, relative in expected.items():
-            self.assertEqual(provenance[key], sha256(ROOT / relative), key)
+        self.assertIn("model", bundle)
+        self.assertIn("deep_action", bundle)
+        self.assertIn("pose_library", bundle)
+        self.assertEqual(
+            bundle["danger_support_contract"]["classes"], [12, 13, 14, 15, 16]
+        )
+        self.assertEqual(
+            bundle["danger_support_contract"]["shots_per_class"], 1
+        )
 
-    def test_every_checkpoint_and_pose_id_excludes_sealed_subject(self) -> None:
-        """모든 배포 binary 내부 메타와 pose ID에서 봉인 대상이 빠졌는지 검사한다."""
+    def test_single_pt_and_pose_ids_exclude_sealed_subject(self) -> None:
+        """단일 pt 계약과 pose ID에서 봉인 대상이 빠졌는지 검사한다."""
         checkpoints = sorted((ROOT / "checkpoints").rglob("*.pt"))
-        self.assertEqual(len(checkpoints), 12)
-        for path in checkpoints:
-            checkpoint = torch.load(path, map_location="cpu", weights_only=False)
-            self.assertIs(checkpoint["sealed_yja_used"], False, str(path))
-            self.assertIs(checkpoint["target_subject_used"], False, str(path))
-            self.assertIs(
-                checkpoint["outer_holdout_used_for_selection"], False, str(path)
-            )
+        self.assertEqual(checkpoints, [])
+        self.assertEqual(
+            sorted(path.name for path in (ROOT / "artifacts").glob("*.pt")),
+            ["cal44_full_deployment.pt"],
+        )
 
         bundle = torch.load(
-            ROOT / "artifacts/cal40_full_deployment.pt",
-            map_location="cpu", weights_only=False,
+            ROOT / "artifacts/cal44_full_deployment.pt",
+            map_location="cpu", weights_only=True,
         )
         source_sites = {
             "ajh_E01", "ajh_E02", "ajh_E03", "lmh_E01",
@@ -87,18 +82,19 @@ class CAL40ReleaseIntegrityTests(unittest.TestCase):
         )
 
     def test_readme_current_metrics_match_machine_results(self) -> None:
-        """README 최상단 CAL40 수치와 runtime이 결과 JSON에서 벗어나지 않게 고정한다."""
+        """README 최상단 CAL44 수치와 runtime이 결과 JSON에서 벗어나지 않게 고정한다."""
         result = json.loads((
-            ROOT / "results/a44_cal40_fixed_deep_action_safety_5seed.json"
+            ROOT / "results/a62_cal44_fall_support_5seed.json"
         ).read_text(encoding="utf-8"))
         runtime = json.loads((
-            ROOT / "results/cal40_full_runtime_benchmark.json"
+            ROOT / "results/cal44_full_runtime_benchmark.json"
         ).read_text(encoding="utf-8"))
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        current = result["aggregate"]["cal44"]
         checks = {
-            f"{100 * result['aggregate']['action_accuracy']['mean']:.2f}": "action",
-            f"{100 * result['aggregate']['action_macro_f1']['mean']:.2f}": "macro F1",
-            f"{100 * result['aggregate']['danger_recall']['mean']:.2f}": "danger recall",
+            f"{100 * current['action_accuracy']['mean']:.2f}": "action",
+            f"{100 * current['action_macro_f1']['mean']:.2f}": "macro F1",
+            f"{100 * current['danger_recall']['mean']:.2f}": "danger recall",
             f"{runtime['calibration']['median_ms']:.2f}": "calibration runtime",
             f"{runtime['classification_only']['median_ms']:.2f}": "classification runtime",
             f"{runtime['classification_and_pose']['median_ms']:.2f}": "pose runtime",
@@ -177,8 +173,8 @@ class CAL40ReleaseIntegrityTests(unittest.TestCase):
         self.assertAlmostEqual(recall["fall_while_walking"], 0.0047619049)
         self.assertAlmostEqual(recall["bed_exit_failed"], 0.0067226892)
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        self.assertIn("fall_while_walking` recall은 0.48%", readme)
-        self.assertIn("bed_exit_failed`는 0.67%", readme)
+        self.assertIn("`fall_while_walking 0.48%`", readme)
+        self.assertIn("`bed_exit_failed 0.67%`", readme)
         balance = json.loads((
             ROOT / "results/a59_training_class_balance_audit.json"
         ).read_text(encoding="utf-8"))

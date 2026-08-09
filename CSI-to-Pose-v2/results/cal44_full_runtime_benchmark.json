@@ -1,0 +1,29 @@
+{
+  "run": "CAL44-FALL-SUPPORT-SINGLE-BUNDLE",
+  "device": "NVIDIA GeForce RTX 5060 Ti",
+  "repeats": 20,
+  "warmup": 5,
+  "frames": 304,
+  "links": 3,
+  "live_subcarriers": 114,
+  "basic_support_trials": 16,
+  "danger_support_trials": 5,
+  "absence_trials": 12,
+  "pose_candidates": 1210,
+  "calibration": {
+    "median_ms": 329.93,
+    "p90_ms": 339.89
+  },
+  "classification_only": {
+    "median_ms": 107.78,
+    "p90_ms": 109.19
+  },
+  "classification_and_pose": {
+    "median_ms": 112.53,
+    "p90_ms": 119.08
+  },
+  "csv_parsing_and_disk_io_included": false,
+  "target_subject_used": false,
+  "sealed_yja_used": false,
+  "query_labels_or_pose_gt_at_inference": false
+}

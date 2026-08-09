@@ -24,6 +24,7 @@ class LabelContractTests(unittest.TestCase):
         self.assertEqual(C.CALIBRATION_PROMPT_CLASSES, (0, 1, 2, 3, 4, 5, 7, 8))
         self.assertNotIn(C.ACTION_TO_ID["absence"], C.CALIBRATION_PROMPT_CLASSES)
         self.assertTrue(all(class_id < 9 for class_id in C.CALIBRATION_PROMPT_CLASSES))
+        self.assertEqual(C.DANGER_CALIBRATION_CLASSES, (12, 13, 14, 15, 16))
 
 
 if __name__ == "__main__":

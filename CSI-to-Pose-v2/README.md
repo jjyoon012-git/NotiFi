@@ -2,11 +2,11 @@
 
 `CSI-to-Pose-v2`는 카메라 없이 3개 Tx-Rx 링크의 Wi-Fi CSI로 행동 17-way 출력, 위험도 3-way 분류, pelvis-relative SMPL-22 동작을 추정하는 연구 코드입니다. 기존 [`CSI-to-Pose`](../CSI-to-Pose)는 팀원 재현용으로 그대로 두었고, 이 디렉터리만 새로 개발했습니다.
 
-## 현재 채택 모델: CAL40-FIXED-DEEP-ACTION-SAFETY-RISK
+## 현재 채택 모델: CAL44-FALL-SUPPORT-SINGLE-BUNDLE
 
-CAL40은 site adversary의 gradient reversal을 켠 `CAL60(GRL=1)`과 끈 `CAL66(GRL=0)`을 함께 사용합니다. 두 모델은 동일한 현장 calibration support를 독립적으로 encoding하고, source-inner fold에서 미리 고정한 CAL17 transport를 거친 action 확률만 1:1 평균합니다. 위험도는 false alarm이 더 안정적인 CAL60 native risk head에 고정 danger bias를 적용하고, pose는 CAL60의 CSI motion descriptor와 source GVHMR library를 사용합니다. A51 진단상 GRL=1이 실제 사람·site 지문을 더 적게 담았다고 볼 수 없으므로, 두 모델은 불변/비불변 역할 분담이 아니라 **서로 다른 decision boundary를 가진 ensemble**로 해석합니다.
+CAL44는 CAL40의 두 encoder ensemble, CAL17 transport, CAL60 risk head, CAL23 pose simulation을 그대로 유지하면서 **현장 낙상 5종 CSI를 각 1회씩 calibration support로 추가**합니다. 낙상 support는 기본 환경 보정에 섞지 않고 각 encoder로 별도 encoding해 target danger prototype을 만듭니다. 기존 danger 5종 조건부 확률과 현장 prototype 확률을 1:1로 결합하며, danger 여부 logit과 risk head에는 손대지 않습니다. 따라서 낙상 세부 구분은 보완하되 danger recall을 올리려고 safe 오경보를 늘리는 경로는 차단했습니다.
 
-이 조합은 5개 support seed의 source nested-LOSO에서 CAL32보다 Action `+0.80%p`, Macro-F1 `+0.75%p`, 최악 site Action `+0.89%p` 개선했습니다. A58에서 이 상승은 주로 `lie_to_stand +8.00%p`, `stand_to_sit +6.19%p`였고, `fall_while_walking` recall은 0.48%, `bed_exit_failed`는 0.67%에 머물렀습니다. 따라서 **현재의 확실한 개선은 safe 전환 동작 일부**이며, 낙상 세부 복원이나 임의의 실제 unseen 사용자에서 seen 수준을 보장했다는 뜻은 아닙니다.
+A62의 5-seed source nested-LOSO는 calibration에 쓴 낙상 5개를 query에서 제거한 동일 조건 비교입니다. CAL44는 CAL40 matched baseline보다 Action `+0.60%p`, Macro-F1 `+0.73%p`, danger 5종 `+1.72%p`, 최악 site Action `+1.05%p` 개선했습니다. Danger recall과 Safe→Danger는 동일합니다. 개선은 재현됐지만 danger 5종 정확도 자체가 13.00%이므로 아직 높은 수준은 아닙니다.
 
 ### 핵심 성능
 
@@ -18,12 +18,14 @@ CAL40은 site adversary의 gradient reversal을 켠 `CAL60(GRL=1)`과 끈 `CAL66
 | CAL60 + CAL17 | 40.60±0.47% | 32.59±0.55% | 51.09±1.07% | 41.56±1.40% | 44.83±2.24% | 10.08±1.25% | 16.46±1.30% | 33.76±2.01% |
 | CAL32 safety | 41.51±0.59% | 33.36±0.28% | 52.24±0.86% | 43.65±1.25% | 51.88±2.57% | 10.74±1.19% | 18.27±0.80% | 35.67±1.66% |
 | **CAL40 safety** | **42.31±0.73%** | **34.11±0.50%** | **52.19±0.87%** | **43.67±1.23%** | **52.45±2.60%** | **10.74±0.77%** | 18.68±0.70% | **36.56±1.74%** |
+| CAL40 matched query | 43.44±0.76% | 34.50±0.41% | 52.29±0.87% | 43.20±1.24% | 53.12±3.07% | 11.29±0.66% | 18.68±0.70% | 37.76±1.79% |
+| **CAL44 fall support** | **44.05±0.83%** | **35.23±0.57%** | **52.29±0.87%** | **43.20±1.24%** | **53.12±3.07%** | **13.00±1.32%** | 18.68±0.70% | **38.82±1.72%** |
 
-`Safe→Danger`는 낮을수록 좋습니다. CAL40은 CAL32보다 action은 좋아졌지만 false alarm이 `+0.41%p` 증가했습니다. 안전 profile은 danger recall을 우선한 운영점이며, 진단용 확률과 confidence를 함께 확인해야 합니다.
+`CAL40 matched query`와 CAL44는 site마다 기본 support 16개와 낙상 support 5개를 모두 제외한 1,063개 query/seed를 공유합니다. 기존 CAL40 행은 1,098개 query/seed 계약이라 절대값을 직접 비교하지 않습니다. `Safe→Danger`는 낮을수록 좋습니다.
 
 ### 3D 복원 성능
 
-CAL40의 pose 경로는 아직 CAL23 v4와 같습니다.
+CAL44의 pose 경로는 아직 CAL23 v4와 같습니다.
 
 | Pose | Distal | PA-Pose | Danger Pose | Danger Distal |
 |---:|---:|---:|---:|---:|
@@ -33,15 +35,15 @@ PA-Pose가 11.27 cm인데 일반 pose가 29.68 cm라는 것은 회전·이동·�
 
 ### 실행 시간
 
-RTX GPU, 304 frames, 3 links, 114 live subcarriers, support 16개, absence 12개, pose 후보 1,210개 기준입니다. CSV parsing과 disk I/O는 제외했습니다.
+RTX GPU, 304 frames, 3 links, 114 live subcarriers, 기본 support 16개, 낙상 support 5개, absence 12개, pose 후보 1,210개 기준입니다. CSV parsing과 disk I/O는 제외했습니다.
 
 | 경로 | 중앙값 | p90 |
 |---|---:|---:|
-| 현장 calibration 1회 | 214.01 ms | 222.17 ms |
-| action + risk | 94.63 ms | 98.29 ms |
-| action + risk + 3D pose | 108.03 ms | 116.95 ms |
+| 현장 calibration 1회 | 329.93 ms | 339.89 ms |
+| action + risk | 107.78 ms | 109.19 ms |
+| action + risk + 3D pose | 112.53 ms | 119.08 ms |
 
-CAL40 전체 배포 bundle은 58.06 MiB입니다. CAL32보다 encoder가 하나 늘어 calibration과 분류 시간이 증가했습니다.
+CAL44 전체 배포 bundle은 58.06 MiB입니다. 두 encoder, transport 설정, risk profile, source pose library가 모두 `cal44_full_deployment.pt` 하나에 들어 있습니다. 낙상 support를 두 encoder로 추가 encoding하므로 CAL40보다 1회 calibration 시간이 늘었습니다.
 
 ## 데이터와 평가 계약
 
@@ -51,13 +53,13 @@ CAL40 전체 배포 bundle은 58.06 MiB입니다. CAL32보다 encoder가 하나 
 4. outer fold는 사람 전체를 숨깁니다. 예를 들어 `ajh` fold의 test는 ajh의 세 환경 전부입니다.
 5. hyperparameter와 transport 설정은 해당 outer 사람을 제외한 source-inner site만으로 고릅니다.
 6. 추론 때 target query의 action/risk label, GVHMR GT, 원본 영상은 사용하지 않습니다.
-7. 현장 calibration은 8개 기본 행동 각 2 trial, absence 12 trial만 사용합니다.
+7. 현장 calibration은 8개 기본 행동 각 2 trial, 통제된 낙상 5종 각 1 trial, absence 12 trial을 사용합니다.
 8. query는 16개 실제 행동입니다. 네트워크 출력은 기존 계약 호환을 위해 17-way이며 class 6 absence는 query 평가에서 제외합니다.
 9. Tx 방향은 `RX North`, `TX1 South`, `TX2 West`, `TX3 East`로 고정합니다. 높이와 거리는 달라질 수 있습니다.
 
 ### 라벨 및 현장 prompt 계약
 
-위험도 ID는 `0=safe`, `1=warning`, `2=danger`입니다. 현장 support는 아래 `prompt` 8개 행동을 표의 ID 순서대로 각 2회 수집하고, absence는 별도 12회를 수집합니다.
+위험도 ID는 `0=safe`, `1=warning`, `2=danger`입니다. 기본 prompt 8종은 각 2회, 낙상 5종은 각 1회, absence는 12회를 수집합니다. 낙상은 반드시 매트와 보조자가 있는 통제된 환경에서 수행하고, 실제 평가 query와 같은 trial을 재사용하지 않습니다. 낙상 support에는 CSI와 class ID만 필요하며 영상·GVHMR GT는 필요하지 않습니다.
 
 | Action ID | 이름 | 위험도 | Query 평가 | Calibration prompt |
 |---:|---|---|:---:|:---:|
@@ -73,11 +75,11 @@ CAL40 전체 배포 bundle은 58.06 MiB입니다. CAL32보다 encoder가 하나 
 | 9 | unstable_walking | warning | O | X |
 | 10 | stumble_recover | warning | O | X |
 | 11 | bed_exit_failed | warning | O | X |
-| 12 | fall_from_standing | danger | O | X |
-| 13 | fall_while_walking | danger | O | X |
-| 14 | bed_exit_fall | danger | O | X |
-| 15 | bed_fall | danger | O | X |
-| 16 | chair_exit_fall | danger | O | X |
+| 12 | fall_from_standing | danger | O | 낙상 1회 |
+| 13 | fall_while_walking | danger | O | 낙상 1회 |
+| 14 | bed_exit_fall | danger | O | 낙상 1회 |
+| 15 | bed_fall | danger | O | 낙상 1회 |
+| 16 | chair_exit_fall | danger | O | 낙상 1회 |
 
 ## 전체 파이프라인
 
@@ -86,6 +88,7 @@ flowchart LR
     A["Raw CSI: 3 links"] --> B["30 Hz grid + valid mask"]
     C["12 absence trials"] --> D["Static amplitude/phase baseline"]
     E["8 basic actions x 2"] --> F["Motion scale + support anchors"]
+    Q["5 controlled falls x 1"] --> R["Target danger prototypes"]
     B --> G["Physics support canonicalization"]
     D --> G
     F --> G
@@ -99,11 +102,13 @@ flowchart LR
     I2 --> J2
     J1 --> K["1:1 action probability ensemble"]
     J2 --> K
+    R --> S["1:1 danger subtype calibration"]
+    K --> S
     I1 --> L["CAL60 native 3-risk head"]
     L --> M["Safety danger bias"]
     I1 --> N["CSI motion descriptor"]
     N --> O["CAL23 source GVHMR retrieval"]
-    K --> O
+    S --> O
     O --> P["Pelvis-relative SMPL-22 sequence"]
 ```
 
@@ -120,6 +125,8 @@ CAL60의 gradient reversal은 source site를 맞히기 어렵게 만들어 환�
 ### 3. Target calibration과 action transport
 
 두 encoder는 동일한 현장 support/absence를 각각 encoding합니다. CAL17은 source 행동 prototype을 target 기본 행동 anchor 쪽으로 선형 transport하고, query embedding을 17개 행동 확률로 바꿉니다. fold별 설정은 5개 source-inner CAL39 보고서의 중앙값으로 **배포 전에 고정**했습니다. target query 결과를 보고 설정을 다시 선택하지 않습니다.
+
+CAL44는 낙상 5개를 기본 support와 분리해 query처럼 encoding한 뒤 class별 prototype을 만듭니다. 이 prototype은 danger 여부를 강제로 올리지 않고 `12~16`번 내부의 조건부 확률만 50% 보정합니다. support trial은 추론 query에서 제외해야 하며, query label이나 GT를 다시 보정에 사용하지 않습니다.
 
 ### 4. 위험도 분류
 
@@ -143,6 +150,7 @@ A54 음성대조군에서 prompt label 순환과 1-link 입력은 각각 0/35가
 
 | ID | 날짜/시간 KST | 변경과 목적 | 결과 | 판단 |
 |---|---|---|---|---|
+| **A62 / CAL44** | 2026-08-09 08시 | 낙상 5종 각 1-shot target prototype을 기본 calibration과 분리하고 danger 조건부 확률만 1:1 결합 | matched Action 43.44→44.05%, F1 34.50→35.23%, Danger 5종 11.29→13.00%, 최악 site 37.76→38.82%; recall·오경보 동일 | **현재 채택**, 개선은 유의미하지만 danger 세부 분류는 여전히 낮음 |
 | A61 / CAL68+CAL17 | 2026-08-09 07:10 | A60에 동일한 CAL17 source-inner transport를 적용해 calibration 후 회복 여부 확인 | Action 40.81→38.44%, F1 32.66→30.71%, Danger 47.62→43.81%, 오경보 16.20→11.86%, 최악 site 33.76→28.66% | 오경보와 함께 danger recall·action도 하락, **기각 확정** |
 | A60 / CAL68 | 2026-08-09 06:56 | A58의 실제 혼동 쌍만 prototype margin으로 분리하고 CAL60에서 6 epoch source-only 미세조정 | raw Action 36.81→36.35%, F1 29.51→29.54%, Danger 41.90%, 오경보 9.23%, 최악 site 29.94% | source train에서 margin loss가 거의 항상 0이고 Action이 하락. target 붕괴를 source margin으로 고칠 수 없어 **기각**, 옵션 코드도 제거 |
 | A59 | 2026-08-09 06:44 | 7-site×5-seed 실제 training sampler의 16-action 균형 감사 | 원본 max/min 3.33배→sampler 1.42배, absence draw 0 | danger 붕괴는 단순 class 수보다 표현·시간 hard-negative 병목 |
@@ -160,7 +168,7 @@ A54 음성대조군에서 prompt label 순환과 1-link 입력은 각각 0/35가
 | A47 | 2026-08-09 05:44 | true-risk oracle과 실제 predicted-risk hard routing으로 계층 병목 분리 | true-risk Action 57.78%, 실제 routing 36.81%, danger 내부 top-1 29.14%, top-2 49.52% | danger 정보는 일부 있으나 coarse-risk 오류 때문에 후처리 routing은 불가 |
 | A46 / CAL41 | 2026-08-09 05:38 | A45의 fold별 비율 중앙값 `ajh 0.75/mhw 0.75/lmh 0.50`을 고정해 5-seed 재평가 | Action 42.02±0.56%, F1 33.91±0.46%, Danger 5종 11.22±0.88%, 최악 site 36.56±1.54% | CAL40보다 Action/F1 하락하여 기각 |
 | A45 | 2026-08-09 05:38 | 두 encoder 비율 `0.25/0.50/0.75`를 outer 없이 source-inner에서만 선택 | ajh는 5회 중 4회 0.75, mhw는 4회 0.75, lmh는 0.25~0.75로 불안정 | 고정 비율 검증용, 단독 채택하지 않음 |
-| **A44 / CAL40** | 2026-08-09 05:38 | CAL60(GRL=1)+CAL66(GRL=0)의 고정 CAL17 action 확률 ensemble, risk는 CAL32 유지 | Action 42.31±0.73%, F1 34.11±0.50%, Risk F1 43.67±1.23%, Danger 52.45±2.60%, 최악 site 36.56±1.74% | **현재 채택** |
+| A44 / CAL40 | 2026-08-09 05:38 | CAL60(GRL=1)+CAL66(GRL=0)의 고정 CAL17 action 확률 ensemble, risk는 CAL32 유지 | Action 42.31±0.73%, F1 34.11±0.50%, Risk F1 43.67±1.23%, Danger 52.45±2.60%, 최악 site 36.56±1.74% | CAL44 이전 baseline |
 | A43 / CAL39 | 2026-08-09 05시 | 두 encoder 조합의 source-inner 설정을 support seed마다 탐색 | Action 42.15±0.99%, F1 33.77±1.06%, 최악 site 36.82±1.89% | A44 고정 설정을 만드는 selection 자료로만 사용 |
 | A42 / CAL66 | 2026-08-09 05시 | domain GRL을 0으로 두어 행동 단서 삭제 여부 확인 | raw Action 36.99%, F1 28.94%, Risk F1 47.31%, false alarm 6.78% | 단독 미채택, CAL40 보조 encoder로 채택 |
 | A41 | 2026-08-09 05시 | 기본 행동 3개 후보 중 embedding 내부 거리가 가까운 2개 선택 | Action 약 37.1% | support 다양성을 잃어 기각 |
@@ -190,7 +198,7 @@ A54 음성대조군에서 prompt label 순환과 1-link 입력은 각각 0/35가
 
 ## 객관적인 한계와 다음 개선 순서
 
-1. **세부 warning/danger 행동이 safe 동작으로 샙니다.** A58 recall은 `fall_while_walking 0.48%`, `bed_exit_failed 0.67%`, `stumble_recover 12.29%`였습니다. 최다 혼동은 stumble→walking 166회, unstable walking→walking 140회, bed-exit failed→lying/walking 96/95회입니다. A59에서 sampler가 원본 class 비율 3.33배를 1.42배로 줄였으므로 단순 oversampling만으로 해결할 문제도 아닙니다. 전체 Danger 5종 정확도는 10.74%지만 true danger 안에서만 고르면 29.14%, top-2는 49.52%입니다. 다음 encoder는 걷기→불안정→충돌의 시간 순서와 hard-negative contrast를 직접 학습해야 합니다.
+1. **세부 warning/danger 행동이 safe 동작으로 샙니다.** CAL44가 danger 5종을 11.29→13.00%로 올렸지만 절대 성능은 낮습니다. A58의 `fall_while_walking 0.48%`, `bed_exit_failed 0.67%`, `stumble_recover 12.29%` 병목은 prototype만으로 해결되지 않습니다. 다음 encoder는 걷기→불안정→충돌의 시간 순서와 hard-negative contrast를 직접 학습해야 합니다.
 2. **pose가 action 개선을 따라오지 않습니다.** Danger distal 56.13 cm가 가장 큰 복원 병목입니다. A48에서 정답 action을 넣어도 raw pose가 오히려 나빠졌습니다. 다음 버전은 action label을 조건으로 넣는 것만으로 끝내지 말고, CSI temporal token과 body-part contact trajectory를 직접 연결해야 합니다.
 3. **source 사람이 3명뿐이고 GRL도 지문을 제거하지 못했습니다.** A51에서 CAL60 subject/site probe는 85.61/76.96%였습니다. CAL40의 두 encoder ensemble은 decision boundary 다양성으로 평균 성능을 보완할 뿐 사람·환경 편향을 제거하지 않습니다.
 4. **support 품질에 민감합니다.** 5개 seed의 Action 표준편차는 0.73%p이고 최악 site는 1.74%p입니다. support를 늘리거나 내부 거리로 고르는 단순 방식은 실패했습니다.
@@ -217,9 +225,9 @@ pip install -r requirements.txt
 ```python
 import torch
 
-from notifi_pose.deployment import CAL20Deployment, load_csi_csv_batch
+from notifi_pose.deployment import CAL44Deployment, load_csi_csv_batch
 
-runtime = CAL20Deployment.load("artifacts/cal40_full_deployment.pt")
+runtime = CAL44Deployment.load("artifacts/cal44_full_deployment.pt")
 
 # support_csvs는 prompt_classes 순서대로 각 shots_per_prompt개를 둡니다.
 support_labels = torch.tensor(
@@ -228,12 +236,19 @@ support_labels = torch.tensor(
 assert len(support_csvs) == len(support_labels)
 support_csi, support_mask, _ = load_csi_csv_batch(support_csvs)
 absence_csi, absence_mask, _ = load_csi_csv_batch(absence_csvs)
+danger_labels = torch.tensor(
+    runtime.danger_support_contract["classes"]
+).repeat_interleave(runtime.danger_support_contract["shots_per_class"])
+danger_csi, danger_mask, _ = load_csi_csv_batch(danger_support_csvs)
 calibration = runtime.calibrate(
     support_csi,
     support_mask,
     support_labels,
     absence_csi,
     absence_mask,
+    danger_csi,
+    danger_mask,
+    danger_labels,
 )
 
 query_csi, query_mask, _ = load_csi_csv_batch(query_csvs)
@@ -264,7 +279,7 @@ $env:NOTIFI_WORK_ROOT = "D:\path\to\work_v2"
 
 로컬 절대 경로는 코드나 checkpoint에 저장하지 않습니다. 데이터셋·timestamp를 쓰는 utility는 위 환경 변수를 명시하고 실행합니다.
 
-주 encoder는 기존 source-clean 초기 checkpoint에서 학습합니다. 앞의 모든 KP 버전을 순차 실행할 필요는 없습니다.
+주 encoder는 기존 source-clean 초기 checkpoint에서 학습합니다. 앞의 모든 KP 버전을 순차 실행할 필요는 없습니다. 아래 재현 과정은 중간 checkpoint를 새로 만들지만, 추론 사용자에게는 배포하지 않습니다.
 
 ```powershell
 python scripts/train_cal20_source_folds.py `
@@ -294,7 +309,7 @@ python scripts/evaluate_cal40_fixed_deep_action.py `
   --output results\a44_cal40_fixed_deep_action_safety_5seed.json
 ```
 
-배포 bundle export는 CAL60 calibration/pose library와 CAL40 고정 결과, CAL66 checkpoint를 묶습니다.
+배포 bundle export는 CAL60 calibration/pose library와 CAL40 고정 결과, CAL66 checkpoint를 먼저 묶고 낙상 support 계약을 추가합니다. 최종 산출물은 CAL44 파일 하나입니다.
 
 ```powershell
 python scripts/export_cal20_deployment.py `
@@ -303,8 +318,12 @@ python scripts/export_cal20_deployment.py `
   --pose-result D:\results\cal23_seed17017.json `
   --deep-action-run D:\runs\cal66_grl0 `
   --fixed-deep-action-result results\a44_cal40_fixed_deep_action_safety_5seed.json `
-  --output artifacts\cal40_full_deployment.pt `
+  --output D:\runs\cal40_full_deployment.pt `
   --absence-trials 12
+
+python scripts/upgrade_cal40_to_cal44.py `
+  --input D:\runs\cal40_full_deployment.pt `
+  --output artifacts\cal44_full_deployment.pt
 ```
 
 ## 검증
@@ -312,26 +331,23 @@ python scripts/export_cal20_deployment.py `
 ```powershell
 python -m compileall -q notifi_pose scripts tests
 python -m unittest discover -s tests -p "test_*.py"
-python scripts/benchmark_cal32_deployment.py `
-  --bundle artifacts\cal40_full_deployment.pt `
-  --output results\cal40_full_runtime_benchmark.json
 ```
 
-`SHA256SUMS`로 배포 artifact와 두 all-source checkpoint의 무결성을 확인할 수 있습니다.
+`SHA256SUMS`로 단일 배포 artifact의 무결성을 확인할 수 있습니다.
 
 ## 주요 파일
 
-- `artifacts/cal40_full_deployment.pt`: 두 encoder, 고정 transport, risk profile, source pose library가 들어 있는 실행용 bundle
-- `checkpoints/cal46_source_clean/`: CAL60 재학습 초기화용 all-source/outer-fold checkpoint
-- `checkpoints/cal60/`: site-adversarial GRL을 켠 주 encoder의 all-source/outer-fold checkpoint
-- `checkpoints/cal66_grl0/`: action ensemble용 보조 encoder의 all-source/outer-fold checkpoint
+- `artifacts/cal44_full_deployment.pt`: 두 encoder, 고정 transport, 낙상 calibration, risk profile, source pose library가 모두 들어 있는 유일한 실행용 `.pt`
 - `notifi_pose/cal12.py`: physics support canonicalization과 공통 CSI encoder 요소
 - `notifi_pose/cal20.py`: support-relative CAL60/CAL66 model
 - `notifi_pose/cal17.py`: prototype transport
 - `notifi_pose/cal27.py`: query-to-source kernel transport
-- `notifi_pose/deployment.py`: CAL40 calibration, 분류, risk profile, 3D simulation API
+- `notifi_pose/danger_support.py`: 낙상 support prototype과 danger 조건부 확률 결합
+- `notifi_pose/deployment.py`: CAL44 calibration, 분류, risk profile, 3D simulation API
 - `scripts/train_cal20_source_folds.py`: leakage 없는 source nested-LOSO 학습
 - `scripts/evaluate_cal40_fixed_deep_action.py`: 고정 설정 5-seed CAL40 평가
+- `scripts/evaluate_cal44_fall_support.py`: 낙상 support를 query에서 제외한 5-seed CAL44 평가
+- `scripts/upgrade_cal40_to_cal44.py`: 기존 전체 bundle을 CAL44 단일 artifact로 변환
 - `scripts/diagnose_cal40_representation.py`: 두 encoder의 source 행동·사람·site 지문 진단
 - `scripts/evaluate_cal40_health_gate.py`: 두 encoder의 calibration OOD threshold와 입력 품질 검사
 - `scripts/evaluate_cal40_health_negative_controls.py`: calibration gate의 음성대조군 검사
@@ -341,7 +357,8 @@ python scripts/benchmark_cal32_deployment.py `
 - `scripts/evaluate_cal42_safe_anchor_risk.py`: 기각된 safe-anchor risk calibration 재현
 - `scripts/evaluate_cal43_safe_anchor_shrinkage.py`: 부분 수축 risk calibration 재현
 - `scripts/export_cal20_deployment.py`: 재현 provenance를 포함한 bundle export
-- `results/a44_cal40_fixed_deep_action_safety_5seed.json`: 현재 모델의 전체 site/seed metric
+- `results/a62_cal44_fall_support_5seed.json`: 현재 CAL44의 matched baseline과 전체 site/seed metric
+- `results/a44_cal40_fixed_deep_action_safety_5seed.json`: CAL44 이전 CAL40 metric
 - `results/a58_cal40_confusion_diagnosis.json`: 현재 모델의 17-action·3-risk confusion 진단
 - `results/a59_training_class_balance_audit.json`: sampler 전후 class 불균형 통계
 - `results/a53_source_only_link_threshold_audit.json`: 링크 품질 임계의 source-only 통계
@@ -349,4 +366,3 @@ python scripts/benchmark_cal32_deployment.py `
 - `results/a55_cal40_site_reliability.json`, `results/a56_cal42_safe_anchor_risk.json`: 위험도 편차와 기각 실험
 - `results/a57_cal43_safe_anchor_shrinkage.json`: conservative 쪽으로 치우친 부분 수축 결과
 - `results/cal60_cal17_seed17017.json`, `results/cal60_cal23_seed17017.json`: 배포 bundle을 만든 calibration/pose 입력 원본
-- `results/cal40_full_runtime_benchmark.json`: 배포 지연 시간과 bundle 크기
