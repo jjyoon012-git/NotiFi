@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "notifi-ai"
+version = "1.0.0"
+description = "NotiFi CSI action, risk, and pelvis-relative 3D pose inference"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24,<3",
+  "pandas>=2.0,<3",
+  "torch>=2.2",
+]
+
+[project.optional-dependencies]
+api = ["fastapi>=0.110", "python-multipart>=0.0.9", "uvicorn>=0.27"]
+test = ["pytest>=8.0"]
+
+[project.scripts]
+notifi-ai = "notifi_ai.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["notifi_ai*"]

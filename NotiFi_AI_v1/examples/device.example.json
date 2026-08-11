@@ -1,0 +1,14 @@
+{
+  "device_id": "home-001",
+  "rx_id": "rx-notebook",
+  "tx1_id": "esp32-tx1",
+  "tx2_id": "esp32-tx2",
+  "tx3_id": "esp32-tx3",
+  "firmware_version": "notifi-csi-1.0",
+  "rx_direction": "North",
+  "tx1_direction": "South",
+  "tx2_direction": "West",
+  "tx3_direction": "East",
+  "notes": "Initial home installation"
+}
+

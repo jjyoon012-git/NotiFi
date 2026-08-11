@@ -1,0 +1,57 @@
+{
+  "model_name": "NotiFi_AI_v1",
+  "protocol": "single_split_lmh_e01",
+  "packaged_runtime_verified": true,
+  "runtime_validation": {
+    "cpu_forward_smoke": true,
+    "cuda_forward_smoke": true,
+    "classification_confusion_matches_locked_result": true,
+    "retrieval_max_abs_delta_vs_research_runtime": 0.0,
+    "required_preprocessing": [
+      "trial_link_quality_mask",
+      "installation_absence_mean_subtraction"
+    ]
+  },
+  "classification_test_trials": 329,
+  "pose_test_trials_without_absence": 315,
+  "classification": {
+    "action_accuracy": 0.9422492401,
+    "action_macro_f1": 0.9253750511,
+    "risk_accuracy": 0.9726443769,
+    "risk_macro_f1": 0.9655107144,
+    "danger_recall": 0.9142857143,
+    "danger_true_positive": 64,
+    "danger_support": 70,
+    "safe_to_danger": 2,
+    "safe_support": 175
+  },
+  "pose": {
+    "mpjpe_cm": 12.8853329103,
+    "distal_mpjpe_cm": 18.6656960632,
+    "dynamic_mpjpe_cm": 16.4231719864,
+    "danger_pose_mpjpe_cm": 19.8293310723,
+    "danger_distal_mpjpe_cm": 29.2499778526,
+    "danger_endpoint_mpjpe_cm": 25.0518038922,
+    "speed_correlation": 0.5141046192,
+    "danger_speed_correlation": 0.5793103825
+  },
+  "calibration_smoke": {
+    "site": "ajh/E01",
+    "absence_trials": 12,
+    "basic_support_trials": 8,
+    "query_trial": "ajh_E01_D01_t009",
+    "query_action_correct": true,
+    "query_risk_correct": true,
+    "query_pose_mpjpe_cm": 15.8750591278,
+    "calibration_seconds": 56.1978178024,
+    "warmed_inference_seconds": 0.2218618393,
+    "usable_links": 3,
+    "note": "Execution smoke test only; this single query is not a calibration performance claim."
+  },
+  "leakage_contract": {
+    "query_gt_used": false,
+    "query_label_used": false,
+    "video_used_at_inference": false,
+    "test_used_for_model_selection": false
+  }
+}

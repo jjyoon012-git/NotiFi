@@ -1,0 +1,20 @@
+{
+  "absence": [
+    "calibration/absence_001/csi.csv",
+    "calibration/absence_002/csi.csv"
+  ],
+  "support": [
+    {
+      "path": "calibration/standing_001/csi.csv",
+      "action_id": 1,
+      "risk_id": 0,
+      "trial_id": "standing_001"
+    },
+    {
+      "path": "calibration/walking_001/csi.csv",
+      "action_id": 0,
+      "risk_id": 0,
+      "trial_id": "walking_001"
+    }
+  ]
+}

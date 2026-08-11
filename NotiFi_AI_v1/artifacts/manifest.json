@@ -1,0 +1,57 @@
+{
+  "model_name": "NotiFi_AI_v1",
+  "schema_version": 1,
+  "protocol": "single_split_lmh_e01",
+  "build_device": "cuda",
+  "trace_max_abs_delta": {
+    "core": 0.0008306503295898438,
+    "features": 0.0008164644241333008
+  },
+  "artifacts": [
+    {
+      "path": "notifi_ai_v1_core.ts",
+      "bytes": 8625389,
+      "sha256": "1c3060d38415d52347d15a4e6af086c79040bc171665003647157b731a013f4e"
+    },
+    {
+      "path": "notifi_ai_v1_core_cpu.ts",
+      "bytes": 8629632,
+      "sha256": "173210420a13a2f749afc6bb6f5a1360c40f06feb037d9451d3f863ed4392d85"
+    },
+    {
+      "path": "notifi_ai_v1_features.ts",
+      "bytes": 15870116,
+      "sha256": "696ee1441658a08a03f7c798f8651cac36a4c31994b22e55cca66a1a2e3c8f4b"
+    },
+    {
+      "path": "notifi_ai_v1_features_cpu.ts",
+      "bytes": 15874239,
+      "sha256": "e65ea57c32e07e80222364d3aeba25475fc2278cfd84b1e45b84a31585bfcd33"
+    },
+    {
+      "path": "notifi_ai_v1_retrieval.pt",
+      "bytes": 60249704,
+      "sha256": "9f269471243bd339c9c2e6f252c1c4eec21f305425966d30611194c73bd80b20"
+    }
+  ],
+  "source_artifacts": {
+    "selector": {
+      "sha256": "f6701f03c16bf3d23a4bf63cd762dd6d05cb6ca4469c64777c94e1b2b6cc7c09"
+    },
+    "candidate_reranker": {
+      "sha256": "1678f5adda5a8e025397bb9193974a3f58070c3576d628771a2d8d4ab058e72a"
+    },
+    "scalar_profile": {
+      "sha256": "392d3b915d6549d7f496e4abe43eeecee48e03665f837c613d4edd24e73452b6"
+    },
+    "part_profile": {
+      "sha256": "3529910fe00321b455830c8dc9df77c33909f53bdc201849af3feb3f10e2bcd3"
+    },
+    "profile_ranker": {
+      "sha256": "3c4c94c0f78e97800a2971a487cc06abd8602c1ea15eaaf533819db5c7554f7d"
+    },
+    "retrieval_action_classifier": {
+      "sha256": "b8645497809d2355044fdb9b5933f297c76c698fd1f8baff5ca10229c68ef832"
+    }
+  }
+}
