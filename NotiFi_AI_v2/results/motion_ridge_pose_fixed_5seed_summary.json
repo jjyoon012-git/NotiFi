@@ -1,0 +1,142 @@
+{
+  "run": "NOTIFI-AI-V2-MOTION-RIDGE-POSE-FIXED-5SEED",
+  "protocol": "source nested-LOSO; fixed reg=100, mixture=0.5, risk_sqrt gate; basic and danger support labels only",
+  "aggregate": {
+    "baseline": {
+      "pose_cm": {
+        "mean": 29.371958715575083,
+        "std": 0.17079629398636464
+      },
+      "distal_cm": {
+        "mean": 43.41007760592869,
+        "std": 0.31593339014304705
+      },
+      "pa_pose_cm": {
+        "mean": 10.450334417398134,
+        "std": 0.09289010758768082
+      },
+      "danger_pose_cm": {
+        "mean": 38.35438907146454,
+        "std": 0.1327066395196264
+      },
+      "danger_distal_cm": {
+        "mean": 56.98865073067801,
+        "std": 0.1713047645532005
+      }
+    },
+    "outer": {
+      "pose_cm": {
+        "mean": 28.96761221545083,
+        "std": 0.16079867340176823
+      },
+      "distal_cm": {
+        "mean": 42.879733783858164,
+        "std": 0.31021226870505236
+      },
+      "pa_pose_cm": {
+        "mean": 10.61429302896586,
+        "std": 0.09634009685265868
+      },
+      "danger_pose_cm": {
+        "mean": 37.228992921965464,
+        "std": 0.3841337693507248
+      },
+      "danger_distal_cm": {
+        "mean": 55.47006334577288,
+        "std": 0.527731124882284
+      }
+    }
+  },
+  "seeds": [
+    {
+      "support_seed": 17017,
+      "baseline": {
+        "pose_cm": 29.624349304607936,
+        "distal_cm": 43.77508546624865,
+        "pa_pose_cm": 10.504195407726488,
+        "danger_pose_cm": 38.47700783184597,
+        "danger_distal_cm": 57.19043527330671
+      },
+      "selected": {
+        "pose_cm": 29.122298104422434,
+        "distal_cm": 43.14050504139492,
+        "pa_pose_cm": 10.681891014563314,
+        "danger_pose_cm": 36.79626371179308,
+        "danger_distal_cm": 55.009520053863525
+      }
+    },
+    {
+      "support_seed": 17027,
+      "baseline": {
+        "pose_cm": 29.520466923713684,
+        "distal_cm": 43.81184492792402,
+        "pa_pose_cm": 10.575587296920707,
+        "danger_pose_cm": 38.23966128485544,
+        "danger_distal_cm": 57.13835784367153
+      },
+      "selected": {
+        "pose_cm": 29.20010941369193,
+        "distal_cm": 43.355561579976765,
+        "pa_pose_cm": 10.736935780690505,
+        "danger_pose_cm": 37.436997464724946,
+        "danger_distal_cm": 55.85307904652187
+      }
+    },
+    {
+      "support_seed": 17037,
+      "baseline": {
+        "pose_cm": 29.23709750175476,
+        "distal_cm": 43.181698662894114,
+        "pa_pose_cm": 10.341600236087741,
+        "danger_pose_cm": 38.32707021917616,
+        "danger_distal_cm": 56.83276653289795
+      },
+      "selected": {
+        "pose_cm": 28.808819396155222,
+        "distal_cm": 42.579821177891326,
+        "pa_pose_cm": 10.503716476161973,
+        "danger_pose_cm": 36.91838894571577,
+        "danger_distal_cm": 54.84760914530073
+      }
+    },
+    {
+      "support_seed": 17047,
+      "baseline": {
+        "pose_cm": 29.296060970851354,
+        "distal_cm": 43.2014171566282,
+        "pa_pose_cm": 10.343542206317702,
+        "danger_pose_cm": 38.535745654787334,
+        "danger_distal_cm": 57.03256215367998
+      },
+      "selected": {
+        "pose_cm": 28.852373361587524,
+        "distal_cm": 42.6344701222011,
+        "pa_pose_cm": 10.498975925204453,
+        "danger_pose_cm": 37.86238261631557,
+        "danger_distal_cm": 56.26797335488455
+      }
+    },
+    {
+      "support_seed": 17057,
+      "baseline": {
+        "pose_cm": 29.181818876947677,
+        "distal_cm": 43.080341815948486,
+        "pa_pose_cm": 10.486746939938028,
+        "danger_pose_cm": 38.192460366657805,
+        "danger_distal_cm": 56.749131849833894
+      },
+      "selected": {
+        "pose_cm": 28.85446080139705,
+        "distal_cm": 42.68831099782671,
+        "pa_pose_cm": 10.649945948209055,
+        "danger_pose_cm": 37.130931871277944,
+        "danger_distal_cm": 55.37213512829372
+      }
+    }
+  ],
+  "outer_holdout_used_for_selection": false,
+  "target_subject_used": false,
+  "sealed_yja_used": false,
+  "query_labels_or_pose_gt_at_inference": false,
+  "calibration_pose_gt_used": false
+}

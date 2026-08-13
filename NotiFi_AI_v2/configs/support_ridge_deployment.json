@@ -1,0 +1,35 @@
+{
+  "name": "NotiFi AI v2 full-support ridge deployment v2",
+  "selection": "global mode across source-inner folds and five support seeds",
+  "warning_support_contract": {
+    "classes": [9, 10, 11],
+    "shots_per_class": 1,
+    "query_overlap_allowed": false
+  },
+  "risk_from_action": true,
+  "fold_configs": {
+    "ajh": {
+      "direction": "source_to_target",
+      "regularization": 0.2,
+      "prototype_temperature": 0.05,
+      "site_temperature": 0.1,
+      "mixture": 0.75
+    },
+    "mhw": {
+      "direction": "source_to_target",
+      "regularization": 0.2,
+      "prototype_temperature": 0.05,
+      "site_temperature": 0.1,
+      "mixture": 0.75
+    },
+    "lmh": {
+      "direction": "source_to_target",
+      "regularization": 0.2,
+      "prototype_temperature": 0.05,
+      "site_temperature": 0.1,
+      "mixture": 0.75
+    }
+  },
+  "target_subject_used": false,
+  "sealed_yja_used": false
+}

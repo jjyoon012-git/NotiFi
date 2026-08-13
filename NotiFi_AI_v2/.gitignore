@@ -1,5 +1,6 @@
 runs/
 *.pt
 *.pth
+!artifacts/notifi_ai_v2.pt
 __pycache__/
 *.pyc

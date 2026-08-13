@@ -4,11 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "notifi-ai-v2"
-version = "0.1.0"
-description = "Motion-calibrated CSI action, risk, and pose research"
+version = "0.2.0"
+description = "Full-support calibrated CSI action, risk, and pose inference"
 requires-python = ">=3.10"
 dependencies = [
   "numpy>=1.24,<3",
+  "pandas>=2.0,<3",
   "torch>=2.2",
 ]
 
@@ -16,4 +17,4 @@ dependencies = [
 test = []
 
 [tool.setuptools.packages.find]
-include = ["notifi_ai_v2*"]
+include = ["notifi_ai_v2*", "notifi_pose*"]

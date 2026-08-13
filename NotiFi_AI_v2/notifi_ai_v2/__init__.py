@@ -1,10 +1,5 @@
-"""NotiFi AI v2 research package."""
+"""NotiFi AI v2 full-support calibration package."""
 
-from .geometry import InstallationGeometry
-from .model import MotionCalibratedEncoder, MotionEncoderConfig
+from .support_alignment import aligned_logits, identity_ridge_map
 
-__all__ = [
-    "InstallationGeometry",
-    "MotionCalibratedEncoder",
-    "MotionEncoderConfig",
-]
+__all__ = ("aligned_logits", "identity_ridge_map")
