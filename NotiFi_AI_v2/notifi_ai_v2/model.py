@@ -111,6 +111,47 @@ class GeometryAwareLinkFusion(nn.Module):
         return fused, weight
 
 
+class TemporalPyramidPool(nn.Module):
+    """Keep coarse event order as well as global temporal statistics."""
+
+    def __init__(self, hidden: int, bins: int = 4):
+        super().__init__()
+        self.bins = bins
+        self.projection = nn.Sequential(
+            nn.LayerNorm(hidden * (3 + bins)),
+            nn.Linear(hidden * (3 + bins), hidden),
+            nn.GELU(),
+        )
+
+    @staticmethod
+    def _mean(values: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+        weight = mask[..., None].to(values.dtype)
+        return (values * weight).sum(dim=1) / weight.sum(dim=1).clamp_min(1.0)
+
+    def forward(self, values: torch.Tensor, valid: torch.Tensor) -> torch.Tensor:
+        mean = self._mean(values, valid)
+        weight = valid[..., None].to(values.dtype)
+        variance = (
+            (values - mean[:, None]).square() * weight
+        ).sum(dim=1) / weight.sum(dim=1).clamp_min(1.0)
+        maximum = values.masked_fill(~valid[..., None], -torch.inf).max(dim=1).values
+        maximum = torch.where(torch.isfinite(maximum), maximum, torch.zeros_like(maximum))
+
+        frames = values.shape[1]
+        length = valid.sum(dim=1).clamp_min(1)
+        position = torch.arange(frames, device=values.device)[None] / length[:, None]
+        segments = []
+        for index in range(self.bins):
+            selected = (
+                valid
+                & (position >= index / self.bins)
+                & (position < (index + 1) / self.bins)
+            )
+            segments.append(self._mean(values, selected))
+        pooled = torch.cat((mean, variance.sqrt(), maximum, *segments), dim=-1)
+        return self.projection(pooled)
+
+
 class MotionCalibratedEncoder(nn.Module):
     """Produce action, risk, and dense motion predictions from CSI only."""
 
@@ -118,7 +159,7 @@ class MotionCalibratedEncoder(nn.Module):
         super().__init__()
         self.config = config
         self.frontend = PhysicsMotionFrontend()
-        self.link_encoder = SharedLinkEncoder(6, config)
+        self.link_encoder = SharedLinkEncoder(7, config)
         self.fusion = GeometryAwareLinkFusion(config.hidden)
         self.trunk = nn.ModuleList(
             ResidualTemporalBlock(config.hidden, 2 ** index, config.dropout)
@@ -127,14 +168,16 @@ class MotionCalibratedEncoder(nn.Module):
         self.action_head = nn.Linear(config.hidden, N_ACTIONS)
         self.risk_head = nn.Linear(config.hidden, N_RISKS)
         self.motion_head = nn.Linear(config.hidden, config.motion_targets)
+        self.pool = TemporalPyramidPool(config.hidden)
 
     def forward(
         self,
         csi: torch.Tensor,
         link_mask: torch.Tensor,
         geometry: InstallationGeometry | None = None,
+        representation: str = "iq",
     ) -> dict[str, torch.Tensor]:
-        frontend = self.frontend(csi, link_mask)
+        frontend = self.frontend(csi, link_mask, representation=representation)
         per_link = self.link_encoder(frontend.features, frontend.valid)
         geometry = geometry or InstallationGeometry.cardinal_default()
         vectors = geometry.normalized_tensor(device=csi.device, dtype=csi.dtype)
@@ -143,7 +186,7 @@ class MotionCalibratedEncoder(nn.Module):
         for block in self.trunk:
             sequence = block(sequence, frame_valid)
         weight = frame_valid[..., None].to(sequence.dtype)
-        pooled = (sequence * weight).sum(dim=1) / weight.sum(dim=1).clamp_min(1.0)
+        pooled = self.pool(sequence, frame_valid)
         return {
             "action_logits": self.action_head(pooled),
             "risk_logits": self.risk_head(pooled),

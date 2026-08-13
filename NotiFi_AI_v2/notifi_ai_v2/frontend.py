@@ -49,7 +49,8 @@ class PhysicsMotionFrontend(nn.Module):
     """Suppress static RF fingerprints while preserving temporal motion cues."""
 
     feature_names = (
-        "log_amplitude_residual",
+        "relative_log_amplitude_spectrum",
+        "dynamic_log_amplitude_residual",
         "amplitude_delta",
         "amplitude_acceleration",
         "local_motion_energy",
@@ -64,16 +65,37 @@ class PhysicsMotionFrontend(nn.Module):
         self.energy_window = energy_window
         self.eps = eps
 
-    def forward(self, csi: torch.Tensor, link_mask: torch.Tensor) -> FrontendOutput:
+    def forward(
+        self,
+        csi: torch.Tensor,
+        link_mask: torch.Tensor,
+        representation: str = "iq",
+    ) -> FrontendOutput:
         _validate(csi, link_mask)
         valid = link_mask.to(torch.bool)
-        real, imag = csi[..., 0], csi[..., 1]
+        if representation == "iq":
+            real, imag = csi[..., 0], csi[..., 1]
+            amplitude = torch.sqrt(
+                real.square() + imag.square()
+            ).clamp_min(self.eps)
+            phase = torch.atan2(imag, real)
+        elif representation == "amp_phase":
+            amplitude = csi[..., 0].clamp_min(self.eps)
+            phase = csi[..., 1]
+        else:
+            raise ValueError("representation must be 'iq' or 'amp_phase'")
 
-        amplitude = torch.sqrt(real.square() + imag.square()).clamp_min(self.eps)
         log_amplitude = torch.log(amplitude)
         amp_center = _masked_time_median(log_amplitude, valid)
-        amp_residual = log_amplitude - amp_center
-        amp_delta = _temporal_delta(amp_residual, valid)
+        dynamic_amplitude = log_amplitude - amp_center
+        expanded = valid[..., None].expand_as(log_amplitude)
+        packed = log_amplitude.masked_fill(~expanded, torch.nan).permute(
+            0, 2, 1, 3
+        ).flatten(2)
+        global_center = torch.nanmedian(packed, dim=-1).values[:, None, :, None]
+        global_center = torch.nan_to_num(global_center)
+        relative_spectrum = log_amplitude - global_center
+        amp_delta = _temporal_delta(dynamic_amplitude, valid)
         amp_acceleration = _temporal_delta(amp_delta, valid)
 
         b, t, links, subcarriers = amp_delta.shape
@@ -86,7 +108,6 @@ class PhysicsMotionFrontend(nn.Module):
         )
         energy = energy.reshape(b, links, subcarriers, t).permute(0, 3, 1, 2)
 
-        phase = torch.atan2(imag, real)
         adjacent = phase[..., 1:] - phase[..., :-1]
         adjacent = torch.atan2(torch.sin(adjacent), torch.cos(adjacent))
         adjacent = F.pad(adjacent, (0, 1))
@@ -96,7 +117,9 @@ class PhysicsMotionFrontend(nn.Module):
         phase_delta = _temporal_delta(phase_residual, valid)
 
         weight = valid[..., None].to(csi.dtype)
-        denominator = weight.sum(dim=(1, 3)).clamp_min(1.0)
+        denominator = (
+            weight.sum(dim=1).squeeze(-1) * phase_delta.shape[-1]
+        ).clamp_min(1.0)
         cosine = (torch.cos(phase_delta) * weight).sum(dim=(1, 3)) / denominator
         sine = (torch.sin(phase_delta) * weight).sum(dim=(1, 3)) / denominator
         phase_quality = torch.sqrt(cosine.square() + sine.square()).clamp(0.0, 1.0)
@@ -104,7 +127,8 @@ class PhysicsMotionFrontend(nn.Module):
 
         features = torch.stack(
             (
-                amp_residual,
+                relative_spectrum,
+                dynamic_amplitude,
                 amp_delta,
                 amp_acceleration,
                 torch.sqrt(energy + self.eps),

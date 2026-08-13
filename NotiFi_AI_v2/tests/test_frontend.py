@@ -18,8 +18,8 @@ class FrontendTests(unittest.TestCase):
         csi, mask = make_input()
         gain = torch.tensor([2.0, 0.5, 4.0])[None, None, :, None, None]
         frontend = PhysicsMotionFrontend()
-        first = frontend(csi, mask).features[..., :4]
-        second = frontend(csi * gain, mask).features[..., :4]
+        first = frontend(csi, mask).features[..., :5]
+        second = frontend(csi * gain, mask).features[..., :5]
         self.assertTrue(torch.allclose(first, second, atol=2e-5, rtol=2e-5))
 
     def test_differential_phase_rejects_constant_link_rotation(self):
@@ -54,6 +54,22 @@ class FrontendTests(unittest.TestCase):
         output = PhysicsMotionFrontend()(csi, mask)
         self.assertGreater(output.activity[0].max(), 0.01)
         self.assertGreater(output.activity[0].sum(), 0.1)
+
+    def test_amp_phase_and_iq_paths_agree(self):
+        torch.manual_seed(19)
+        amplitude = torch.rand(2, 24, 3, 114) + 0.2
+        phase = torch.rand(2, 24, 3, 114) * 2 * math.pi - math.pi
+        iq = torch.stack(
+            (amplitude * torch.cos(phase), amplitude * torch.sin(phase)), dim=-1
+        )
+        amp_phase = torch.stack((amplitude, phase), dim=-1)
+        mask = torch.ones(2, 24, 3, dtype=torch.bool)
+        frontend = PhysicsMotionFrontend()
+        first = frontend(iq, mask, representation="iq")
+        second = frontend(amp_phase, mask, representation="amp_phase")
+        self.assertTrue(torch.allclose(
+            first.features, second.features, atol=2e-5, rtol=2e-5
+        ))
 
 
 if __name__ == "__main__":

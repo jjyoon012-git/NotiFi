@@ -1,0 +1,84 @@
+{
+  "protocol": "nested_source_subject_loso_m1_v1",
+  "source_sites": [
+    "ajh_E01",
+    "ajh_E02",
+    "ajh_E03",
+    "lmh_E01",
+    "mhw_E01",
+    "mhw_E02",
+    "mhw_E03"
+  ],
+  "source_trials_before_support_reserve": 1210,
+  "reserved_support_trials": 112,
+  "query_trials": 1098,
+  "support_used_by_model": false,
+  "outer_holdout_used_for_selection": false,
+  "target_subject_used": false,
+  "sealed_yja_used": false,
+  "seed": 24017,
+  "m1a_dynamic_only": {
+    "status": "rejected",
+    "selected_epochs": {
+      "ajh": 6,
+      "mhw": 20,
+      "lmh": 19
+    },
+    "outer_site_macro": {
+      "action_accuracy": 0.0928699768,
+      "action_macro_f1": 0.0515007052,
+      "risk_accuracy": 0.2977123750,
+      "risk_macro_f1": 0.2385762994,
+      "danger_recall": 0.6428571471,
+      "danger_action_accuracy": 0.1190476210,
+      "safe_to_danger_rate": 0.5973433682,
+      "motion_mae": 0.1509006537,
+      "worst_site_action_accuracy": 0.0509554148
+    }
+  },
+  "m1b_relative_spectrum_ordered_pooling": {
+    "status": "rejected",
+    "selected_epochs": {
+      "ajh": 15,
+      "mhw": 4,
+      "lmh": 21
+    },
+    "outer_subject_macro": {
+      "ajh": {
+        "action_macro_f1": 0.0763590932,
+        "risk_macro_f1": 0.3634899159,
+        "danger_recall": 0.0444444468,
+        "safe_to_danger_rate": 0.1798245559
+      },
+      "mhw": {
+        "action_macro_f1": 0.0502163519,
+        "risk_macro_f1": 0.3190311988,
+        "danger_recall": 0.6111111244,
+        "safe_to_danger_rate": 0.3771929840
+      },
+      "lmh": {
+        "action_macro_f1": 0.1442750841,
+        "risk_macro_f1": 0.5263383389,
+        "danger_recall": 0.6000000238,
+        "safe_to_danger_rate": 0.1466666609
+      }
+    },
+    "outer_site_macro": {
+      "action_accuracy": 0.1293541938,
+      "action_macro_f1": 0.0748573456,
+      "risk_accuracy": 0.4509052549,
+      "risk_macro_f1": 0.3677002404,
+      "danger_recall": 0.3666666767,
+      "danger_action_accuracy": 0.0428571446,
+      "safe_to_danger_rate": 0.2596741830,
+      "motion_mae": 0.1574573954,
+      "worst_site_action_accuracy": 0.1019108295
+    }
+  },
+  "promotion_gate": {
+    "action_macro_f1_minimum": 0.40,
+    "safe_to_danger_target_maximum": 0.10,
+    "passed": false
+  },
+  "decision": "Do not promote or warm-start from M1. Train M2 episodic support-conditioned calibration from scratch."
+}
