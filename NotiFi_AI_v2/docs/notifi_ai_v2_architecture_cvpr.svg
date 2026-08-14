@@ -1,0 +1,254 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1320" viewBox="0 0 2400 1320">
+  <defs>
+    <style>
+      .title { font: 700 43px Arial, Helvetica, sans-serif; fill: #142033; }
+      .subtitle { font: 400 22px Arial, Helvetica, sans-serif; fill: #5b6574; }
+      .panel { font: 700 25px Arial, Helvetica, sans-serif; fill: #142033; }
+      .head { font: 700 23px Arial, Helvetica, sans-serif; fill: #172235; }
+      .body { font: 400 19px Arial, Helvetica, sans-serif; fill: #283548; }
+      .small { font: 400 16px Arial, Helvetica, sans-serif; fill: #586476; }
+      .tiny { font: 400 14px Arial, Helvetica, sans-serif; fill: #667286; }
+      .metric { font: 700 19px Arial, Helvetica, sans-serif; fill: #172235; }
+      .box { stroke: #8d99aa; stroke-width: 2.2; rx: 7; ry: 7; }
+      .arrow { fill: none; stroke: #465569; stroke-width: 3.2; marker-end: url(#arrow); }
+      .cal-arrow { fill: none; stroke: #d07a25; stroke-width: 3.3; marker-end: url(#arrow-orange); }
+      .train-arrow { fill: none; stroke: #7c8797; stroke-width: 2.7; stroke-dasharray: 10 8; marker-end: url(#arrow-gray); }
+      .split-line { stroke: #d7dde5; stroke-width: 2; }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#465569"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#d07a25"/>
+    </marker>
+    <marker id="arrow-gray" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#7c8797"/>
+    </marker>
+    <pattern id="grid" width="16" height="16" patternUnits="userSpaceOnUse">
+      <path d="M16 0 L0 0 0 16" fill="none" stroke="#ffffff" stroke-opacity="0.38" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect x="0" y="0" width="2400" height="1320" fill="#ffffff"/>
+
+  <text x="70" y="70" class="title">NotiFi AI v2: Support-Calibrated CSI-to-Action and 3D Motion Reconstruction</text>
+  <text x="72" y="108" class="subtitle">Three-link Wi-Fi CSI inference with user-specific calibration; no query labels, video, or GVHMR are used at test time.</text>
+  <line x1="70" y1="142" x2="2330" y2="142" class="split-line"/>
+
+  <!-- Panel labels -->
+  <text x="70" y="190" class="panel">(a) User support calibration</text>
+  <text x="780" y="190" class="panel">(b) CSI representation</text>
+  <text x="1480" y="190" class="panel">(c) Calibrated multi-task inference</text>
+
+  <!-- Panel A: support inputs -->
+  <rect x="65" y="215" width="645" height="690" fill="#fffdf9" stroke="#d8c4ad" stroke-width="2.3" rx="9"/>
+  <text x="95" y="258" class="head">Deployment support set</text>
+  <text x="95" y="287" class="small">Collected once after a new installation</text>
+
+  <rect x="95" y="320" width="250" height="105" class="box" fill="#fff1df"/>
+  <rect x="113" y="340" width="70" height="60" fill="#f9c778" stroke="#a76b24" stroke-width="1.6" rx="3"/>
+  <rect x="113" y="340" width="70" height="60" fill="url(#grid)"/>
+  <path d="M118 385 C130 362,143 390,154 353 S173 382,179 348" fill="none" stroke="#a75a16" stroke-width="3"/>
+  <text x="200" y="361" class="body">Empty room</text>
+  <text x="200" y="389" class="metric">12 trials</text>
+
+  <rect x="365" y="320" width="310" height="105" class="box" fill="#fff1df"/>
+  <circle cx="400" cy="366" r="16" fill="#e7a34e"/>
+  <path d="M400 382 L400 405 M382 392 L418 392 M400 405 L386 419 M400 405 L414 419" fill="none" stroke="#875018" stroke-width="5" stroke-linecap="round"/>
+  <text x="438" y="361" class="body">8 basic actions</text>
+  <text x="438" y="389" class="metric">2 shots each</text>
+
+  <rect x="95" y="445" width="250" height="105" class="box" fill="#fff1df"/>
+  <path d="M124 518 L141 473 L159 509 L178 482" fill="none" stroke="#d17a20" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="200" y="486" class="body">Warning actions</text>
+  <text x="200" y="514" class="metric">3 x 1 shot</text>
+
+  <rect x="365" y="445" width="310" height="105" class="box" fill="#fff1df"/>
+  <circle cx="399" cy="480" r="13" fill="#d86e52"/>
+  <path d="M409 492 L430 509 M414 489 L442 484 M430 509 L452 516 M430 509 L419 526" fill="none" stroke="#9e3e2d" stroke-width="6" stroke-linecap="round"/>
+  <line x1="382" y1="528" x2="457" y2="528" stroke="#9e3e2d" stroke-width="3"/>
+  <text x="477" y="486" class="body">Controlled falls</text>
+  <text x="477" y="514" class="metric">5 x 1 shot</text>
+
+  <path d="M220 425 L220 581 L270 581" class="cal-arrow"/>
+  <path d="M520 425 L520 581 L470 581" class="cal-arrow"/>
+  <path d="M220 550 L220 581" class="cal-arrow"/>
+  <path d="M520 550 L520 581" class="cal-arrow"/>
+
+  <rect x="160" y="590" width="455" height="115" class="box" fill="#ffe6c6" stroke="#ca7b2a"/>
+  <text x="388" y="630" text-anchor="middle" class="head">Support calibrator</text>
+  <text x="388" y="662" text-anchor="middle" class="body">Robust statistics + identity-regularized ridge</text>
+  <text x="388" y="688" text-anchor="middle" class="small">fit once; query GT is never accessed</text>
+
+  <path d="M388 705 L388 748" class="cal-arrow"/>
+  <rect x="93" y="758" width="176" height="105" class="box" fill="#fff8ed" stroke="#ca7b2a"/>
+  <text x="181" y="794" text-anchor="middle" class="body">Environment</text>
+  <text x="181" y="822" text-anchor="middle" class="metric">canonicalizer</text>
+  <text x="181" y="849" text-anchor="middle" class="tiny">C_env</text>
+
+  <rect x="299" y="758" width="176" height="105" class="box" fill="#fff8ed" stroke="#ca7b2a"/>
+  <text x="387" y="794" text-anchor="middle" class="body">Class-anchor</text>
+  <text x="387" y="822" text-anchor="middle" class="metric">alignment</text>
+  <text x="387" y="849" text-anchor="middle" class="tiny">A_cls</text>
+
+  <rect x="505" y="758" width="176" height="105" class="box" fill="#fff8ed" stroke="#ca7b2a"/>
+  <text x="593" y="794" text-anchor="middle" class="body">Motion-signature</text>
+  <text x="593" y="822" text-anchor="middle" class="metric">alignment</text>
+  <text x="593" y="849" text-anchor="middle" class="tiny">W_mot</text>
+
+  <!-- Query CSI input -->
+  <rect x="65" y="945" width="645" height="210" fill="#f8fbff" stroke="#b4c5da" stroke-width="2.3" rx="9"/>
+  <text x="95" y="987" class="head">Query CSI</text>
+  <text x="95" y="1017" class="small">3 Tx-Rx links, 304 frames, 114 live subcarriers</text>
+
+  <rect x="100" y="1046" width="150" height="78" fill="#2563a7" stroke="#164a7a" stroke-width="1.8" rx="4"/>
+  <rect x="100" y="1046" width="150" height="78" fill="url(#grid)"/>
+  <path d="M104 1095 C124 1060,140 1110,157 1066 S188 1104,204 1072 S229 1087,246 1057" fill="none" stroke="#f4c44d" stroke-width="4"/>
+  <rect x="270" y="1046" width="150" height="78" fill="#397f91" stroke="#245b68" stroke-width="1.8" rx="4"/>
+  <rect x="270" y="1046" width="150" height="78" fill="url(#grid)"/>
+  <path d="M274 1080 C293 1062,311 1107,330 1077 S363 1058,382 1095 S401 1075,416 1088" fill="none" stroke="#f8dc72" stroke-width="4"/>
+  <rect x="440" y="1046" width="150" height="78" fill="#655aa8" stroke="#413878" stroke-width="1.8" rx="4"/>
+  <rect x="440" y="1046" width="150" height="78" fill="url(#grid)"/>
+  <path d="M444 1098 C462 1068,480 1102,499 1060 S532 1098,549 1072 S573 1082,586 1058" fill="none" stroke="#f4cd58" stroke-width="4"/>
+  <text x="175" y="1146" text-anchor="middle" class="tiny">TX1-South</text>
+  <text x="345" y="1146" text-anchor="middle" class="tiny">TX2-West</text>
+  <text x="515" y="1146" text-anchor="middle" class="tiny">TX3-East</text>
+
+  <!-- Panel B: representation -->
+  <rect x="755" y="215" width="665" height="940" fill="#fbfdff" stroke="#b9c7d8" stroke-width="2.3" rx="9"/>
+
+  <rect x="810" y="270" width="555" height="115" class="box" fill="#eaf3ff" stroke="#6485aa"/>
+  <text x="1088" y="312" text-anchor="middle" class="head">Temporal preprocessing</text>
+  <text x="1088" y="345" text-anchor="middle" class="body">30 Hz resampling + validity mask + link ordering</text>
+  <text x="1088" y="372" text-anchor="middle" class="small">preserves amplitude and normalized phase dynamics</text>
+
+  <path d="M710 1056 L765 1056 L765 327 L810 327" class="arrow"/>
+  <path d="M269 810 L735 810 L735 440 L810 440" class="cal-arrow"/>
+
+  <rect x="810" y="415" width="555" height="105" class="box" fill="#e6f0fb" stroke="#6485aa"/>
+  <text x="1088" y="455" text-anchor="middle" class="head">Support-conditioned canonicalization</text>
+  <text x="1088" y="488" text-anchor="middle" class="body">remove static environment and person-specific scale</text>
+
+  <path d="M1088 385 L1088 415" class="arrow"/>
+  <path d="M1088 520 L1088 566" class="arrow"/>
+
+  <rect x="795" y="575" width="275" height="250" class="box" fill="#dcecff" stroke="#4d77a8"/>
+  <text x="932" y="618" text-anchor="middle" class="head">Invariant encoder</text>
+  <text x="932" y="651" text-anchor="middle" class="small">time-frequency CSI stem</text>
+  <text x="932" y="680" text-anchor="middle" class="small">subcarrier + Doppler cues</text>
+  <rect x="835" y="713" width="195" height="50" fill="#c6ddf7" stroke="#7093b7" stroke-width="1.6" rx="5"/>
+  <text x="932" y="745" text-anchor="middle" class="body">GRL during training</text>
+  <text x="932" y="795" text-anchor="middle" class="metric">z_inv, H(t)</text>
+
+  <rect x="1105" y="575" width="275" height="250" class="box" fill="#eaebff" stroke="#6d70ad"/>
+  <text x="1242" y="618" text-anchor="middle" class="head">Complementary encoder</text>
+  <text x="1242" y="651" text-anchor="middle" class="small">action-discriminative stream</text>
+  <text x="1242" y="680" text-anchor="middle" class="small">retains useful fine dynamics</text>
+  <rect x="1145" y="713" width="195" height="50" fill="#d8d9f7" stroke="#8788b9" stroke-width="1.6" rx="5"/>
+  <text x="1242" y="745" text-anchor="middle" class="body">no adversarial GRL</text>
+  <text x="1242" y="795" text-anchor="middle" class="metric">z_cmp, H'(t)</text>
+
+  <path d="M1088 566 L932 575" class="arrow"/>
+  <path d="M1088 566 L1242 575" class="arrow"/>
+
+  <rect x="810" y="875" width="555" height="180" class="box" fill="#eef5fc" stroke="#6485aa"/>
+  <text x="1088" y="918" text-anchor="middle" class="head">Dual-view CSI representation</text>
+  <text x="1088" y="955" text-anchor="middle" class="body">global action embeddings + frame-wise motion descriptor</text>
+  <line x1="905" y1="982" x2="1270" y2="982" stroke="#9bb1c8" stroke-width="2"/>
+  <text x="935" y="1023" class="metric">z = [z_inv, z_cmp]</text>
+  <text x="1145" y="1023" class="metric">D(t) from H(t)</text>
+  <path d="M932 825 L1010 875" class="arrow"/>
+  <path d="M1242 825 L1165 875" class="arrow"/>
+
+  <!-- Panel C -->
+  <rect x="1460" y="215" width="875" height="940" fill="#fdfdfd" stroke="#c5cbd3" stroke-width="2.3" rx="9"/>
+  <text x="1495" y="255" class="head">Action and risk branch</text>
+
+  <path d="M1365 930 L1510 930 L1510 340 L1570 340" class="arrow"/>
+  <path d="M475 810 L1435 810 L1435 290 L1570 290" class="cal-arrow"/>
+
+  <rect x="1570" y="275" width="355" height="145" class="box" fill="#e8f6ec" stroke="#5e9870"/>
+  <text x="1748" y="316" text-anchor="middle" class="head">17-class affine ridge</text>
+  <text x="1748" y="350" text-anchor="middle" class="body">source prototypes -&gt; user space</text>
+  <text x="1748" y="381" text-anchor="middle" class="small">64-D map with identity prior</text>
+
+  <path d="M1925 347 L1972 347" class="arrow"/>
+  <rect x="1972" y="275" width="310" height="145" class="box" fill="#e8f6ec" stroke="#5e9870"/>
+  <text x="2127" y="313" text-anchor="middle" class="head">Calibrated action</text>
+  <text x="2127" y="346" text-anchor="middle" class="metric">17-way probability</text>
+  <text x="2127" y="379" text-anchor="middle" class="small">0.25 raw + 0.75 aligned</text>
+
+  <path d="M2127 420 L2127 470" class="arrow"/>
+  <rect x="1972" y="480" width="310" height="130" class="box" fill="#fdeced" stroke="#b26168"/>
+  <text x="2127" y="520" text-anchor="middle" class="head">Risk aggregation</text>
+  <text x="2127" y="553" text-anchor="middle" class="body">sum calibrated action mass</text>
+  <text x="2127" y="584" text-anchor="middle" class="metric">Safe / Warning / Danger</text>
+
+  <rect x="1530" y="465" width="360" height="145" fill="#f6fbf7" stroke="#7da98a" stroke-width="2" rx="7"/>
+  <text x="1710" y="505" text-anchor="middle" class="head">Output 1: semantic behavior</text>
+  <text x="1710" y="540" text-anchor="middle" class="metric">17 action labels</text>
+  <text x="1710" y="573" text-anchor="middle" class="small">including 5 fall subtypes</text>
+  <path d="M2127 420 L2127 445 L1710 445 L1710 465" class="arrow"/>
+
+  <line x1="1495" y1="650" x2="2300" y2="650" class="split-line"/>
+  <text x="1495" y="695" class="head">3D motion branch</text>
+
+  <path d="M1365 1015 L1510 1015 L1510 770 L1570 770" class="arrow"/>
+  <path d="M681 810 L1450 810 L1450 720 L1570 720" class="cal-arrow"/>
+
+  <rect x="1570" y="705" width="315" height="140" class="box" fill="#f0eaff" stroke="#8067ad"/>
+  <text x="1728" y="747" text-anchor="middle" class="head">Motion-signature ridge</text>
+  <text x="1728" y="781" text-anchor="middle" class="body">user dynamics -&gt; source space</text>
+  <text x="1728" y="814" text-anchor="middle" class="small">frame-wise descriptor alignment</text>
+
+  <path d="M1885 775 L1930 775" class="arrow"/>
+  <rect x="1930" y="705" width="330" height="140" class="box" fill="#f0eaff" stroke="#8067ad"/>
+  <text x="2095" y="747" text-anchor="middle" class="head">Top-k motion retrieval</text>
+  <text x="2095" y="781" text-anchor="middle" class="body">nearest compatible trajectories</text>
+  <text x="2095" y="814" text-anchor="middle" class="small">action-conditioned search</text>
+
+  <rect x="1515" y="900" width="290" height="125" class="box" fill="#f5f1ff" stroke="#8067ad"/>
+  <text x="1660" y="941" text-anchor="middle" class="head">Risk-aware blend</text>
+  <text x="1660" y="975" text-anchor="middle" class="body">weighted trajectory synthesis</text>
+  <text x="1660" y="1004" text-anchor="middle" class="small">prevents over-dynamic safe poses</text>
+
+  <rect x="1850" y="900" width="270" height="125" class="box" fill="#f5f1ff" stroke="#8067ad"/>
+  <text x="1985" y="941" text-anchor="middle" class="head">Body correction</text>
+  <text x="1985" y="975" text-anchor="middle" class="body">first-order bone-length fit</text>
+  <text x="1985" y="1004" text-anchor="middle" class="small">pelvis-relative output</text>
+
+  <path d="M2095 845 L2095 870 L1660 870 L1660 900" class="arrow"/>
+  <path d="M1805 963 L1850 963" class="arrow"/>
+
+  <rect x="2160" y="884" width="145" height="160" fill="#f7f3ff" stroke="#8067ad" stroke-width="2.2" rx="7"/>
+  <circle cx="2232" cy="917" r="14" fill="#5f4b8b"/>
+  <path d="M2232 931 L2232 977 M2232 943 L2203 959 M2232 943 L2260 954 M2232 977 L2207 1012 M2232 977 L2257 1012" fill="none" stroke="#5f4b8b" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="2203" cy="959" r="5" fill="#d46b54"/>
+  <circle cx="2260" cy="954" r="5" fill="#d46b54"/>
+  <circle cx="2207" cy="1012" r="5" fill="#d46b54"/>
+  <circle cx="2257" cy="1012" r="5" fill="#d46b54"/>
+  <text x="2232" y="1074" text-anchor="middle" class="metric">304 x 22 x 3</text>
+  <text x="2232" y="1101" text-anchor="middle" class="small">3D pose</text>
+  <path d="M2120 963 L2160 963" class="arrow"/>
+
+  <!-- Offline source assets and training-only path -->
+  <rect x="755" y="1190" width="1580" height="92" fill="#f7f8fa" stroke="#aeb6c1" stroke-width="2" stroke-dasharray="10 7" rx="7"/>
+  <text x="785" y="1226" class="head">Training / offline assets</text>
+  <text x="785" y="1262" class="body">Source CSI + subject/site IDs</text>
+  <text x="1090" y="1262" class="small">Action CE, risk CE, and domain-adversarial GRL</text>
+  <text x="1600" y="1262" class="body">Source GVHMR sequences</text>
+  <text x="1885" y="1262" class="small">build fixed motion bank</text>
+  <path d="M1055 1190 L1055 1158 L932 1158 L932 825" class="train-arrow"/>
+  <path d="M1840 1190 L1840 1145 L2268 1145 L2268 845 L2200 845" class="train-arrow"/>
+
+  <!-- Legend -->
+  <rect x="65" y="1190" width="645" height="92" fill="#ffffff" stroke="#d0d6de" stroke-width="1.8" rx="7"/>
+  <text x="92" y="1225" class="head">Legend</text>
+  <line x1="190" y1="1217" x2="250" y2="1217" class="arrow"/>
+  <text x="267" y="1224" class="small">query inference</text>
+  <line x1="410" y1="1217" x2="470" y2="1217" class="cal-arrow"/>
+  <text x="487" y="1224" class="small">support conditioning</text>
+  <line x1="190" y1="1254" x2="250" y2="1254" class="train-arrow"/>
+  <text x="267" y="1261" class="small">training only</text>
+  <text x="410" y="1261" class="small">Support trials excluded from query.</text>
+</svg>

@@ -6,6 +6,15 @@ pelvis-relative SMPL body-22 동작을 추정하는 unseen calibration 연구 �
 선택에 한 번도 사용하지 않았고, artifact와 설정을 잠근 뒤 최종 감사 평가를
 한 번 수행했다.
 
+## 모델 구조도
+
+![NotiFi AI v2 architecture](docs/notifi_ai_v2_architecture_cvpr.png)
+
+논문 및 발표 자료에는 고해상도 PNG를 사용할 수 있으며, 편집 가능한 원본은
+[`docs/notifi_ai_v2_architecture_cvpr.svg`](docs/notifi_ai_v2_architecture_cvpr.svg)에
+있다. 실선은 query 추론, 주황색은 calibration support 경로, 점선은 학습 및
+offline motion-bank 구축 경로를 의미한다.
+
 ## 현재 채택 구조
 
 ```text
@@ -205,31 +214,6 @@ Artifact 크기는 60,880,749 bytes이고 SHA-256은
 `f1d055df3252bf1e0d09c62d4ce1ec953b08c3cdb0e8cd7e3f7dac5be287447c`이다.
 실패한 M2/M3 체크포인트와 수백 개의 중간 JSON은 공개 패키지에서 제거했다.
 
-## 대조학습과 강화학습 판단
-
-대조학습은 이 문제에 적합하다. 단, 일반적인 augmentation 두 개를 무조건 같은
-표현으로 묶으면 실제 동작 차이까지 지울 수 있다. 필요한 positive pair는
-`같은 행동 + 다른 사람/환경` 또는 `같은 trial + RF 환경만 바꾼 view`이고,
-시간 진행과 신체 움직임은 보존해야 한다. 실제 source-only 대조학습 후보는
-action macro-F1 `29.51% → 25.78%`, risk macro-F1 `47.30% → 39.64%`, danger
-recall `43.33% → 36.19%`로 모두 악화됐다. 같은 행동이라는 이유만으로 서로 다른
-motion phase를 positive로 묶은 것이 세부 움직임을 지운 것으로 판단해 코드와 PT를
-폐기했다. 다음 대조학습은 같은 trial의 시간 대응 구간만 positive로 쓰는
-phase-aware 사전학습이어야 한다.
-
-강화학습은 CSI→정답 행동/pose 학습의 주력 해법이 아니다. 현재 데이터에는
-정책이 탐색할 환경 simulator와 신뢰할 reward가 없어서 supervised·contrastive
-학습보다 불안정하다. 추후 제품 단계에서 calibration 시간을 줄이기 위해
-`현재 불확실성을 가장 많이 줄일 다음 동작`을 선택하는 contextual bandit 또는
-active calibration에는 사용할 가치가 있다.
-
-설계 방향은 WiFi 3D pose의 end-to-end 공간 표현을 보인
-[Person-in-WiFi 3D (CVPR 2024)](https://openaccess.thecvf.com/content/CVPR2024/html/Yan_Person-in-WiFi_3D_End-to-End_Multi-Person_3D_Pose_Estimation_with_Wi-Fi_CVPR_2024_paper.html),
-CSI에 일반 영상용 contrastive 규칙을 그대로 적용하면 실패할 수 있음을 지적한
-[ARC](https://arxiv.org/abs/2310.06328), 시간 예측과 redundancy reduction을 결합한
-[CAPC](https://arxiv.org/abs/2410.01825), cross-domain WiFi test-time adaptation을
-다룬 [DATTA (WACV 2026)](https://openaccess.thecvf.com/content/WACV2026/papers/Strohmayer_DATTA_Domain-Adversarial_Test-Time_Adaptation_for_Cross-Domain_WiFi-Based_Human_Activity_Recognition_WACV_2026_paper.pdf)를 참고했다.
-
 ## 남은 한계
 
 - Source 사람이 3명이고 최종 unseen도 1명뿐이므로 “어떤 사용자에서도 동일 성능”은 입증되지 않았다.
@@ -240,5 +224,4 @@ CSI에 일반 영상용 contrastive 규칙을 그대로 적용하면 실패할 �
 
 다음 승격 조건은 별도 subject에서 현재 full-support 개선을 재현하고, 연속 motion
 residual decoder가 retrieval-only pose보다 danger pose와 PA-MPJPE를 동시에
-개선하는 것이다. Reinforcement learning은 최종 pose 학습이 아니라 안전한
-calibration 동작 순서를 능동적으로 고르는 단계에만 검토한다.
+개선하는 것이다.
