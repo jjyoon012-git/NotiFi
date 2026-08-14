@@ -74,6 +74,8 @@ source를 다시 학습했다.
 | Orientation factorization | PA-MPJPE는 8.49 cm로 개선됐지만 전체 pose는 27.07 cm로 악화 |
 | State + motion 분해 | 전체 26.26 cm로 소폭 개선됐지만 danger가 34.21 cm로 악화 |
 | State + danger hybrid | 전체 26.22 cm였으나 복잡도 대비 0.05 cm 개선에 그쳐 미채택 |
+| Link-masked JEPA | label-free latent loss는 수렴했지만 26.40 cm, danger 34.41 cm로 현재 pose encoder보다 악화 |
+| Skeleton + trajectory graph decoder | 단독 26.73/33.90 cm, pose encoder 결합 26.77/34.05 cm로 현재 26.33/33.86 cm를 넘지 못함 |
 
 ## 봉인 Unseen 평가
 
@@ -207,3 +209,29 @@ danger_route = prediction["continuous_danger_expert_used"]
 
 따라서 다음 핵심은 decoder를 더 크게 만드는 일이 아니라, source-only self-supervised pretraining과
 시간 정렬을 통해 CSI encoder가 환경보다 실제 움직임을 더 안정적으로 표현하게 만드는 것이다.
+
+## 대폭 개선을 위한 폐루프 설계
+
+현재 데이터만으로 작은 head를 계속 교체하는 방식은 한계에 도달했다. 다음 큰 변경은 아래 순서로
+진행한다.
+
+1. **RF digital twin**: TX/RX 방향, 높이, 거리, 벽과 가구, 체형, 동작을 무작위화한 ray-tracing
+   CSI를 대량 생성한다. 소규모 real CSI만 사용한 link JEPA는 실패했으므로, 사전학습의 핵심은
+   목적함수보다 환경 다양성의 규모다. [WiFi-JEPA](https://arxiv.org/abs/2607.11064)는 CSI-native
+   link masking과 simulated CSI가 상호 보완된다는 근거를 제공한다.
+2. **대규모 motion prior**: AMASS와 낙상 motion으로 root-relative pose, 진행 상태, 접촉 부위를
+   학습한다. global trajectory와 local pose를 분리하고 skeleton 구조를 prior에 직접 넣는다.
+   [RoHM](https://openaccess.thecvf.com/content/CVPR2024/html/Zhang_RoHM_Robust_Human_Motion_Reconstruction_via_Diffusion_CVPR_2024_paper.html)과
+   [SkeletonDiffusion](https://openaccess.thecvf.com/content/CVPR2025/html/Curreli_Nonisotropic_Gaussian_Diffusion_for_Realistic_3D_Human_Motion_Prediction_CVPR_2025_paper.html)의
+   분해와 skeleton-aware prior를 따른다.
+3. **다중 가설 생성**: CSI에서 한 자세를 바로 회귀하지 않고 가능한 motion을 여러 개 생성한다.
+   낙상 방향처럼 CSI만으로 모호한 정보는 평균 자세로 뭉개지 않고 후보 분포로 보존한다.
+4. **Pose-to-CSI 폐루프**: paired source 데이터로 pose와 CSI의 compatibility model을 학습한다.
+   생성 후보를 다시 RF latent로 투영하고 실제 query CSI와 가장 일치하는 motion을 선택한다.
+   query GT는 사용하지 않는다.
+5. **명시적 시간 정렬**: trial별 offset과 작은 time warp를 latent variable로 추정해 CSI 변화와
+   pose velocity를 맞춘다. 현재 temporal encoder가 시점 오차를 암묵적으로 흡수하게 두는 것보다
+   원인을 분리할 수 있다.
+
+이 설계의 승격 기준은 별도 source nested-LOSO에서 현재 전체 pose 26.33 cm와 danger pose
+33.86 cm를 동시에 낮추는 것이다. 이 조건 전에는 봉인 unseen artifact를 다시 만들지 않는다.
