@@ -2,8 +2,8 @@
 
 NotiFi AI v2는 3개 송신 링크의 CSI만으로 17개 행동, 3단계 위험도와
 pelvis-relative SMPL body-22 동작을 추정하는 unseen calibration 연구 모델이다.
-현재 채택본은 `artifacts/notifi_ai_v2.pt` 하나로 배포된다. `yja/E02`는 모델
-선택에 한 번도 사용하지 않았고, artifact와 설정을 잠근 뒤 최종 감사 평가를
+현재 채택본은 `artifacts/notifi_ai_v2.pt` 하나로 배포된다. 최종 unseen 데이터는
+모델 선택에 한 번도 사용하지 않았고, artifact와 설정을 잠근 뒤 감사 평가를
 한 번 수행했다.
 
 ## 모델 구조도
@@ -55,78 +55,69 @@ safe 9종, warning 3종, danger 5종으로 정확히 합산한다. Pose는 CSI�
 calibration support로 보정한 뒤 GVHMR motion bank를 검색한다. Danger 확률의
 제곱근으로 보정 강도를 조절해 정적인 동작이 과도하게 변형되는 것을 막는다.
 
-## 검증 성능
+## 봉인 Unseen 성능
 
-프로토콜은 `ajh E01-E03`, `mhw E01-E03`, `lmh E01`만 사용한 source
-nested subject-LOSO다. 각 outer subject는 학습과 설정 선택에서 제외했으며,
-calibration support는 query에서 제거했다. 아래 값은 서로 다른 support seed
-5회의 평균과 모집단 표준편차다.
+고정 artifact를 학습·validation·설정 선택에 전혀 사용하지 않은 신규 사용자와
+환경에 처음 적용했다. 전체 데이터에서 absence·basic·warning·danger support로
+calibration을 수행한 뒤, support와 겹치지 않는 239개 query를 평가했다. 이 결과를
+확인한 뒤 모델, calibration 설정 또는 임계값을 수정하지 않았다.
 
-### 행동·위험 분류
-
-| 지표 | 동일 가중치 raw 경로 | 정상 calibration | 변화 |
-|---|---:|---:|---:|
-| 17동작 accuracy | 44.89 ± 0.87% | **53.38 ± 1.52%** | +8.48%p |
-| 17동작 macro-F1 | 35.33 ± 0.94% | **47.55 ± 1.83%** | +12.22%p |
-| danger 세부동작 accuracy | 13.00 ± 2.12% | **38.73 ± 6.11%** | +25.73%p |
-| 3위험도 accuracy | 52.88 ± 0.86% | **68.50 ± 2.01%** | +15.62%p |
-| 3위험도 macro-F1 | 43.50 ± 1.20% | **62.00 ± 2.87%** | +18.51%p |
-| danger recall | 53.12 ± 3.07% | **56.90 ± 5.49%** | +3.78%p |
-| safe → danger 오경보 | 18.68 ± 0.70% | **8.21 ± 1.85%** | -10.47%p |
-
-새 모델은 warning support 3회를 추가해 기존에 비어 있던 위험 경계까지 target
-좌표로 옮긴다. 위험도는 calibrated action 확률에서 파생하므로 분류와 위험도가
-서로 모순되는 경우도 줄었다. 두 열은 동일한 encoder checkpoint와 동일한 1,042개
-query를 사용하고 calibration 적용 여부만 다르다.
-
-2026-08-14 재감사에서 기존 표의 `54.51%`가 배포 artifact와 다른 비-seed primary
-fold checkpoint로 계산된 것을 확인했다. 현재 표는 `notifi_ai_v2.pt`의 primary
-encoder SHA-256과 일치하는 seed-22012 fold 계보로 5개 support seed를 다시 실행한
-결과다. 최종 봉인 `yja/E02` 결과와 pose 결과에는 이 checkpoint 불일치가 없었다.
-
-### 3D 동작 복원
-
-| 지표 | 기존 motion 검색 | 현재 motion 정렬 | 변화 |
-|---|---:|---:|---:|
-| Pose MPJPE | 29.37 ± 0.17 cm | **28.97 ± 0.16 cm** | -0.40 cm |
-| Distal MPJPE | 43.41 ± 0.32 cm | **42.88 ± 0.31 cm** | -0.53 cm |
-| PA-MPJPE | **10.45 ± 0.09 cm** | 10.61 ± 0.10 cm | +0.16 cm |
-| Danger pose MPJPE | 38.35 ± 0.13 cm | **37.23 ± 0.38 cm** | -1.13 cm |
-| Danger distal MPJPE | 56.99 ± 0.17 cm | **55.47 ± 0.53 cm** | -1.52 cm |
-
-절대 관절 궤적과 danger 사지 오차는 5개 seed 모두 개선됐다. 반면 회전·이동·
-크기를 정렬한 PA-MPJPE는 0.16 cm 악화됐다. 따라서 현재 motion 정렬은 실제
-궤적과 낙상 복원에는 유효하지만, 순수 자세 모양까지 개선한 것은 아니다.
-
-상세 수치는 `results/full_support_loso_recheck_20260814.json`과
-`results/motion_ridge_pose_fixed_5seed_summary.json`에 있다. 재평가 조건과
-held-out 사람별 결과는 [`docs/loso_evaluation_2026-08-14.md`](docs/loso_evaluation_2026-08-14.md)에
-정리했다.
-
-### 최종 봉인 unseen
-
-고정 artifact를 `yja/E02`에 처음 적용했다. 전체 275개 중 absence 12개와
-basic 16개, warning 3개, danger 5개를 calibration에 사용하고, 겹치지 않는
-239개 query를 평가했다. 이 결과를 본 뒤 모델이나 임계값은 수정하지 않았다.
-
-| 지표 | yja/E02 최종 결과 |
+| 지표 | 봉인 unseen 결과 |
 |---|---:|
 | 17동작 accuracy | **65.69%** |
 | 17동작 macro-F1 | **55.64%** |
+| 동작 macro ROC-AUC | **96.21%** |
+| 동작 micro ROC-AUC | **96.36%** |
 | 3위험도 accuracy | **95.82%** |
 | 3위험도 macro-F1 | **95.87%** |
-| danger recall | **43 / 45 = 95.56%** |
+| 위험도 macro ROC-AUC | **99.55%** |
+| 위험도 micro ROC-AUC | **99.23%** |
+| danger recall | **95.56%** |
 | danger 세부동작 accuracy | 42.22% |
-| safe → danger 오경보 | **0 / 122 = 0%** |
-| Pose / danger MPJPE | 29.72 / 35.77 cm |
+| safe → danger 오경보 | **0.00%** |
+| Pose MPJPE | 29.72 cm |
+| Distal MPJPE | 43.84 cm |
+| PA-MPJPE | 10.81 cm |
+| Danger pose MPJPE | 35.77 cm |
 | Danger distal MPJPE | 51.90 cm |
 
-정확한 support trial ID, artifact hash와 전체 지표는
-`results/sealed_yja_e02_final.json`에 기록했다. 위험 그룹은 잘 일반화됐지만
-세부 행동과 관절 복원은 여전히 상용 품질에 못 미친다.
+### 퍼센트 Confusion Matrix
 
-봉인 `yja/E02`의 퍼센트 confusion matrix, ROC-AUC, pose 오차 분포와 재현 방법은
-[`docs/evaluation/yja_e02/README.md`](docs/evaluation/yja_e02/README.md)에 정리했다.
+각 행을 100%로 정규화했으며 셀에는 원시 개수가 아니라 실제 클래스별 예측 비율을
+표시했다. `absence`는 calibration 전용이라 query 양성 샘플이 없다.
+
+![17-action unseen confusion matrix](docs/evaluation/unseen/action_confusion_matrix_percent.png)
+
+![3-risk unseen confusion matrix](docs/evaluation/unseen/risk_confusion_matrix_percent.png)
+
+위험도는 safe 100.0%, warning 88.9%, danger 95.6%의 recall을 보였다. 반면 세부
+낙상 동작은 일부 subtype으로 예측이 몰려 danger recall 95.56%에 비해 danger
+세부동작 accuracy가 42.22%로 낮다.
+
+### ROC-AUC
+
+ROC는 one-vs-rest 방식이다. `absence`에는 query 양성이 없으므로 동작 macro
+ROC-AUC는 실제 평가 가능한 16개 동작만 평균했다.
+
+![17-action unseen ROC-AUC](docs/evaluation/unseen/action_roc_auc.png)
+
+![3-risk unseen ROC-AUC](docs/evaluation/unseen/risk_roc_auc.png)
+
+높은 AUC와 상대적으로 낮은 17동작 accuracy의 차이는 정답 동작에 높은 점수를
+주더라도 비슷한 동작 하나의 점수가 조금 더 높아 최종 argmax가 틀리는 경우가
+있다는 뜻이다. 위험 그룹은 잘 분리하지만 세부 행동 경계는 더 개선해야 한다.
+
+### Pose 오차 분포
+
+![Unseen pose error CDF](docs/evaluation/unseen/pose_error_cdf_percent.png)
+
+누적 오차 분포에서 danger pose의 중앙값은 35.0 cm다. 현재 pose는 연속 관절
+생성기가 아니라 calibrated motion retrieval이므로, motion bank에 없는 낙상 궤적과
+손·발 끝 움직임은 정확히 생성하기 어렵다. 따라서 위험도 탐지는 유망하지만 세부
+행동과 3D 관절 복원은 아직 상용 품질에 못 미친다.
+
+이 평가는 신규 사용자·환경 한 조건에 대한 봉인 결과다. 모든 신규 사용자와 공간에서
+동일한 성능을 보장한다는 의미는 아니다.
 
 ## Calibration 계약
 
@@ -228,7 +219,7 @@ Artifact 크기는 60,880,749 bytes이고 SHA-256은
 - 3위험도 macro-F1 62.00%, danger recall 56.90%는 개선됐지만 상용 안전 시스템 수준이 아니다.
 - Pose는 연속 관절 생성기가 아니라 calibrated motion retrieval이다. Bank에 없는 낙상은 근사 동작으로 나온다.
 - Danger distal 55.47 cm는 부상 부위 판단에 쓰기에는 여전히 크다.
-- `yja/E02` 최종 평가는 구조와 설정을 완전히 잠근 뒤 한 번만 수행해야 한다.
+- 봉인 unseen 평가는 구조와 설정을 완전히 잠근 뒤 한 번만 수행해야 한다.
 
 다음 승격 조건은 별도 subject에서 현재 full-support 개선을 재현하고, 연속 motion
 residual decoder가 retrieval-only pose보다 danger pose와 PA-MPJPE를 동시에

@@ -175,7 +175,7 @@ def save_roc(
 
 
 def save_pose_error_cdf(
-    errors: np.ndarray, risks: np.ndarray, output: Path,
+    errors: np.ndarray, risks: np.ndarray, output: Path, display_name: str,
 ) -> None:
     """Save risk-stratified empirical pose-error CDFs using percentages."""
     figure, axis = plt.subplots(figsize=(10.5, 7.0), constrained_layout=True)
@@ -194,7 +194,7 @@ def save_pose_error_cdf(
     axis.set_xlabel("Per-trial pose MPJPE (cm)", fontsize=12)
     axis.set_ylabel("Trials at or below error (%)", fontsize=12)
     axis.set_title(
-        "Sealed yja/E02: pose error distribution by risk",
+        f"{display_name}: pose error distribution by risk",
         fontsize=17,
         pad=14,
         fontweight="bold",
@@ -213,6 +213,7 @@ def main() -> None:
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--summary-output", type=Path, required=True)
+    parser.add_argument("--display-name", default="Sealed unseen")
     options = parser.parse_args()
 
     payload = np.load(options.input, allow_pickle=False)
@@ -232,14 +233,14 @@ def main() -> None:
     save_confusion(
         action_confusion,
         action_display_labels,
-        "Sealed yja/E02: 17-action confusion matrix (row-normalized)",
+        f"{options.display_name}: 17-action confusion matrix (row-normalized)",
         options.output_dir / "action_confusion_matrix_percent.png",
         (18.0, 15.5),
     )
     save_confusion(
         risk_confusion,
         RISK_NAMES,
-        "Sealed yja/E02: 3-risk confusion matrix (row-normalized)",
+        f"{options.display_name}: 3-risk confusion matrix (row-normalized)",
         options.output_dir / "risk_confusion_matrix_percent.png",
         (8.5, 7.2),
     )
@@ -247,20 +248,21 @@ def main() -> None:
         true_action,
         payload["action_probability"],
         ACTION_NAMES,
-        "Sealed yja/E02: action one-vs-rest ROC (16 query classes)",
+        f"{options.display_name}: action one-vs-rest ROC (16 query classes)",
         options.output_dir / "action_roc_auc.png",
     )
     risk_roc = save_roc(
         true_risk,
         payload["risk_probability"],
         RISK_NAMES,
-        "Sealed yja/E02: 3-risk one-vs-rest ROC",
+        f"{options.display_name}: 3-risk one-vs-rest ROC",
         options.output_dir / "risk_roc_auc.png",
     )
     save_pose_error_cdf(
         payload["pose_error_cm"],
         true_risk,
         options.output_dir / "pose_error_cdf_percent.png",
+        options.display_name,
     )
     summary = {
         "protocol": "sealed yja/E02; 239 query trials; support excluded",
