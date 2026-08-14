@@ -64,22 +64,25 @@ calibration support는 query에서 제거했다. 아래 값은 서로 다른 sup
 
 ### 행동·위험 분류
 
-| 지표 | 이전 채택본 | 현재 모델 | 변화 |
+| 지표 | 동일 가중치 raw 경로 | 정상 calibration | 변화 |
 |---|---:|---:|---:|
-| 17동작 accuracy | 46.70 ± 0.46% | **54.51 ± 1.89%** | +7.81%p |
-| 17동작 macro-F1 | 42.17 ± 1.04% | **48.45 ± 1.82%** | +6.28%p |
-| danger 세부동작 accuracy | 39.76 ± 4.17% | 39.77 ± 6.29% | 유지 |
-| 3위험도 accuracy | 52.29 ± 0.87% | **68.21 ± 2.29%** | +15.93%p |
-| 3위험도 macro-F1 | 43.20 ± 1.24% | **61.44 ± 3.21%** | +18.24%p |
-| danger recall | 53.12 ± 3.07% | **59.65 ± 7.00%** | +6.53%p |
-| safe → danger 오경보 | 18.68 ± 0.70% | **8.21 ± 2.34%** | -10.47%p |
+| 17동작 accuracy | 44.89 ± 0.87% | **53.38 ± 1.52%** | +8.48%p |
+| 17동작 macro-F1 | 35.33 ± 0.94% | **47.55 ± 1.83%** | +12.22%p |
+| danger 세부동작 accuracy | 13.00 ± 2.12% | **38.73 ± 6.11%** | +25.73%p |
+| 3위험도 accuracy | 52.88 ± 0.86% | **68.50 ± 2.01%** | +15.62%p |
+| 3위험도 macro-F1 | 43.50 ± 1.20% | **62.00 ± 2.87%** | +18.51%p |
+| danger recall | 53.12 ± 3.07% | **56.90 ± 5.49%** | +3.78%p |
+| safe → danger 오경보 | 18.68 ± 0.70% | **8.21 ± 1.85%** | -10.47%p |
 
 새 모델은 warning support 3회를 추가해 기존에 비어 있던 위험 경계까지 target
 좌표로 옮긴다. 위험도는 calibrated action 확률에서 파생하므로 분류와 위험도가
-서로 모순되는 경우도 줄었다. 이전 채택본은 1,063개, 현재 모델은 warning support
-21개를 추가 제외한 1,042개 query를 평가했으므로 두 열의 query 집합은 완전히 같지
-않다. 동일한 1,042개 query에서 raw 경로 대비 action macro-F1은
-`35.64% → 48.45%`였다.
+서로 모순되는 경우도 줄었다. 두 열은 동일한 encoder checkpoint와 동일한 1,042개
+query를 사용하고 calibration 적용 여부만 다르다.
+
+2026-08-14 재감사에서 기존 표의 `54.51%`가 배포 artifact와 다른 비-seed primary
+fold checkpoint로 계산된 것을 확인했다. 현재 표는 `notifi_ai_v2.pt`의 primary
+encoder SHA-256과 일치하는 seed-22012 fold 계보로 5개 support seed를 다시 실행한
+결과다. 최종 봉인 `yja/E02` 결과와 pose 결과에는 이 checkpoint 불일치가 없었다.
 
 ### 3D 동작 복원
 
@@ -95,8 +98,10 @@ calibration support는 query에서 제거했다. 아래 값은 서로 다른 sup
 크기를 정렬한 PA-MPJPE는 0.16 cm 악화됐다. 따라서 현재 motion 정렬은 실제
 궤적과 낙상 복원에는 유효하지만, 순수 자세 모양까지 개선한 것은 아니다.
 
-상세 수치는 `results/full_support_ridge_risk_5seed_summary.json`과
-`results/motion_ridge_pose_fixed_5seed_summary.json`에 있다.
+상세 수치는 `results/full_support_loso_recheck_20260814.json`과
+`results/motion_ridge_pose_fixed_5seed_summary.json`에 있다. 재평가 조건과
+held-out 사람별 결과는 [`docs/loso_evaluation_2026-08-14.md`](docs/loso_evaluation_2026-08-14.md)에
+정리했다.
 
 ### 최종 봉인 unseen
 
@@ -217,7 +222,7 @@ Artifact 크기는 60,880,749 bytes이고 SHA-256은
 ## 남은 한계
 
 - Source 사람이 3명이고 최종 unseen도 1명뿐이므로 “어떤 사용자에서도 동일 성능”은 입증되지 않았다.
-- 3위험도 macro-F1 61.44%, danger recall 59.65%는 개선됐지만 상용 안전 시스템 수준이 아니다.
+- 3위험도 macro-F1 62.00%, danger recall 56.90%는 개선됐지만 상용 안전 시스템 수준이 아니다.
 - Pose는 연속 관절 생성기가 아니라 calibrated motion retrieval이다. Bank에 없는 낙상은 근사 동작으로 나온다.
 - Danger distal 55.47 cm는 부상 부위 판단에 쓰기에는 여전히 크다.
 - `yja/E02` 최종 평가는 구조와 설정을 완전히 잠근 뒤 한 번만 수행해야 한다.

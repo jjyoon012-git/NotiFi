@@ -153,13 +153,14 @@ GVHMR pose는 calibration과 추론에 사용하지 않습니다.
 다른 support seed 5개의 평균입니다. 모델 설정은 outer test subject를 사용하지
 않고 고정했습니다.
 
-| Metric | Previous | NotiFi AI v2 |
+| Metric | Matched raw path | Normal calibration |
 |---|---:|---:|
-| 17-action accuracy | 46.70% | **54.51%** |
-| 17-action macro-F1 | 42.17% | **48.45%** |
-| 3-risk accuracy | 52.29% | **68.21%** |
-| 3-risk macro-F1 | 43.20% | **61.44%** |
-| Danger recall | 53.12% | **59.65%** |
+| 17-action accuracy | 44.89% | **53.38%** |
+| 17-action macro-F1 | 35.33% | **47.55%** |
+| Danger subtype accuracy | 13.00% | **38.73%** |
+| 3-risk accuracy | 52.88% | **68.50%** |
+| 3-risk macro-F1 | 43.50% | **62.00%** |
+| Danger recall | 53.12% | **56.90%** |
 | Safe to danger false alarm | 18.68% | **8.21%** |
 
 | Pose metric | Previous retrieval | NotiFi AI v2 |
@@ -171,8 +172,12 @@ GVHMR pose는 calibration과 추론에 사용하지 않습니다.
 | PA-MPJPE | **10.45 cm** | 10.61 cm |
 
 현재 모델은 행동과 위험 경계를 크게 개선했지만 danger 세부동작 accuracy는
-`39.77%`, danger distal MPJPE는 `55.47 cm`입니다. 낙상 형태와 접촉 부위를
+`38.73%`, danger distal MPJPE는 `55.47 cm`입니다. 낙상 형태와 접촉 부위를
 정밀하게 복원하는 문제는 아직 해결되지 않았습니다.
+
+두 분류 열은 동일한 1,042개 query와 동일 checkpoint 계보를 사용합니다. 2026-08-14
+재감사에서 이전 LOSO 표가 배포 artifact와 다른 비-seed primary fold checkpoint를
+사용한 것을 확인해, 실제 artifact SHA-256과 일치하는 seed-22012 계보로 정정했습니다.
 
 ### Final sealed `yja/E02`
 
