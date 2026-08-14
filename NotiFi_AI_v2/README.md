@@ -125,6 +125,9 @@ basic 16개, warning 3개, danger 5개를 calibration에 사용하고, 겹치지
 `results/sealed_yja_e02_final.json`에 기록했다. 위험 그룹은 잘 일반화됐지만
 세부 행동과 관절 복원은 여전히 상용 품질에 못 미친다.
 
+봉인 `yja/E02`의 퍼센트 confusion matrix, ROC-AUC, pose 오차 분포와 재현 방법은
+[`docs/evaluation/yja_e02/README.md`](docs/evaluation/yja_e02/README.md)에 정리했다.
+
 ## Calibration 계약
 
 기본동작은 각각 2회 수집한다.

@@ -88,6 +88,15 @@ def main() -> None:
     parser.add_argument("--cache-root", type=Path, required=True)
     parser.add_argument("--artifact", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--diagnostics-output",
+        type=Path,
+        default=None,
+        help=(
+            "Optional compressed query-level predictions used to reproduce "
+            "confusion matrices and ROC curves."
+        ),
+    )
     parser.add_argument("--support-seed", type=int, default=17017)
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--device", default="cuda")
@@ -159,10 +168,13 @@ def main() -> None:
         risk_logits.append(prediction["risk_logits"].detach().cpu())
         predicted_pose.append(prediction["pose_rel"].detach().cpu())
 
+    action_logits = torch.cat(action_logits)
+    risk_logits = torch.cat(risk_logits)
+    predicted_pose = torch.cat(predicted_pose)
     actions = torch.tensor(table.class_id.iloc[query].to_numpy()).long()
     risks = torch.tensor(table.risk_id.iloc[query].to_numpy()).long()
     classification = classification_metrics(
-        torch.cat(action_logits), torch.cat(risk_logits), actions, risks
+        action_logits, risk_logits, actions, risks
     )
     classification["safe_to_danger_rate"] = (
         classification["safe_to_danger"] / max(classification["safe_total"], 1)
@@ -171,7 +183,14 @@ def main() -> None:
     valid = torch.from_numpy(np.array(store.valid[query], dtype=bool))
     valid &= torch.isfinite(target_pose).all(-1).all(-1)
     pose = retrieval_metrics(
-        torch.cat(predicted_pose), target_pose, valid, risks
+        predicted_pose, target_pose, valid, risks
+    )
+    joint_error_cm = 100.0 * torch.linalg.vector_norm(
+        predicted_pose - target_pose, dim=-1
+    )
+    trial_pose_error_cm = (
+        (joint_error_cm * valid[..., None]).sum((1, 2))
+        / (valid.sum(1) * joint_error_cm.shape[-1]).clamp_min(1)
     )
     result = {
         "run": "NOTIFI-AI-V2-SEALED-YJA-E02-FINAL",
@@ -203,6 +222,21 @@ def main() -> None:
     options.output.write_text(
         json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8"
     )
+    if options.diagnostics_output is not None:
+        options.diagnostics_output.parent.mkdir(parents=True, exist_ok=True)
+        np.savez_compressed(
+            options.diagnostics_output,
+            trial_id=table.trial_id.iloc[query].astype(str).to_numpy(),
+            true_action=actions.numpy(),
+            true_risk=risks.numpy(),
+            predicted_action=action_logits.argmax(-1).numpy(),
+            predicted_risk=risk_logits.argmax(-1).numpy(),
+            action_probability=action_logits.softmax(-1).numpy(),
+            risk_probability=risk_logits.softmax(-1).numpy(),
+            pose_error_cm=trial_pose_error_cm.numpy(),
+            artifact_sha256=np.asarray(result["artifact_sha256"]),
+            support_seed=np.asarray(options.support_seed, dtype=np.int64),
+        )
     print(json.dumps({
         "classification": classification,
         "pose": pose,
