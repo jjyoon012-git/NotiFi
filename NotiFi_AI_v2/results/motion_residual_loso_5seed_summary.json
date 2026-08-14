@@ -1,0 +1,38 @@
+{
+  "run": "NOTIFI-AI-V2-CSI-CONTINUOUS-MOTION-RESIDUAL",
+  "protocol": "source nested-LOSO; leave-site-out training retrieval; five seeds",
+  "seeds": [26081, 26082, 26083, 26084, 26085],
+  "baseline_cm": {
+    "pose": 29.109985,
+    "distal": 43.123395,
+    "pa_pose": 10.680864,
+    "danger_pose": 36.769739,
+    "danger_distal": 54.976920
+  },
+  "residual_mean_cm": {
+    "pose": 28.693,
+    "distal": 42.137,
+    "pa_pose": 11.015,
+    "danger_pose": 35.806,
+    "danger_distal": 53.078
+  },
+  "residual_std_cm": {
+    "pose": 0.082,
+    "distal": 0.146,
+    "pa_pose": 0.103,
+    "danger_pose": 0.157,
+    "danger_distal": 0.193
+  },
+  "mean_change_cm": {
+    "pose": -0.417,
+    "distal": -0.986,
+    "pa_pose": 0.334,
+    "danger_pose": -0.964,
+    "danger_distal": -1.899
+  },
+  "outer_holdout_used_for_selection": false,
+  "target_subject_used": false,
+  "sealed_target_used": false,
+  "query_labels_or_pose_gt_at_inference": false,
+  "source_pose_gt_training_only": true
+}

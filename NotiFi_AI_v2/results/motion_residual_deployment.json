@@ -1,0 +1,40 @@
+{
+  "artifact": "C:\\Users\\jjeong\\Documents\\Playground\\notifi_target_repo\\NotiFi_AI_v2\\artifacts\\notifi_ai_v2_motion_residual.pt",
+  "training_trials": 1063,
+  "source_sites": [
+    "ajh_E01",
+    "ajh_E02",
+    "ajh_E03",
+    "lmh_E01",
+    "mhw_E01",
+    "mhw_E02",
+    "mhw_E03"
+  ],
+  "epochs": 5,
+  "strength": 0.75,
+  "training_seed": 26081,
+  "history": [
+    {
+      "epoch": 1,
+      "loss": 0.15148221073525675
+    },
+    {
+      "epoch": 2,
+      "loss": 0.14688905018768952
+    },
+    {
+      "epoch": 3,
+      "loss": 0.13628979948129546
+    },
+    {
+      "epoch": 4,
+      "loss": 0.13251726572098357
+    },
+    {
+      "epoch": 5,
+      "loss": 0.12887515269973304
+    }
+  ],
+  "target_subject_used": false,
+  "sealed_target_used": false
+}

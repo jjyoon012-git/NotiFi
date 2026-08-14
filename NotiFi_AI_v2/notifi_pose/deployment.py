@@ -34,6 +34,7 @@ from notifi_ai_v2.support_alignment import (
     apply_affine_map,
     identity_ridge_map,
 )
+from notifi_ai_v2.motion_residual import MotionResidualDecoder
 
 
 MIN_LINK_COVERAGE = 0.50
@@ -166,6 +167,16 @@ class CAL20Deployment:
             )
             for key, value in pose.items()
         }
+        residual = bundle.get("motion_residual")
+        self.motion_residual = None
+        self.motion_residual_strength = 0.0
+        if residual is not None:
+            self.motion_residual = MotionResidualDecoder(
+                **residual["model_config"]
+            ).to(self.device)
+            self.motion_residual.load_state_dict(residual["model"])
+            self.motion_residual.eval()
+            self.motion_residual_strength = float(residual["strength"])
 
     @classmethod
     def load(
@@ -516,6 +527,7 @@ class CAL20Deployment:
 
     def _simulate_pose(
         self,
+        features: torch.Tensor,
         motion: torch.Tensor,
         frame_mask: torch.Tensor,
         action: torch.Tensor,
@@ -593,6 +605,16 @@ class CAL20Deployment:
                 prediction, frame_mask, symmetric=True
             )
             prediction = prediction + bone_blend * (projected - prediction)
+        if self.motion_residual is not None:
+            refined = self.motion_residual(
+                features.to(self.device).float(),
+                prediction.to(self.device).float(),
+                frame_mask.to(self.device).bool(),
+                action.to(self.device).softmax(-1),
+                risk.to(self.device).softmax(-1),
+                self.motion_residual_strength,
+            )
+            prediction = refined["pose_rel"].detach().cpu()
         return {
             "pose_rel": prediction,
             "pose_valid": frame_mask,
@@ -805,6 +827,7 @@ class CAL20Deployment:
         }
         if simulate_pose:
             result.update(self._simulate_pose(
+                output["query_features"],
                 output["pose_motion"],
                 output["query_frame_mask"],
                 action,

@@ -213,9 +213,9 @@
   <text x="1660" y="1004" text-anchor="middle" class="small">prevents over-dynamic safe poses</text>
 
   <rect x="1850" y="900" width="270" height="125" class="box" fill="#f5f1ff" stroke="#8067ad"/>
-  <text x="1985" y="941" text-anchor="middle" class="head">Body correction</text>
-  <text x="1985" y="975" text-anchor="middle" class="body">first-order bone-length fit</text>
-  <text x="1985" y="1004" text-anchor="middle" class="small">pelvis-relative output</text>
+  <text x="1985" y="941" text-anchor="middle" class="head">CSI residual decoder</text>
+  <text x="1985" y="975" text-anchor="middle" class="body">dilated temporal bone residual</text>
+  <text x="1985" y="1004" text-anchor="middle" class="small">risk-gated continuous refinement</text>
 
   <path d="M2095 845 L2095 870 L1660 870 L1660 900" class="arrow"/>
   <path d="M1805 963 L1850 963" class="arrow"/>
@@ -235,7 +235,7 @@
   <rect x="755" y="1190" width="1580" height="92" fill="#f7f8fa" stroke="#aeb6c1" stroke-width="2" stroke-dasharray="10 7" rx="7"/>
   <text x="785" y="1226" class="head">Training / offline assets</text>
   <text x="785" y="1262" class="body">Source CSI + subject/site IDs</text>
-  <text x="1090" y="1262" class="small">Action CE, risk CE, and domain-adversarial GRL</text>
+  <text x="1090" y="1262" class="small">Action/risk losses, domain GRL, and pose residual loss</text>
   <text x="1600" y="1262" class="body">Source GVHMR sequences</text>
   <text x="1885" y="1262" class="small">build fixed motion bank</text>
   <path d="M1055 1190 L1055 1158 L932 1158 L932 825" class="train-arrow"/>

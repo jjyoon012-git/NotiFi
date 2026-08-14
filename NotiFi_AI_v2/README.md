@@ -2,7 +2,7 @@
 
 NotiFi AI v2는 3개 송신 링크의 CSI만으로 17개 행동, 3단계 위험도와
 pelvis-relative SMPL body-22 동작을 추정하는 unseen calibration 연구 모델이다.
-현재 채택본은 `artifacts/notifi_ai_v2.pt` 하나로 배포된다. 최종 unseen 데이터는
+현재 채택본은 `artifacts/notifi_ai_v2_motion_residual.pt` 하나로 배포된다. 최종 unseen 데이터는
 모델 선택에 한 번도 사용하지 않았고, artifact와 설정을 잠근 뒤 감사 평가를
 한 번 수행했다.
 
@@ -38,7 +38,8 @@ offline motion-bank 구축 경로를 의미한다.
   17-action ──> 3-risk     top-k GVHMR motion retrieval
                                   |
                                   v
-                     가중 합성 + 뼈 길이 일관성 보정
+                     CSI-conditioned temporal residual
+                     (retrieval 관절 방향·궤적 보정)
                                   |
                                   v
                          304 x 22 x 3 pose
@@ -54,6 +55,27 @@ offline motion-bank 구축 경로를 의미한다.
 safe 9종, warning 3종, danger 5종으로 정확히 합산한다. Pose는 CSI가 예측한 시간별 motion descriptor를
 calibration support로 보정한 뒤 GVHMR motion bank를 검색한다. Danger 확률의
 제곱근으로 보정 강도를 조절해 정적인 동작이 과도하게 변형되는 것을 막는다.
+검색된 pose는 최종값으로 그대로 쓰지 않는다. 64차원 framewise CSI 특징, 검색 pose의
+뼈 벡터와 속도, 행동·위험 확률을 dilated temporal decoder에 넣어 관절별 연속 잔차를
+예측한다. 예측 위험도가 낮으면 잔차를 자동으로 줄이고, pelvis root는 고정하며,
+source 학습 중에는 자기 환경의 motion bank를 사용할 수 없게 해 복사 누수를 막았다.
+
+### Source Nested-LOSO 복원 검증
+
+사람 한 명 전체를 외부 평가로 숨기고, 남은 사람의 별도 환경으로 epoch와 잔차 강도만
+선택했다. 5개 training seed 평균이며 외부 사람의 GT는 설정 선택에 사용하지 않았다.
+
+| 지표 | Retrieval-only | Residual decoder | 변화 |
+|---|---:|---:|---:|
+| Pose MPJPE | 29.11 cm | **28.69 ± 0.08 cm** | -0.42 cm |
+| Distal MPJPE | 43.12 cm | **42.14 ± 0.15 cm** | -0.99 cm |
+| PA-MPJPE | **10.68 cm** | 11.02 ± 0.10 cm | +0.34 cm |
+| Danger pose MPJPE | 36.77 cm | **35.81 ± 0.16 cm** | -0.96 cm |
+| Danger distal MPJPE | 54.98 cm | **53.08 ± 0.19 cm** | -1.90 cm |
+
+낙상과 말단 관절 오차는 모든 seed에서 줄었지만 PA-MPJPE는 악화됐다. 즉 낙상 궤적과
+손·발 위치는 더 가까워졌으나, 회전·이동·크기를 제거한 순수 자세 형상에는 아직
+trade-off가 있다.
 
 ## 봉인 Unseen 성능
 
@@ -75,11 +97,11 @@ calibration을 수행한 뒤, support와 겹치지 않는 239개 query를 평가
 | danger recall | **95.56%** |
 | danger 세부동작 accuracy | 42.22% |
 | safe → danger 오경보 | **0.00%** |
-| Pose MPJPE | 29.72 cm |
-| Distal MPJPE | 43.84 cm |
-| PA-MPJPE | 10.81 cm |
-| Danger pose MPJPE | 35.77 cm |
-| Danger distal MPJPE | 51.90 cm |
+| Pose MPJPE | **28.43 cm** |
+| Distal MPJPE | **41.83 cm** |
+| PA-MPJPE | 11.73 cm |
+| Danger pose MPJPE | **33.17 cm** |
+| Danger distal MPJPE | **48.27 cm** |
 
 ### 퍼센트 Confusion Matrix
 
@@ -111,10 +133,10 @@ ROC-AUC는 실제 평가 가능한 16개 동작만 평균했다.
 
 ![Unseen pose error CDF](docs/evaluation/unseen/pose_error_cdf_percent.png)
 
-누적 오차 분포에서 danger pose의 중앙값은 35.0 cm다. 현재 pose는 연속 관절
-생성기가 아니라 calibrated motion retrieval이므로, motion bank에 없는 낙상 궤적과
-손·발 끝 움직임은 정확히 생성하기 어렵다. 따라서 위험도 탐지는 유망하지만 세부
-행동과 3D 관절 복원은 아직 상용 품질에 못 미친다.
+전체 trial-frame 관절 오차 중앙값은 26.34 cm다. 현재 pose는 calibrated motion
+retrieval을 초기값으로 삼고 CSI temporal residual을 생성하므로 bank에 없는 관절
+궤적을 제한적으로 수정할 수 있다. 다만 완전한 생성 모델은 아니며 세부 행동과 3D
+관절 복원은 아직 상용 품질에 못 미친다.
 
 이 평가는 신규 사용자·환경 한 조건에 대한 봉인 결과다. 모든 신규 사용자와 공간에서
 동일한 성능을 보장한다는 의미는 아니다.
@@ -164,7 +186,7 @@ Danger calibration은 실제 사용자가 맨바닥에서 수행하면 안 된�
 python -m pip install -e .
 python -m compileall -q notifi_ai_v2 notifi_pose scripts tests
 python -m unittest discover -s tests -p "test_*.py" -v
-python scripts/verify_artifact.py --artifact artifacts/notifi_ai_v2.pt --device cpu
+python scripts/verify_artifact.py --artifact artifacts/notifi_ai_v2_motion_residual.pt --device cpu
 ```
 
 Python API는 tensor 입력 `[B,304,3,114,2]`와 link mask `[B,304,3]`을 받는다.
@@ -172,7 +194,7 @@ Python API는 tensor 입력 `[B,304,3,114,2]`와 link mask `[B,304,3]`을 받는
 ```python
 from notifi_pose.deployment import CAL44Deployment
 
-runtime = CAL44Deployment.load("artifacts/notifi_ai_v2.pt")
+runtime = CAL44Deployment.load("artifacts/notifi_ai_v2_motion_residual.pt")
 calibration = runtime.calibrate(
     support_csi,
     support_mask,
@@ -201,26 +223,29 @@ pose = prediction["pose_rel"]              # [B,304,22,3]
 
 | 경로 | 역할 |
 |---|---|
-| `artifacts/notifi_ai_v2.pt` | 두 encoder, source prototype, GVHMR bank와 full-support calibration 설정을 포함한 단일 artifact |
-| `notifi_pose/deployment.py` | calibration, 17동작·3위험도 추론, pose 검색 API |
+| `artifacts/notifi_ai_v2_motion_residual.pt` | encoder, source prototype, GVHMR bank, calibration과 residual decoder를 포함한 단일 artifact |
+| `notifi_pose/deployment.py` | calibration, 17동작·3위험도 추론, retrieval와 residual pose API |
+| `notifi_ai_v2/motion_residual.py` | CSI-conditioned 연속 관절 잔차 decoder와 학습 손실 |
 | `notifi_ai_v2/support_alignment.py` | identity-regularized support ridge |
 | `notifi_pose/skeleton.py` | SMPL body-22 뼈 길이 일관성 보정 |
 | `scripts/verify_artifact.py` | 단일 PT end-to-end smoke test |
 | `scripts/evaluate_cal44_support_ridge.py` | source nested-LOSO 행동 검증 |
 | `scripts/evaluate_motion_signature_ridge_pose.py` | source nested-LOSO pose 검증 |
+| `scripts/train_motion_residual_loso.py` | 누수 방지 source nested-LOSO residual 학습·검증 |
+| `scripts/train_motion_residual_deployment.py` | source 전체 고정 epoch 학습과 단일 artifact export |
 
-Artifact 크기는 60,880,749 bytes이고 SHA-256은
-`f1d055df3252bf1e0d09c62d4ce1ec953b08c3cdb0e8cd7e3f7dac5be287447c`이다.
+Artifact 크기는 62,143,097 bytes이고 SHA-256은
+`42c2787ce8daec161340411121e210777b95d3dfd4b7fe46c4a820ba13278773`이다.
 실패한 M2/M3 체크포인트와 수백 개의 중간 JSON은 공개 패키지에서 제거했다.
 
 ## 남은 한계
 
 - Source 사람이 3명이고 최종 unseen도 1명뿐이므로 “어떤 사용자에서도 동일 성능”은 입증되지 않았다.
 - 3위험도 macro-F1 62.00%, danger recall 56.90%는 개선됐지만 상용 안전 시스템 수준이 아니다.
-- Pose는 연속 관절 생성기가 아니라 calibrated motion retrieval이다. Bank에 없는 낙상은 근사 동작으로 나온다.
-- Danger distal 55.47 cm는 부상 부위 판단에 쓰기에는 여전히 크다.
+- Pose는 retrieval 초기값을 연속 잔차로 수정하지만 완전한 motion 생성기는 아니다. Bank와 크게 다른 낙상에는 한계가 있다.
+- 봉인 unseen danger distal 48.27 cm는 개선됐지만 부상 부위 판단에 단독으로 쓰기에는 여전히 크다.
+- PA-MPJPE가 retrieval-only보다 악화돼 관절 궤적과 순수 자세 형상을 동시에 개선하는 제약이 더 필요하다.
 - 봉인 unseen 평가는 구조와 설정을 완전히 잠근 뒤 한 번만 수행해야 한다.
 
-다음 승격 조건은 별도 subject에서 현재 full-support 개선을 재현하고, 연속 motion
-residual decoder가 retrieval-only pose보다 danger pose와 PA-MPJPE를 동시에
-개선하는 것이다.
+다음 승격 조건은 별도 subject에서 현재 full-support 개선을 재현하고, residual
+decoder가 retrieval-only보다 danger pose와 PA-MPJPE를 동시에 개선하는 것이다.
