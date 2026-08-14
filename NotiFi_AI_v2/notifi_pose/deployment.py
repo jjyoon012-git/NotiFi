@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 from dataclasses import dataclass
 import math
 from pathlib import Path
@@ -35,6 +36,7 @@ from notifi_ai_v2.support_alignment import (
     identity_ridge_map,
 )
 from notifi_ai_v2.motion_residual import MotionResidualDecoder
+from notifi_ai_v2.continuous_motion import ContinuousMotionGenerator
 
 
 MIN_LINK_COVERAGE = 0.50
@@ -104,6 +106,38 @@ class CAL20Deployment:
         self.model = build_calibration_model(bundle["model_config"]).to(self.device)
         self.model.load_state_dict(bundle["model"])
         self.model.eval()
+        self.continuous_motion_encoder = None
+        self.continuous_base_generator = None
+        self.continuous_danger_generator = None
+        self.continuous_risk_threshold = 1.0
+        continuous = bundle.get("continuous_pose")
+        if continuous is not None:
+            if continuous.get("sealed_target_used") is not False:
+                raise ValueError("continuous pose branch must exclude sealed target")
+            self.continuous_motion_encoder = copy.deepcopy(
+                self.model.motion_encoder
+            ).to(self.device)
+            self.continuous_motion_encoder.load_state_dict(
+                continuous["motion_encoder"]
+            )
+            self.continuous_motion_encoder.eval()
+            self.continuous_base_generator = ContinuousMotionGenerator(
+                **continuous["base_generator_config"]
+            ).to(self.device)
+            self.continuous_base_generator.load_state_dict(
+                continuous["base_generator"]
+            )
+            self.continuous_base_generator.eval()
+            self.continuous_danger_generator = ContinuousMotionGenerator(
+                **continuous["danger_generator_config"]
+            ).to(self.device)
+            self.continuous_danger_generator.load_state_dict(
+                continuous["danger_generator"]
+            )
+            self.continuous_danger_generator.eval()
+            self.continuous_risk_threshold = float(
+                continuous["risk_threshold"]
+            )
         self.support_contract = dict(bundle["support_contract"])
         self.action_config = dict(bundle["action_config"])
         self.risk_config = dict(bundle["risk_config"])
@@ -826,14 +860,43 @@ class CAL20Deployment:
             **quality,
         }
         if simulate_pose:
-            result.update(self._simulate_pose(
-                output["query_features"],
-                output["pose_motion"],
-                output["query_frame_mask"],
-                action,
-                motion_risk,
-                calibration.motion_mapping,
-            ))
+            if self.continuous_motion_encoder is None:
+                result.update(self._simulate_pose(
+                    output["query_features"],
+                    output["pose_motion"],
+                    output["query_frame_mask"],
+                    action,
+                    motion_risk,
+                    calibration.motion_mapping,
+                ))
+            else:
+                prepared = self.model.canonicalizer.prepare(
+                    query_csi.to(self.device).float(), query_mask,
+                    calibration.support_csi, calibration.support_mask,
+                    calibration.support_labels,
+                    calibration.absence_csi, calibration.absence_mask,
+                )
+                features, frame_mask, _, _ = self.continuous_motion_encoder(
+                    prepared["query_motion"], prepared["query_mask"],
+                )
+                action_probability = action.softmax(-1)
+                risk_probability = risk.softmax(-1)
+                base_pose = self.continuous_base_generator(
+                    features, frame_mask, action_probability, risk_probability,
+                )["pose_rel"]
+                danger_pose = self.continuous_danger_generator(
+                    features, frame_mask, action_probability, risk_probability,
+                )["pose_rel"]
+                danger_gate = (
+                    risk_probability[:, 2] >= self.continuous_risk_threshold
+                )
+                result.update({
+                    "pose_rel": torch.where(
+                        danger_gate[:, None, None, None], danger_pose, base_pose,
+                    ),
+                    "pose_frame_mask": frame_mask,
+                    "continuous_danger_expert_used": danger_gate,
+                })
         return result
 
 

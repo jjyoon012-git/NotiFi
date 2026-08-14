@@ -1,0 +1,41 @@
+{
+  "run": "NOTIFI-AI-V2-CONTINUOUS-DANGER-SEALED-FINAL",
+  "protocol": "locked full-source artifact; final-only unseen subject/environment; support excluded from 239 queries",
+  "artifact": "C:\\Users\\jjeong\\Documents\\Playground\\notifi_target_repo\\NotiFi_AI_v2\\artifacts\\notifi_ai_v2.pt",
+  "artifact_sha256": "24d23f077e251101003f14b89b4974a54fe0478629d9065f7aa874b7722f9aaf",
+  "support_seed": 17017,
+  "counts": {
+    "total": 275,
+    "absence": 12,
+    "basic_support": 16,
+    "warning_support": 3,
+    "danger_support": 5,
+    "query": 239,
+    "danger_expert_routed": 37
+  },
+  "classification": {
+    "action_accuracy": 0.6569037437438965,
+    "action_macro_f1": 0.5563808679580688,
+    "risk_accuracy": 0.9581589698791504,
+    "risk_macro_f1": 0.9586687088012695,
+    "danger_recall": 0.9555555582046509,
+    "danger_correct": 43,
+    "danger_total": 45,
+    "danger_action_accuracy": 0.42222222685813904,
+    "safe_to_danger": 0,
+    "safe_total": 122,
+    "trials": 239,
+    "safe_to_danger_rate": 0.0
+  },
+  "pose": {
+    "pose_cm": 26.960644125938416,
+    "distal_cm": 39.16734457015991,
+    "pa_pose_cm": 10.237992854853937,
+    "danger_pose_cm": 34.46265757083893,
+    "danger_distal_cm": 50.629305839538574
+  },
+  "risk_threshold": 0.75,
+  "used_for_model_selection": false,
+  "used_for_training_or_tuning": false,
+  "query_labels_or_pose_gt_used_at_inference": false
+}

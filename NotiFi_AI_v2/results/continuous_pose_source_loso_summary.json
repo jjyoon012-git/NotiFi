@@ -1,0 +1,29 @@
+{
+  "run": "NOTIFI-AI-V2-CONTINUOUS-POSE-SOURCE-SELECTION",
+  "protocol": "source nested leave-one-site-out; sealed target excluded",
+  "retrieval_cm": {
+    "pose": 29.1223,
+    "distal": 43.1405,
+    "pa_pose": 10.6819,
+    "danger_pose": 36.7963,
+    "danger_distal": 55.0095
+  },
+  "continuous_base_cm": {
+    "pose": 26.3468,
+    "distal": 39.3933,
+    "pa_pose": 9.5073,
+    "danger_pose": 34.0654,
+    "danger_distal": 50.9960
+  },
+  "selected_continuous_danger_expert_cm": {
+    "pose": 26.3320,
+    "distal": 39.3512,
+    "pa_pose": 9.5758,
+    "danger_pose": 33.8554,
+    "danger_distal": 50.6615
+  },
+  "risk_threshold": 0.75,
+  "target_subject_used": false,
+  "sealed_target_used": false,
+  "query_labels_or_pose_gt_used_at_inference": false
+}

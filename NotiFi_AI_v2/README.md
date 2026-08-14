@@ -1,251 +1,209 @@
 # NotiFi AI v2
 
-NotiFi AI v2는 3개 송신 링크의 CSI만으로 17개 행동, 3단계 위험도와
-pelvis-relative SMPL body-22 동작을 추정하는 unseen calibration 연구 모델이다.
-현재 채택본은 `artifacts/notifi_ai_v2_motion_residual.pt` 하나로 배포된다. 최종 unseen 데이터는
-모델 선택에 한 번도 사용하지 않았고, artifact와 설정을 잠근 뒤 감사 평가를
-한 번 수행했다.
+NotiFi AI v2는 3개 송신기와 1개 수신기에서 수집한 CSI만으로 17개 행동, 3단계 위험도,
+pelvis-relative SMPL body-22 동작을 추론하는 calibration 기반 모델이다.
 
-## 모델 구조도
+현재 배포 artifact는 `notifi_ai_v2.pt`이다. 분류 calibration은 기존
+full-support 방식을 유지하고, pose는 motion bank를 그대로 출력하는 대신 CSI에서 연속 관절
+궤적을 생성한다. 새 사람과 환경의 정답 query는 학습, epoch 선택, threshold 선택에 사용하지
+않았다.
 
-![NotiFi AI v2 architecture](docs/notifi_ai_v2_architecture_cvpr.png)
+## 현재 파이프라인
 
-논문 및 발표 자료에는 고해상도 PNG를 사용할 수 있으며, 편집 가능한 원본은
-[`docs/notifi_ai_v2_architecture_cvpr.svg`](docs/notifi_ai_v2_architecture_cvpr.svg)에
-있다. 실선은 query 추론, 주황색은 calibration support 경로, 점선은 학습 및
-offline motion-bank 구축 경로를 의미한다.
-
-## 현재 채택 구조
-
-```text
-새 공간 CSI
-  ├─ 빈 공간 12회
-  ├─ 기본동작 8종 x 2회
-  ├─ warning 동작 3종 x 1회
-  └─ 통제된 danger 동작 5종 x 1회
-           |
-           v
-  support/absence canonicalization
-           |
-           v
-  두 CSI encoder의 행동·위험·motion descriptor
-       |                         |
-       v                         v
-  17-class affine ridge      motion-signature ridge
-  source 행동공간 → target    target 움직임 → source pose 공간
-       |                         |
-       v                         v
-  17-action ──> 3-risk     top-k GVHMR motion retrieval
-                                  |
-                                  v
-                     CSI-conditioned temporal residual
-                     (retrieval 관절 방향·궤적 보정)
-                                  |
-                                  v
-                         304 x 22 x 3 pose
+```mermaid
+flowchart LR
+    S["Calibration support<br/>absence + basic + warning + danger"] --> C["CSI canonicalization<br/>환경/사람 기준선 보정"]
+    Q["Query CSI"] --> C
+    C --> E["공유 CSI encoder"]
+    E --> A["17-action head"]
+    A --> R["3-risk aggregation"]
+    E --> P["Pose-specific motion encoder"]
+    A --> G["Continuous kinematic decoder"]
+    R --> G
+    P --> G
+    R --> D{"Predicted danger<br/>probability >= 0.75"}
+    D -->|No| B["Base motion generator"]
+    D -->|Yes| F["Danger-specialized generator"]
+    B --> O["304 x 22 x 3 pose"]
+    F --> O
 ```
 
-기존 모델은 기본 자세 support를 정적 반사 기준선으로만 사용했다. 현재 모델은
-기본·warning·danger support가 만드는 class geometry를 이용해 source의 17개
-행동 prototype 전체를 새 사용자 공간으로 옮긴다. 64차원 행동 정렬은 적은 support에
-과적합하지 않도록 identity prior가 있는 affine ridge를 사용하며, 기존 분류와
-정렬 분류를 `0.25 : 0.75` 확률로 결합한다.
+### Calibration과 분류
 
-위험도는 별도 head의 불안정한 경계를 다시 쓰지 않고, 보정된 17개 행동 확률을
-safe 9종, warning 3종, danger 5종으로 정확히 합산한다. Pose는 CSI가 예측한 시간별 motion descriptor를
-calibration support로 보정한 뒤 GVHMR motion bank를 검색한다. Danger 확률의
-제곱근으로 보정 강도를 조절해 정적인 동작이 과도하게 변형되는 것을 막는다.
-검색된 pose는 최종값으로 그대로 쓰지 않는다. 64차원 framewise CSI 특징, 검색 pose의
-뼈 벡터와 속도, 행동·위험 확률을 dilated temporal decoder에 넣어 관절별 연속 잔차를
-예측한다. 예측 위험도가 낮으면 잔차를 자동으로 줄이고, pelvis root는 고정하며,
-source 학습 중에는 자기 환경의 motion bank를 사용할 수 없게 해 복사 누수를 막았다.
+- 비어 있는 공간 12개로 정적 환경 반사 기준선을 만든다.
+- 기본 행동 8종을 각 2개, warning 3종과 danger 5종을 각 1개 사용한다.
+- support anchor와 source prototype을 identity-regularized affine ridge로 정렬한다.
+- 17개 행동 확률을 safe, warning, danger 그룹으로 합산해 위험도를 계산한다.
+- link coverage와 calibration geometry가 기준을 벗어나면 `abstain`과 경고를 반환한다.
 
-### Source Nested-LOSO 복원 검증
+### 연속 pose 복원
 
-사람 한 명 전체를 외부 평가로 숨기고, 남은 사람의 별도 환경으로 epoch와 잔차 강도만
-선택했다. 5개 training seed 평균이며 외부 사람의 GT는 설정 선택에 사용하지 않았다.
+- 분류 가중치는 고정하고 pose 전용 CSI encoder만 source pose GT로 미세 조정한다.
+- temporal Transformer가 시간 문맥을 읽고 각 관절의 방향과 뼈 길이 보정값을 생성한다.
+- source GT에서 구한 평균 skeleton을 기준으로 관절을 순방향 운동학으로 누적한다.
+- 최종 출력은 root-relative이므로 절대 방 위치보다 자세와 동작 형태에 집중한다.
+- danger generator는 source 낙상만으로 추가 학습한다.
+- 분기 조건은 GT 위험도가 아니라 CSI에서 예측한 danger 확률이다.
 
-| 지표 | Retrieval-only | Residual decoder | 변화 |
-|---|---:|---:|---:|
-| Pose MPJPE | 29.11 cm | **28.69 ± 0.08 cm** | -0.42 cm |
-| Distal MPJPE | 43.12 cm | **42.14 ± 0.15 cm** | -0.99 cm |
-| PA-MPJPE | **10.68 cm** | 11.02 ± 0.10 cm | +0.34 cm |
-| Danger pose MPJPE | 36.77 cm | **35.81 ± 0.16 cm** | -0.96 cm |
-| Danger distal MPJPE | 54.98 cm | **53.08 ± 0.19 cm** | -1.90 cm |
+이 구조는 motion bank의 trial 하나를 그대로 복사하지 않는다. 다만 CSI에 없는 세부 정보를
+완벽히 복원하는 생성 모델은 아니며, source motion manifold 안에서 가장 가능성 높은 연속 동작을
+예측한다.
 
-낙상과 말단 관절 오차는 모든 seed에서 줄었지만 PA-MPJPE는 악화됐다. 즉 낙상 궤적과
-손·발 위치는 더 가까워졌으나, 회전·이동·크기를 제거한 순수 자세 형상에는 아직
-trade-off가 있다.
+## Source-only 모델 선택
 
-## 봉인 Unseen 성능
+세 사람의 7개 source 환경만 사용한 nested leave-one-site-out 결과다. 바깥 holdout 환경은
+학습과 epoch 선택에 사용하지 않았고, 최종 unseen 사용자도 사용하지 않았다.
 
-고정 artifact를 학습·validation·설정 선택에 전혀 사용하지 않은 신규 사용자와
-환경에 처음 적용했다. 전체 데이터에서 absence·basic·warning·danger support로
-calibration을 수행한 뒤, support와 겹치지 않는 239개 query를 평가했다. 이 결과를
-확인한 뒤 모델, calibration 설정 또는 임계값을 수정하지 않았다.
+| 모델 | Pose MPJPE | Distal | PA-MPJPE | Danger pose | Danger distal |
+|---|---:|---:|---:|---:|---:|
+| Motion retrieval | 29.12 cm | 43.14 cm | 10.68 cm | 36.80 cm | 55.01 cm |
+| Retrieval + residual | 28.69 cm | 42.14 cm | 11.02 cm | 35.81 cm | 53.08 cm |
+| Continuous base | 26.35 cm | 39.39 cm | **9.51 cm** | 34.07 cm | 51.00 cm |
+| Continuous + predicted-risk danger expert | **26.33 cm** | **39.35 cm** | 9.58 cm | **33.86 cm** | **50.66 cm** |
 
-| 지표 | 봉인 unseen 결과 |
+현재 모델은 retrieval 대비 source pose를 약 9.6%, danger pose를 약 8.0%, danger distal을
+약 7.9% 줄였다. 이 source-only 결과에 따라 danger expert와 threshold 0.75를 잠근 뒤 전체
+source를 다시 학습했다.
+
+### 채택하지 않은 실험
+
+| 실험 | 판단 |
+|---|---|
+| GT motion autoencoder prior | GT 재구성은 7.46 cm였지만 CSI-to-latent가 28.19 cm라 병목을 해결하지 못함 |
+| Action-conditioned prior | 행동 평균으로 수렴해 28.27 cm, danger 36.22 cm로 악화 |
+| Orientation factorization | PA-MPJPE는 8.49 cm로 개선됐지만 전체 pose는 27.07 cm로 악화 |
+| State + motion 분해 | 전체 26.26 cm로 소폭 개선됐지만 danger가 34.21 cm로 악화 |
+| State + danger hybrid | 전체 26.22 cm였으나 복잡도 대비 0.05 cm 개선에 그쳐 미채택 |
+
+## 봉인 Unseen 평가
+
+잠긴 artifact를 신규 사용자/환경에 처음 적용했다. calibration support는 query에서 제외했고,
+남은 239개 query의 label과 GT pose는 추론이 끝난 뒤 지표 계산에만 사용했다. 결과를 확인한 뒤
+가중치, epoch, threshold를 수정하지 않았다.
+
+### 분류
+
+| 지표 | 결과 |
 |---|---:|
-| 17동작 accuracy | **65.69%** |
-| 17동작 macro-F1 | **55.64%** |
-| 동작 macro ROC-AUC | **96.21%** |
-| 동작 micro ROC-AUC | **96.36%** |
-| 3위험도 accuracy | **95.82%** |
-| 3위험도 macro-F1 | **95.87%** |
-| 위험도 macro ROC-AUC | **99.55%** |
-| 위험도 micro ROC-AUC | **99.23%** |
-| danger recall | **95.56%** |
-| danger 세부동작 accuracy | 42.22% |
-| safe → danger 오경보 | **0.00%** |
-| Pose MPJPE | **28.43 cm** |
-| Distal MPJPE | **41.83 cm** |
-| PA-MPJPE | 11.73 cm |
-| Danger pose MPJPE | **33.17 cm** |
-| Danger distal MPJPE | **48.27 cm** |
+| 17-action accuracy | **65.69%** |
+| 17-action macro-F1 | **55.64%** |
+| 3-risk accuracy | **95.82%** |
+| 3-risk macro-F1 | **95.87%** |
+| Danger recall | **95.56%** (43/45) |
+| Danger 세부 행동 accuracy | 42.22% |
+| Safe -> danger 오경보 | **0.00%** (0/122) |
 
-### 퍼센트 Confusion Matrix
+### Pose
 
-각 행을 100%로 정규화했으며 셀에는 원시 개수가 아니라 실제 클래스별 예측 비율을
-표시했다. `absence`는 calibration 전용이라 query 양성 샘플이 없다.
+| 지표 | Retrieval | 이전 residual | 현재 continuous | Retrieval 대비 |
+|---|---:|---:|---:|---:|
+| Pose MPJPE | 29.72 cm | 28.43 cm | **26.96 cm** | **-9.29%** |
+| Distal MPJPE | 43.84 cm | 41.83 cm | **39.17 cm** | **-10.66%** |
+| PA-MPJPE | 10.81 cm | 11.73 cm | **10.24 cm** | **-5.28%** |
+| Danger pose MPJPE | 35.77 cm | **33.17 cm** | 34.46 cm | -3.66% |
+| Danger distal MPJPE | 51.90 cm | **48.27 cm** | 50.63 cm | -2.45% |
 
-![17-action unseen confusion matrix](docs/evaluation/unseen/action_confusion_matrix_percent.png)
+현재 모델은 전체 동작과 말단 복원에서는 가장 좋지만, 낙상만 보면 이전 residual 모델이 더
+좋다. unseen 결과를 보고 두 모델을 섞으면 test 적응이 되므로 현재 artifact는 source-only
+선택을 유지한다. 다음 승격 조건은 별도 unseen subject에서도 개선을 재현하면서 danger pose와
+danger distal이 residual 기준까지 동시에 내려가는 것이다.
 
-![3-risk unseen confusion matrix](docs/evaluation/unseen/risk_confusion_matrix_percent.png)
+평가 원본은 `results/sealed_unseen_continuous_danger_final.json`에 있다.
 
-위험도는 safe 100.0%, warning 88.9%, danger 95.6%의 recall을 보였다. 반면 세부
-낙상 동작은 일부 subtype으로 예측이 몰려 danger recall 95.56%에 비해 danger
-세부동작 accuracy가 42.22%로 낮다.
+## 지원 동작
 
-### ROC-AUC
+| 위험도 | ID | 동작 |
+|---|---:|---|
+| safe | 0 | walking |
+| safe | 1 | standing still |
+| safe | 2 | sitting still |
+| safe | 3 | lying still |
+| safe | 4 | lie to stand |
+| safe | 5 | stand to lie normally |
+| safe | 6 | absence |
+| safe | 7 | sit to stand |
+| safe | 8 | stand to sit |
+| warning | 9 | unstable walking |
+| warning | 10 | stumble and recover |
+| warning | 11 | failed bed exit |
+| danger | 12 | fall from standing |
+| danger | 13 | fall while walking |
+| danger | 14 | bed-exit fall |
+| danger | 15 | bed fall |
+| danger | 16 | chair-exit fall |
 
-ROC는 one-vs-rest 방식이다. `absence`에는 query 양성이 없으므로 동작 macro
-ROC-AUC는 실제 평가 가능한 16개 동작만 평균했다.
-
-![17-action unseen ROC-AUC](docs/evaluation/unseen/action_roc_auc.png)
-
-![3-risk unseen ROC-AUC](docs/evaluation/unseen/risk_roc_auc.png)
-
-높은 AUC와 상대적으로 낮은 17동작 accuracy의 차이는 정답 동작에 높은 점수를
-주더라도 비슷한 동작 하나의 점수가 조금 더 높아 최종 argmax가 틀리는 경우가
-있다는 뜻이다. 위험 그룹은 잘 분리하지만 세부 행동 경계는 더 개선해야 한다.
-
-### Pose 오차 분포
-
-![Unseen pose error CDF](docs/evaluation/unseen/pose_error_cdf_percent.png)
-
-전체 trial-frame 관절 오차 중앙값은 26.34 cm다. 현재 pose는 calibrated motion
-retrieval을 초기값으로 삼고 CSI temporal residual을 생성하므로 bank에 없는 관절
-궤적을 제한적으로 수정할 수 있다. 다만 완전한 생성 모델은 아니며 세부 행동과 3D
-관절 복원은 아직 상용 품질에 못 미친다.
-
-이 평가는 신규 사용자·환경 한 조건에 대한 봉인 결과다. 모든 신규 사용자와 공간에서
-동일한 성능을 보장한다는 의미는 아니다.
-
-## Calibration 계약
-
-기본동작은 각각 2회 수집한다.
-
-| ID | 동작 |
-|---:|---|
-| 0 | walking |
-| 1 | standing still |
-| 2 | sitting still |
-| 3 | lying still |
-| 4 | lie to stand |
-| 5 | stand to lie normally |
-| 7 | sit to stand |
-| 8 | stand to sit |
-
-빈 공간은 12회, danger support는 아래 5종을 각각 1회 사용한다.
-
-warning support도 각각 1회 수집한다.
-
-| ID | 동작 |
-|---:|---|
-| 9 | unstable walking |
-| 10 | stumble and recover |
-| 11 | failed bed exit |
-
-| ID | 동작 |
-|---:|---|
-| 12 | fall from standing |
-| 13 | fall while walking |
-| 14 | bed-exit fall |
-| 15 | bed fall |
-| 16 | chair-exit fall |
-
-Danger calibration은 실제 사용자가 맨바닥에서 수행하면 안 된다. 현재 수치는
-연구 데이터의 통제된 낙상 support를 사용한 결과이며, 제품에서는 안전요원과
-매트가 있는 설치 절차, 사전 등록된 사용자 동작, 또는 안전한 대체 동작으로
-재설계해야 한다. Query의 행동 라벨이나 GT pose는 calibration과 추론에 사용하지
-않는다.
-
-## 설치와 실행
+## 실행
 
 ```powershell
 python -m pip install -e .
 python -m compileall -q notifi_ai_v2 notifi_pose scripts tests
 python -m unittest discover -s tests -p "test_*.py" -v
-python scripts/verify_artifact.py --artifact artifacts/notifi_ai_v2_motion_residual.pt --device cpu
+python scripts/verify_artifact.py `
+  --artifact artifacts/notifi_ai_v2.pt `
+  --device cpu
 ```
 
-Python API는 tensor 입력 `[B,304,3,114,2]`와 link mask `[B,304,3]`을 받는다.
+Python API 입력은 CSI `[B,304,3,114,2]`, link mask `[B,304,3]`이다.
 
 ```python
 from notifi_pose.deployment import CAL44Deployment
 
-runtime = CAL44Deployment.load("artifacts/notifi_ai_v2_motion_residual.pt")
+runtime = CAL44Deployment.load(
+    "artifacts/notifi_ai_v2.pt"
+)
 calibration = runtime.calibrate(
-    support_csi,
-    support_mask,
-    support_labels,
+    basic_csi,
+    basic_mask,
+    basic_labels,
     absence_csi,
     absence_mask,
-    danger_support_csi,
-    danger_support_mask,
-    danger_support_labels,
-    warning_support_csi,
-    warning_support_mask,
-    warning_support_labels,
+    danger_csi,
+    danger_mask,
+    danger_labels,
+    warning_csi,
+    warning_mask,
+    warning_labels,
 )
-prediction = runtime.predict(query_csi, query_mask, calibration)
+prediction = runtime.predict(
+    query_csi,
+    query_mask,
+    calibration,
+    simulate_pose=True,
+    risk_profile="conservative",
+)
 
 action = prediction["action_probability"]  # [B,17]
 risk = prediction["risk_probability"]      # [B,3]
 pose = prediction["pose_rel"]              # [B,304,22,3]
+danger_route = prediction["continuous_danger_expert_used"]
 ```
 
-`notifi_pose.deployment.load_csi_csv_batch`로 raw CSV를 같은 입력 계약으로 변환할
-수 있다. 링크 coverage가 부족하거나 calibration geometry가 source 범위를 벗어나면
-`abstain`과 `calibration_domain_warning`이 반환된다.
-
-## 배포 파일
+## 주요 파일
 
 | 경로 | 역할 |
 |---|---|
-| `artifacts/notifi_ai_v2_motion_residual.pt` | encoder, source prototype, GVHMR bank, calibration과 residual decoder를 포함한 단일 artifact |
-| `notifi_pose/deployment.py` | calibration, 17동작·3위험도 추론, retrieval와 residual pose API |
-| `notifi_ai_v2/motion_residual.py` | CSI-conditioned 연속 관절 잔차 decoder와 학습 손실 |
-| `notifi_ai_v2/support_alignment.py` | identity-regularized support ridge |
-| `notifi_pose/skeleton.py` | SMPL body-22 뼈 길이 일관성 보정 |
-| `scripts/verify_artifact.py` | 단일 PT end-to-end smoke test |
-| `scripts/evaluate_cal44_support_ridge.py` | source nested-LOSO 행동 검증 |
-| `scripts/evaluate_motion_signature_ridge_pose.py` | source nested-LOSO pose 검증 |
-| `scripts/train_motion_residual_loso.py` | 누수 방지 source nested-LOSO residual 학습·검증 |
-| `scripts/train_motion_residual_deployment.py` | source 전체 고정 epoch 학습과 단일 artifact export |
+| `notifi_pose/deployment.py` | calibration, 분류, 위험도, continuous pose를 묶은 배포 API |
+| `notifi_ai_v2/continuous_motion.py` | 연속 kinematic pose generator와 복합 손실 |
+| `notifi_ai_v2/support_alignment.py` | full-support affine alignment |
+| `scripts/train_continuous_motion_loso.py` | retrieval-free generator source nested-LOSO |
+| `scripts/train_pose_specific_encoder_loso.py` | pose 전용 CSI encoder 검증 |
+| `scripts/train_danger_expert_loso.py` | predicted-risk danger expert 검증 |
+| `scripts/train_continuous_pose_deployment.py` | 전체 source 고정 학습과 artifact export |
+| `scripts/evaluate_sealed_continuous_pose.py` | 잠긴 artifact 최종 unseen 감사 |
+| `scripts/verify_artifact.py` | 단일 artifact end-to-end smoke test |
 
-Artifact 크기는 62,143,097 bytes이고 SHA-256은
-`42c2787ce8daec161340411121e210777b95d3dfd4b7fe46c4a820ba13278773`이다.
-실패한 M2/M3 체크포인트와 수백 개의 중간 JSON은 공개 패키지에서 제거했다.
+현재 artifact SHA-256은
+`24d23f077e251101003f14b89b4974a54fe0478629d9065f7aa874b7722f9aaf`이다.
 
-## 남은 한계
+## 남은 문제
 
-- Source 사람이 3명이고 최종 unseen도 1명뿐이므로 “어떤 사용자에서도 동일 성능”은 입증되지 않았다.
-- 3위험도 macro-F1 62.00%, danger recall 56.90%는 개선됐지만 상용 안전 시스템 수준이 아니다.
-- Pose는 retrieval 초기값을 연속 잔차로 수정하지만 완전한 motion 생성기는 아니다. Bank와 크게 다른 낙상에는 한계가 있다.
-- 봉인 unseen danger distal 48.27 cm는 개선됐지만 부상 부위 판단에 단독으로 쓰기에는 여전히 크다.
-- PA-MPJPE가 retrieval-only보다 악화돼 관절 궤적과 순수 자세 형상을 동시에 개선하는 제약이 더 필요하다.
-- 봉인 unseen 평가는 구조와 설정을 완전히 잠근 뒤 한 번만 수행해야 한다.
+- source 사용자는 세 명뿐이어서 사람과 환경 변화의 분산을 충분히 학습했다고 보기 어렵다.
+- GT-only motion prior가 7.46 cm까지 내려가므로 decoder 용량보다 CSI-to-motion 표현이 주 병목이다.
+- source danger 학습 trial은 175개여서 빠른 낙상의 다양한 방향과 관절 궤적이 부족하다.
+- danger 세부 행동 accuracy 42.22%는 위험 탐지는 잘해도 넘어지는 유형을 아직 혼동한다는 뜻이다.
+- danger distal 50.63 cm는 어느 신체 부위가 바닥에 접근했는지 제품 수준으로 판단하기에 크다.
+- 고정된 body-22 평균 skeleton을 사용하므로 사용자 체형 차이를 직접 모델링하지 않는다.
+- CSI와 GT의 trial별 시간 오차는 temporal context로 완화할 뿐 명시적으로 추정하지 않는다.
 
-다음 승격 조건은 별도 subject에서 현재 full-support 개선을 재현하고, residual
-decoder가 retrieval-only보다 danger pose와 PA-MPJPE를 동시에 개선하는 것이다.
+따라서 다음 핵심은 decoder를 더 크게 만드는 일이 아니라, source-only self-supervised pretraining과
+시간 정렬을 통해 CSI encoder가 환경보다 실제 움직임을 더 안정적으로 표현하게 만드는 것이다.
